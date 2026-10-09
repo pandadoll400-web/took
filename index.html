@@ -388,8 +388,7 @@
         }
 
         function buyAxe(reqLevel, price) {
-            if (axeLevel >= reqLevel) return;
-            if (axeLevel < reqLevel - 1) { alert('이전 단계의 도끼를 먼저 구매해야 합니다!'); return; }
+            if (axeLevel >= reqLevel) { alert('이미 더 좋거나 같은 등급의 도끼를 보유 중입니다!'); return; }
             if (money >= price) {
                 money -= price; axeLevel = reqLevel; updateMoney(); updateAxeUI();
                 floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `도끼 업그레이드!`, color: '#2ecc71', life: 60 });
@@ -400,9 +399,11 @@
             for (let i = 1; i <= 3; i++) {
                 let btn = document.getElementById('btn-axe-' + i);
                 if (!btn) continue;
-                if (axeLevel >= i) { btn.innerText = '보유중'; btn.disabled = true; btn.style.background = '#95a5a6'; }
-                else if (axeLevel === i - 1) { btn.innerText = '구매하기'; btn.disabled = false; btn.style.background = '#2ecc71'; }
-                else { btn.innerText = '잠김'; btn.disabled = true; btn.style.background = '#7f8c8d'; }
+                if (axeLevel >= i) { 
+                    btn.innerText = '보유중'; btn.disabled = true; btn.style.background = '#95a5a6'; 
+                } else { 
+                    btn.innerText = '구매하기'; btn.disabled = false; btn.style.background = '#2ecc71'; 
+                }
             }
         }
 
