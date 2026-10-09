@@ -421,23 +421,20 @@
             return normalDropTables;
         }
 
-        let luckEndTime = parseInt(localStorage.getItem('treeGameLuck')) || 0;
-
         function getAdjustedTables(type) {
             let tables = getTables(type);
-            if (Date.now() < luckEndTime) {
-                let adjusted = JSON.parse(JSON.stringify(tables)); // 깊은 복사
-                let boostSum = 0;
-                for (let i = 1; i < adjusted.length; i++) { // 일반 등급(0번) 제외 전부 1.5배
-                    let diff = (adjusted[i].chance * 1.5) - adjusted[i].chance;
-                    adjusted[i].chance *= 1.5;
-                    boostSum += diff;
-                }
-                adjusted[0].chance -= boostSum; // 오른 확률만큼 일반 확률 삭감
-                if (adjusted[0].chance < 0) adjusted[0].chance = 0;
-                return adjusted;
+            
+            // 글로벌 1분 타이머 (서버 동기화 상시 발동)
+            let adjusted = JSON.parse(JSON.stringify(tables)); // 깊은 복사
+            let boostSum = 0;
+            for (let i = 1; i < adjusted.length; i++) { // 일반 등급(0번) 제외 전부 1.5배
+                let diff = (adjusted[i].chance * 1.5) - adjusted[i].chance;
+                adjusted[i].chance *= 1.5;
+                boostSum += diff;
             }
-            return tables;
+            adjusted[0].chance -= boostSum; // 오른 확률만큼 일반 확률 삭감
+            if (adjusted[0].chance < 0) adjusted[0].chance = 0;
+            return adjusted;
         }
 
         function generateCustomer(type) {
@@ -497,13 +494,11 @@
 
             let now = Date.now();
             
-            // 클릭 없이도 시간이 끝나면 3분(180초) 타이머 무한 자동 갱신 및 적용!
-            if (now >= luckEndTime) {
-                luckEndTime = now + 3 * 60 * 1000;
-                localStorage.setItem('treeGameLuck', luckEndTime);
-            }
-
-            let sec = Math.ceil((luckEndTime - now) / 1000);
+            // 전 세계 접속자 공통 동기화 - 1분(60초) 주기 무한 사이클 타이머
+            let cycle = 60 * 1000;
+            let remainMs = cycle - (now % cycle);
+            let sec = Math.ceil(remainMs / 1000);
+            
             document.getElementById('luck-timer').innerText = `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`;
             document.getElementById('luck-icon').style.filter = `hue-rotate(${now/20}deg) drop-shadow(0 0 10px #9b59b6)`;
 
