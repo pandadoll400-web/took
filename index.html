@@ -537,7 +537,7 @@
             });
 
             let targetCamY = player.y - GAME_HEIGHT / 2 + 100;
-            targetCamY = Math.max(-4000, Math.min(0, targetCamY));
+            targetCamY = Math.max(-5000, Math.min(0, targetCamY));
             cameraY += (targetCamY - cameraY) * 0.1;
 
             trees.forEach(tree => {
@@ -709,6 +709,7 @@
             ctx.save();
             ctx.translate(0, -cameraY);
 
+            ctx.fillStyle = '#162d16'; ctx.fillRect(0, -5000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#48dbfb'; ctx.fillRect(0, -4000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#273c75'; ctx.fillRect(0, -3000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#2c3e50'; ctx.fillRect(0, -2000, GAME_WIDTH, 1000);  
@@ -727,8 +728,11 @@
             ctx.strokeStyle = '#c7ecee'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -3000); ctx.lineTo(GAME_WIDTH, -3000); ctx.stroke();
             ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 혹한: 얼음 지역 (레벨 40 진입 가능)", GAME_WIDTH / 2, -3020);
 
+            ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -4000); ctx.lineTo(GAME_WIDTH, -4000); ctx.stroke();
+            ctx.fillStyle = '#2ecc71'; ctx.fillText("☣️ 치명적 위험: 방사능 지역 (레벨 60 진입 가능)", GAME_WIDTH / 2, -4020);
+
             ctx.strokeStyle = 'rgba(0,0,0,0.08)'; ctx.lineWidth = 2;
-            for(let cy = -4000; cy <= 1000; cy+=100) {
+            for(let cy = -5000; cy <= 1000; cy+=100) {
                 for(let cx = 0; cx <= GAME_WIDTH; cx+=100) { ctx.beginPath(); ctx.arc(cx+50, cy+50, 15, 0, Math.PI); ctx.stroke(); }
             }
 
