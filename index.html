@@ -68,7 +68,7 @@
             color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;
         }
         #luck-container {
-            position: absolute; top: 15px; right: 15px; text-align: center; cursor: pointer; z-index: 10;
+            position: absolute; bottom: 20px; right: 20px; text-align: center; z-index: 10;
         }
         #luck-icon { font-size: 35px; transition: transform 0.2s; text-shadow: 0 0 10px #9b59b6; }
         #luck-icon:active { transform: scale(0.9); }
@@ -422,13 +422,6 @@
         }
 
         let luckEndTime = parseInt(localStorage.getItem('treeGameLuck')) || 0;
-        document.getElementById('luck-container').addEventListener('click', () => {
-            if (Date.now() > luckEndTime) {
-                luckEndTime = Date.now() + 3 * 60 * 1000; // 3분 버프
-                localStorage.setItem('treeGameLuck', luckEndTime);
-                floatTexts.push({ x: GAME_WIDTH/2, y: GAME_HEIGHT/2, text: `🍀 행운 1.5배 발동!`, color: '#9b59b6', life: 80, size: 24 });
-            }
-        });
 
         function getAdjustedTables(type) {
             let tables = getTables(type);
@@ -503,14 +496,16 @@
             if (document.getElementById('inventory-modal').style.display === 'block') return;
 
             let now = Date.now();
-            if (now < luckEndTime) {
-                let sec = Math.ceil((luckEndTime - now) / 1000);
-                document.getElementById('luck-timer').innerText = `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`;
-                document.getElementById('luck-icon').style.filter = `hue-rotate(${now/20}deg) drop-shadow(0 0 10px #9b59b6)`;
-            } else {
-                document.getElementById('luck-timer').innerText = `버프 받기!`;
-                document.getElementById('luck-icon').style.filter = `none`;
+            
+            // 클릭 없이도 시간이 끝나면 3분(180초) 타이머 무한 자동 갱신 및 적용!
+            if (now >= luckEndTime) {
+                luckEndTime = now + 3 * 60 * 1000;
+                localStorage.setItem('treeGameLuck', luckEndTime);
             }
+
+            let sec = Math.ceil((luckEndTime - now) / 1000);
+            document.getElementById('luck-timer').innerText = `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`;
+            document.getElementById('luck-icon').style.filter = `hue-rotate(${now/20}deg) drop-shadow(0 0 10px #9b59b6)`;
 
             let moveX = 0, moveY = 0;
             if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
