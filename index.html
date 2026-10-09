@@ -403,6 +403,12 @@
                     level = 10000;
                     maxXp = 999999999; 
                 }
+            } else {
+                // Vercel(서버) 접속인데 과거 버그로 저장된 치트 데이터가 남아있다면 강제로 삭제하고 새로고침
+                if (maxXp === 999999999 || level >= 10000) {
+                    localStorage.removeItem('treeGameSave');
+                    location.reload();
+                }
             }
 
             document.getElementById('level-text').innerText = `LV. ${level}`;
