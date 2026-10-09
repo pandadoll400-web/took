@@ -352,7 +352,7 @@
             {
                 id: 'radioactive', type: 'radioactive', x: GAME_WIDTH / 2, y: -4650, radius: 170, trunkRadius: 60,
                 progress: 0, maxProgress: 300, shakeAngle: 0,
-                unlocked: false, price: 5000000, reqLevel: 60, color1: '#2ecc71', color2: '#1abc9c', drops: [10, 15] 
+                unlocked: false, price: 2500000, reqLevel: 60, color1: '#2ecc71', color2: '#1abc9c', drops: [10, 15] 
             }
         ];
 
@@ -631,6 +631,11 @@
                             
                             totalEarned = Math.floor(totalEarned);
                             money += totalEarned; updateMoney();
+                            
+                            // 판매 금액의 5%를 경험치로 보너스 지급!
+                            let earnedXp = Math.floor(totalEarned * 0.05) + 5; 
+                            addXp(earnedXp, firstC.x, shop.queueY - 100);
+                            
                             floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned}`, color: 'gold', life: 60 });
                             shop.queue.shift();
                         }
