@@ -67,15 +67,6 @@
             display: block; margin: 20px auto 0; padding: 10px 20px; background: #e74c3c;
             color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;
         }
-        #luck-container {
-            position: absolute; bottom: 20px; right: 20px; text-align: center; z-index: 10;
-        }
-        #luck-icon { font-size: 35px; transition: transform 0.2s; text-shadow: 0 0 10px #9b59b6; }
-        #luck-icon:active { transform: scale(0.9); }
-        #luck-timer {
-            color: #f1c40f; font-weight: bold; background: rgba(0,0,0,0.6);
-            padding: 2px 5px; border-radius: 5px; font-size: 13px; margin-top: -5px;
-        }
     </style>
 </head>
 <body>
@@ -85,10 +76,6 @@
         <div id="level-container">
             <div id="level-text">LV. 1</div>
             <div id="xp-bar-bg"><div id="xp-bar-fill"></div></div>
-        </div>
-        <div id="luck-container">
-            <div id="luck-icon">🍀</div>
-            <div id="luck-timer">버프 받기!</div>
         </div>
         <button id="inventory-btn">가방</button>
         <div id="inventory-modal">
@@ -427,24 +414,8 @@
             return normalDropTables;
         }
 
-        function getAdjustedTables(type) {
-            let tables = getTables(type);
-            
-            // 글로벌 1분 타이머 (서버 동기화 상시 발동)
-            let adjusted = JSON.parse(JSON.stringify(tables)); // 깊은 복사
-            let boostSum = 0;
-            for (let i = 1; i < adjusted.length; i++) { // 일반 등급(0번) 제외 전부 1.5배
-                let diff = (adjusted[i].chance * 1.5) - adjusted[i].chance;
-                adjusted[i].chance *= 1.5;
-                boostSum += diff;
-            }
-            adjusted[0].chance -= boostSum; // 오른 확률만큼 일반 확률 삭감
-            if (adjusted[0].chance < 0) adjusted[0].chance = 0;
-            return adjusted;
-        }
-
         function generateCustomer(type) {
-            let tables = getAdjustedTables(type);
+            let tables = getTables(type);
             let r = Math.random(), cum = 0, tier = tables[0];
             for (let t of tables) { cum += t.chance; if (r <= cum) { tier = t; break; } }
             
@@ -471,7 +442,7 @@
         }
 
         function spawnFruit(x, y, type) {
-            let tables = getAdjustedTables(type);
+            let tables = getTables(type);
             let r = Math.random(), cum = 0, data = null;
             for (let t of tables) { cum += t.chance; if (r <= cum) { data = { fruit: t.items[Math.floor(Math.random() * t.items.length)], color: t.color, xp: t.xp, price: t.price }; break; } }
             
@@ -497,16 +468,6 @@
 
         function update() {
             if (document.getElementById('inventory-modal').style.display === 'block') return;
-
-            let now = Date.now();
-            
-            // 전 세계 접속자 공통 동기화 - 1분(60초) 주기 무한 사이클 타이머
-            let cycle = 60 * 1000;
-            let remainMs = cycle - (now % cycle);
-            let sec = Math.ceil(remainMs / 1000);
-            
-            document.getElementById('luck-timer').innerText = `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`;
-            document.getElementById('luck-icon').style.filter = `hue-rotate(${now/20}deg) drop-shadow(0 0 10px #9b59b6)`;
 
             let moveX = 0, moveY = 0;
             if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
