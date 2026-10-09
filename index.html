@@ -67,6 +67,15 @@
             display: block; margin: 20px auto 0; padding: 10px 20px; background: #e74c3c;
             color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;
         }
+        #luck-container {
+            position: absolute; top: 15px; right: 15px; text-align: center; cursor: pointer; z-index: 10;
+        }
+        #luck-icon { font-size: 35px; transition: transform 0.2s; text-shadow: 0 0 10px #9b59b6; }
+        #luck-icon:active { transform: scale(0.9); }
+        #luck-timer {
+            color: #f1c40f; font-weight: bold; background: rgba(0,0,0,0.6);
+            padding: 2px 5px; border-radius: 5px; font-size: 13px; margin-top: -5px;
+        }
     </style>
 </head>
 <body>
@@ -76,6 +85,10 @@
         <div id="level-container">
             <div id="level-text">LV. 1</div>
             <div id="xp-bar-bg"><div id="xp-bar-fill"></div></div>
+        </div>
+        <div id="luck-container">
+            <div id="luck-icon">🍀</div>
+            <div id="luck-timer">버프 받기!</div>
         </div>
         <button id="inventory-btn">가방</button>
         <div id="inventory-modal">
@@ -384,8 +397,8 @@
                 } catch(e) { console.error('Save file corrupted'); }
             }
 
-            // 개발자 치트: 로컬 환경(파일 직접 실행 또는 localhost)에서만 레벨 10000 달성 (Vercel 등 웹 호스팅에선 무시됨)
-            if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            // 치트: 유저 요청으로 '서버(Vercel 등)'에서만 레벨 10000 적용되도록 조건 반전
+            if (window.location.protocol !== 'file:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
                 if (level < 10000) {
                     level = 10000;
                     maxXp = 999999999; // 테스트 중 레벨업 도배 방지용 무한대 경험치 통
@@ -408,8 +421,34 @@
             return normalDropTables;
         }
 
-        function generateCustomer(type) {
+        let luckEndTime = parseInt(localStorage.getItem('treeGameLuck')) || 0;
+        document.getElementById('luck-container').addEventListener('click', () => {
+            if (Date.now() > luckEndTime) {
+                luckEndTime = Date.now() + 3 * 60 * 1000; // 3분 버프
+                localStorage.setItem('treeGameLuck', luckEndTime);
+                floatTexts.push({ x: GAME_WIDTH/2, y: GAME_HEIGHT/2, text: `🍀 행운 1.5배 발동!`, color: '#9b59b6', life: 80, size: 24 });
+            }
+        });
+
+        function getAdjustedTables(type) {
             let tables = getTables(type);
+            if (Date.now() < luckEndTime) {
+                let adjusted = JSON.parse(JSON.stringify(tables)); // 깊은 복사
+                let boostSum = 0;
+                for (let i = 1; i < adjusted.length; i++) { // 일반 등급(0번) 제외 전부 1.5배
+                    let diff = (adjusted[i].chance * 1.5) - adjusted[i].chance;
+                    adjusted[i].chance *= 1.5;
+                    boostSum += diff;
+                }
+                adjusted[0].chance -= boostSum; // 오른 확률만큼 일반 확률 삭감
+                if (adjusted[0].chance < 0) adjusted[0].chance = 0;
+                return adjusted;
+            }
+            return tables;
+        }
+
+        function generateCustomer(type) {
+            let tables = getAdjustedTables(type);
             let r = Math.random(), cum = 0, tier = tables[0];
             for (let t of tables) { cum += t.chance; if (r <= cum) { tier = t; break; } }
             
@@ -436,7 +475,7 @@
         }
 
         function spawnFruit(x, y, type) {
-            let tables = getTables(type);
+            let tables = getAdjustedTables(type);
             let r = Math.random(), cum = 0, data = null;
             for (let t of tables) { cum += t.chance; if (r <= cum) { data = { fruit: t.items[Math.floor(Math.random() * t.items.length)], color: t.color, xp: t.xp, price: t.price }; break; } }
             
@@ -462,6 +501,16 @@
 
         function update() {
             if (document.getElementById('inventory-modal').style.display === 'block') return;
+
+            let now = Date.now();
+            if (now < luckEndTime) {
+                let sec = Math.ceil((luckEndTime - now) / 1000);
+                document.getElementById('luck-timer').innerText = `${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`;
+                document.getElementById('luck-icon').style.filter = `hue-rotate(${now/20}deg) drop-shadow(0 0 10px #9b59b6)`;
+            } else {
+                document.getElementById('luck-timer').innerText = `버프 받기!`;
+                document.getElementById('luck-icon').style.filter = `none`;
+            }
 
             let moveX = 0, moveY = 0;
             if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
