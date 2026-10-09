@@ -632,8 +632,12 @@
                             totalEarned = Math.floor(totalEarned);
                             money += totalEarned; updateMoney();
                             
-                            // 판매 금액의 5%를 경험치로 보너스 지급!
-                            let earnedXp = Math.floor(totalEarned * 0.05) + 5; 
+                            // 주울 때와 완전히 동일한 XP 지급!
+                            let baseItemXp = 2; // 기본값
+                            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables];
+                            for (let t of tables) { if (t.items.includes(baseName)) { baseItemXp = t.xp; break; } }
+                            let earnedXp = firstC.amount * baseItemXp;
+                            
                             addXp(earnedXp, firstC.x, shop.queueY - 100);
                             
                             floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned}`, color: 'gold', life: 60 });
