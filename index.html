@@ -54,7 +54,34 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.5); z-index: 10;
         }
         #inventory-btn:active { transform: translateY(2px); }
+
+        #shop-btn {
+            position: absolute; bottom: 20px; left: 100px;
+            background: #f1c40f; color: black; font-size: 18px; font-weight: bold;
+            padding: 15px 20px; border-radius: 50%; border: 3px solid #f39c12; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5); z-index: 10;
+        }
+        #shop-btn:active { transform: translateY(2px); }
         
+        #shop-modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(30, 40, 50, 0.95); color: white; padding: 20px; border-radius: 15px;
+            width: 85%; max-width: 350px; max-height: 80%; overflow-y: auto; display: none; border: 2px solid #fff; z-index: 30;
+        }
+        .shop-tabs { display: flex; justify-content: center; margin-bottom: 20px; gap: 10px; }
+        .shop-tab-btn { flex: 1; padding: 10px; border: none; background: #7f8c8d; color: white; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .shop-tab-btn.active { background: #f1c40f; color: black; }
+        .axe-item { background: #2c3e50; margin-bottom: 15px; padding: 15px; border-radius: 10px; border: 2px solid #7f8c8d; text-align: center; }
+        .axe-item h3 { margin: 0 0 10px 0; color: #fff; }
+        .axe-item p { margin: 5px 0; font-size: 14px; color: #ecf0f1;}
+        .axe-item button { padding: 8px 15px; background: #2ecc71; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%;}
+        .axe-item button:disabled { background: #95a5a6; cursor: not-allowed; }
+        .limited-box { background: #2c3e50; border: 2px solid #f1c40f; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 0 15px rgba(241, 196, 15, 0.2); }
+        .limited-title { font-size: 20px; font-weight: bold; color: #f1c40f; text-shadow: 0 0 10px rgba(241, 196, 15, 0.8); margin-bottom: 15px; }
+        .limited-desc { color: #bdc3c7; font-size: 13px; line-height: 1.5; margin-bottom: 15px; }
+        .limited-soldout { color: #e74c3c; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
+        .limited-btn { width: 100%; padding: 12px; background: #8e7a3f; color: #333; font-weight: bold; border: none; border-radius: 5px; cursor: not-allowed; }
+
         #inventory-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(20, 20, 20, 0.95); color: white; padding: 20px; border-radius: 15px;
@@ -78,6 +105,48 @@
             <div id="xp-bar-bg"><div id="xp-bar-fill"></div></div>
         </div>
         <button id="inventory-btn">가방</button>
+        <button id="shop-btn">상점</button>
+        
+        <div id="shop-modal">
+            <h2>상점</h2>
+            <div class="shop-tabs">
+                <button class="shop-tab-btn active" onclick="switchShopTab('axe')">도끼</button>
+                <button class="shop-tab-btn" onclick="switchShopTab('limited')">한정조합</button>
+            </div>
+            
+            <div id="shop-axe" style="display: block;">
+                <div class="axe-item">
+                    <h3>🪓 나무 도끼</h3>
+                    <p>나무 패는 시간: 5초 ➔ 4초</p>
+                    <p>가격: 💰 100,000</p>
+                    <button id="btn-axe-1" onclick="buyAxe(1, 100000)">구매하기</button>
+                </div>
+                <div class="axe-item">
+                    <h3>⛏️ 은 도끼</h3>
+                    <p>나무 패는 시간: 4초 ➔ 3.5초</p>
+                    <p>가격: 💰 1,000,000</p>
+                    <button id="btn-axe-2" onclick="buyAxe(2, 1000000)">구매하기</button>
+                </div>
+                <div class="axe-item">
+                    <h3>✨ 금 도끼</h3>
+                    <p>나무 패는 시간: 3.5초 ➔ 3.2초</p>
+                    <p>가격: 💰 10,000,000</p>
+                    <button id="btn-axe-3" onclick="buyAxe(3, 10000000)">구매하기</button>
+                </div>
+            </div>
+            
+            <div id="shop-limited" style="display: none;">
+                <div class="limited-box">
+                    <div class="limited-title">✨ 고대 도끼 한정 조합 ✨</div>
+                    <div class="limited-desc">금 도끼와 잊혀진 심해의 광석을 융합하여 강력한 고대 도끼를 만듭니다. (나무 패는 시간 대폭 감소)</div>
+                    <div class="limited-soldout">매진되었습니다! (시간 초과)</div>
+                    <button class="limited-btn" disabled>매진</button>
+                </div>
+            </div>
+            
+            <button class="close-btn" onclick="document.getElementById('shop-modal').style.display='none'">닫기</button>
+        </div>
+
         <div id="inventory-modal">
             <h2>인벤토리</h2>
             <div class="grid" id="inventory-grid"></div>
@@ -271,6 +340,7 @@
 
         let level = 1; let xp = 0; let maxXp = 20;
         let money = 0;
+        let axeLevel = 0; // 0:기본, 1:나무도끼, 2:철(은)도끼, 3:금도끼
         let inventory = {};
 
         function addXp(amount, x, y) {
@@ -294,12 +364,46 @@
         let floatTexts = [];
 
         function getItemColor(itemName) {
-            let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '');
-            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables];
+            let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '');
+            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables];
             for (let t of tables) {
                 if (t.items.includes(baseName)) return t.color;
             }
             return '#fff';
+        }
+
+        // --- 상점 UI 및 도끼 로직 추가 ---
+        document.getElementById('shop-btn').addEventListener('click', () => {
+            document.getElementById('shop-modal').style.display = 'block';
+            resetJoyMouse(); player.targetTree = null;
+            updateAxeUI();
+        });
+
+        function switchShopTab(tab) {
+            document.getElementById('shop-axe').style.display = tab === 'axe' ? 'block' : 'none';
+            document.getElementById('shop-limited').style.display = tab === 'limited' ? 'block' : 'none';
+            document.querySelectorAll('.shop-tab-btn').forEach((btn, idx) => {
+                btn.className = (idx === 0 && tab === 'axe') || (idx === 1 && tab === 'limited') ? 'shop-tab-btn active' : 'shop-tab-btn';
+            });
+        }
+
+        function buyAxe(reqLevel, price) {
+            if (axeLevel >= reqLevel) return;
+            if (axeLevel < reqLevel - 1) { alert('이전 단계의 도끼를 먼저 구매해야 합니다!'); return; }
+            if (money >= price) {
+                money -= price; axeLevel = reqLevel; updateMoney(); updateAxeUI();
+                floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `도끼 업그레이드!`, color: '#2ecc71', life: 60 });
+            } else { alert('돈이 부족합니다!'); }
+        }
+
+        function updateAxeUI() {
+            for (let i = 1; i <= 3; i++) {
+                let btn = document.getElementById('btn-axe-' + i);
+                if (!btn) continue;
+                if (axeLevel >= i) { btn.innerText = '보유중'; btn.disabled = true; btn.style.background = '#95a5a6'; }
+                else if (axeLevel === i - 1) { btn.innerText = '구매하기'; btn.disabled = false; btn.style.background = '#2ecc71'; }
+                else { btn.innerText = '잠김'; btn.disabled = true; btn.style.background = '#7f8c8d'; }
+            }
         }
 
         // 동적 인벤토리 UI 구성
@@ -379,6 +483,7 @@
         function saveGame() {
             const data = {
                 level: level, xp: xp, maxXp: maxXp, money: money, inventory: inventory,
+                axeLevel: axeLevel,
                 treeUnlocked: trees.map(t => t.unlocked)
             };
             localStorage.setItem('treeGameSave', JSON.stringify(data));
@@ -393,6 +498,7 @@
                     xp = data.xp || 0;
                     maxXp = data.maxXp || 20;
                     money = data.money || 0;
+                    axeLevel = data.axeLevel || 0;
                     if (data.inventory) inventory = { ...inventory, ...data.inventory };
                     if (data.treeUnlocked) {
                         trees.forEach((t, i) => {
@@ -550,7 +656,13 @@
                         player.shakeTimer++;
                         tree.shakeAngle = Math.sin(player.shakeTimer * 0.8) * 0.05;
                         tree.progress += 1;
-                        if (tree.progress >= tree.maxProgress) {
+                        
+                        let maxP = tree.maxProgress;
+                        if (axeLevel === 1) maxP = Math.floor(tree.maxProgress * (4.0 / 5.0)); // 4초
+                        else if (axeLevel === 2) maxP = Math.floor(tree.maxProgress * (3.5 / 5.0)); // 3.5초
+                        else if (axeLevel === 3) maxP = Math.floor(tree.maxProgress * (3.2 / 5.0)); // 3.2초
+
+                        if (tree.progress >= maxP) {
                             tree.progress = 0;
                             let dropCount = Math.floor(Math.random() * (tree.drops[1] - tree.drops[0] + 1)) + tree.drops[0];
                             for(let i=0; i<dropCount; i++) spawnFruit(tree.x, tree.y, tree.type);
@@ -842,7 +954,11 @@
 
                     if (t.progress > 0) {
                         ctx.fillStyle = 'black'; ctx.fillRect(-40, -145, 80, 12);
-                        ctx.fillStyle = '#3498db'; ctx.fillRect(-38, -143, 76 * (t.progress / t.maxProgress), 8);
+                        let maxP = t.maxProgress;
+                        if (axeLevel === 1) maxP = Math.floor(t.maxProgress * (4.0 / 5.0));
+                        else if (axeLevel === 2) maxP = Math.floor(t.maxProgress * (3.5 / 5.0));
+                        else if (axeLevel === 3) maxP = Math.floor(t.maxProgress * (3.2 / 5.0));
+                        ctx.fillStyle = '#3498db'; ctx.fillRect(-38, -143, 76 * (t.progress / maxP), 8);
                         ctx.fillStyle = 'white'; ctx.font = '10px Arial'; ctx.textAlign = 'center'; ctx.fillText("흔드는 중...", 0, -150);
                     }
 
