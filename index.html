@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>나무 흔들기 게임 - 특성 시스템 및 대규모 밸런스 패치</title>
+    <style>
+        body {
+            margin: 0; padding: 0;
+            background-color: #1e272e;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+            touch-action: none; font-family: 'Malgun Gothic', sans-serif;
+            user-select: none; -webkit-user-select: none;
+        }
+        #game-container {
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            background-color: #222;
+        }
+        #gameCanvas { display: block; }
+        
+        #money-display {
+            position: absolute; top: 15px; left: 15px;
+            background: rgba(0, 0, 0, 0.7); color: #f1c40f;
+            font-size: 20px; font-weight: bold;
+            padding: 8px 15px; border-radius: 20px;
+            border: 2px solid #f39c12; pointer-events: none; z-index: 10;
+        }
+        
+        #level-container {
+            position: absolute; top: 15px; left: 50%;
+            transform: translateX(-50%); width: 250px;
+            text-align: center; pointer-events: none; z-index: 10;
+        }
+        #level-text {
+            color: white; font-size: 22px; font-weight: bold;
+            text-shadow: 2px 2px 4px #000; margin-bottom: 5px;
+        }
+        #xp-bar-bg {
+            background: rgba(0,0,0,0.6); border: 2px solid #fff;
+            border-radius: 10px; height: 15px; width: 100%;
+            overflow: hidden; position: relative;
+        }
+        #xp-bar-fill {
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            height: 100%; width: 0%; transition: width 0.3s;
+        }
+
+        #inventory-btn {
+            position: absolute; bottom: 20px; left: 20px;
+            background: #8e44ad; color: white; font-size: 18px; font-weight: bold;
+            padding: 15px 20px; border-radius: 50%; border: 3px solid #9b59b6; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5); z-index: 10;
+        }
+        #inventory-btn:active { transform: translateY(2px); }
+        
+        #inventory-modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(20, 20, 20, 0.95); color: white; padding: 20px; border-radius: 15px;
+            width: 80%; max-height: 70%; overflow-y: auto; display: none; border: 2px solid #fff; z-index: 20;
+        }
+        #inventory-modal h2 { margin-top: 0; text-align: center; color: #f1c40f; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .grid-item { background: #2c3e50; padding: 10px; border-radius: 10px; text-align: center; font-size: 14px; }
+        .close-btn {
+            display: block; margin: 20px auto 0; padding: 10px 20px; background: #e74c3c;
+            color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div id="money-display">💰 0</div>
+        <div id="level-container">
+            <div id="level-text">LV. 1</div>
+            <div id="xp-bar-bg"><div id="xp-bar-fill"></div></div>
+        </div>
+        <button id="inventory-btn">가방</button>
+        <div id="inventory-modal">
+            <h2>인벤토리</h2>
+            <div class="grid" id="inventory-grid"></div>
+            <button class="close-btn" id="close-modal-btn">닫기</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('game-container');
+
+        const GAME_WIDTH = 600;
+        const GAME_HEIGHT = 1000;
+        let cameraY = 0; 
+        
+        function resize() {
+            const windowRatio = window.innerWidth / window.innerHeight;
+            const gameRatio = GAME_WIDTH / GAME_HEIGHT;
+            let w, h;
+            if (windowRatio < gameRatio) { w = window.innerWidth; h = window.innerWidth / gameRatio; } 
+            else { w = window.innerHeight * gameRatio; h = window.innerHeight; }
+            container.style.width = w + 'px'; container.style.height = h + 'px';
+            canvas.width = GAME_WIDTH; canvas.height = GAME_HEIGHT;
+            canvas.style.width = '100%'; canvas.style.height = '100%';
+        }
+        window.addEventListener('resize', resize); resize();
+
+        function getPos(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: (clientX - rect.left) * (canvas.width / rect.width),
+                y: (clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        const keys = { w: false, a: false, s: false, d: false };
+        let joystick = { active: false, id: null, x: 0, y: 0, dx: 0, dy: 0, originX: 0, originY: 0 };
+        
+        window.addEventListener('keydown', e => { 
+            let k = e.key.toLowerCase();
+            if (keys.hasOwnProperty(k)) keys[k] = true; 
+            if (e.key === ' ') {
+                e.preventDefault();
+                handleTreeClick(player.x, player.y + cameraY, true); 
+            }
+        });
+        window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = false; });
+
+        function handleTreeClick(cx, cy, isSpacebar = false) {
+            let target = null;
+            let minDist = 9999;
+            trees.forEach(tree => {
+                let clickDist = Math.hypot(cx - tree.x, cy - tree.y);
+                let playerDist = Math.hypot(player.x - tree.x, player.y - tree.y - 80);
+                
+                if (playerDist < tree.trunkRadius + player.radius + 60) {
+                    if (isSpacebar || clickDist < tree.radius + 50) {
+                        if (playerDist < minDist) { minDist = playerDist; target = tree; }
+                    }
+                }
+            });
+
+            if (target) {
+                if (player.targetTree === target) {
+                    player.targetTree = null;
+                } else {
+                    if (!target.unlocked) {
+                        if (money >= target.price) {
+                            money -= target.price; updateMoney(); target.unlocked = true;
+                            floatTexts.push({ x: target.x, y: target.y - 100, text: `잠금 해제!`, color: '#2ecc71', life: 60 });
+                        } else {
+                            floatTexts.push({ x: target.x, y: target.y - 100, text: `💰 ${target.price} 부족!`, color: 'red', life: 60 });
+                        }
+                    } else { player.targetTree = target; }
+                }
+            }
+        }
+
+        canvas.addEventListener('mousedown', e => {
+            let pos = getPos(e.clientX, e.clientY);
+            if (pos.x < GAME_WIDTH / 2 && pos.y > GAME_HEIGHT / 2) {
+                joystick.active = true; joystick.originX = pos.x; joystick.originY = pos.y; joystick.x = pos.x; joystick.y = pos.y;
+            } else { handleTreeClick(pos.x, pos.y + cameraY); }
+        });
+        canvas.addEventListener('mousemove', e => {
+            if (joystick.active) {
+                let pos = getPos(e.clientX, e.clientY);
+                joystick.x = pos.x; joystick.y = pos.y; updateJoyMath();
+            }
+        });
+        const resetJoyMouse = () => { joystick.active = false; joystick.dx = 0; joystick.dy = 0; joystick.id = null; };
+        canvas.addEventListener('mouseup', resetJoyMouse); canvas.addEventListener('mouseleave', resetJoyMouse);
+
+        canvas.addEventListener('touchstart', e => {
+            if(e.target === canvas) e.preventDefault();
+            for(let i=0; i<e.changedTouches.length; i++) {
+                let t = e.changedTouches[i]; let pos = getPos(t.clientX, t.clientY);
+                if (pos.x < GAME_WIDTH / 2 && pos.y > GAME_HEIGHT / 2 && !joystick.active) {
+                    joystick.active = true; joystick.id = t.identifier;
+                    joystick.originX = pos.x; joystick.originY = pos.y; joystick.x = pos.x; joystick.y = pos.y;
+                } else { handleTreeClick(pos.x, pos.y + cameraY); }
+            }
+        }, {passive: false});
+        canvas.addEventListener('touchmove', e => {
+            if(e.target === canvas) e.preventDefault();
+            for(let i=0; i<e.changedTouches.length; i++) {
+                let t = e.changedTouches[i]; let pos = getPos(t.clientX, t.clientY);
+                if (joystick.active && joystick.id === t.identifier) { joystick.x = pos.x; joystick.y = pos.y; updateJoyMath(); }
+            }
+        }, {passive: false});
+        canvas.addEventListener('touchend', e => {
+            for(let i=0; i<e.changedTouches.length; i++) {
+                let t = e.changedTouches[i];
+                if (joystick.active && joystick.id === t.identifier) resetJoyMouse();
+            }
+        });
+
+        function updateJoyMath() {
+            let dx = joystick.x - joystick.originX, dy = joystick.y - joystick.originY;
+            let dist = Math.hypot(dx, dy), maxR = 60;
+            if (dist > maxR) { joystick.x = joystick.originX + (dx/dist)*maxR; joystick.y = joystick.originY + (dy/dist)*maxR; }
+            joystick.dx = (joystick.x - joystick.originX) / maxR; joystick.dy = (joystick.y - joystick.originY) / maxR;
+        }
+
+        // --- 재편성된 과일 티어 및 아이템 리스트 ---
+        const I_COM = ['사과', '오렌지', '바나나', '복숭아'];
+        const I_RAR = ['키위', '블루베리', '배', '체리'];
+        const I_SRA = ['멜론', '포도', '딸기'];
+        const I_EPI = ['파인애플', '망고', '수박'];
+        const I_LEG = ['레몬', '아보카도', '코코넛', '라임'];
+        const I_MYT = ['용과', '블랙사파이어', '패션후르츠'];
+        const I_ETE = ['골드키위', '플래티넘사과', '영겁의포도'];
+
+        // 지역별 세부 드롭 테이블 구성
+        const normalDropTables = [
+            { chance: 0.50, name: '일반', price: 1500, xp: 2, color: '#ecf0f1', items: I_COM },
+            { chance: 0.20, name: '희귀', price: 3000, xp: 8, color: '#3498db', items: I_RAR },
+            { chance: 0.15, name: '초희귀', price: 5000, xp: 24, color: '#9b59b6', items: I_SRA },
+            { chance: 0.10, name: '드문', price: 8000, xp: 60, color: '#f1c40f', items: I_EPI },
+            { chance: 0.04, name: '전설', price: 10000, xp: 200, color: '#e67e22', items: I_LEG },
+            { chance: 0.01, name: '신화적인', price: 15000, xp: 800, color: '#ff4757', items: I_MYT }
+        ];
+
+        const fireDropTables = [
+            { chance: 0.45, name: '일반', price: 1500, xp: 2, color: '#ecf0f1', items: I_COM },
+            { chance: 0.20, name: '희귀', price: 3000, xp: 8, color: '#3498db', items: I_RAR },
+            { chance: 0.18, name: '드문', price: 8000, xp: 60, color: '#f1c40f', items: I_EPI },
+            { chance: 0.12, name: '전설', price: 10000, xp: 200, color: '#e67e22', items: I_LEG },
+            { chance: 0.05, name: '신화적인', price: 15000, xp: 800, color: '#ff4757', items: I_MYT }
+        ];
+        
+        const twistedDropTables = [
+            { chance: 0.40, name: '일반', price: 1500, xp: 2, color: '#ecf0f1', items: I_COM },
+            { chance: 0.25, name: '희귀', price: 3000, xp: 8, color: '#3498db', items: I_RAR },
+            { chance: 0.15, name: '초희귀', price: 5000, xp: 24, color: '#9b59b6', items: I_SRA },
+            { chance: 0.10, name: '전설', price: 10000, xp: 200, color: '#e67e22', items: I_LEG },
+            { chance: 0.08, name: '신화적인', price: 15000, xp: 800, color: '#ff4757', items: I_MYT },
+            { chance: 0.02, name: '영원한', price: 20000, xp: 3000, color: '#ff9ff3', items: I_ETE }
+        ];
+
+        const electricDropTables = [
+            { chance: 0.30, name: '일반', price: 1500, xp: 2, color: '#ecf0f1', items: I_COM },
+            { chance: 0.20, name: '희귀', price: 3000, xp: 8, color: '#3498db', items: I_RAR },
+            { chance: 0.15, name: '초희귀', price: 5000, xp: 24, color: '#9b59b6', items: I_SRA },
+            { chance: 0.15, name: '드문', price: 8000, xp: 60, color: '#f1c40f', items: I_EPI },
+            { chance: 0.10, name: '전설', price: 10000, xp: 200, color: '#e67e22', items: I_LEG },
+            { chance: 0.07, name: '신화적인', price: 15000, xp: 800, color: '#ff4757', items: I_MYT },
+            { chance: 0.03, name: '영원한', price: 20000, xp: 3000, color: '#ff9ff3', items: I_ETE }
+        ];
+
+        const iceDropTables = [
+            { chance: 0.20, name: '일반', price: 1500, xp: 2, color: '#ecf0f1', items: I_COM },
+            { chance: 0.20, name: '희귀', price: 3000, xp: 8, color: '#3498db', items: I_RAR },
+            { chance: 0.20, name: '초희귀', price: 5000, xp: 24, color: '#9b59b6', items: I_SRA },
+            { chance: 0.15, name: '드문', price: 8000, xp: 60, color: '#f1c40f', items: I_EPI },
+            { chance: 0.12, name: '전설', price: 10000, xp: 200, color: '#e67e22', items: I_LEG },
+            { chance: 0.08, name: '신화적인', price: 15000, xp: 800, color: '#ff4757', items: I_MYT },
+            { chance: 0.05, name: '영원한', price: 20000, xp: 3000, color: '#ff9ff3', items: I_ETE }
+        ];
+
+        let level = 1; let xp = 0; let maxXp = 20;
+        let money = 0;
+        let inventory = {};
+
+        function addXp(amount, x, y) {
+            xp += amount;
+            floatTexts.push({ x: x, y: y, text: `+${amount} XP`, color: '#3498db', life: 40 });
+            let leveledUp = false;
+            while (xp >= maxXp) {
+                xp -= maxXp; level++; maxXp = Math.floor(maxXp * 1.5);
+                leveledUp = true;
+            }
+            if (leveledUp) {
+                document.getElementById('level-text').innerText = `LV. ${level}`;
+                floatTexts.push({ x: player.x, y: player.y - 60, text: `LEVEL UP!`, color: '#f1c40f', life: 80, size: 24 });
+            }
+            document.getElementById('xp-bar-fill').style.width = `${(xp / maxXp) * 100}%`;
+        }
+        function updateMoney() { document.getElementById('money-display').innerText = `💰 ${money}`; }
+
+        let fruitsOnGround = [];
+        let floatTexts = [];
+
+        function getItemColor(itemName) {
+            let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '');
+            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables];
+            for (let t of tables) {
+                if (t.items.includes(baseName)) return t.color;
+            }
+            return '#fff';
+        }
+
+        // 동적 인벤토리 UI 구성
+        document.getElementById('inventory-btn').addEventListener('click', () => {
+            document.getElementById('inventory-modal').style.display = 'block'; resetJoyMouse(); player.targetTree = null;
+            const grid = document.getElementById('inventory-grid'); grid.innerHTML = '';
+            for (const item in inventory) {
+                if (inventory[item] > 0) {
+                    let color = getItemColor(item);
+                    grid.innerHTML += `<div class="grid-item" style="border: 2px solid ${color}">
+                        <strong style="color:${color}">${item}</strong><br>x ${inventory[item]}</div>`;
+                }
+            }
+            if (grid.innerHTML === '') grid.innerHTML = '<p style="grid-column: span 3; text-align:center;">가방이 비어있습니다.</p>';
+        });
+        document.getElementById('close-modal-btn').addEventListener('click', () => { document.getElementById('inventory-modal').style.display = 'none'; });
+
+        // 플레이어
+        const player = {
+            x: GAME_WIDTH / 2, y: GAME_HEIGHT / 2, radius: 25, speed: 6,
+            targetTree: null, shakeTimer: 0, walkTimer: 0, facing: 1,
+            colors: { skin: '#ffeaa7', shirt: '#e67e22', hat: '#8B4513' }
+        };
+
+        let trees = [
+            {
+                id: 'normal', type: 'normal', x: GAME_WIDTH / 2, y: 350, radius: 130, trunkRadius: 35,
+                progress: 0, maxProgress: 300, shakeAngle: 0,
+                unlocked: true, price: 0, reqLevel: 1, color1: '#2ecc71', color2: '#1e8449', drops: [2, 4]
+            },
+            {
+                id: 'fire', type: 'fire', x: GAME_WIDTH / 2, y: -650, radius: 140, trunkRadius: 45,
+                progress: 0, maxProgress: 300, shakeAngle: 0,
+                unlocked: false, price: 500, reqLevel: 3, color1: '#e74c3c', color2: '#c0392b', drops: [4, 7]
+            },
+            {
+                id: 'twisted', type: 'twisted', x: GAME_WIDTH / 2, y: -1650, radius: 150, trunkRadius: 50,
+                progress: 0, maxProgress: 300, shakeAngle: 0,
+                unlocked: false, price: 3000, reqLevel: 10, color1: '#7f8c8d', color2: '#2c3e50', drops: [5, 9] 
+            },
+            {
+                id: 'electric', type: 'electric', x: GAME_WIDTH / 2, y: -2650, radius: 150, trunkRadius: 50,
+                progress: 0, maxProgress: 300, shakeAngle: 0,
+                unlocked: false, price: 50000, reqLevel: 25, color1: '#fbc531', color2: '#00a8ff', drops: [6, 10] 
+            },
+            {
+                id: 'ice', type: 'ice', x: GAME_WIDTH / 2, y: -3650, radius: 160, trunkRadius: 55,
+                progress: 0, maxProgress: 300, shakeAngle: 0,
+                unlocked: false, price: 500000, reqLevel: 40, color1: '#dff9fb', color2: '#c7ecee', drops: [8, 12] 
+            }
+        ];
+
+        const shopFrontX = 350; 
+        
+        let shops = [
+            { type: 'normal', name: '일반 상점', x: 420, y: 680, frontX: shopFrontX, queueY: 820, queue: [] },
+            { type: 'fire', name: '불꽃 상점', x: 420, y: -300, frontX: shopFrontX, queueY: -150, queue: [] },
+            { type: 'twisted', name: '뒤틀린 상점', x: 420, y: -1300, frontX: shopFrontX, queueY: -1150, queue: [] },
+            { type: 'electric', name: '전기 상점', x: 420, y: -2300, frontX: shopFrontX, queueY: -2150, queue: [] },
+            { type: 'ice', name: '얼음 상점', x: 420, y: -3300, frontX: shopFrontX, queueY: -3150, queue: [] }
+        ];
+
+        // 지붕/벽 색상 수동 할당 (위의 객체 리터럴 단순화를 위해)
+        shops[0].roofColor = '#c0392b'; shops[0].wallColor = '#e6c280';
+        shops[1].roofColor = '#8e44ad'; shops[1].wallColor = '#b08d57';
+        shops[2].roofColor = '#111'; shops[2].wallColor = '#4f5b66';
+        shops[3].roofColor = '#fbc531'; shops[3].wallColor = '#273c75';
+        shops[4].roofColor = '#c7ecee'; shops[4].wallColor = '#535c68';
+
+        function saveGame() {
+            const data = {
+                level: level, xp: xp, maxXp: maxXp, money: money, inventory: inventory,
+                treeUnlocked: trees.map(t => t.unlocked)
+            };
+            localStorage.setItem('treeGameSave', JSON.stringify(data));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('treeGameSave');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    level = data.level || 1;
+                    xp = data.xp || 0;
+                    maxXp = data.maxXp || 20;
+                    money = data.money || 0;
+                    if (data.inventory) inventory = { ...inventory, ...data.inventory };
+                    if (data.treeUnlocked) {
+                        trees.forEach((t, i) => {
+                            if (data.treeUnlocked[i] !== undefined) t.unlocked = data.treeUnlocked[i];
+                        });
+                    }
+                } catch(e) { console.error('Save file corrupted'); }
+            }
+
+            // 개발자 치트: 로컬 환경(파일 직접 실행 또는 localhost)에서만 레벨 10000 달성 (Vercel 등 웹 호스팅에선 무시됨)
+            if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                if (level < 10000) {
+                    level = 10000;
+                    maxXp = 999999999; // 테스트 중 레벨업 도배 방지용 무한대 경험치 통
+                }
+            }
+
+            document.getElementById('level-text').innerText = `LV. ${level}`;
+            document.getElementById('xp-bar-fill').style.width = `${(xp / maxXp) * 100}%`;
+            updateMoney();
+        }
+
+        loadGame(); 
+        setInterval(saveGame, 1000); 
+
+        function getTables(type) {
+            if (type === 'ice') return iceDropTables;
+            if (type === 'electric') return electricDropTables;
+            if (type === 'twisted') return twistedDropTables;
+            if (type === 'fire') return fireDropTables;
+            return normalDropTables;
+        }
+
+        function generateCustomer(type) {
+            let tables = getTables(type);
+            let r = Math.random(), cum = 0, tier = tables[0];
+            for (let t of tables) { cum += t.chance; if (r <= cum) { tier = t; break; } }
+            
+            let fruit = tier.items[Math.floor(Math.random() * tier.items.length)];
+            let amount = Math.floor(Math.random() * 3) + 1;
+            let reward = tier.price * amount; // 유저 요청 기준가 적용
+
+            // 다중 구매(2~3개) 시 약 2000원(1500~2500) 할인 적용
+            if (amount > 1) {
+                let discount = Math.floor(Math.random() * 1000) + 1500; 
+                reward = Math.max(reward - discount, tier.price); // 할인해도 최소 1개값은 보장
+            }
+
+            reward = Math.floor(reward); // 소수점 방지
+            
+            const skins = ['#ffeaa7', '#fab1a0', '#e1b12c', '#8c7ae6', '#c8d6e5'];
+            const shirts = ['#3498db', '#e74c3c', '#9b59b6', '#2ecc71', '#f1c40f', '#34495e'];
+            const hats = ['#2c3e50', '#8B4513', '#c0392b', '#16a085', '#d35400'];
+            
+            return {
+                x: -50, walkTimer: 0, fruit: fruit, amount: amount, reward: reward,
+                colors: { skin: skins[Math.floor(Math.random()*skins.length)], shirt: shirts[Math.floor(Math.random()*shirts.length)], hat: hats[Math.floor(Math.random()*hats.length)] }
+            };
+        }
+
+        function spawnFruit(x, y, type) {
+            let tables = getTables(type);
+            let r = Math.random(), cum = 0, data = null;
+            for (let t of tables) { cum += t.chance; if (r <= cum) { data = { fruit: t.items[Math.floor(Math.random() * t.items.length)], color: t.color, xp: t.xp, price: t.price }; break; } }
+            
+            if(data) {
+                let trait = '';
+                let traitType = null;
+                // 일반지형 빼고 나무에서 떨어질 때 35% 확률로 특성 부여
+                if (type !== 'normal' && Math.random() < 0.35) {
+                    traitType = type;
+                    if (type === 'fire') trait = '불꽃 ';
+                    else if (type === 'twisted') trait = '뒤틀린 ';
+                    else if (type === 'electric') trait = '전기 ';
+                    else if (type === 'ice') trait = '얼음 ';
+                }
+
+                fruitsOnGround.push({
+                    x: x, y: y + 80, vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 0.5) * 8 - 4,
+                    fruit: trait + data.fruit, color: data.color, xp: data.xp, price: data.price, life: 600,
+                    traitType: traitType
+                });
+            }
+        }
+
+        function update() {
+            if (document.getElementById('inventory-modal').style.display === 'block') return;
+
+            let moveX = 0, moveY = 0;
+            if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
+            if (keys.a) moveX -= 1; if (keys.d) moveX += 1;
+            
+            if (moveX !== 0 || moveY !== 0) {
+                let mag = Math.hypot(moveX, moveY);
+                player.vx = (moveX / mag) * player.speed; player.vy = (moveY / mag) * player.speed;
+            } else if (joystick.active) {
+                player.vx = joystick.dx * player.speed; player.vy = joystick.dy * player.speed;
+            } else { player.vx *= 0.8; player.vy *= 0.8; }
+
+            let isMoving = Math.hypot(player.vx, player.vy) > 0.5;
+            
+            if (isMoving) {
+                player.targetTree = null; player.walkTimer++;
+                player.x += player.vx; player.y += player.vy;
+                if (Math.abs(player.vx) > 0.1) player.facing = player.vx > 0 ? 1 : -1;
+            } else { player.walkTimer = 0; }
+
+            player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
+            player.y = Math.max(-3950, Math.min(GAME_HEIGHT - player.radius, player.y));
+            
+            if (level < 3 && player.y < 30 && player.y > -500) {
+                player.y = 30;
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 3 달성 시 통과 가능!`, color: 'red', life: 40 });
+            } else if (level < 10 && player.y < -970 && player.y > -1500) {
+                player.y = -970;
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 10 달성 시 통과 가능!`, color: '#9b59b6', life: 40 });
+            } else if (level < 25 && player.y < -1970 && player.y > -2500) {
+                player.y = -1970;
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 25 달성 시 통과 가능!`, color: '#fbc531', life: 40 });
+            } else if (level < 40 && player.y < -2970 && player.y > -3500) {
+                player.y = -2970;
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 40 달성 시 통과 가능!`, color: '#c7ecee', life: 40 });
+            }
+
+            shops.forEach(shop => {
+                let sx = shop.x - 20, sy = shop.y; 
+                if (player.x > sx - player.radius && player.y > sy - player.radius && player.y < sy + 200 + player.radius) {
+                    if (player.x - player.vx <= sx - player.radius) player.x = sx - player.radius;
+                    else if (player.y - player.vy <= sy - player.radius) player.y = sy - player.radius;
+                    else if (player.y - player.vy >= sy + 200 + player.radius) player.y = sy + 200 + player.radius;
+                }
+            });
+
+            let targetCamY = player.y - GAME_HEIGHT / 2 + 100;
+            targetCamY = Math.max(-4000, Math.min(0, targetCamY));
+            cameraY += (targetCamY - cameraY) * 0.1;
+
+            trees.forEach(tree => {
+                let distToTree = Math.hypot(player.x - tree.x, player.y - tree.y - 80);
+                if (player.targetTree === tree) {
+                    if (distToTree > tree.trunkRadius + player.radius + 60) {
+                        player.targetTree = null;
+                    } else {
+                        player.shakeTimer++;
+                        tree.shakeAngle = Math.sin(player.shakeTimer * 0.8) * 0.05;
+                        tree.progress += 1;
+                        if (tree.progress >= tree.maxProgress) {
+                            tree.progress = 0;
+                            let dropCount = Math.floor(Math.random() * (tree.drops[1] - tree.drops[0] + 1)) + tree.drops[0];
+                            for(let i=0; i<dropCount; i++) spawnFruit(tree.x, tree.y, tree.type);
+                        }
+                    }
+                } else {
+                    tree.shakeAngle = 0;
+                }
+            });
+
+            for (let i = fruitsOnGround.length - 1; i >= 0; i--) {
+                let f = fruitsOnGround[i];
+                f.x += f.vx; f.y += f.vy; f.vx *= 0.9;
+                if (f.vy < 5) f.vy += 0.4;
+                if (f.vy > 0 && f.vy < 0.5) { f.vy = 0; f.vx = 0; }
+                if (f.x < 10 || f.x > GAME_WIDTH - 10) f.vx *= -1;
+                
+                let distToP = Math.hypot(player.x - f.x, player.y - f.y);
+                if (distToP < player.radius + 50) {
+                    f.x += (player.x - f.x) * 0.15; f.y += (player.y - f.y) * 0.15;
+                    if (distToP < player.radius + 10) {
+                        // 특성이 붙은 과일도 동적으로 인벤토리에 추가
+                        if (inventory[f.fruit] === undefined) inventory[f.fruit] = 0;
+                        inventory[f.fruit]++;
+                        floatTexts.push({ x: player.x, y: player.y - 40, text: `+${f.fruit}`, color: f.color, life: 40 });
+                        addXp(f.xp, player.x + 20, player.y - 60);
+                        fruitsOnGround.splice(i, 1); continue;
+                    }
+                }
+                f.life--; if (f.life <= 0) fruitsOnGround.splice(i, 1);
+            }
+
+            shops.forEach(shop => {
+                if (shop.queue.length < 5 && Math.random() < 0.01) {
+                    let newCustomer = generateCustomer(shop.type);
+                    newCustomer.y = shop.queueY;
+                    shop.queue.push(newCustomer);
+                }
+                
+                shop.queue.forEach((c, i) => {
+                    let tx = shop.frontX - i * 60, dx = tx - c.x;
+                    if (Math.abs(dx) > 2) { c.x += dx > 0 ? 2 : -2; c.walkTimer++; c.facing = dx > 0 ? 1 : -1; } 
+                    else { c.x = tx; c.walkTimer = 0; c.facing = 1; }
+                });
+
+                if (shop.queue.length > 0) {
+                    let firstC = shop.queue[0];
+                    if (firstC.x === shop.frontX && Math.hypot(player.x - firstC.x, player.y - shop.queueY) < 70) {
+                        
+                        let baseName = firstC.fruit;
+                        let totalAvailable = (inventory[baseName]||0) + (inventory['불꽃 '+baseName]||0) + (inventory['뒤틀린 '+baseName]||0) + (inventory['전기 '+baseName]||0) + (inventory['얼음 '+baseName]||0);
+
+                        if (totalAvailable >= firstC.amount) {
+                            let needed = firstC.amount;
+                            let baseRewardPerItem = firstC.reward / firstC.amount;
+                            let totalEarned = 0;
+                            
+                            // 수익이 가장 높은 특성 과일 우선 소모 (가장 비싸게 팔아줌!)
+                            const traits = [
+                                { name: '얼음 ', mult: 2.5 },
+                                { name: '전기 ', mult: 2 },
+                                { name: '뒤틀린 ', mult: 2 },
+                                { name: '불꽃 ', mult: 1.5 },
+                                { name: '', mult: 1 } // 기본 과일
+                            ];
+
+                            for (let tr of traits) {
+                                if (needed <= 0) break;
+                                let itemName = tr.name + baseName;
+                                let available = inventory[itemName] || 0;
+                                let take = Math.min(available, needed);
+                                if (take > 0) {
+                                    inventory[itemName] -= take;
+                                    needed -= take;
+                                    totalEarned += take * baseRewardPerItem * tr.mult;
+                                }
+                            }
+                            
+                            totalEarned = Math.floor(totalEarned);
+                            money += totalEarned; updateMoney();
+                            floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned}`, color: 'gold', life: 60 });
+                            shop.queue.shift();
+                        }
+                    }
+                }
+            });
+
+            for (let i = floatTexts.length - 1; i >= 0; i--) {
+                floatTexts[i].y -= 1; floatTexts[i].life--;
+                if (floatTexts[i].life <= 0) floatTexts.splice(i, 1);
+            }
+        }
+
+        function drawCharacter(ctx, char, x, y, isShaking, walkTimer) {
+            ctx.save(); ctx.translate(x, y);
+            ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
+
+            let walkAngle = walkTimer ? Math.sin(walkTimer * 0.15) * 15 : 0;
+            let bobbing = walkTimer ? Math.abs(Math.sin(walkTimer * 0.15)) * 3 : 0;
+            if(isShaking) { bobbing = Math.random() * 2; walkAngle = 0; }
+            ctx.translate(0, -bobbing);
+
+            ctx.fillStyle = '#2c3e50';
+            ctx.save(); ctx.translate(-8, 15); ctx.rotate((walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
+            ctx.save(); ctx.translate(8, 15); ctx.rotate((-walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
+
+            let torsoGrad = ctx.createLinearGradient(0, -10, 0, 15);
+            torsoGrad.addColorStop(0, char.colors.shirt); torsoGrad.addColorStop(1, '#2c3e50');
+            ctx.fillStyle = torsoGrad; ctx.beginPath(); ctx.roundRect(-15, -5, 30, 22, 5); ctx.fill();
+
+            if (isShaking) {
+                let sE = Math.sin(player.shakeTimer * 1.5) * 10; ctx.fillStyle = char.colors.skin;
+                ctx.save(); ctx.translate(-15, 0); ctx.rotate(-Math.PI/4); ctx.fillRect(-4, -20 + sE, 8, 20); ctx.beginPath(); ctx.arc(0, -22 + sE, 6, 0, Math.PI*2); ctx.fill(); ctx.restore();
+                ctx.save(); ctx.translate(15, 0); ctx.rotate(Math.PI/4); ctx.fillRect(-4, -20 - sE, 8, 20); ctx.beginPath(); ctx.arc(0, -22 - sE, 6, 0, Math.PI*2); ctx.fill(); ctx.restore();
+            } else {
+                ctx.fillStyle = char.colors.skin;
+                ctx.save(); ctx.translate(-18, 0); ctx.rotate((-walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
+                ctx.save(); ctx.translate(18, 0); ctx.rotate((walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
+            }
+
+            let headGrad = ctx.createRadialGradient(0, -20, 5, 0, -20, 15);
+            headGrad.addColorStop(0, '#ffffff'); headGrad.addColorStop(1, char.colors.skin);
+            ctx.fillStyle = headGrad; ctx.beginPath(); ctx.arc(0, -20, 15, 0, Math.PI*2); ctx.fill();
+
+            let facing = char.facing || 1; ctx.fillStyle = '#2d3436';
+            ctx.beginPath(); ctx.arc(-5 + (facing*2), -22, 2, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(5 + (facing*2), -22, 2, 0, Math.PI*2); ctx.fill();
+
+            ctx.fillStyle = char.colors.hat;
+            ctx.beginPath(); ctx.ellipse(0, -32, 22, 6, 0, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(0, -32, 14, Math.PI, 0); ctx.fill();
+            ctx.restore();
+        }
+
+        function drawShop(ctx, shop) {
+            const x = shop.x; const y = shop.y;
+            ctx.fillStyle = '#5c3a21'; ctx.fillRect(x - 10, y + 210, 200, 20);
+            let wallGrad = ctx.createLinearGradient(x, y, x, y + 210);
+            wallGrad.addColorStop(0, shop.wallColor); wallGrad.addColorStop(1, '#94703a'); 
+            ctx.fillStyle = wallGrad; ctx.fillRect(x, y + 80, 180, 130);
+            ctx.fillStyle = '#6b4423'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
+            ctx.fillStyle = '#3a2311'; ctx.fillRect(x - 20, y + 140, 50, 40);
+            ctx.fillStyle = '#111'; ctx.fillRect(x, y + 100, 40, 40);
+            
+            ctx.fillStyle = shop.roofColor;
+            ctx.beginPath(); ctx.moveTo(x - 20, y + 80); ctx.lineTo(x + 90, y); ctx.lineTo(x + 200, y + 80); ctx.fill(); 
+            ctx.strokeStyle = '#222'; ctx.lineWidth = 4; ctx.stroke();
+            
+            ctx.fillStyle = shop.roofColor; ctx.beginPath(); ctx.moveTo(x-30, y+100); ctx.lineTo(x+30, y+80); ctx.lineTo(x+30, y+110); ctx.lineTo(x-30, y+120); ctx.fill();
+            ctx.fillStyle = '#d35400'; ctx.fillRect(x + 40, y + 40, 110, 35); ctx.strokeStyle = '#2c3e50'; ctx.lineWidth = 3; ctx.strokeRect(x + 40, y + 40, 110, 35);
+            ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial'; ctx.textAlign = 'center'; ctx.fillText(shop.name, x + 95, y + 63);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+            ctx.save();
+            ctx.translate(0, -cameraY);
+
+            ctx.fillStyle = '#48dbfb'; ctx.fillRect(0, -4000, GAME_WIDTH, 1000); 
+            ctx.fillStyle = '#273c75'; ctx.fillRect(0, -3000, GAME_WIDTH, 1000); 
+            ctx.fillStyle = '#2c3e50'; ctx.fillRect(0, -2000, GAME_WIDTH, 1000);  
+            ctx.fillStyle = '#cf3a24'; ctx.fillRect(0, -1000, GAME_WIDTH, 1000); 
+            ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1000); 
+
+            ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(GAME_WIDTH, 0); ctx.stroke();
+            ctx.fillStyle = '#d35400'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("🔥 위험: 불꽃 지역 (레벨 3 진입 가능)", GAME_WIDTH / 2, -20);
+
+            ctx.strokeStyle = '#8e44ad'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -1000); ctx.lineTo(GAME_WIDTH, -1000); ctx.stroke();
+            ctx.fillStyle = '#9b59b6'; ctx.fillText("🌪️ 경고: 뒤틀린 지역 (레벨 10 진입 가능)", GAME_WIDTH / 2, -1020);
+
+            ctx.strokeStyle = '#fbc531'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -2000); ctx.lineTo(GAME_WIDTH, -2000); ctx.stroke();
+            ctx.fillStyle = '#fbc531'; ctx.fillText("⚡ 격동: 전기 지역 (레벨 25 진입 가능)", GAME_WIDTH / 2, -2020);
+
+            ctx.strokeStyle = '#c7ecee'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -3000); ctx.lineTo(GAME_WIDTH, -3000); ctx.stroke();
+            ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 혹한: 얼음 지역 (레벨 40 진입 가능)", GAME_WIDTH / 2, -3020);
+
+            ctx.strokeStyle = 'rgba(0,0,0,0.08)'; ctx.lineWidth = 2;
+            for(let cy = -4000; cy <= 1000; cy+=100) {
+                for(let cx = 0; cx <= GAME_WIDTH; cx+=100) { ctx.beginPath(); ctx.arc(cx+50, cy+50, 15, 0, Math.PI); ctx.stroke(); }
+            }
+
+            let renderList = [];
+            fruitsOnGround.forEach(f => renderList.push({ type: 'fruit', obj: f, y: f.y }));
+            renderList.push({ type: 'player', obj: player, y: player.y });
+            
+            shops.forEach(shop => {
+                shop.queue.forEach(c => renderList.push({ type: 'customer', obj: c, y: c.y }));
+            });
+            
+            trees.forEach(t => renderList.push({ type: 'tree', obj: t, y: t.y }));
+            renderList.sort((a, b) => a.y - b.y);
+
+            renderList.forEach(item => {
+                if (item.type === 'fruit') {
+                    let f = item.obj;
+                    ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.beginPath(); ctx.ellipse(f.x, f.y + 10, 8, 3, 0, 0, Math.PI*2); ctx.fill();
+                    if (f.life < 100 && Math.floor(f.life / 10) % 2 === 0) return;
+
+                    ctx.fillStyle = f.color; ctx.beginPath(); ctx.arc(f.x, f.y, 10, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+                    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(f.x - 3, f.y - 3, 2.5, 0, Math.PI*2); ctx.fill();
+                    
+                    // 과일 특성(Trait) 시각적 효과 표시!
+                    if (f.traitType === 'fire') {
+                        ctx.fillStyle = 'rgba(255, 100, 0, 0.9)';
+                        ctx.beginPath(); ctx.arc(f.x, f.y - 10, 5, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.moveTo(f.x-5, f.y-10); ctx.lineTo(f.x+5, f.y-10); ctx.lineTo(f.x, f.y-20); ctx.fill();
+                    } else if (f.traitType === 'twisted') {
+                        ctx.fillStyle = 'rgba(30, 30, 30, 0.8)';
+                        ctx.beginPath(); ctx.arc(f.x - 4, f.y, 3, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(f.x + 4, f.y + 4, 2, 0, Math.PI*2); ctx.fill();
+                    } else if (f.traitType === 'electric') {
+                        ctx.strokeStyle = '#fbc531'; ctx.lineWidth = 2;
+                        ctx.beginPath(); ctx.moveTo(f.x - 6, f.y - 6); ctx.lineTo(f.x, f.y - 2); ctx.lineTo(f.x + 6, f.y - 8); ctx.stroke();
+                    } else if (f.traitType === 'ice') {
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                        ctx.beginPath(); ctx.moveTo(f.x - 4, f.y - 12); ctx.lineTo(f.x + 4, f.y - 12); ctx.lineTo(f.x, f.y - 6); ctx.fill();
+                    }
+
+                    // 과일 텍스트 (특성이 붙었으면 길어짐)
+                    ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center'; 
+                    ctx.shadowColor = 'black'; ctx.shadowBlur = 3;
+                    ctx.fillText(f.fruit, f.x, f.y - 16);
+                    ctx.shadowBlur = 0;
+
+                } else if (item.type === 'player') {
+                    drawCharacter(ctx, item.obj, item.obj.x, item.obj.y, item.obj === player && player.targetTree !== null, item.obj.walkTimer);
+                } else if (item.type === 'customer') {
+                    drawCharacter(ctx, item.obj, item.obj.x, item.obj.y, false, item.obj.walkTimer);
+                    if (item.obj.x === shopFrontX) {
+                        ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(item.obj.x - 55, item.obj.y - 85, 110, 40, 5); ctx.fill();
+                        ctx.strokeStyle = 'black'; ctx.lineWidth = 1; ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(item.obj.x - 5, item.obj.y - 45); ctx.lineTo(item.obj.x + 5, item.obj.y - 45); ctx.lineTo(item.obj.x, item.obj.y - 35); ctx.fillStyle = 'white'; ctx.fill();
+                        
+                        ctx.fillStyle = 'black'; 
+                        ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+                        ctx.fillText(`${item.obj.fruit} x${item.obj.amount}`, item.obj.x, item.obj.y - 67);
+                        ctx.fillStyle = '#d35400'; ctx.fillText(`💰${item.obj.reward}`, item.obj.x, item.obj.y - 53);
+                        
+                        let baseName = item.obj.fruit;
+                        let totalAvailable = (inventory[baseName]||0) + (inventory['불꽃 '+baseName]||0) + (inventory['뒤틀린 '+baseName]||0) + (inventory['전기 '+baseName]||0) + (inventory['얼음 '+baseName]||0);
+                        if((totalAvailable < item.obj.amount) && Math.hypot(player.x - item.obj.x, player.y - item.obj.y) < 70) {
+                            ctx.fillStyle = 'red'; ctx.font = 'bold 10px Arial'; ctx.fillText(`부족해요!`, item.obj.x, item.obj.y - 95);
+                        }
+                    }
+                } else if (item.type === 'tree') {
+                    let t = item.obj;
+                    ctx.save(); ctx.translate(t.x, t.y); ctx.rotate(t.shakeAngle);
+                    
+                    let trunkBottom = t.radius * 1.4;
+                    ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(0, trunkBottom, t.radius * 0.9, 25, 0, 0, Math.PI*2); ctx.fill();
+
+                    let trunkGrad = ctx.createLinearGradient(-t.trunkRadius, 0, t.trunkRadius, 0);
+                    if (t.type === 'twisted') {
+                        trunkGrad.addColorStop(0, '#2c3e50'); trunkGrad.addColorStop(0.5, '#4f5b66'); trunkGrad.addColorStop(1, '#1a252f');
+                    } else if (t.type === 'electric') {
+                        trunkGrad.addColorStop(0, '#353b48'); trunkGrad.addColorStop(0.5, '#2f3640'); trunkGrad.addColorStop(1, '#192a56');
+                    } else if (t.type === 'ice') {
+                        trunkGrad.addColorStop(0, '#b2bec3'); trunkGrad.addColorStop(0.5, '#dfe6e9'); trunkGrad.addColorStop(1, '#636e72');
+                    } else {
+                        trunkGrad.addColorStop(0, '#3e1a08'); trunkGrad.addColorStop(0.5, '#5c2a11'); trunkGrad.addColorStop(1, '#2e1003');
+                    }
+                    ctx.fillStyle = trunkGrad;
+                    ctx.beginPath(); ctx.moveTo(-t.trunkRadius*0.8, -20); ctx.lineTo(t.trunkRadius*0.8, -20);
+                    ctx.lineTo(t.trunkRadius*1.2, trunkBottom); ctx.lineTo(-t.trunkRadius*1.2, trunkBottom); ctx.fill();
+                    
+                    let strokeColor = (t.type === 'twisted' || t.type === 'electric') ? '#1a252f' : (t.type === 'ice' ? '#636e72' : '#2e1003');
+                    ctx.strokeStyle = strokeColor; ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(-10, 20); ctx.lineTo(-20, trunkBottom); ctx.stroke(); 
+                    ctx.beginPath(); ctx.moveTo(10, 10); ctx.lineTo(25, trunkBottom); ctx.stroke();
+
+                    if (t.progress > 0) {
+                        ctx.fillStyle = 'black'; ctx.fillRect(-40, -145, 80, 12);
+                        ctx.fillStyle = '#3498db'; ctx.fillRect(-38, -143, 76 * (t.progress / t.maxProgress), 8);
+                        ctx.fillStyle = 'white'; ctx.font = '10px Arial'; ctx.textAlign = 'center'; ctx.fillText("흔드는 중...", 0, -150);
+                    }
+
+                    if (t.type === 'ice') {
+                        let leafGrad = ctx.createLinearGradient(0, -180, 0, 0);
+                        leafGrad.addColorStop(0, '#c7ecee'); leafGrad.addColorStop(1, '#81ecec');
+                        ctx.fillStyle = leafGrad;
+                        ctx.beginPath(); ctx.moveTo(0, -t.radius*1.3); ctx.lineTo(-t.radius, 20); ctx.lineTo(t.radius, 20); ctx.fill();
+                        ctx.beginPath(); ctx.moveTo(0, -t.radius*1.6); ctx.lineTo(-t.radius*0.8, -30); ctx.lineTo(t.radius*0.8, -30); ctx.fill();
+                        ctx.beginPath(); ctx.moveTo(0, -t.radius*1.9); ctx.lineTo(-t.radius*0.6, -80); ctx.lineTo(t.radius*0.6, -80); ctx.fill();
+
+                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                        [[-80, 20, 30], [-40, 20, 50], [0, 20, 70], [40, 20, 50], [80, 20, 30]].forEach(p => {
+                            ctx.beginPath(); ctx.moveTo(p[0]-10, p[1]); ctx.lineTo(p[0]+10, p[1]); ctx.lineTo(p[0], p[1]+p[2]); ctx.fill();
+                        });
+                    } else if (t.type === 'electric') {
+                        let time = Date.now() / 150;
+                        let s1 = 1 + Math.sin(time)*0.06;
+                        let s2 = 1 + Math.cos(time)*0.06;
+                        let leafGrad = ctx.createRadialGradient(0, -60, 20, 0, -50, t.radius+40);
+                        leafGrad.addColorStop(0, t.color1); leafGrad.addColorStop(1, t.color2);
+                        ctx.fillStyle = leafGrad;
+                        ctx.beginPath(); ctx.arc(-60, -30, t.radius*0.8*s1, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(60, -30, t.radius*0.8*s2, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(0, -90, t.radius*1.1*s1, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(0, -40, t.radius*1.2*s2, 0, Math.PI*2); ctx.fill();
+
+                        ctx.strokeStyle = '#f5f6fa'; ctx.lineWidth = 4;
+                        if (Math.random() > 0.4) {
+                            ctx.beginPath(); 
+                            ctx.moveTo(0, -100); ctx.lineTo(-30 + Math.random()*60, -60); 
+                            ctx.lineTo(-20 + Math.random()*40, -30); ctx.lineTo(-40 + Math.random()*80, 10); ctx.stroke();
+                        }
+                    } else {
+                        let leafGrad = ctx.createRadialGradient(0, -60, 20, 0, -50, t.radius+40);
+                        leafGrad.addColorStop(0, t.color1); leafGrad.addColorStop(1, t.color2);
+                        ctx.fillStyle = leafGrad;
+                        ctx.beginPath(); ctx.arc(-60, -30, t.radius*0.8, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(60, -30, t.radius*0.8, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(0, -90, t.radius*1.1, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(0, -40, t.radius*1.2, 0, Math.PI*2); ctx.fill();
+                        
+                        if (t.type === 'twisted') {
+                            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                            ctx.beginPath(); ctx.arc(-20, -100, 15, 0, Math.PI*2); ctx.fill();
+                            ctx.beginPath(); ctx.arc(40, -50, 20, 0, Math.PI*2); ctx.fill();
+                            ctx.beginPath(); ctx.arc(-50, -20, 12, 0, Math.PI*2); ctx.fill();
+                        }
+                    }
+
+                    if (!t.unlocked) {
+                        ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.beginPath(); ctx.arc(0, -50, 40, 0, Math.PI*2); ctx.fill();
+                        ctx.fillStyle = 'white'; ctx.font = 'bold 24px Arial'; ctx.textAlign = 'center'; ctx.fillText("🔒", 0, -55);
+                        ctx.font = 'bold 16px Arial'; ctx.fillStyle = 'gold'; ctx.fillText(`${t.price} 💰`, 0, -35);
+                    }
+                    ctx.restore();
+
+                    if (Math.hypot(player.x - t.x, player.y - t.y - 80) < t.trunkRadius + player.radius + 60 && player.targetTree !== t) {
+                        ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(t.x - 50, t.y - t.radius - 80, 100, 30, 5); ctx.fill();
+                        ctx.fillStyle = 'black'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center';
+                        ctx.fillText(t.unlocked ? "👆 클릭!" : "👆 잠금 해제", t.x, t.y - t.radius - 60);
+                    }
+                }
+            });
+
+            shops.forEach(shop => drawShop(ctx, shop));
+
+            floatTexts.forEach(t => {
+                ctx.fillStyle = t.color; ctx.globalAlpha = t.life / 40;
+                let size = t.size || 18; ctx.font = `bold ${size}px Arial`; ctx.textAlign = 'center';
+                ctx.shadowColor = 'black'; ctx.shadowBlur = 4;
+                ctx.fillText(t.text, t.x, t.y); ctx.shadowBlur = 0;
+            });
+            ctx.globalAlpha = 1.0;
+
+            ctx.restore(); 
+
+            if (joystick.active) {
+                ctx.beginPath(); ctx.arc(joystick.originX, joystick.originY, 60, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'; ctx.lineWidth = 2; ctx.stroke();
+                ctx.beginPath(); ctx.arc(joystick.x, joystick.y, 25, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; ctx.fill();
+            }
+        }
+
+        function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
+        gameLoop();
+    </script>
+</body>
+</html>
