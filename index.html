@@ -274,7 +274,7 @@
         let inventory = {};
 
         function addXp(amount, x, y) {
-            amount = amount * 2; // 유저 요청: 상시 경험치 2배 버프
+            amount = amount * 4; // 유저 요청: 상시 경험치 4배 버프 (기존 2배에서 2배 추가!)
             xp += amount;
             floatTexts.push({ x: x, y: y, text: `+${amount} XP`, color: '#3498db', life: 40 });
             let leveledUp = false;
