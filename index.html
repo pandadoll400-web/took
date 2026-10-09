@@ -112,6 +112,7 @@
             <div class="shop-tabs">
                 <button class="shop-tab-btn active" onclick="switchShopTab('axe')">도끼</button>
                 <button class="shop-tab-btn" onclick="switchShopTab('limited')">한정조합</button>
+                <button class="shop-tab-btn" onclick="switchShopTab('skin')">스킨</button>
             </div>
             
             <div id="shop-axe" style="display: block;">
@@ -142,6 +143,10 @@
                     <div class="limited-soldout">매진되었습니다! (시간 초과)</div>
                     <button class="limited-btn" disabled>매진</button>
                 </div>
+            </div>
+
+            <div id="shop-skin" style="display: none;">
+                <p style="text-align: center; color: #bdc3c7; margin-top: 30px; font-weight: bold;">스킨 업데이트 준비 중입니다...</p>
             </div>
             
             <button class="close-btn" onclick="document.getElementById('shop-modal').style.display='none'">닫기</button>
@@ -382,8 +387,9 @@
         function switchShopTab(tab) {
             document.getElementById('shop-axe').style.display = tab === 'axe' ? 'block' : 'none';
             document.getElementById('shop-limited').style.display = tab === 'limited' ? 'block' : 'none';
+            document.getElementById('shop-skin').style.display = tab === 'skin' ? 'block' : 'none';
             document.querySelectorAll('.shop-tab-btn').forEach((btn, idx) => {
-                btn.className = (idx === 0 && tab === 'axe') || (idx === 1 && tab === 'limited') ? 'shop-tab-btn active' : 'shop-tab-btn';
+                btn.className = (idx === 0 && tab === 'axe') || (idx === 1 && tab === 'limited') || (idx === 2 && tab === 'skin') ? 'shop-tab-btn active' : 'shop-tab-btn';
             });
         }
 
