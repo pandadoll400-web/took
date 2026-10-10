@@ -185,6 +185,14 @@
             <div class="grid" id="radioactive-grid"></div>
             <button class="close-btn" onclick="document.getElementById('radioactive-modal').style.display='none'" style="background: #27ae60;">닫기</button>
         </div>
+
+        <div id="cave-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(30, 39, 46, 0.95); color: white; padding: 20px; border-radius: 15px; width: 85%; max-width: 400px; max-height: 80%; overflow-y: auto; display: none; border: 2px solid #636e72; z-index: 40;">
+            <h2 style="margin-top: 0; text-align: center; color: #b2bec3;">암석 도감</h2>
+            <p style="text-align: center; font-size: 14px; color: #dfe6e9;">암석(16종)을 모두 보유하면 고고학자 스킨을 드립니다!</p>
+            <div id="cave-progress" style="text-align: center; margin-bottom: 15px; font-weight: bold; color: #f1c40f;">진행도: 0 / 16</div>
+            <div class="grid" id="cave-grid"></div>
+            <button class="close-btn" onclick="document.getElementById('cave-modal').style.display='none'" style="background: #2d3436; border: 1px solid #636e72;">닫기</button>
+        </div>
     </div>
 
     <script>
@@ -238,6 +246,9 @@
                             return;
                         } else if (shop.type === 'radioactive') {
                             openRadioactiveIndex();
+                            return;
+                        } else if (shop.type === 'cave') {
+                            openCaveIndex();
                             return;
                         }
                     }
@@ -394,14 +405,25 @@
             { chance: 0.02, name: '초월', price: 200000, xp: 10000, color: '#00cec9', items: ['상어', '스켈레톤 피쉬'] }
         ];
 
+        const caveDropTables = [
+            { chance: 0.55, name: '일반', price: 4000, xp: 100, color: '#ecf0f1', items: ['사암', '셰일', '이암'] },
+            { chance: 0.20, name: '희귀', price: 10000, xp: 300, color: '#3498db', items: ['화강암', '섬록암', '반려암'] },
+            { chance: 0.13, name: '에픽', price: 25000, xp: 800, color: '#9b59b6', items: ['현무암', '안산암', '유문암'] },
+            { chance: 0.08, name: '전설', price: 60000, xp: 2000, color: '#f1c40f', items: ['흑요석', '수정', '자수정'] },
+            { chance: 0.04, name: '불멸', price: 150000, xp: 6000, color: '#ff4757', items: ['오팔', '다이아몬드', '운석', '몰다바이트'] }
+        ];
+
+
         let level = 1; let xp = 0; let maxXp = 20;
         let money = 0;
         let axeLevel = 0; // 0:기본, 1:나무도끼, 2:철(은)도끼, 3:금도끼
         let inventory = {};
         let fishCollection = [];
         let radioactiveCollection = [];
+        let caveCollection = [];
         const oceanFishNames = ['흰동가리', '해초', '멸치', '오징어', '낙지', '붕어', '참치', '복어', '메기', '잉어', '무지개송어', '초롱아귀', '라이언 피쉬', '궁수고기', '상어', '스켈레톤 피쉬'];
         const baseFruitNames = ['사과', '오렌지', '바나나', '복숭아', '키위', '블루베리', '배', '체리', '멜론', '포도', '딸기', '파인애플', '망고', '수박', '레몬', '아보카도', '코코넛', '라임', '용과', '블랙사파이어', '패션후르츠', '골드키위', '플래티넘사과', '영겁의포도'];
+        const caveStoneNames = ['사암', '셰일', '이암', '화강암', '섬록암', '반려암', '현무암', '안산암', '유문암', '흑요석', '수정', '자수정', '오팔', '다이아몬드', '운석', '몰다바이트'];
         let ownedSkins = ['default'];
         let equippedSkin = 'default';
 
@@ -485,6 +507,45 @@
             }
         }
 
+        function openCaveIndex() {
+            document.getElementById('cave-modal').style.display = 'block';
+            resetJoyMouse();
+            player.targetTree = null;
+            
+            let count = 0;
+            const grid = document.getElementById('cave-grid');
+            grid.innerHTML = '';
+            
+            caveStoneNames.forEach(stone => {
+                const collected = (inventory[stone] > 0) || (inventory['동굴 ' + stone] > 0);
+                if (collected) count++;
+                const color = collected ? '#2ecc71' : '#555';
+                const name = collected ? stone : '???';
+                grid.innerHTML += `<div class="grid-item" style="border: 2px solid ${color}; color: ${collected ? '#fff' : '#777'}">
+                    <strong style="color:${color}">${name}</strong><br>${collected ? '보유 중' : '미보유'}</div>`;
+            });
+            
+            const progressHtml = `진행도: ${count} / 16`;
+            let extraBtn = '';
+            
+            if (count >= 16 && !ownedSkins.includes('archaeologist')) {
+                extraBtn = `<br><button onclick="claimCaveSkin()" style="margin-top:10px; background:#636e72; color:white; padding:10px; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">스킨 획득하기!</button>`;
+            }
+            document.getElementById('cave-progress').innerHTML = progressHtml + extraBtn;
+        }
+
+        function claimCaveSkin() {
+            let count = 0;
+            caveStoneNames.forEach(stone => { if (inventory[stone] > 0 || inventory['동굴 ' + stone] > 0) count++; });
+            if (count >= 16 && !ownedSkins.includes('archaeologist')) {
+                ownedSkins.push('archaeologist');
+                floatTexts.push({ x: player.x, y: player.y - 100, text: `고고학자 스킨 획득!`, color: '#636e72', life: 100 });
+                updateShopSkinUI();
+                updateInvSkinUI();
+                openCaveIndex(); 
+            }
+        }
+
         function addXp(amount, x, y) {
             amount = amount * 5; // 유저 요청: 상시 경험치 버프 반토막 (너프)
             xp += amount;
@@ -506,8 +567,8 @@
         let floatTexts = [];
 
         function getItemColor(itemName) {
-            let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '');
-            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables];
+            let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '').replace('동굴 ', '');
+            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables];
             for (let t of tables) {
                 if (t.items.includes(baseName)) return t.color;
             }
@@ -559,7 +620,8 @@
             { id: 'jack_orange', name: '주황 잭오랜턴', price: 10000, icon: '🎃' },
             { id: 'jack_fiery', name: '불타는 잭오랜턴', price: 10000, icon: '🎃🔥' },
             { id: 'snorkeling_fisher', name: '스노우쿨링 어부', price: 0, icon: '🤿', isReward: true },
-            { id: 'mad_scientist', name: '매드 사이언티스트', price: 0, icon: '🥼', isReward: true }
+            { id: 'mad_scientist', name: '매드 사이언티스트', price: 0, icon: '🥼', isReward: true },
+            { id: 'archaeologist', name: '고고학자', price: 0, icon: '🤠', isReward: true }
         ];
 
         function updateShopSkinUI() {
@@ -734,7 +796,12 @@
             {
                 id: 'ocean', type: 'ocean', x: GAME_WIDTH / 2, y: -5650, radius: 180, trunkRadius: 65,
                 progress: 0, maxProgress: 300, shakeAngle: 0,
-                unlocked: false, price: 10000000, reqLevel: 65, color1: '#0984e3', color2: '#74b9ff', drops: [12, 18] 
+                unlocked: false, price: 5000000, reqLevel: 65, color1: '#0984e3', color2: '#74b9ff', drops: [12, 18] 
+            },
+            {
+                id: 'cave', type: 'cave', x: GAME_WIDTH / 2, y: -6650, radius: 190, trunkRadius: 70,
+                progress: 0, maxProgress: 400, shakeAngle: 0,
+                unlocked: false, price: 15000000, reqLevel: 85, color1: '#636e72', color2: '#2d3436', drops: [15, 20] 
             }
         ];
 
@@ -747,7 +814,8 @@
             { type: 'electric', name: '전기 상점', x: 420, y: -2300, frontX: shopFrontX, queueY: -2150, queue: [] },
             { type: 'ice', name: '얼음 상점', x: 420, y: -3300, frontX: shopFrontX, queueY: -3150, queue: [] },
             { type: 'radioactive', name: '방사능 상점', x: 420, y: -4300, frontX: shopFrontX, queueY: -4150, queue: [] },
-            { type: 'ocean', name: '바다 상점', x: 420, y: -5300, frontX: shopFrontX, queueY: -5150, queue: [] }
+            { type: 'ocean', name: '바다 상점', x: 420, y: -5300, frontX: shopFrontX, queueY: -5150, queue: [] },
+            { type: 'cave', name: '동굴 상점', x: 420, y: -6300, frontX: shopFrontX, queueY: -6150, queue: [] }
         ];
 
         // 지붕/벽 색상 수동 할당 (위의 객체 리터럴 단순화를 위해)
@@ -766,7 +834,8 @@
                 ownedSkins: ownedSkins, equippedSkin: equippedSkin,
                 treeUnlocked: trees.map(t => t.unlocked),
                 fishCollection: fishCollection,
-                radioactiveCollection: radioactiveCollection
+                radioactiveCollection: radioactiveCollection,
+                caveCollection: caveCollection
             };
             localStorage.setItem('treeGameSave', JSON.stringify(data));
         }
@@ -786,6 +855,7 @@
                     if (data.inventory) inventory = { ...inventory, ...data.inventory };
                     if (data.fishCollection) fishCollection = data.fishCollection;
                     if (data.radioactiveCollection) radioactiveCollection = data.radioactiveCollection;
+                    if (data.caveCollection) caveCollection = data.caveCollection;
                     if (data.treeUnlocked) {
                         trees.forEach((t, i) => {
                             if (data.treeUnlocked[i] !== undefined) t.unlocked = data.treeUnlocked[i];
@@ -871,6 +941,7 @@
                     else if (type === 'ice') trait = '얼음 ';
                     else if (type === 'radioactive') trait = '방사능 ';
                     else if (type === 'ocean') trait = '심해 ';
+                    else if (type === 'cave') trait = '동굴 ';
                 }
 
                 fruitsOnGround.push({
@@ -886,6 +957,7 @@
             if (document.getElementById('shop-modal').style.display === 'block') return;
             if (document.getElementById('ocean-modal').style.display === 'block') return;
             if (document.getElementById('radioactive-modal').style.display === 'block') return;
+            if (document.getElementById('cave-modal').style.display === 'block') return;
 
             let moveX = 0, moveY = 0;
             if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
@@ -907,7 +979,7 @@
             } else { player.walkTimer = 0; }
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
-            player.y = Math.max(-5950, Math.min(GAME_HEIGHT - player.radius, player.y));
+            player.y = Math.max(-6950, Math.min(GAME_HEIGHT - player.radius, player.y));
             
             if (level < 3 && player.y < 30 && player.y > -500) {
                 player.y = 30;
@@ -939,7 +1011,7 @@
             });
 
             let targetCamY = player.y - GAME_HEIGHT / 2 + 100;
-            targetCamY = Math.max(-6000, Math.min(0, targetCamY));
+            targetCamY = Math.max(-7000, Math.min(0, targetCamY));
             cameraY += (targetCamY - cameraY) * 0.1;
 
             trees.forEach(tree => {
@@ -995,6 +1067,14 @@
                         if (baseFruitNames.includes(baseName) && !radioactiveCollection.includes(baseName)) {
                             radioactiveCollection.push(baseName);
                             floatTexts.push({ x: player.x, y: player.y - 80, text: `과일 도감 등록: ${baseName}!`, color: '#2ecc71', life: 60 });
+                        }
+                        
+                        if (caveStoneNames.includes(baseName) && !caveCollection.includes(baseName)) {
+                            let inInv = (inventory[baseName] > 0) || (inventory['동굴 ' + baseName] > 0);
+                            if (inInv) {
+                                caveCollection.push(baseName);
+                                floatTexts.push({ x: player.x, y: player.y - 80, text: `암석 도감 등록: ${baseName}!`, color: '#b2bec3', life: 60 });
+                            }
                         }
                         floatTexts.push({ x: player.x, y: player.y - 40, text: `+${f.fruit}`, color: f.color, life: 40 });
                         addXp(f.xp, player.x + 20, player.y - 60);
@@ -1085,7 +1165,7 @@
             if(isShaking) { bobbing = Math.random() * 2; walkAngle = 0; }
             let facing = char.facing || 1;
 
-            let useSkin = (skin === 'snorkeling_fisher' || skin === 'mad_scientist') ? 'default' : skin;
+            let useSkin = (skin === 'snorkeling_fisher' || skin === 'mad_scientist' || skin === 'archaeologist') ? 'default' : skin;
             if (useSkin.startsWith('ghost')) {
                 let floatOffset = Math.sin(Date.now() * 0.005) * 5 - bobbing;
                 ctx.translate(0, floatOffset - 10);
@@ -1221,6 +1301,7 @@
                 let shirtCol = char.colors.shirt;
                 if (skin === 'snorkeling_fisher') shirtCol = '#0984e3';
                 else if (skin === 'mad_scientist') shirtCol = '#ecf0f1';
+                else if (skin === 'archaeologist') shirtCol = '#bfa181';
                 torsoGrad.addColorStop(0, shirtCol); torsoGrad.addColorStop(1, '#2c3e50');
                 ctx.fillStyle = torsoGrad; ctx.beginPath(); ctx.roundRect(-15, -5, 30, 22, 5); ctx.fill();
                 if (isShaking) {
@@ -1263,6 +1344,12 @@
                     ctx.beginPath(); ctx.roundRect(1 + (facing*2), -25, 8, 5, 1); ctx.fill();
                     ctx.strokeStyle = '#27ae60'; ctx.lineWidth = 1.5;
                     ctx.beginPath(); ctx.moveTo(-1, -22); ctx.lineTo(1, -22); ctx.stroke();
+                } else if (skin === 'archaeologist') {
+                    // 안경
+                    ctx.strokeStyle = '#333'; ctx.lineWidth = 1.5;
+                    ctx.beginPath(); ctx.arc(-5 + (facing*2), -22, 3, 0, Math.PI*2); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(5 + (facing*2), -22, 3, 0, Math.PI*2); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(-2 + (facing*2), -22); ctx.lineTo(2 + (facing*2), -22); ctx.stroke();
                 } else {
                     ctx.fillStyle = '#2d3436';
                     ctx.beginPath(); ctx.arc(-5 + (facing*2), -22, 2, 0, Math.PI*2); ctx.fill();
@@ -1279,6 +1366,13 @@
                     ctx.lineTo(10, -42); ctx.lineTo(12, -28);
                     ctx.lineTo(22, -33); ctx.lineTo(14, -22);
                     ctx.fill();
+                } else if (skin === 'archaeologist') {
+                    // 페도라 모자
+                    ctx.fillStyle = '#8d6e63';
+                    ctx.beginPath(); ctx.ellipse(0, -32, 24, 5, 0, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.roundRect(-12, -45, 24, 15, 3); ctx.fill();
+                    ctx.fillStyle = '#5d4037';
+                    ctx.fillRect(-12, -35, 24, 4);
                 } else {
                     ctx.fillStyle = skin === 'snorkeling_fisher' ? '#fdcb6e' : char.colors.hat;
                     ctx.beginPath(); ctx.ellipse(0, -32, 22, 6, 0, 0, Math.PI*2); ctx.fill();
@@ -1313,6 +1407,7 @@
             ctx.save();
             ctx.translate(0, -cameraY);
 
+            ctx.fillStyle = '#1e272e'; ctx.fillRect(0, -7000, GAME_WIDTH, 1000); // Cave
             ctx.fillStyle = '#005f73'; ctx.fillRect(0, -6000, GAME_WIDTH, 1000); // Ocean
             ctx.fillStyle = '#162d16'; ctx.fillRect(0, -5000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#48dbfb'; ctx.fillRect(0, -4000, GAME_WIDTH, 1000); 
@@ -1339,8 +1434,11 @@
             ctx.strokeStyle = '#0984e3'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -5000); ctx.lineTo(GAME_WIDTH, -5000); ctx.stroke();
             ctx.fillStyle = '#0984e3'; ctx.fillText("🌊 심연: 바다 지역 (레벨 65 진입 가능)", GAME_WIDTH / 2, -5020);
 
+            ctx.strokeStyle = '#636e72'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -6000); ctx.lineTo(GAME_WIDTH, -6000); ctx.stroke();
+            ctx.fillStyle = '#b2bec3'; ctx.fillText("⛏️ 지하: 동굴 지역 (레벨 85 진입 가능)", GAME_WIDTH / 2, -6020);
+
             ctx.strokeStyle = 'rgba(0,0,0,0.08)'; ctx.lineWidth = 2;
-            for(let cy = -6000; cy <= 1000; cy+=100) {
+            for(let cy = -7000; cy <= 1000; cy+=100) {
                 for(let cx = 0; cx <= GAME_WIDTH; cx+=100) { ctx.beginPath(); ctx.arc(cx+50, cy+50, 15, 0, Math.PI); ctx.stroke(); }
             }
 
@@ -1428,6 +1526,8 @@
                         trunkGrad.addColorStop(0, '#b2bec3'); trunkGrad.addColorStop(0.5, '#dfe6e9'); trunkGrad.addColorStop(1, '#636e72');
                     } else if (t.type === 'ocean') {
                         trunkGrad.addColorStop(0, '#00b894'); trunkGrad.addColorStop(0.5, '#55efc4'); trunkGrad.addColorStop(1, '#00cec9');
+                    } else if (t.type === 'cave') {
+                        trunkGrad.addColorStop(0, '#2d3436'); trunkGrad.addColorStop(0.5, '#636e72'); trunkGrad.addColorStop(1, '#1e272e');
                     } else {
                         trunkGrad.addColorStop(0, '#3e1a08'); trunkGrad.addColorStop(0.5, '#5c2a11'); trunkGrad.addColorStop(1, '#2e1003');
                     }
@@ -1480,6 +1580,27 @@
                                 ctx.stroke();
                             }
                         }
+                    } else if (t.type === 'cave') {
+                        // 거대한 돌 덩어리 잎
+                        ctx.fillStyle = '#636e72'; ctx.strokeStyle = '#2d3436'; ctx.lineWidth = 4;
+                        const rockPoints = [
+                            {x: 0, y: -t.radius*0.8, r: t.radius*0.9},
+                            {x: -t.radius*0.6, y: -t.radius*0.4, r: t.radius*0.7},
+                            {x: t.radius*0.6, y: -t.radius*0.4, r: t.radius*0.7},
+                            {x: -t.radius*0.3, y: 0, r: t.radius*0.5},
+                            {x: t.radius*0.3, y: 0, r: t.radius*0.5}
+                        ];
+                        rockPoints.forEach(p => {
+                            ctx.beginPath();
+                            ctx.moveTo(p.x - p.r, p.y + p.r/2);
+                            ctx.lineTo(p.x - p.r/2, p.y - p.r);
+                            ctx.lineTo(p.x + p.r/2, p.y - p.r);
+                            ctx.lineTo(p.x + p.r, p.y + p.r/2);
+                            ctx.lineTo(p.x + p.r/2, p.y + p.r);
+                            ctx.lineTo(p.x - p.r/2, p.y + p.r);
+                            ctx.closePath();
+                            ctx.fill(); ctx.stroke();
+                        });
                     } else if (t.type === 'radioactive') {
                         // 고급스러운 에메랄드 금장 방사능 나무
                         let leafGrad = ctx.createRadialGradient(0, -60, 20, 0, -50, t.radius);
