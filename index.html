@@ -154,7 +154,19 @@
 
         <div id="inventory-modal">
             <h2>인벤토리</h2>
-            <div class="grid" id="inventory-grid"></div>
+            <div class="shop-tabs">
+                <button class="shop-tab-btn active" onclick="switchInvTab('items')">과일</button>
+                <button class="shop-tab-btn" onclick="switchInvTab('skins')">스킨</button>
+            </div>
+            
+            <div id="inv-items" style="display: block;">
+                <div class="grid" id="inventory-grid"></div>
+            </div>
+
+            <div id="inv-skins" style="display: none;">
+                <div id="inv-skin-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+            </div>
+
             <button class="close-btn" id="close-modal-btn">닫기</button>
         </div>
     </div>
@@ -384,7 +396,7 @@
             document.getElementById('shop-modal').style.display = 'block';
             resetJoyMouse(); player.targetTree = null;
             updateAxeUI();
-            updateSkinUI();
+            updateShopSkinUI();
         });
 
         function switchShopTab(tab) {
@@ -425,20 +437,19 @@
             { id: 'jack_fiery', name: '불타는 잭오랜턴', price: 10000, icon: '🎃🔥' }
         ];
 
-        function updateSkinUI() {
+        function updateShopSkinUI() {
             const list = document.getElementById('skin-list');
+            if (!list) return;
             list.innerHTML = '';
             skinsData.forEach(skin => {
+                if (skin.id === 'default') return; // 기본 스킨은 상점에서 제외
                 const isOwned = ownedSkins.includes(skin.id);
-                const isEquipped = equippedSkin === skin.id;
                 
                 let btnHtml = '';
-                if (isEquipped) {
-                    btnHtml = `<button disabled style="background: #e67e22;">장착중</button>`;
-                } else if (isOwned) {
-                    btnHtml = `<button onclick="buyOrEquipSkin('${skin.id}')" style="background: #3498db;">장착하기</button>`;
+                if (isOwned) {
+                    btnHtml = `<button disabled style="background: #95a5a6;">보유중</button>`;
                 } else {
-                    btnHtml = `<button onclick="buyOrEquipSkin('${skin.id}')" style="background: #2ecc71;">구매 (💰 ${skin.price})</button>`;
+                    btnHtml = `<button onclick="buySkin('${skin.id}')" style="background: #2ecc71;">구매 (💰 ${skin.price})</button>`;
                 }
 
                 list.innerHTML += `
@@ -452,28 +463,66 @@
             });
         }
 
-        function buyOrEquipSkin(skinId) {
+        function buySkin(skinId) {
             const skin = skinsData.find(s => s.id === skinId);
             if (!skin) return;
 
             if (ownedSkins.includes(skinId)) {
-                // Equip
-                equippedSkin = skinId;
-                updateSkinUI();
-                floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `스킨 장착 완료!`, color: '#3498db', life: 60 });
-            } else {
-                // Buy
-                if (money >= skin.price) {
-                    money -= skin.price;
-                    ownedSkins.push(skinId);
-                    equippedSkin = skinId;
-                    updateMoney();
-                    updateSkinUI();
-                    floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `스킨 구매 및 장착!`, color: '#f1c40f', life: 60 });
-                } else {
-                    alert('돈이 부족합니다!');
-                }
+                alert('이미 보유하고 있는 스킨입니다.'); return;
             }
+            if (money >= skin.price) {
+                money -= skin.price;
+                ownedSkins.push(skinId);
+                updateMoney();
+                updateShopSkinUI();
+                updateInvSkinUI();
+                floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `구매 완료! 가방을 확인하세요.`, color: '#f1c40f', life: 80 });
+            } else {
+                alert('돈이 부족합니다!');
+            }
+        }
+
+        function updateInvSkinUI() {
+            const list = document.getElementById('inv-skin-list');
+            if (!list) return;
+            list.innerHTML = '';
+            skinsData.forEach(skin => {
+                const isOwned = ownedSkins.includes(skin.id);
+                if (!isOwned) return;
+
+                const isEquipped = equippedSkin === skin.id;
+                let btnHtml = '';
+                if (isEquipped) {
+                    btnHtml = `<button disabled style="background: #e67e22;">장착중</button>`;
+                } else {
+                    btnHtml = `<button onclick="equipSkin('${skin.id}')" style="background: #3498db;">장착하기</button>`;
+                }
+
+                list.innerHTML += `
+                    <div class="axe-item" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="text-align:left;">
+                            <h4 style="margin:0; color:#fff;">${skin.icon} ${skin.name}</h4>
+                        </div>
+                        <div>${btnHtml}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function equipSkin(skinId) {
+            if (ownedSkins.includes(skinId)) {
+                equippedSkin = skinId;
+                updateInvSkinUI();
+                floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `스킨 장착 완료!`, color: '#3498db', life: 60 });
+            }
+        }
+
+        function switchInvTab(tab) {
+            document.getElementById('inv-items').style.display = tab === 'items' ? 'block' : 'none';
+            document.getElementById('inv-skins').style.display = tab === 'skins' ? 'block' : 'none';
+            document.querySelectorAll('#inventory-modal .shop-tab-btn').forEach((btn, idx) => {
+                btn.className = (idx === 0 && tab === 'items') || (idx === 1 && tab === 'skins') ? 'shop-tab-btn active' : 'shop-tab-btn';
+            });
         }
 
         // 동적 인벤토리 UI 구성
@@ -488,6 +537,8 @@
                 }
             }
             if (grid.innerHTML === '') grid.innerHTML = '<p style="grid-column: span 3; text-align:center;">가방이 비어있습니다.</p>';
+            
+            updateInvSkinUI();
         });
         document.getElementById('close-modal-btn').addEventListener('click', () => { document.getElementById('inventory-modal').style.display = 'none'; });
 
