@@ -410,24 +410,37 @@
             resetJoyMouse();
             player.targetTree = null;
             
-            document.getElementById('ocean-progress').innerText = `진행도: ${fishCollection.length} / 16`;
-            
+            let count = 0;
             const grid = document.getElementById('ocean-grid');
             grid.innerHTML = '';
             
             oceanFishNames.forEach(fish => {
-                const collected = fishCollection.includes(fish);
-                const color = collected ? getItemColor(fish) : '#555';
+                const collected = (inventory[fish] > 0) || (inventory['심해 ' + fish] > 0);
+                if (collected) count++;
+                const color = collected ? '#2ecc71' : '#555';
                 const name = collected ? fish : '???';
                 grid.innerHTML += `<div class="grid-item" style="border: 2px solid ${color}; color: ${collected ? '#fff' : '#777'}">
-                    <strong style="color:${color}">${name}</strong><br>${collected ? '수집 완료' : '미수집'}</div>`;
+                    <strong style="color:${color}">${name}</strong><br>${collected ? '보유 중' : '미보유'}</div>`;
             });
             
-            if (fishCollection.length >= 16 && !ownedSkins.includes('snorkeling_fisher')) {
+            const progressHtml = `진행도: ${count} / 16`;
+            let extraBtn = '';
+            
+            if (count >= 16 && !ownedSkins.includes('snorkeling_fisher')) {
+                extraBtn = `<br><button onclick="claimOceanSkin()" style="margin-top:10px; background:#0984e3; color:white; padding:10px; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">스킨 획득하기!</button>`;
+            }
+            document.getElementById('ocean-progress').innerHTML = progressHtml + extraBtn;
+        }
+
+        function claimOceanSkin() {
+            let count = 0;
+            oceanFishNames.forEach(fish => { if (inventory[fish] > 0 || inventory['심해 ' + fish] > 0) count++; });
+            if (count >= 16 && !ownedSkins.includes('snorkeling_fisher')) {
                 ownedSkins.push('snorkeling_fisher');
                 floatTexts.push({ x: player.x, y: player.y - 100, text: `스노우쿨링 어부 스킨 획득!`, color: '#0984e3', life: 100 });
                 updateShopSkinUI();
                 updateInvSkinUI();
+                openOceanIndex(); 
             }
         }
 
@@ -436,24 +449,37 @@
             resetJoyMouse();
             player.targetTree = null;
             
-            document.getElementById('radioactive-progress').innerText = `진행도: ${radioactiveCollection.length} / 24`;
-            
+            let count = 0;
             const grid = document.getElementById('radioactive-grid');
             grid.innerHTML = '';
             
             baseFruitNames.forEach(fruit => {
-                const collected = radioactiveCollection.includes(fruit);
-                const color = collected ? getItemColor(fruit) : '#555';
+                const collected = (inventory['방사능 ' + fruit] > 0);
+                if (collected) count++;
+                const color = collected ? '#2ecc71' : '#555';
                 const name = collected ? `방사능 ${fruit}` : '???';
                 grid.innerHTML += `<div class="grid-item" style="border: 2px solid ${color}; color: ${collected ? '#fff' : '#777'}; font-size: 11px;">
-                    <strong style="color:${color}">${name}</strong><br>${collected ? '수집 완료' : '미수집'}</div>`;
+                    <strong style="color:${color}">${name}</strong><br>${collected ? '보유 중' : '미보유'}</div>`;
             });
             
-            if (radioactiveCollection.length >= 24 && !ownedSkins.includes('mad_scientist')) {
+            const progressHtml = `진행도: ${count} / 24`;
+            let extraBtn = '';
+            
+            if (count >= 24 && !ownedSkins.includes('mad_scientist')) {
+                extraBtn = `<br><button onclick="claimRadioactiveSkin()" style="margin-top:10px; background:#2ecc71; color:white; padding:10px; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">스킨 획득하기!</button>`;
+            }
+            document.getElementById('radioactive-progress').innerHTML = progressHtml + extraBtn;
+        }
+
+        function claimRadioactiveSkin() {
+            let count = 0;
+            baseFruitNames.forEach(fruit => { if (inventory['방사능 ' + fruit] > 0) count++; });
+            if (count >= 24 && !ownedSkins.includes('mad_scientist')) {
                 ownedSkins.push('mad_scientist');
                 floatTexts.push({ x: player.x, y: player.y - 100, text: `매드 사이언티스트 스킨 획득!`, color: '#2ecc71', life: 100 });
                 updateShopSkinUI();
                 updateInvSkinUI();
+                openRadioactiveIndex(); 
             }
         }
 
@@ -957,26 +983,18 @@
                         
                         let baseName = f.fruit.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '');
                         if (oceanFishNames.includes(baseName) && !fishCollection.includes(baseName)) {
-                            fishCollection.push(baseName);
-                            floatTexts.push({ x: player.x, y: player.y - 80, text: `바다 도감 등록: ${baseName}!`, color: '#f1c40f', life: 60 });
-                            
-                            if (fishCollection.length === 16 && !ownedSkins.includes('snorkeling_fisher')) {
-                                ownedSkins.push('snorkeling_fisher');
-                                floatTexts.push({ x: player.x, y: player.y - 120, text: `스노우쿨링 어부 스킨 획득!`, color: '#0984e3', life: 100 });
-                                updateShopSkinUI();
-                                updateInvSkinUI();
+                            let inInv = (inventory[baseName] > 0) || (inventory['심해 ' + baseName] > 0);
+                            if (inInv) {
+                                fishCollection.push(baseName);
+                                floatTexts.push({ x: player.x, y: player.y - 80, text: `바다 도감 등록: ${baseName}!`, color: '#f1c40f', life: 60 });
                             }
                         }
                         
                         if (f.fruit.startsWith('방사능 ') && baseFruitNames.includes(baseName) && !radioactiveCollection.includes(baseName)) {
-                            radioactiveCollection.push(baseName);
-                            floatTexts.push({ x: player.x, y: player.y - 80, text: `방사능 도감 등록: ${baseName}!`, color: '#2ecc71', life: 60 });
-                            
-                            if (radioactiveCollection.length === 24 && !ownedSkins.includes('mad_scientist')) {
-                                ownedSkins.push('mad_scientist');
-                                floatTexts.push({ x: player.x, y: player.y - 120, text: `매드 사이언티스트 스킨 획득!`, color: '#2ecc71', life: 100 });
-                                updateShopSkinUI();
-                                updateInvSkinUI();
+                            let inInv = (inventory[f.fruit] > 0);
+                            if (inInv) {
+                                radioactiveCollection.push(baseName);
+                                floatTexts.push({ x: player.x, y: player.y - 80, text: `방사능 도감 등록: ${baseName}!`, color: '#2ecc71', life: 60 });
                             }
                         }
                         floatTexts.push({ x: player.x, y: player.y - 40, text: `+${f.fruit}`, color: f.color, life: 40 });
