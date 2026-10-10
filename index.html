@@ -355,6 +355,15 @@
             { chance: 0.08, name: '영원한', price: 20000, xp: 3000, color: '#ff9ff3', items: I_ETE }
         ];
 
+        const oceanDropTables = [
+            { chance: 0.55, name: '일반', price: 2000, xp: 50, color: '#bdc3c7', items: ['흰동가리', '해초', '멸치'] },
+            { chance: 0.20, name: '희귀', price: 5000, xp: 150, color: '#3498db', items: ['오징어', '낙지', '붕어'] },
+            { chance: 0.10, name: '영웅', price: 12000, xp: 500, color: '#9b59b6', items: ['참치', '복어', '메기', '잉어'] },
+            { chance: 0.07, name: '전설', price: 30000, xp: 1200, color: '#f1c40f', items: ['무지개송어', '초롱아귀'] },
+            { chance: 0.06, name: '신화', price: 80000, xp: 3000, color: '#e74c3c', items: ['라이언 피쉬', '궁수고기'] },
+            { chance: 0.02, name: '초월', price: 200000, xp: 10000, color: '#00cec9', items: ['상어', '스켈레톤 피쉬'] }
+        ];
+
         let level = 1; let xp = 0; let maxXp = 20;
         let money = 0;
         let axeLevel = 0; // 0:기본, 1:나무도끼, 2:철(은)도끼, 3:금도끼
@@ -383,8 +392,8 @@
         let floatTexts = [];
 
         function getItemColor(itemName) {
-            let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '');
-            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables];
+            let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '');
+            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables];
             for (let t of tables) {
                 if (t.items.includes(baseName)) return t.color;
             }
@@ -605,6 +614,11 @@
                 id: 'radioactive', type: 'radioactive', x: GAME_WIDTH / 2, y: -4650, radius: 170, trunkRadius: 60,
                 progress: 0, maxProgress: 300, shakeAngle: 0,
                 unlocked: false, price: 2500000, reqLevel: 50, color1: '#2ecc71', color2: '#1abc9c', drops: [10, 15] 
+            },
+            {
+                id: 'ocean', type: 'ocean', x: GAME_WIDTH / 2, y: -5650, radius: 180, trunkRadius: 65,
+                progress: 0, maxProgress: 300, shakeAngle: 0,
+                unlocked: false, price: 10000000, reqLevel: 65, color1: '#0984e3', color2: '#74b9ff', drops: [12, 18] 
             }
         ];
 
@@ -616,7 +630,8 @@
             { type: 'twisted', name: '뒤틀린 상점', x: 420, y: -1300, frontX: shopFrontX, queueY: -1150, queue: [] },
             { type: 'electric', name: '전기 상점', x: 420, y: -2300, frontX: shopFrontX, queueY: -2150, queue: [] },
             { type: 'ice', name: '얼음 상점', x: 420, y: -3300, frontX: shopFrontX, queueY: -3150, queue: [] },
-            { type: 'radioactive', name: '방사능 상점', x: 420, y: -4300, frontX: shopFrontX, queueY: -4150, queue: [] }
+            { type: 'radioactive', name: '방사능 상점', x: 420, y: -4300, frontX: shopFrontX, queueY: -4150, queue: [] },
+            { type: 'ocean', name: '바다 상점', x: 420, y: -5300, frontX: shopFrontX, queueY: -5150, queue: [] }
         ];
 
         // 지붕/벽 색상 수동 할당 (위의 객체 리터럴 단순화를 위해)
@@ -626,6 +641,7 @@
         shops[3].roofColor = '#fbc531'; shops[3].wallColor = '#273c75';
         shops[4].roofColor = '#c7ecee'; shops[4].wallColor = '#535c68';
         shops[5].roofColor = '#27ae60'; shops[5].wallColor = '#1e272e';
+        shops[6].roofColor = '#00cec9'; shops[6].wallColor = '#0984e3';
 
         function saveGame() {
             const data = {
@@ -681,6 +697,7 @@
         setInterval(saveGame, 1000); 
 
         function getTables(type) {
+            if (type === 'ocean') return oceanDropTables;
             if (type === 'radioactive') return radioactiveDropTables;
             if (type === 'ice') return iceDropTables;
             if (type === 'electric') return electricDropTables;
@@ -733,6 +750,7 @@
                     else if (type === 'electric') trait = '전기 ';
                     else if (type === 'ice') trait = '얼음 ';
                     else if (type === 'radioactive') trait = '방사능 ';
+                    else if (type === 'ocean') trait = '심해 ';
                 }
 
                 fruitsOnGround.push({
@@ -766,7 +784,7 @@
             } else { player.walkTimer = 0; }
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
-            player.y = Math.max(-4950, Math.min(GAME_HEIGHT - player.radius, player.y));
+            player.y = Math.max(-5950, Math.min(GAME_HEIGHT - player.radius, player.y));
             
             if (level < 3 && player.y < 30 && player.y > -500) {
                 player.y = 30;
@@ -783,6 +801,9 @@
             } else if (level < 50 && player.y < -3970 && player.y > -4500) {
                 player.y = -3970;
                 if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 50 달성 시 통과 가능!`, color: '#2ecc71', life: 40 });
+            } else if (level < 65 && player.y < -4970 && player.y > -5500) {
+                player.y = -4970;
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 65 달성 시 통과 가능!`, color: '#0984e3', life: 40 });
             }
 
             shops.forEach(shop => {
@@ -795,7 +816,7 @@
             });
 
             let targetCamY = player.y - GAME_HEIGHT / 2 + 100;
-            targetCamY = Math.max(-5000, Math.min(0, targetCamY));
+            targetCamY = Math.max(-6000, Math.min(0, targetCamY));
             cameraY += (targetCamY - cameraY) * 0.1;
 
             trees.forEach(tree => {
@@ -864,7 +885,7 @@
                     if (firstC.x === shop.frontX && Math.hypot(player.x - firstC.x, player.y - shop.queueY) < 70) {
                         
                         let baseName = firstC.fruit;
-                        let totalAvailable = (inventory[baseName]||0) + (inventory['불꽃 '+baseName]||0) + (inventory['뒤틀린 '+baseName]||0) + (inventory['전기 '+baseName]||0) + (inventory['얼음 '+baseName]||0) + (inventory['방사능 '+baseName]||0);
+                        let totalAvailable = (inventory[baseName]||0) + (inventory['불꽃 '+baseName]||0) + (inventory['뒤틀린 '+baseName]||0) + (inventory['전기 '+baseName]||0) + (inventory['얼음 '+baseName]||0) + (inventory['방사능 '+baseName]||0) + (inventory['심해 '+baseName]||0);
 
                         if (totalAvailable >= firstC.amount) {
                             let needed = firstC.amount;
@@ -873,6 +894,7 @@
                             
                             // 수익이 가장 높은 특성 과일 우선 소모 (가장 비싸게 팔아줌!)
                             const traits = [
+                                { name: '심해 ', mult: 4.0 },
                                 { name: '방사능 ', mult: 3.0 },
                                 { name: '얼음 ', mult: 2.5 },
                                 { name: '전기 ', mult: 2 },
@@ -1082,6 +1104,17 @@
                     ctx.fillStyle = '#3498db';
                     ctx.beginPath(); ctx.arc(-5 + (facing*2), -22, 4, 0, Math.PI*2); ctx.fill();
                     ctx.beginPath(); ctx.arc(5 + (facing*2), -22, 4, 0, Math.PI*2); ctx.fill();
+                } else if (char.shopType === 'ocean') {
+                    ctx.fillStyle = '#0984e3';
+                    ctx.beginPath(); ctx.roundRect(-10 + (facing*2), -26, 20, 10, 3); ctx.fill();
+                    ctx.fillStyle = '#74b9ff';
+                    ctx.beginPath(); ctx.roundRect(-8 + (facing*2), -24, 6, 6, 2); ctx.fill();
+                    ctx.beginPath(); ctx.roundRect(2 + (facing*2), -24, 6, 6, 2); ctx.fill();
+                    ctx.strokeStyle = '#fdcb6e'; ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(0 + (facing*4), -14);
+                    ctx.lineTo(12 * facing, -12);
+                    ctx.lineTo(14 * facing, -35);
+                    ctx.stroke();
                 } else {
                     ctx.fillStyle = '#2d3436';
                     ctx.beginPath(); ctx.arc(-5 + (facing*2), -22, 2, 0, Math.PI*2); ctx.fill();
@@ -1120,6 +1153,7 @@
             ctx.save();
             ctx.translate(0, -cameraY);
 
+            ctx.fillStyle = '#005f73'; ctx.fillRect(0, -6000, GAME_WIDTH, 1000); // Ocean
             ctx.fillStyle = '#162d16'; ctx.fillRect(0, -5000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#48dbfb'; ctx.fillRect(0, -4000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#273c75'; ctx.fillRect(0, -3000, GAME_WIDTH, 1000); 
@@ -1142,8 +1176,11 @@
             ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -4000); ctx.lineTo(GAME_WIDTH, -4000); ctx.stroke();
             ctx.fillStyle = '#2ecc71'; ctx.fillText("☣️ 치명적 위험: 방사능 지역 (레벨 50 진입 가능)", GAME_WIDTH / 2, -4020);
 
+            ctx.strokeStyle = '#0984e3'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -5000); ctx.lineTo(GAME_WIDTH, -5000); ctx.stroke();
+            ctx.fillStyle = '#0984e3'; ctx.fillText("🌊 심연: 바다 지역 (레벨 65 진입 가능)", GAME_WIDTH / 2, -5020);
+
             ctx.strokeStyle = 'rgba(0,0,0,0.08)'; ctx.lineWidth = 2;
-            for(let cy = -5000; cy <= 1000; cy+=100) {
+            for(let cy = -6000; cy <= 1000; cy+=100) {
                 for(let cx = 0; cx <= GAME_WIDTH; cx+=100) { ctx.beginPath(); ctx.arc(cx+50, cy+50, 15, 0, Math.PI); ctx.stroke(); }
             }
 
@@ -1210,7 +1247,7 @@
                         ctx.fillStyle = '#d35400'; ctx.fillText(`💰${item.obj.reward}`, item.obj.x, item.obj.y - 53);
                         
                         let baseName = item.obj.fruit;
-                        let totalAvailable = (inventory[baseName]||0) + (inventory['불꽃 '+baseName]||0) + (inventory['뒤틀린 '+baseName]||0) + (inventory['전기 '+baseName]||0) + (inventory['얼음 '+baseName]||0) + (inventory['방사능 '+baseName]||0);
+                        let totalAvailable = (inventory[baseName]||0) + (inventory['불꽃 '+baseName]||0) + (inventory['뒤틀린 '+baseName]||0) + (inventory['전기 '+baseName]||0) + (inventory['얼음 '+baseName]||0) + (inventory['방사능 '+baseName]||0) + (inventory['심해 '+baseName]||0);
                         if((totalAvailable < item.obj.amount) && Math.hypot(player.x - item.obj.x, player.y - item.obj.y) < 70) {
                             ctx.fillStyle = 'red'; ctx.font = 'bold 10px Arial'; ctx.fillText(`부족해요!`, item.obj.x, item.obj.y - 95);
                         }
@@ -1229,6 +1266,8 @@
                         trunkGrad.addColorStop(0, '#353b48'); trunkGrad.addColorStop(0.5, '#2f3640'); trunkGrad.addColorStop(1, '#192a56');
                     } else if (t.type === 'ice') {
                         trunkGrad.addColorStop(0, '#b2bec3'); trunkGrad.addColorStop(0.5, '#dfe6e9'); trunkGrad.addColorStop(1, '#636e72');
+                    } else if (t.type === 'ocean') {
+                        trunkGrad.addColorStop(0, '#00b894'); trunkGrad.addColorStop(0.5, '#55efc4'); trunkGrad.addColorStop(1, '#00cec9');
                     } else {
                         trunkGrad.addColorStop(0, '#3e1a08'); trunkGrad.addColorStop(0.5, '#5c2a11'); trunkGrad.addColorStop(1, '#2e1003');
                     }
@@ -1263,6 +1302,24 @@
                         [[-80, 20, 30], [-40, 20, 50], [0, 20, 70], [40, 20, 50], [80, 20, 30]].forEach(p => {
                             ctx.beginPath(); ctx.moveTo(p[0]-10, p[1]); ctx.lineTo(p[0]+10, p[1]); ctx.lineTo(p[0], p[1]+p[2]); ctx.fill();
                         });
+                    } else if (t.type === 'ocean') {
+                        // 흐느적거리는 해초 렌더링
+                        ctx.strokeStyle = '#00b894'; ctx.lineWidth = 20;
+                        ctx.lineCap = 'round';
+                        let timeOffset = Date.now() * 0.003;
+                        for(let pass = 0; pass < 2; pass++) {
+                            ctx.strokeStyle = pass === 0 ? '#00b894' : '#55efc4'; 
+                            ctx.lineWidth = pass === 0 ? 20 : 8;
+                            for(let w = -70; w <= 70; w += 35) {
+                                ctx.beginPath();
+                                ctx.moveTo(w, 20);
+                                for(let y = 20; y >= -t.radius*1.3; y -= 15) {
+                                    let offset = Math.sin((y * 0.02) + timeOffset + w) * 15;
+                                    ctx.lineTo(w + offset, y);
+                                }
+                                ctx.stroke();
+                            }
+                        }
                     } else if (t.type === 'radioactive') {
                         // 고급스러운 에메랄드 금장 방사능 나무
                         let leafGrad = ctx.createRadialGradient(0, -60, 20, 0, -50, t.radius);
