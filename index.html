@@ -712,7 +712,8 @@
             
             return {
                 x: -50, walkTimer: 0, fruit: fruit, amount: amount, reward: reward,
-                colors: { skin: skins[Math.floor(Math.random()*skins.length)], shirt: shirts[Math.floor(Math.random()*shirts.length)], hat: hats[Math.floor(Math.random()*hats.length)] }
+                colors: { skin: skins[Math.floor(Math.random()*skins.length)], shirt: shirts[Math.floor(Math.random()*shirts.length)], hat: hats[Math.floor(Math.random()*hats.length)] },
+                shopType: type
             };
         }
 
@@ -773,15 +774,15 @@
             } else if (level < 10 && player.y < -970 && player.y > -1500) {
                 player.y = -970;
                 if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 10 달성 시 통과 가능!`, color: '#9b59b6', life: 40 });
-            } else if (level < 25 && player.y < -1970 && player.y > -2500) {
+            } else if (level < 20 && player.y < -1970 && player.y > -2500) {
                 player.y = -1970;
-                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 25 달성 시 통과 가능!`, color: '#fbc531', life: 40 });
-            } else if (level < 40 && player.y < -2970 && player.y > -3500) {
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 20 달성 시 통과 가능!`, color: '#fbc531', life: 40 });
+            } else if (level < 35 && player.y < -2970 && player.y > -3500) {
                 player.y = -2970;
-                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 40 달성 시 통과 가능!`, color: '#c7ecee', life: 40 });
-            } else if (level < 60 && player.y < -3970 && player.y > -4500) {
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 35 달성 시 통과 가능!`, color: '#c7ecee', life: 40 });
+            } else if (level < 50 && player.y < -3970 && player.y > -4500) {
                 player.y = -3970;
-                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 60 달성 시 통과 가능!`, color: '#2ecc71', life: 40 });
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 50 달성 시 통과 가능!`, color: '#2ecc71', life: 40 });
             }
 
             shops.forEach(shop => {
@@ -1071,9 +1072,22 @@
                 let headGrad = ctx.createRadialGradient(0, -20, 5, 0, -20, 15);
                 headGrad.addColorStop(0, '#ffffff'); headGrad.addColorStop(1, char.colors.skin);
                 ctx.fillStyle = headGrad; ctx.beginPath(); ctx.arc(0, -20, 15, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = '#2d3436';
-                ctx.beginPath(); ctx.arc(-5 + (facing*2), -22, 2, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(5 + (facing*2), -22, 2, 0, Math.PI*2); ctx.fill();
+                
+                if (char.shopType === 'radioactive') {
+                    ctx.fillStyle = '#2c3e50';
+                    ctx.beginPath(); ctx.ellipse(0 + (facing*2), -15, 12, 10, 0, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = '#7f8c8d';
+                    ctx.beginPath(); ctx.arc(-8 + (facing*2), -12, 5, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(8 + (facing*2), -12, 5, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = '#3498db';
+                    ctx.beginPath(); ctx.arc(-5 + (facing*2), -22, 4, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(5 + (facing*2), -22, 4, 0, Math.PI*2); ctx.fill();
+                } else {
+                    ctx.fillStyle = '#2d3436';
+                    ctx.beginPath(); ctx.arc(-5 + (facing*2), -22, 2, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(5 + (facing*2), -22, 2, 0, Math.PI*2); ctx.fill();
+                }
+                
                 ctx.fillStyle = char.colors.hat;
                 ctx.beginPath(); ctx.ellipse(0, -32, 22, 6, 0, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.arc(0, -32, 14, Math.PI, 0); ctx.fill();
@@ -1120,13 +1134,13 @@
             ctx.fillStyle = '#9b59b6'; ctx.fillText("🌪️ 경고: 뒤틀린 지역 (레벨 10 진입 가능)", GAME_WIDTH / 2, -1020);
 
             ctx.strokeStyle = '#fbc531'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -2000); ctx.lineTo(GAME_WIDTH, -2000); ctx.stroke();
-            ctx.fillStyle = '#fbc531'; ctx.fillText("⚡ 격동: 전기 지역 (레벨 25 진입 가능)", GAME_WIDTH / 2, -2020);
+            ctx.fillStyle = '#fbc531'; ctx.fillText("⚡ 격동: 전기 지역 (레벨 20 진입 가능)", GAME_WIDTH / 2, -2020);
 
             ctx.strokeStyle = '#c7ecee'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -3000); ctx.lineTo(GAME_WIDTH, -3000); ctx.stroke();
-            ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 혹한: 얼음 지역 (레벨 40 진입 가능)", GAME_WIDTH / 2, -3020);
+            ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 혹한: 얼음 지역 (레벨 35 진입 가능)", GAME_WIDTH / 2, -3020);
 
             ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -4000); ctx.lineTo(GAME_WIDTH, -4000); ctx.stroke();
-            ctx.fillStyle = '#2ecc71'; ctx.fillText("☣️ 치명적 위험: 방사능 지역 (레벨 60 진입 가능)", GAME_WIDTH / 2, -4020);
+            ctx.fillStyle = '#2ecc71'; ctx.fillText("☣️ 치명적 위험: 방사능 지역 (레벨 50 진입 가능)", GAME_WIDTH / 2, -4020);
 
             ctx.strokeStyle = 'rgba(0,0,0,0.08)'; ctx.lineWidth = 2;
             for(let cy = -5000; cy <= 1000; cy+=100) {
