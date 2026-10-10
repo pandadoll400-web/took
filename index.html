@@ -889,6 +889,7 @@
         function getTables(type) {
             if (type === 'ocean') return oceanDropTables;
             if (type === 'radioactive') return radioactiveDropTables;
+            if (type === 'cave') return caveDropTables;
             if (type === 'ice') return iceDropTables;
             if (type === 'electric') return electricDropTables;
             if (type === 'twisted') return twistedDropTables;
@@ -999,6 +1000,9 @@
             } else if (level < 65 && player.y < -4970 && player.y > -5500) {
                 player.y = -4970;
                 if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 65 달성 시 통과 가능!`, color: '#0984e3', life: 40 });
+            } else if (level < 85 && player.y < -5970 && player.y > -6500) {
+                player.y = -5970;
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 85 달성 시 통과 가능!`, color: '#636e72', life: 40 });
             }
 
             shops.forEach(shop => {
