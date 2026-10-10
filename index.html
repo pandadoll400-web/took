@@ -968,26 +968,28 @@
                 }
 
             } else if (skin.startsWith('jack')) {
-                ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
-                ctx.translate(0, -bobbing);
+                let floatOffset = Math.sin(Date.now() * 0.005) * 5 - bobbing;
+                ctx.translate(0, floatOffset - 10);
+                
+                ctx.fillStyle = 'rgba(0,0,0,0.2)'; 
+                ctx.beginPath(); ctx.ellipse(0, 35 - floatOffset, 20, 6, 0, 0, Math.PI*2); ctx.fill();
 
                 let isFiery = skin === 'jack_fiery';
-                let cloakColor = isFiery ? '#c0392b' : '#8e44ad';
+                let ghostColor = isFiery ? '#c0392b' : '#8e44ad';
                 
-                ctx.fillStyle = '#3e2723'; 
-                ctx.save(); ctx.translate(-8, 15); ctx.rotate((walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
-                ctx.save(); ctx.translate(8, 15); ctx.rotate((-walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
-
-                ctx.fillStyle = cloakColor;
+                ctx.fillStyle = ghostColor;
                 ctx.beginPath();
-                ctx.moveTo(0, -10); ctx.lineTo(-22, 18); ctx.lineTo(22, 18); ctx.fill();
-
-                if (isShaking) {
-                    let sE = Math.sin(player.shakeTimer * 1.5) * 10;
-                    ctx.fillStyle = cloakColor;
-                    ctx.save(); ctx.translate(-15, 0); ctx.rotate(-Math.PI/4); ctx.fillRect(-4, -15 + sE, 8, 15); ctx.restore();
-                    ctx.save(); ctx.translate(15, 0); ctx.rotate(Math.PI/4); ctx.fillRect(-4, -15 - sE, 8, 15); ctx.restore();
+                ctx.arc(0, -10, 18, Math.PI, 0); 
+                ctx.lineTo(18, 15);
+                for(let i=18; i>=-18; i-=6) {
+                    ctx.lineTo(i, 15 + Math.sin(i*0.5 + Date.now()*0.01)*3);
                 }
+                ctx.lineTo(-18, -10);
+                ctx.fill();
+
+                let armS = isShaking ? Math.sin(Date.now()*0.02)*10 : 0;
+                ctx.beginPath(); ctx.ellipse(-15, 0 + armS, 6, 12, Math.PI/4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(15, 0 - armS, 6, 12, -Math.PI/4, 0, Math.PI*2); ctx.fill();
 
                 ctx.fillStyle = '#e67e22'; 
                 ctx.beginPath(); ctx.ellipse(0, -20, 18, 15, 0, 0, Math.PI*2); ctx.fill();
