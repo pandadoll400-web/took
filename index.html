@@ -368,7 +368,7 @@
             floatTexts.push({ x: x, y: y, text: `+${amount} XP`, color: '#3498db', life: 40 });
             let leveledUp = false;
             while (xp >= maxXp) {
-                xp -= maxXp; level++; maxXp = Math.floor(maxXp * 1.5);
+                xp -= maxXp; level++; maxXp = Math.floor(maxXp * 1.11);
                 leveledUp = true;
             }
             if (leveledUp) {
