@@ -179,8 +179,8 @@
         </div>
 
         <div id="radioactive-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(20, 50, 30, 0.95); color: white; padding: 20px; border-radius: 15px; width: 85%; max-width: 400px; max-height: 80%; overflow-y: auto; display: none; border: 2px solid #2ecc71; z-index: 40;">
-            <h2 style="margin-top: 0; text-align: center; color: #2ecc71;">방사능 돌연변이 도감</h2>
-            <p style="text-align: center; font-size: 14px; color: #dfe6e9;">방사능 과일(24종)을 모두 모으면 매드 사이언티스트 스킨을 드립니다!</p>
+            <h2 style="margin-top: 0; text-align: center; color: #2ecc71;">과일 도감 (모든 지역)</h2>
+            <p style="text-align: center; font-size: 14px; color: #dfe6e9;">모든 과일(24종)을 인벤토리에 보유하면 매드 사이언티스트 스킨을 드립니다! (일반/방사능 등 특성 무관)</p>
             <div id="radioactive-progress" style="text-align: center; margin-bottom: 15px; font-weight: bold; color: #f1c40f;">진행도: 0 / 24</div>
             <div class="grid" id="radioactive-grid"></div>
             <button class="close-btn" onclick="document.getElementById('radioactive-modal').style.display='none'" style="background: #27ae60;">닫기</button>
@@ -454,10 +454,10 @@
             grid.innerHTML = '';
             
             baseFruitNames.forEach(fruit => {
-                const collected = (inventory['방사능 ' + fruit] > 0);
+                const collected = (inventory[fruit] > 0) || (inventory['방사능 ' + fruit] > 0) || (inventory['얼음 ' + fruit] > 0) || (inventory['불꽃 ' + fruit] > 0) || (inventory['전기 ' + fruit] > 0) || (inventory['뒤틀린 ' + fruit] > 0);
                 if (collected) count++;
                 const color = collected ? '#2ecc71' : '#555';
-                const name = collected ? `방사능 ${fruit}` : '???';
+                const name = collected ? fruit : '???';
                 grid.innerHTML += `<div class="grid-item" style="border: 2px solid ${color}; color: ${collected ? '#fff' : '#777'}; font-size: 11px;">
                     <strong style="color:${color}">${name}</strong><br>${collected ? '보유 중' : '미보유'}</div>`;
             });
@@ -473,7 +473,9 @@
 
         function claimRadioactiveSkin() {
             let count = 0;
-            baseFruitNames.forEach(fruit => { if (inventory['방사능 ' + fruit] > 0) count++; });
+            baseFruitNames.forEach(fruit => { 
+                if (inventory[fruit] > 0 || inventory['방사능 ' + fruit] > 0 || inventory['얼음 ' + fruit] > 0 || inventory['불꽃 ' + fruit] > 0 || inventory['전기 ' + fruit] > 0 || inventory['뒤틀린 ' + fruit] > 0) count++; 
+            });
             if (count >= 24 && !ownedSkins.includes('mad_scientist')) {
                 ownedSkins.push('mad_scientist');
                 floatTexts.push({ x: player.x, y: player.y - 100, text: `매드 사이언티스트 스킨 획득!`, color: '#2ecc71', life: 100 });
@@ -990,12 +992,9 @@
                             }
                         }
                         
-                        if (f.fruit.startsWith('방사능 ') && baseFruitNames.includes(baseName) && !radioactiveCollection.includes(baseName)) {
-                            let inInv = (inventory[f.fruit] > 0);
-                            if (inInv) {
-                                radioactiveCollection.push(baseName);
-                                floatTexts.push({ x: player.x, y: player.y - 80, text: `방사능 도감 등록: ${baseName}!`, color: '#2ecc71', life: 60 });
-                            }
+                        if (baseFruitNames.includes(baseName) && !radioactiveCollection.includes(baseName)) {
+                            radioactiveCollection.push(baseName);
+                            floatTexts.push({ x: player.x, y: player.y - 80, text: `과일 도감 등록: ${baseName}!`, color: '#2ecc71', life: 60 });
                         }
                         floatTexts.push({ x: player.x, y: player.y - 40, text: `+${f.fruit}`, color: f.color, life: 40 });
                         addXp(f.xp, player.x + 20, player.y - 60);
