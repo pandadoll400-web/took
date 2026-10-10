@@ -454,12 +454,18 @@
 
                 list.innerHTML += `
                     <div class="axe-item" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div style="text-align:left;">
-                            <h4 style="margin:0; color:#fff;">${skin.icon} ${skin.name}</h4>
+                        <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
+                            <canvas id="preview-shop-${skin.id}" width="60" height="80"></canvas>
+                            <h4 style="margin:5px 0 0 0; color:#fff;">${skin.name}</h4>
                         </div>
                         <div>${btnHtml}</div>
                     </div>
                 `;
+            });
+
+            // html 생성 후 캔버스에 그리기
+            skinsData.forEach(skin => {
+                if (skin.id !== 'default') drawPreviewCanvas(`preview-shop-${skin.id}`, skin.id);
             });
         }
 
@@ -500,12 +506,18 @@
 
                 list.innerHTML += `
                     <div class="axe-item" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div style="text-align:left;">
-                            <h4 style="margin:0; color:#fff;">${skin.icon} ${skin.name}</h4>
+                        <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
+                            <canvas id="preview-inv-${skin.id}" width="60" height="80"></canvas>
+                            <h4 style="margin:5px 0 0 0; color:#fff;">${skin.name}</h4>
                         </div>
                         <div>${btnHtml}</div>
                     </div>
                 `;
+            });
+
+            // html 생성 후 캔버스에 그리기
+            skinsData.forEach(skin => {
+                if (ownedSkins.includes(skin.id)) drawPreviewCanvas(`preview-inv-${skin.id}`, skin.id);
             });
         }
 
@@ -515,6 +527,20 @@
                 updateInvSkinUI();
                 floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `스킨 장착 완료!`, color: '#3498db', life: 60 });
             }
+        }
+
+        function drawPreviewCanvas(canvasId, skinId) {
+            const pCanvas = document.getElementById(canvasId);
+            if (!pCanvas) return;
+            const pCtx = pCanvas.getContext('2d');
+            pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+            const dummyChar = { colors: { skin: '#ffeaa7', shirt: '#e67e22', hat: '#8B4513' }, facing: 1 };
+            
+            pCtx.save();
+            pCtx.translate(pCanvas.width / 2, pCanvas.height / 2 + 15);
+            pCtx.scale(0.8, 0.8);
+            drawCharacter(pCtx, dummyChar, 0, 0, false, 0, skinId);
+            pCtx.restore();
         }
 
         function switchInvTab(tab) {
@@ -890,10 +916,10 @@
             }
         }
 
-        function drawCharacter(ctx, char, x, y, isShaking, walkTimer) {
+        function drawCharacter(ctx, char, x, y, isShaking, walkTimer, forceSkin = null) {
             ctx.save(); ctx.translate(x, y);
             
-            let skin = (char === player) ? equippedSkin : 'default';
+            let skin = forceSkin ? forceSkin : ((char === player) ? equippedSkin : 'default');
             let walkAngle = walkTimer ? Math.sin(walkTimer * 0.15) * 15 : 0;
             let bobbing = walkTimer ? Math.abs(Math.sin(walkTimer * 0.15)) * 3 : 0;
             if(isShaking) { bobbing = Math.random() * 2; walkAngle = 0; }
