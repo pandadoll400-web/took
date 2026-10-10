@@ -368,7 +368,7 @@
             floatTexts.push({ x: x, y: y, text: `+${amount} XP`, color: '#3498db', life: 40 });
             let leveledUp = false;
             while (xp >= maxXp) {
-                xp -= maxXp; level++; maxXp = Math.floor(maxXp * 1.078);
+                xp -= maxXp; level++; maxXp = Math.floor(maxXp * 1.11);
                 leveledUp = true;
             }
             if (leveledUp) {
@@ -594,17 +594,17 @@
             {
                 id: 'electric', type: 'electric', x: GAME_WIDTH / 2, y: -2650, radius: 150, trunkRadius: 50,
                 progress: 0, maxProgress: 300, shakeAngle: 0,
-                unlocked: false, price: 25000, reqLevel: 10, color1: '#fbc531', color2: '#00a8ff', drops: [6, 10] 
+                unlocked: false, price: 100000, reqLevel: 20, color1: '#fbc531', color2: '#00a8ff', drops: [6, 10] 
             },
             {
                 id: 'ice', type: 'ice', x: GAME_WIDTH / 2, y: -3650, radius: 160, trunkRadius: 55,
                 progress: 0, maxProgress: 300, shakeAngle: 0,
-                unlocked: false, price: 250000, reqLevel: 17, color1: '#dff9fb', color2: '#c7ecee', drops: [8, 12] 
+                unlocked: false, price: 1000000, reqLevel: 35, color1: '#dff9fb', color2: '#c7ecee', drops: [8, 12] 
             },
             {
                 id: 'radioactive', type: 'radioactive', x: GAME_WIDTH / 2, y: -4650, radius: 170, trunkRadius: 60,
                 progress: 0, maxProgress: 300, shakeAngle: 0,
-                unlocked: false, price: 1250000, reqLevel: 25, color1: '#2ecc71', color2: '#1abc9c', drops: [10, 15] 
+                unlocked: false, price: 5000000, reqLevel: 50, color1: '#2ecc71', color2: '#1abc9c', drops: [10, 15] 
             }
         ];
 
@@ -643,7 +643,7 @@
                 try {
                     const data = JSON.parse(saved);
                     level = data.level || 1;
-                    maxXp = Math.floor(20 * Math.pow(1.078, level - 1)); // 기존 세이브의 높은 maxXp 보정
+                    maxXp = Math.floor(20 * Math.pow(1.11, level - 1)); // 기존 세이브의 높은 maxXp 보정
                     xp = Math.min(data.xp || 0, maxXp - 1); // 꽉 찬 경험치 보정
                     money = data.money || 0;
                     axeLevel = data.axeLevel || 0;
