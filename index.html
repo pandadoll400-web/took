@@ -145,8 +145,8 @@
                 </div>
             </div>
 
-            <div id="shop-skin" style="display: none;">
-                <p style="text-align: center; color: #bdc3c7; margin-top: 30px; font-weight: bold;">스킨 업데이트 준비 중입니다...</p>
+            <div id="shop-skin" style="display: none; padding-top: 10px;">
+                <div id="skin-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
             </div>
             
             <button class="close-btn" onclick="document.getElementById('shop-modal').style.display='none'">닫기</button>
@@ -347,6 +347,8 @@
         let money = 0;
         let axeLevel = 0; // 0:기본, 1:나무도끼, 2:철(은)도끼, 3:금도끼
         let inventory = {};
+        let ownedSkins = ['default'];
+        let equippedSkin = 'default';
 
         function addXp(amount, x, y) {
             amount = amount * 10; // 유저 요청: 상시 경험치 10배 미친 버프! (사과 2xp -> 20xp)
@@ -382,6 +384,7 @@
             document.getElementById('shop-modal').style.display = 'block';
             resetJoyMouse(); player.targetTree = null;
             updateAxeUI();
+            updateSkinUI();
         });
 
         function switchShopTab(tab) {
@@ -409,6 +412,66 @@
                     btn.innerText = '보유중'; btn.disabled = true; btn.style.background = '#95a5a6'; 
                 } else { 
                     btn.innerText = '구매하기'; btn.disabled = false; btn.style.background = '#2ecc71'; 
+                }
+            }
+        }
+
+        const skinsData = [
+            { id: 'default', name: '기본 농부', price: 0, icon: '👨‍🌾' },
+            { id: 'ghost_fedora', name: '페도라 유령', price: 1000000, icon: '👻🎩' },
+            { id: 'ghost_classic', name: '클래식 유령', price: 2000000, icon: '👻' },
+            { id: 'ghost_purple', name: '보라빛 유령', price: 3000000, icon: '👻💜' },
+            { id: 'jack_orange', name: '주황 잭오랜턴', price: 5000000, icon: '🎃' },
+            { id: 'jack_fiery', name: '불타는 잭오랜턴', price: 10000000, icon: '🎃🔥' }
+        ];
+
+        function updateSkinUI() {
+            const list = document.getElementById('skin-list');
+            list.innerHTML = '';
+            skinsData.forEach(skin => {
+                const isOwned = ownedSkins.includes(skin.id);
+                const isEquipped = equippedSkin === skin.id;
+                
+                let btnHtml = '';
+                if (isEquipped) {
+                    btnHtml = `<button disabled style="background: #e67e22;">장착중</button>`;
+                } else if (isOwned) {
+                    btnHtml = `<button onclick="buyOrEquipSkin('${skin.id}')" style="background: #3498db;">장착하기</button>`;
+                } else {
+                    btnHtml = `<button onclick="buyOrEquipSkin('${skin.id}')" style="background: #2ecc71;">구매 (💰 ${skin.price})</button>`;
+                }
+
+                list.innerHTML += `
+                    <div class="axe-item" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="text-align:left;">
+                            <h4 style="margin:0; color:#fff;">${skin.icon} ${skin.name}</h4>
+                        </div>
+                        <div>${btnHtml}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function buyOrEquipSkin(skinId) {
+            const skin = skinsData.find(s => s.id === skinId);
+            if (!skin) return;
+
+            if (ownedSkins.includes(skinId)) {
+                // Equip
+                equippedSkin = skinId;
+                updateSkinUI();
+                floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `스킨 장착 완료!`, color: '#3498db', life: 60 });
+            } else {
+                // Buy
+                if (money >= skin.price) {
+                    money -= skin.price;
+                    ownedSkins.push(skinId);
+                    equippedSkin = skinId;
+                    updateMoney();
+                    updateSkinUI();
+                    floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `스킨 구매 및 장착!`, color: '#f1c40f', life: 60 });
+                } else {
+                    alert('돈이 부족합니다!');
                 }
             }
         }
@@ -491,6 +554,7 @@
             const data = {
                 level: level, xp: xp, maxXp: maxXp, money: money, inventory: inventory,
                 axeLevel: axeLevel,
+                ownedSkins: ownedSkins, equippedSkin: equippedSkin,
                 treeUnlocked: trees.map(t => t.unlocked)
             };
             localStorage.setItem('treeGameSave', JSON.stringify(data));
@@ -506,6 +570,8 @@
                     maxXp = data.maxXp || 20;
                     money = data.money || 0;
                     axeLevel = data.axeLevel || 0;
+                    if (data.ownedSkins) ownedSkins = data.ownedSkins;
+                    if (data.equippedSkin) equippedSkin = data.equippedSkin;
                     if (data.inventory) inventory = { ...inventory, ...data.inventory };
                     if (data.treeUnlocked) {
                         trees.forEach((t, i) => {
@@ -775,42 +841,129 @@
 
         function drawCharacter(ctx, char, x, y, isShaking, walkTimer) {
             ctx.save(); ctx.translate(x, y);
-            ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
-
+            
+            let skin = (char === player) ? equippedSkin : 'default';
             let walkAngle = walkTimer ? Math.sin(walkTimer * 0.15) * 15 : 0;
             let bobbing = walkTimer ? Math.abs(Math.sin(walkTimer * 0.15)) * 3 : 0;
             if(isShaking) { bobbing = Math.random() * 2; walkAngle = 0; }
-            ctx.translate(0, -bobbing);
+            let facing = char.facing || 1;
 
-            ctx.fillStyle = '#2c3e50';
-            ctx.save(); ctx.translate(-8, 15); ctx.rotate((walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
-            ctx.save(); ctx.translate(8, 15); ctx.rotate((-walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
+            if (skin.startsWith('ghost')) {
+                let floatOffset = Math.sin(Date.now() * 0.005) * 5 - bobbing;
+                ctx.translate(0, floatOffset - 10);
+                
+                ctx.fillStyle = 'rgba(0,0,0,0.2)'; 
+                ctx.beginPath(); ctx.ellipse(0, 35 - floatOffset, 20, 6, 0, 0, Math.PI*2); ctx.fill();
+                
+                let isPurple = skin === 'ghost_purple';
+                let ghostColor = isPurple ? 'rgba(155, 89, 182, 0.85)' : 'rgba(236, 240, 241, 0.85)';
+                let ghostEdge = isPurple ? '#8e44ad' : '#bdc3c7';
 
-            let torsoGrad = ctx.createLinearGradient(0, -10, 0, 15);
-            torsoGrad.addColorStop(0, char.colors.shirt); torsoGrad.addColorStop(1, '#2c3e50');
-            ctx.fillStyle = torsoGrad; ctx.beginPath(); ctx.roundRect(-15, -5, 30, 22, 5); ctx.fill();
+                ctx.fillStyle = ghostColor;
+                ctx.strokeStyle = ghostEdge;
+                ctx.lineWidth = 2;
 
-            if (isShaking) {
-                let sE = Math.sin(player.shakeTimer * 1.5) * 10; ctx.fillStyle = char.colors.skin;
-                ctx.save(); ctx.translate(-15, 0); ctx.rotate(-Math.PI/4); ctx.fillRect(-4, -20 + sE, 8, 20); ctx.beginPath(); ctx.arc(0, -22 + sE, 6, 0, Math.PI*2); ctx.fill(); ctx.restore();
-                ctx.save(); ctx.translate(15, 0); ctx.rotate(Math.PI/4); ctx.fillRect(-4, -20 - sE, 8, 20); ctx.beginPath(); ctx.arc(0, -22 - sE, 6, 0, Math.PI*2); ctx.fill(); ctx.restore();
+                ctx.beginPath();
+                ctx.arc(0, -15, 18, Math.PI, 0); 
+                ctx.lineTo(18, 15);
+                for(let i=18; i>=-18; i-=6) {
+                    ctx.lineTo(i, 15 + Math.sin(i*0.5 + Date.now()*0.01)*3);
+                }
+                ctx.lineTo(-18, -15);
+                ctx.fill();
+
+                ctx.fillStyle = '#2c3e50';
+                ctx.beginPath(); ctx.arc(-6 + (facing*3), -18, 2.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(6 + (facing*3), -18, 2.5, 0, Math.PI*2); ctx.fill();
+                
+                let armS = isShaking ? Math.sin(Date.now()*0.02)*10 : 0;
+                ctx.fillStyle = ghostColor;
+                ctx.beginPath(); ctx.ellipse(-15, -5 + armS, 6, 12, Math.PI/4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(15, -5 - armS, 6, 12, -Math.PI/4, 0, Math.PI*2); ctx.fill();
+
+                if (skin === 'ghost_fedora') {
+                    ctx.fillStyle = '#34495e';
+                    ctx.beginPath(); ctx.ellipse(0, -32, 22, 6, 0, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = '#2c3e50';
+                    ctx.beginPath(); ctx.arc(0, -32, 14, Math.PI, 0); ctx.fill();
+                    ctx.fillStyle = '#7f8c8d';
+                    ctx.fillRect(-14, -35, 28, 4);
+                }
+
+            } else if (skin.startsWith('jack')) {
+                ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.translate(0, -bobbing);
+
+                let isFiery = skin === 'jack_fiery';
+                let cloakColor = isFiery ? '#c0392b' : '#8e44ad';
+                
+                ctx.fillStyle = '#3e2723'; 
+                ctx.save(); ctx.translate(-8, 15); ctx.rotate((walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
+                ctx.save(); ctx.translate(8, 15); ctx.rotate((-walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
+
+                ctx.fillStyle = cloakColor;
+                ctx.beginPath();
+                ctx.moveTo(0, -10); ctx.lineTo(-22, 18); ctx.lineTo(22, 18); ctx.fill();
+
+                if (isShaking) {
+                    let sE = Math.sin(player.shakeTimer * 1.5) * 10;
+                    ctx.fillStyle = cloakColor;
+                    ctx.save(); ctx.translate(-15, 0); ctx.rotate(-Math.PI/4); ctx.fillRect(-4, -15 + sE, 8, 15); ctx.restore();
+                    ctx.save(); ctx.translate(15, 0); ctx.rotate(Math.PI/4); ctx.fillRect(-4, -15 - sE, 8, 15); ctx.restore();
+                }
+
+                ctx.fillStyle = '#e67e22'; 
+                ctx.beginPath(); ctx.ellipse(0, -20, 18, 15, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#d35400'; 
+                ctx.beginPath(); ctx.ellipse(0, -20, 8, 15, 0, 0, Math.PI*2); ctx.stroke();
+                
+                ctx.fillStyle = isFiery ? '#f1c40f' : '#2c3e50';
+                ctx.beginPath(); ctx.moveTo(-8 + (facing*2), -24); ctx.lineTo(-4 + (facing*2), -24); ctx.lineTo(-6 + (facing*2), -20); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(4 + (facing*2), -24); ctx.lineTo(8 + (facing*2), -24); ctx.lineTo(6 + (facing*2), -20); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(-8+(facing*2), -15); ctx.lineTo(-4+(facing*2), -12); ctx.lineTo(0+(facing*2), -15); ctx.lineTo(4+(facing*2), -12); ctx.lineTo(8+(facing*2), -15);
+                ctx.lineTo(4+(facing*2), -10); ctx.lineTo(-4+(facing*2), -10); ctx.fill();
+
+                ctx.fillStyle = '#27ae60';
+                ctx.fillRect(-2, -38, 4, 6);
+
+                if (isFiery) {
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.beginPath(); ctx.moveTo(0, -45 + (Math.sin(Date.now()*0.02)*5)); 
+                    ctx.lineTo(-10, -32); ctx.lineTo(10, -32); ctx.fill();
+                    ctx.fillStyle = '#f1c40f';
+                    ctx.beginPath(); ctx.moveTo(0, -40 + (Math.sin(Date.now()*0.02)*3)); 
+                    ctx.lineTo(-6, -32); ctx.lineTo(6, -32); ctx.fill();
+                }
+
             } else {
-                ctx.fillStyle = char.colors.skin;
-                ctx.save(); ctx.translate(-18, 0); ctx.rotate((-walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
-                ctx.save(); ctx.translate(18, 0); ctx.rotate((walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
+                ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.translate(0, -bobbing);
+                ctx.fillStyle = '#2c3e50';
+                ctx.save(); ctx.translate(-8, 15); ctx.rotate((walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
+                ctx.save(); ctx.translate(8, 15); ctx.rotate((-walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
+                let torsoGrad = ctx.createLinearGradient(0, -10, 0, 15);
+                torsoGrad.addColorStop(0, char.colors.shirt); torsoGrad.addColorStop(1, '#2c3e50');
+                ctx.fillStyle = torsoGrad; ctx.beginPath(); ctx.roundRect(-15, -5, 30, 22, 5); ctx.fill();
+                if (isShaking) {
+                    let sE = Math.sin(player.shakeTimer * 1.5) * 10; ctx.fillStyle = char.colors.skin;
+                    ctx.save(); ctx.translate(-15, 0); ctx.rotate(-Math.PI/4); ctx.fillRect(-4, -20 + sE, 8, 20); ctx.beginPath(); ctx.arc(0, -22 + sE, 6, 0, Math.PI*2); ctx.fill(); ctx.restore();
+                    ctx.save(); ctx.translate(15, 0); ctx.rotate(Math.PI/4); ctx.fillRect(-4, -20 - sE, 8, 20); ctx.beginPath(); ctx.arc(0, -22 - sE, 6, 0, Math.PI*2); ctx.fill(); ctx.restore();
+                } else {
+                    ctx.fillStyle = char.colors.skin;
+                    ctx.save(); ctx.translate(-18, 0); ctx.rotate((-walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
+                    ctx.save(); ctx.translate(18, 0); ctx.rotate((walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
+                }
+                let headGrad = ctx.createRadialGradient(0, -20, 5, 0, -20, 15);
+                headGrad.addColorStop(0, '#ffffff'); headGrad.addColorStop(1, char.colors.skin);
+                ctx.fillStyle = headGrad; ctx.beginPath(); ctx.arc(0, -20, 15, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#2d3436';
+                ctx.beginPath(); ctx.arc(-5 + (facing*2), -22, 2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(5 + (facing*2), -22, 2, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = char.colors.hat;
+                ctx.beginPath(); ctx.ellipse(0, -32, 22, 6, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(0, -32, 14, Math.PI, 0); ctx.fill();
             }
 
-            let headGrad = ctx.createRadialGradient(0, -20, 5, 0, -20, 15);
-            headGrad.addColorStop(0, '#ffffff'); headGrad.addColorStop(1, char.colors.skin);
-            ctx.fillStyle = headGrad; ctx.beginPath(); ctx.arc(0, -20, 15, 0, Math.PI*2); ctx.fill();
-
-            let facing = char.facing || 1; ctx.fillStyle = '#2d3436';
-            ctx.beginPath(); ctx.arc(-5 + (facing*2), -22, 2, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(5 + (facing*2), -22, 2, 0, Math.PI*2); ctx.fill();
-
-            ctx.fillStyle = char.colors.hat;
-            ctx.beginPath(); ctx.ellipse(0, -32, 22, 6, 0, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(0, -32, 14, Math.PI, 0); ctx.fill();
             ctx.restore();
         }
 
