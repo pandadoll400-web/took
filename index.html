@@ -1059,7 +1059,7 @@
                         if (inventory[f.fruit] === undefined) inventory[f.fruit] = 0;
                         inventory[f.fruit]++;
                         
-                        let baseName = f.fruit.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '');
+                        let baseName = f.fruit.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '').replace('동굴 ', '');
                         if (oceanFishNames.includes(baseName) && !fishCollection.includes(baseName)) {
                             let inInv = (inventory[baseName] > 0) || (inventory['심해 ' + baseName] > 0);
                             if (inInv) {
