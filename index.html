@@ -864,18 +864,11 @@
                 } catch(e) { console.error('Save file corrupted'); }
             }
 
-            // 개발자 전용 치트: 로컬(파일 직접 실행 등)에서 테스트할 때만 레벨 10000 적용 (실제 Vercel 서버 유저는 레벨 1부터 정상 시작!)
-            if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                if (level < 10000) {
-                    level = 10000;
-                    maxXp = 999999999; 
-                }
-            } else {
-                // Vercel(서버) 접속인데 과거 버그로 저장된 치트 데이터가 남아있다면 강제로 삭제하고 새로고침
-                if (maxXp === 999999999 || level >= 10000) {
-                    localStorage.removeItem('treeGameSave');
-                    location.reload();
-                }
+            // 치트 방지 및 개발자 테스트 용도 제거 (유저 요청: 터지지 않게 1로 자연스럽게 변경)
+            if (level >= 10000 || maxXp >= 999999999) {
+                level = 1;
+                maxXp = 20;
+                xp = 0;
             }
 
             document.getElementById('level-text').innerText = `LV. ${level}`;
