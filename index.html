@@ -968,49 +968,71 @@
                 }
 
             } else if (skin.startsWith('jack')) {
-                let floatOffset = Math.sin(Date.now() * 0.005) * 5 - bobbing;
-                ctx.translate(0, floatOffset - 10);
-                
-                ctx.fillStyle = 'rgba(0,0,0,0.2)'; 
-                ctx.beginPath(); ctx.ellipse(0, 35 - floatOffset, 20, 6, 0, 0, Math.PI*2); ctx.fill();
-
                 let isFiery = skin === 'jack_fiery';
-                let ghostColor = isFiery ? '#c0392b' : '#8e44ad';
+                let cloakColor = isFiery ? '#c0392b' : '#8e44ad';
                 
-                ctx.fillStyle = ghostColor;
-                ctx.beginPath();
-                ctx.arc(0, -10, 18, Math.PI, 0); 
-                ctx.lineTo(18, 15);
-                for(let i=18; i>=-18; i-=6) {
-                    ctx.lineTo(i, 15 + Math.sin(i*0.5 + Date.now()*0.01)*3);
-                }
-                ctx.lineTo(-18, -10);
-                ctx.fill();
+                ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.translate(0, -bobbing);
+
+                ctx.fillStyle = '#2d3436'; 
+                ctx.save(); ctx.translate(-6, 15); ctx.rotate((walkAngle * Math.PI)/180); ctx.fillRect(-5, 0, 10, 10);
+                ctx.fillStyle = '#3e2723'; ctx.fillRect(-6, 10, 12, 6); ctx.restore();
+                ctx.save(); ctx.translate(6, 15); ctx.rotate((-walkAngle * Math.PI)/180); ctx.fillStyle = '#2d3436'; ctx.fillRect(-5, 0, 10, 10);
+                ctx.fillStyle = '#3e2723'; ctx.fillRect(-6, 10, 12, 6); ctx.restore();
+
+                ctx.fillStyle = cloakColor;
+                ctx.beginPath(); ctx.moveTo(-10, -10); ctx.quadraticCurveTo(-25, 5, -20, 22);
+                ctx.lineTo(20, 22); ctx.quadraticCurveTo(25, 5, 10, -10); ctx.fill();
+
+                ctx.fillStyle = '#4b3832';
+                ctx.beginPath(); ctx.roundRect(-12, -8, 24, 20, 4); ctx.fill();
+                
+                ctx.fillStyle = '#2c3e50'; ctx.fillRect(-12, 6, 24, 4);
+                ctx.fillStyle = '#f1c40f'; ctx.fillRect(-4, 5, 8, 6);
+                ctx.fillStyle = '#000'; ctx.fillRect(-2, 7, 4, 2);
 
                 let armS = isShaking ? Math.sin(Date.now()*0.02)*10 : 0;
-                ctx.beginPath(); ctx.ellipse(-15, 0 + armS, 6, 12, Math.PI/4, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.ellipse(15, 0 - armS, 6, 12, -Math.PI/4, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = cloakColor;
+                ctx.save(); ctx.translate(-15, -2); ctx.rotate(-Math.PI/6 + armS*0.05); ctx.roundRect(-4, 0, 8, 16, 3); ctx.fill();
+                ctx.fillStyle = '#e67e22'; ctx.beginPath(); ctx.arc(0, 16, 4, 0, Math.PI*2); ctx.fill(); ctx.restore();
+                ctx.save(); ctx.translate(15, -2); ctx.rotate(Math.PI/6 - armS*0.05); ctx.roundRect(-4, 0, 8, 16, 3); ctx.fill();
+                ctx.fillStyle = '#e67e22'; ctx.beginPath(); ctx.arc(0, 16, 4, 0, Math.PI*2); ctx.fill(); ctx.restore();
+
+                ctx.fillStyle = cloakColor;
+                ctx.beginPath(); ctx.ellipse(0, -8, 14, 6, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#f1c40f'; ctx.beginPath(); ctx.arc(0, -6, 3, 0, Math.PI*2); ctx.fill();
+
+                if (!isFiery) {
+                    ctx.fillStyle = cloakColor;
+                    ctx.beginPath(); ctx.arc(0, -20, 19, 0, Math.PI*2); ctx.fill();
+                }
 
                 ctx.fillStyle = '#e67e22'; 
-                ctx.beginPath(); ctx.ellipse(0, -20, 18, 15, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(0, -20, 16, 14, 0, 0, Math.PI*2); ctx.fill();
                 ctx.fillStyle = '#d35400'; 
-                ctx.beginPath(); ctx.ellipse(0, -20, 8, 15, 0, 0, Math.PI*2); ctx.stroke();
+                ctx.beginPath(); ctx.ellipse(0, -20, 7, 14, 0, 0, Math.PI*2); ctx.stroke();
                 
                 ctx.fillStyle = isFiery ? '#f1c40f' : '#2c3e50';
-                ctx.beginPath(); ctx.moveTo(-8 + (facing*2), -24); ctx.lineTo(-4 + (facing*2), -24); ctx.lineTo(-6 + (facing*2), -20); ctx.fill();
-                ctx.beginPath(); ctx.moveTo(4 + (facing*2), -24); ctx.lineTo(8 + (facing*2), -24); ctx.lineTo(6 + (facing*2), -20); ctx.fill();
-                ctx.beginPath(); ctx.moveTo(-8+(facing*2), -15); ctx.lineTo(-4+(facing*2), -12); ctx.lineTo(0+(facing*2), -15); ctx.lineTo(4+(facing*2), -12); ctx.lineTo(8+(facing*2), -15);
-                ctx.lineTo(4+(facing*2), -10); ctx.lineTo(-4+(facing*2), -10); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(-7 + (facing*2), -24); ctx.lineTo(-3 + (facing*2), -24); ctx.lineTo(-5 + (facing*2), -20); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(3 + (facing*2), -24); ctx.lineTo(7 + (facing*2), -24); ctx.lineTo(5 + (facing*2), -20); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(-7+(facing*2), -15); ctx.lineTo(-3+(facing*2), -14); ctx.lineTo(0+(facing*2), -15); ctx.lineTo(3+(facing*2), -14); ctx.lineTo(7+(facing*2), -15);
+                ctx.lineTo(3+(facing*2), -10); ctx.lineTo(-3+(facing*2), -10); ctx.fill();
 
                 ctx.fillStyle = '#27ae60';
-                ctx.fillRect(-2, -38, 4, 6);
+                ctx.fillRect(-2, -36, 4, 4);
+
+                if (!isFiery) {
+                    ctx.fillStyle = cloakColor;
+                    ctx.beginPath(); ctx.moveTo(0, -6); ctx.quadraticCurveTo(-18, -10, -18, -25); ctx.lineTo(-20, -5); ctx.fill();
+                    ctx.beginPath(); ctx.moveTo(0, -6); ctx.quadraticCurveTo(18, -10, 18, -25); ctx.lineTo(20, -5); ctx.fill();
+                }
 
                 if (isFiery) {
                     ctx.fillStyle = '#e74c3c';
-                    ctx.beginPath(); ctx.moveTo(0, -45 + (Math.sin(Date.now()*0.02)*5)); 
+                    ctx.beginPath(); ctx.moveTo(0, -43 + (Math.sin(Date.now()*0.02)*5)); 
                     ctx.lineTo(-10, -32); ctx.lineTo(10, -32); ctx.fill();
                     ctx.fillStyle = '#f1c40f';
-                    ctx.beginPath(); ctx.moveTo(0, -40 + (Math.sin(Date.now()*0.02)*3)); 
+                    ctx.beginPath(); ctx.moveTo(0, -38 + (Math.sin(Date.now()*0.02)*3)); 
                     ctx.lineTo(-6, -32); ctx.lineTo(6, -32); ctx.fill();
                 }
 
