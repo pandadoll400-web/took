@@ -36,6 +36,7 @@
         #level-text {
             color: white; font-size: 22px; font-weight: bold;
             text-shadow: 2px 2px 4px #000; margin-bottom: 5px;
+            pointer-events: auto; cursor: pointer;
         }
         #xp-bar-bg {
             background: rgba(0,0,0,0.6); border: 2px solid #fff;
@@ -754,6 +755,24 @@
             updateInvSkinUI();
         });
         document.getElementById('close-modal-btn').addEventListener('click', () => { document.getElementById('inventory-modal').style.display = 'none'; });
+
+        // 개발자 비밀 치트: 레벨 텍스트 연속 5번 클릭 시 레벨 10000 부여 (로컬/서버 상관없이 동작)
+        let cheatClickCount = 0;
+        let cheatTimeout = null;
+        document.getElementById('level-text').addEventListener('click', () => {
+            cheatClickCount++;
+            if(cheatTimeout) clearTimeout(cheatTimeout);
+            cheatTimeout = setTimeout(() => { cheatClickCount = 0; }, 1000);
+            
+            if(cheatClickCount >= 5) {
+                level = 10000;
+                maxXp = 999999999;
+                document.getElementById('level-text').innerText = `LV. 10000`;
+                alert('개발자 모드 활성화: 레벨 10000 달성!');
+                cheatClickCount = 0;
+                saveGame();
+            }
+        });
 
         // 플레이어
         const player = {
