@@ -414,6 +414,14 @@
             { chance: 0.04, name: '불멸', price: 150000, xp: 6000, color: '#ff4757', items: ['오팔', '다이아몬드', '운석', '몰다바이트'] }
         ];
 
+        const halloweenDropTables = [
+            { chance: 0.30, name: '일반', price: 10, xp: 3, color: '#e67e22', items: ['주황호박'] },
+            { chance: 0.30, name: '일반', price: 10, xp: 3, color: '#27ae60', items: ['초록호박'] },
+            { chance: 0.30, name: '일반', price: 10, xp: 3, color: '#ecf0f1', items: ['하얀호박'] },
+            { chance: 0.099, name: '전설', price: 150, xp: 50, color: '#f1c40f', items: ['잭오랜턴'] },
+            { chance: 0.001, name: '불멸', price: 3000, xp: 500, color: '#95a5a6', items: ['깨진호박'] }
+        ];
+
 
         let level = 1; let xp = 0; let maxXp = 20;
         let money = 0;
@@ -568,8 +576,8 @@
         let floatTexts = [];
 
         function getItemColor(itemName) {
-            let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '').replace('동굴 ', '');
-            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables];
+            let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '').replace('동굴 ', '').replace('할로윈 ', '');
+            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables];
             for (let t of tables) {
                 if (t.items.includes(baseName)) return t.color;
             }
@@ -821,6 +829,11 @@
                 id: 'cave', type: 'cave', x: GAME_WIDTH / 2, y: -6650, radius: 190, trunkRadius: 70,
                 progress: 0, maxProgress: 400, shakeAngle: 0,
                 unlocked: false, price: 15000000, reqLevel: 85, color1: '#636e72', color2: '#2d3436', drops: [15, 20] 
+            },
+            {
+                id: 'halloween', type: 'halloween', x: GAME_WIDTH / 2, y: 1350, radius: 140, trunkRadius: 40,
+                progress: 0, maxProgress: 300, shakeAngle: 0,
+                unlocked: true, price: 0, reqLevel: 1, color1: '#d35400', color2: '#e67e22', drops: [2, 4]
             }
         ];
 
@@ -834,7 +847,8 @@
             { type: 'ice', name: '얼음 상점', x: 420, y: -3300, frontX: shopFrontX, queueY: -3150, queue: [] },
             { type: 'radioactive', name: '방사능 상점', x: 420, y: -4300, frontX: shopFrontX, queueY: -4150, queue: [] },
             { type: 'ocean', name: '바다 상점', x: 420, y: -5300, frontX: shopFrontX, queueY: -5150, queue: [] },
-            { type: 'cave', name: '동굴 상점', x: 420, y: -6300, frontX: shopFrontX, queueY: -6150, queue: [] }
+            { type: 'cave', name: '동굴 상점', x: 420, y: -6300, frontX: shopFrontX, queueY: -6150, queue: [] },
+            { type: 'halloween', name: '할로윈 상점', x: 420, y: 1680, frontX: shopFrontX, queueY: 1820, queue: [] }
         ];
 
         // 지붕/벽 색상 수동 할당 (위의 객체 리터럴 단순화를 위해)
@@ -846,6 +860,7 @@
         shops[5].roofColor = '#27ae60'; shops[5].wallColor = '#1e272e';
         shops[6].roofColor = '#00cec9'; shops[6].wallColor = '#0984e3';
         shops[7].roofColor = '#636e72'; shops[7].wallColor = '#2d3436';
+        shops[8].roofColor = '#8e44ad'; shops[8].wallColor = '#e67e22';
 
         function saveGame() {
             const data = {
@@ -900,6 +915,7 @@
         setInterval(saveGame, 1000); 
 
         function getTables(type) {
+            if (type === 'halloween') return halloweenDropTables;
             if (type === 'ocean') return oceanDropTables;
             if (type === 'radioactive') return radioactiveDropTables;
             if (type === 'cave') return caveDropTables;
@@ -911,18 +927,37 @@
         }
 
         function generateCustomer(type) {
-            let tables = getTables(type);
-            let r = Math.random(), cum = 0, tier = tables[0];
-            for (let t of tables) { cum += t.chance; if (r <= cum) { tier = t; break; } }
-            
-            let fruit = tier.items[Math.floor(Math.random() * tier.items.length)];
-            let amount = Math.floor(Math.random() * 3) + 1;
-            let reward = tier.price * amount; // 유저 요청 기준가 적용
+            let fruit, amount, reward;
+            let customerSkin = null;
 
-            // 다중 구매(2~3개) 시 약 2000원(1500~2500) 할인 적용
-            if (amount > 1) {
-                let discount = Math.floor(Math.random() * 1000) + 1500; 
-                reward = Math.max(reward - discount, tier.price); // 할인해도 최소 1개값은 보장
+            if (type === 'halloween') {
+                const pumpkinChoices = [
+                    { item: '주황호박', price: 10 },
+                    { item: '초록호박', price: 10 },
+                    { item: '하얀호박', price: 10 }
+                ];
+                let chosen = pumpkinChoices[Math.floor(Math.random() * pumpkinChoices.length)];
+                fruit = chosen.item;
+                amount = Math.floor(Math.random() * 3) + 1; // 주황, 초록, 하얀 호박만 1~3개 구매
+                reward = chosen.price * amount;
+
+                // 할로윈 스킨들로 줄서기
+                const hwSkins = ['ghost_fedora', 'ghost_classic', 'ghost_purple', 'jack_orange', 'jack_fiery'];
+                customerSkin = hwSkins[Math.floor(Math.random() * hwSkins.length)];
+            } else {
+                let tables = getTables(type);
+                let r = Math.random(), cum = 0, tier = tables[0];
+                for (let t of tables) { cum += t.chance; if (r <= cum) { tier = t; break; } }
+                
+                fruit = tier.items[Math.floor(Math.random() * tier.items.length)];
+                amount = Math.floor(Math.random() * 3) + 1;
+                reward = tier.price * amount; // 유저 요청 기준가 적용
+
+                // 다중 구매(2~3개) 시 약 2000원(1500~2500) 할인 적용
+                if (amount > 1) {
+                    let discount = Math.floor(Math.random() * 1000) + 1500; 
+                    reward = Math.max(reward - discount, tier.price); // 할인해도 최소 1개값은 보장
+                }
             }
 
             reward = Math.floor(reward); // 소수점 방지
@@ -934,7 +969,8 @@
             return {
                 x: -50, walkTimer: 0, fruit: fruit, amount: amount, reward: reward,
                 colors: { skin: skins[Math.floor(Math.random()*skins.length)], shirt: shirts[Math.floor(Math.random()*shirts.length)], hat: hats[Math.floor(Math.random()*hats.length)] },
-                shopType: type
+                shopType: type,
+                skin: customerSkin
             };
         }
 
@@ -946,8 +982,8 @@
             if(data) {
                 let trait = '';
                 let traitType = null;
-                // 일반지형 빼고 나무에서 떨어질 때 35% 확률로 특성 부여
-                if (type !== 'normal' && Math.random() < 0.35) {
+                // 일반 및 할로윈 지형 빼고 나무에서 떨어질 때 35% 확률로 특성 부여
+                if (type !== 'normal' && type !== 'halloween' && Math.random() < 0.35) {
                     traitType = type;
                     if (type === 'fire') trait = '불꽃 ';
                     else if (type === 'twisted') trait = '뒤틀린 ';
@@ -993,7 +1029,7 @@
             } else { player.walkTimer = 0; }
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
-            player.y = Math.max(-6950, Math.min(GAME_HEIGHT - player.radius, player.y));
+            player.y = Math.max(-6950, Math.min(2000 - player.radius, player.y));
             
             if (level < 3 && player.y < 30 && player.y > -500) {
                 player.y = 30;
@@ -1028,7 +1064,7 @@
             });
 
             let targetCamY = player.y - GAME_HEIGHT / 2 + 100;
-            targetCamY = Math.max(-7000, Math.min(0, targetCamY));
+            targetCamY = Math.max(-7000, Math.min(1000, targetCamY));
             cameraY += (targetCamY - cameraY) * 0.1;
 
             trees.forEach(tree => {
@@ -1154,7 +1190,7 @@
                             
                             // 주울 때와 완전히 동일한 XP 지급!
                             let baseItemXp = 2; // 기본값
-                            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables];
+                            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables];
                             for (let t of tables) { if (t.items.includes(baseName)) { baseItemXp = t.xp; break; } }
                             let earnedXp = firstC.amount * baseItemXp;
                             
@@ -1432,6 +1468,10 @@
             ctx.fillStyle = '#2c3e50'; ctx.fillRect(0, -2000, GAME_WIDTH, 1000);  
             ctx.fillStyle = '#cf3a24'; ctx.fillRect(0, -1000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1000); 
+            ctx.fillStyle = '#2c124d'; ctx.fillRect(0, 1000, GAME_WIDTH, 1000); // Halloween
+
+            ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1000); ctx.lineTo(GAME_WIDTH, 1000); ctx.stroke();
+            ctx.fillStyle = '#f39c12'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("🎃 축제: 할로윈 지역 (레벨 1 진입 가능)", GAME_WIDTH / 2, 1035);
 
             ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(GAME_WIDTH, 0); ctx.stroke();
             ctx.fillStyle = '#d35400'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("🔥 위험: 불꽃 지역 (레벨 3 진입 가능)", GAME_WIDTH / 2, -20);
@@ -1455,7 +1495,7 @@
             ctx.fillStyle = '#b2bec3'; ctx.fillText("⛏️ 지하: 동굴 지역 (레벨 85 진입 가능)", GAME_WIDTH / 2, -6020);
 
             ctx.strokeStyle = 'rgba(0,0,0,0.08)'; ctx.lineWidth = 2;
-            for(let cy = -7000; cy <= 1000; cy+=100) {
+            for(let cy = -7000; cy <= 2000; cy+=100) {
                 for(let cx = 0; cx <= GAME_WIDTH; cx+=100) { ctx.beginPath(); ctx.arc(cx+50, cy+50, 15, 0, Math.PI); ctx.stroke(); }
             }
 
@@ -1510,7 +1550,7 @@
                 } else if (item.type === 'player') {
                     drawCharacter(ctx, item.obj, item.obj.x, item.obj.y, item.obj === player && player.targetTree !== null, item.obj.walkTimer);
                 } else if (item.type === 'customer') {
-                    drawCharacter(ctx, item.obj, item.obj.x, item.obj.y, false, item.obj.walkTimer);
+                    drawCharacter(ctx, item.obj, item.obj.x, item.obj.y, false, item.obj.walkTimer, item.obj.skin || null);
                     if (item.obj.x === shopFrontX) {
                         ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(item.obj.x - 55, item.obj.y - 85, 110, 40, 5); ctx.fill();
                         ctx.strokeStyle = 'black'; ctx.lineWidth = 1; ctx.stroke();
@@ -1545,6 +1585,8 @@
                         trunkGrad.addColorStop(0, '#00b894'); trunkGrad.addColorStop(0.5, '#55efc4'); trunkGrad.addColorStop(1, '#00cec9');
                     } else if (t.type === 'cave') {
                         trunkGrad.addColorStop(0, '#2d3436'); trunkGrad.addColorStop(0.5, '#636e72'); trunkGrad.addColorStop(1, '#1e272e');
+                    } else if (t.type === 'halloween') {
+                        trunkGrad.addColorStop(0, '#2d3436'); trunkGrad.addColorStop(0.5, '#4a235a'); trunkGrad.addColorStop(1, '#1b1464');
                     } else {
                         trunkGrad.addColorStop(0, '#3e1a08'); trunkGrad.addColorStop(0.5, '#5c2a11'); trunkGrad.addColorStop(1, '#2e1003');
                     }
@@ -1618,6 +1660,57 @@
                             ctx.closePath();
                             ctx.fill(); ctx.stroke();
                         });
+                    } else if (t.type === 'halloween') {
+                        // 얼굴 있는 거대한 잭오랜턴 호박 나무
+                        // 호박 꼭지(줄기)
+                        ctx.fillStyle = '#27ae60'; ctx.beginPath();
+                        ctx.roundRect(-10, -t.radius*1.2 - 25, 20, 30, 4); ctx.fill();
+
+                        // 호박 몸통 (3단 볼륨감)
+                        ctx.fillStyle = '#d35400';
+                        ctx.beginPath(); ctx.ellipse(-t.radius*0.45, -t.radius*0.65, t.radius*0.45, t.radius*0.6, 0, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.ellipse(t.radius*0.45, -t.radius*0.65, t.radius*0.45, t.radius*0.6, 0, 0, Math.PI*2); ctx.fill();
+                        ctx.fillStyle = '#e67e22';
+                        ctx.beginPath(); ctx.ellipse(-t.radius*0.22, -t.radius*0.65, t.radius*0.42, t.radius*0.65, 0, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.ellipse(t.radius*0.22, -t.radius*0.65, t.radius*0.42, t.radius*0.65, 0, 0, Math.PI*2); ctx.fill();
+                        ctx.fillStyle = '#f39c12';
+                        ctx.beginPath(); ctx.ellipse(0, -t.radius*0.65, t.radius*0.35, t.radius*0.68, 0, 0, Math.PI*2); ctx.fill();
+
+                        // 호박 세로 골선(입체감)
+                        ctx.strokeStyle = '#ba4a00'; ctx.lineWidth = 3;
+                        ctx.beginPath(); ctx.ellipse(-t.radius*0.22, -t.radius*0.65, t.radius*0.42, t.radius*0.65, 0, 0, Math.PI*2); ctx.stroke();
+                        ctx.beginPath(); ctx.ellipse(t.radius*0.22, -t.radius*0.65, t.radius*0.42, t.radius*0.65, 0, 0, Math.PI*2); ctx.stroke();
+                        ctx.beginPath(); ctx.ellipse(0, -t.radius*0.65, t.radius*0.35, t.radius*0.68, 0, 0, Math.PI*2); ctx.stroke();
+
+                        // 호박 얼굴 조각 (빛나는 노란 눈/코/지그재그 입)
+                        ctx.shadowColor = '#f1c40f'; ctx.shadowBlur = 18;
+                        ctx.fillStyle = '#f1c40f';
+
+                        // 왼쪽 눈 (삼각형)
+                        ctx.beginPath(); ctx.moveTo(-t.radius*0.35, -t.radius*0.8); ctx.lineTo(-t.radius*0.12, -t.radius*0.8); ctx.lineTo(-t.radius*0.23, -t.radius*0.95); ctx.closePath(); ctx.fill();
+                        // 오른쪽 눈 (삼각형)
+                        ctx.beginPath(); ctx.moveTo(t.radius*0.12, -t.radius*0.8); ctx.lineTo(t.radius*0.35, -t.radius*0.8); ctx.lineTo(t.radius*0.23, -t.radius*0.95); ctx.closePath(); ctx.fill();
+                        // 코 (삼각형)
+                        ctx.beginPath(); ctx.moveTo(0, -t.radius*0.75); ctx.lineTo(-t.radius*0.08, -t.radius*0.65); ctx.lineTo(t.radius*0.08, -t.radius*0.65); ctx.closePath(); ctx.fill();
+
+                        // 지그재그 웃는 입
+                        let my = -t.radius*0.45;
+                        ctx.beginPath();
+                        ctx.moveTo(-t.radius*0.35, my);
+                        ctx.lineTo(-t.radius*0.22, my + 14);
+                        ctx.lineTo(-t.radius*0.12, my);
+                        ctx.lineTo(0, my + 14);
+                        ctx.lineTo(t.radius*0.12, my);
+                        ctx.lineTo(t.radius*0.22, my + 14);
+                        ctx.lineTo(t.radius*0.35, my);
+                        ctx.lineTo(t.radius*0.22, my - 10);
+                        ctx.lineTo(t.radius*0.12, my);
+                        ctx.lineTo(0, my - 10);
+                        ctx.lineTo(-t.radius*0.12, my);
+                        ctx.lineTo(-t.radius*0.22, my - 10);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
                     } else if (t.type === 'radioactive') {
                         // 고급스러운 에메랄드 금장 방사능 나무
                         let leafGrad = ctx.createRadialGradient(0, -60, 20, 0, -50, t.radius);
