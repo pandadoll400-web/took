@@ -439,8 +439,8 @@
             { chance: 0.30, name: '일반', price: 2000, xp: 50, color: '#e67e22', items: ['주황호박'] },
             { chance: 0.30, name: '일반', price: 2000, xp: 50, color: '#27ae60', items: ['초록호박'] },
             { chance: 0.30, name: '일반', price: 2000, xp: 50, color: '#ecf0f1', items: ['하얀호박'] },
-            { chance: 0.093, name: '전설', price: 15000, xp: 300, color: '#f1c40f', items: ['잭오랜턴'] },
-            { chance: 0.007, name: '불멸', price: 300000, xp: 5000, color: '#95a5a6', items: ['깨진호박'] }
+            { chance: 0.09, name: '전설', price: 15000, xp: 300, color: '#f1c40f', items: ['잭오랜턴'] },
+            { chance: 0.01, name: '불멸', price: 300000, xp: 5000, color: '#95a5a6', items: ['깨진호박'] }
         ];
 
 
@@ -598,7 +598,7 @@
             
             grid.innerHTML = `<div class="grid-item" style="border: 2px solid ${color}; color: ${hasBrokenPumpkin ? '#fff' : '#777'}; width: 100%; max-width: 200px; text-align: center; padding: 15px; border-radius: 10px; background: rgba(0,0,0,0.3);">
                 <strong style="color:${color}; font-size: 16px;">${name}</strong><br>
-                <span style="font-size: 13px; margin-top: 5px; display: inline-block;">${hasBrokenPumpkin ? '✨ 보유 중' : '미보유 (호박 나무 0.7% 확률)'}</span>
+                <span style="font-size: 13px; margin-top: 5px; display: inline-block;">${hasBrokenPumpkin ? '✨ 보유 중' : '미보유 (호박 나무 1% 확률)'}</span>
             </div>`;
             
             const progressHtml = `진행도: ${hasBrokenPumpkin ? 1 : 0} / 1`;
