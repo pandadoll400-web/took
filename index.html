@@ -194,6 +194,14 @@
             <div class="grid" id="cave-grid"></div>
             <button class="close-btn" onclick="document.getElementById('cave-modal').style.display='none'" style="background: #2d3436; border: 1px solid #636e72;">닫기</button>
         </div>
+
+        <div id="halloween-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(25, 12, 38, 0.95); color: white; padding: 20px; border-radius: 15px; width: 85%; max-width: 400px; max-height: 80%; overflow-y: auto; display: none; border: 2px solid #8e44ad; z-index: 40;">
+            <h2 style="margin-top: 0; text-align: center; color: #f39c12;">🎃 할로윈 도감</h2>
+            <p style="text-align: center; font-size: 14px; color: #dfe6e9;">호박 나무에서 나오는 '깨진호박'을 보유하면 사신 스킨을 드립니다!</p>
+            <div id="halloween-progress" style="text-align: center; margin-bottom: 15px; font-weight: bold; color: #f1c40f;">진행도: 0 / 1</div>
+            <div class="grid" id="halloween-grid" style="display: flex; justify-content: center;"></div>
+            <button class="close-btn" onclick="document.getElementById('halloween-modal').style.display='none'" style="background: #4a235a; border: 1px solid #8e44ad;">닫기</button>
+        </div>
     </div>
 
     <script>
@@ -250,6 +258,9 @@
                             return;
                         } else if (shop.type === 'cave') {
                             openCaveIndex();
+                            return;
+                        } else if (shop.type === 'halloween') {
+                            openHalloweenIndex();
                             return;
                         }
                     }
@@ -555,6 +566,45 @@
             }
         }
 
+        function openHalloweenIndex() {
+            document.getElementById('halloween-modal').style.display = 'block';
+            resetJoyMouse();
+            player.targetTree = null;
+            
+            const grid = document.getElementById('halloween-grid');
+            grid.innerHTML = '';
+            
+            const hasBrokenPumpkin = (inventory['깨진호박'] > 0);
+            const color = hasBrokenPumpkin ? '#2ecc71' : '#555';
+            const name = hasBrokenPumpkin ? '깨진호박' : '???';
+            
+            grid.innerHTML = `<div class="grid-item" style="border: 2px solid ${color}; color: ${hasBrokenPumpkin ? '#fff' : '#777'}; width: 100%; max-width: 200px; text-align: center; padding: 15px; border-radius: 10px; background: rgba(0,0,0,0.3);">
+                <strong style="color:${color}; font-size: 16px;">${name}</strong><br>
+                <span style="font-size: 13px; margin-top: 5px; display: inline-block;">${hasBrokenPumpkin ? '✨ 보유 중' : '미보유 (호박 나무 0.1% 확률)'}</span>
+            </div>`;
+            
+            const progressHtml = `진행도: ${hasBrokenPumpkin ? 1 : 0} / 1`;
+            let extraBtn = '';
+            
+            if (hasBrokenPumpkin && !ownedSkins.includes('reaper')) {
+                extraBtn = `<br><button onclick="claimReaperSkin()" style="margin-top:12px; background:#8e44ad; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; font-size:15px; box-shadow: 0 0 10px rgba(142,68,173,0.5);">💀 사신 스킨 획득하기!</button>`;
+            } else if (ownedSkins.includes('reaper')) {
+                extraBtn = `<br><div style="margin-top:10px; color:#2ecc71; font-weight:bold;">✨ 사신 스킨 보유 중!</div>`;
+            }
+            document.getElementById('halloween-progress').innerHTML = progressHtml + extraBtn;
+        }
+
+        function claimReaperSkin() {
+            if ((inventory['깨진호박'] > 0) && !ownedSkins.includes('reaper')) {
+                ownedSkins.push('reaper');
+                floatTexts.push({ x: player.x, y: player.y - 100, text: `💀 사신 스킨 획득!`, color: '#8e44ad', life: 100 });
+                updateShopSkinUI();
+                updateInvSkinUI();
+                openHalloweenIndex();
+                saveGame();
+            }
+        }
+
         function addXp(amount, x, y) {
             amount = amount * 5; // 유저 요청: 상시 경험치 버프 반토막 (너프)
             xp += amount;
@@ -630,7 +680,8 @@
             { id: 'jack_fiery', name: '불타는 잭오랜턴', price: 10000, icon: '🎃🔥' },
             { id: 'snorkeling_fisher', name: '스노우쿨링 어부', price: 0, icon: '🤿', isReward: true },
             { id: 'mad_scientist', name: '매드 사이언티스트', price: 0, icon: '🥼', isReward: true },
-            { id: 'archaeologist', name: '고고학자', price: 0, icon: '🤠', isReward: true }
+            { id: 'archaeologist', name: '고고학자', price: 0, icon: '🤠', isReward: true },
+            { id: 'reaper', name: '사신', price: 0, icon: '💀', isReward: true }
         ];
 
         function updateShopSkinUI() {
@@ -1008,6 +1059,7 @@
             if (document.getElementById('ocean-modal').style.display === 'block') return;
             if (document.getElementById('radioactive-modal').style.display === 'block') return;
             if (document.getElementById('cave-modal').style.display === 'block') return;
+            if (document.getElementById('halloween-modal').style.display === 'block') return;
 
             let moveX = 0, moveY = 0;
             if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
@@ -1129,6 +1181,9 @@
                                 floatTexts.push({ x: player.x, y: player.y - 80, text: `암석 도감 등록: ${baseName}!`, color: '#b2bec3', life: 60 });
                             }
                         }
+                        if (baseName === '깨진호박') {
+                            floatTexts.push({ x: player.x, y: player.y - 80, text: `🎃 불멸: 깨진호박 획득! (사신 스킨 해금 가능)`, color: '#8e44ad', life: 90 });
+                        }
                         floatTexts.push({ x: player.x, y: player.y - 40, text: `+${f.fruit}`, color: f.color, life: 40 });
                         addXp(f.xp, player.x + 20, player.y - 60);
                         fruitsOnGround.splice(i, 1); continue;
@@ -1219,7 +1274,110 @@
             let facing = char.facing || 1;
 
             let useSkin = (skin === 'snorkeling_fisher' || skin === 'mad_scientist' || skin === 'archaeologist') ? 'default' : skin;
-            if (useSkin.startsWith('ghost')) {
+            if (useSkin === 'reaper') {
+                // 사신 스킨: 검정색 로브, 해골 얼굴, 낫
+                ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.translate(0, -bobbing);
+
+                // 검정색 로브 발 / 하단
+                ctx.fillStyle = '#0a0a0d';
+                ctx.save(); ctx.translate(-6, 15); ctx.rotate((walkAngle * Math.PI)/180); ctx.fillRect(-5, 0, 10, 12); ctx.restore();
+                ctx.save(); ctx.translate(6, 15); ctx.rotate((-walkAngle * Math.PI)/180); ctx.fillRect(-5, 0, 10, 12); ctx.restore();
+
+                // 검정색 로브 몸통 (망토와 옷자락)
+                ctx.fillStyle = '#111116';
+                ctx.beginPath();
+                ctx.moveTo(-16, -10);
+                ctx.lineTo(-20, 23);
+                ctx.lineTo(-12, 19);
+                ctx.lineTo(-4, 24);
+                ctx.lineTo(4, 19);
+                ctx.lineTo(12, 24);
+                ctx.lineTo(20, 20);
+                ctx.lineTo(16, -10);
+                ctx.closePath();
+                ctx.fill();
+
+                // 로브 중앙 음영
+                ctx.fillStyle = '#1e1e24';
+                ctx.beginPath(); ctx.roundRect(-9, -8, 18, 24, 3); ctx.fill();
+
+                let armS = isShaking ? Math.sin(Date.now()*0.02)*10 : 0;
+
+                // 왼팔 (로브 소매)
+                ctx.fillStyle = '#111116';
+                ctx.save(); ctx.translate(-14, -2); ctx.rotate(-Math.PI/6 + armS*0.05); ctx.roundRect(-4, 0, 8, 16, 3); ctx.fill();
+                // 뼈 손
+                ctx.fillStyle = '#f5f6fa'; ctx.beginPath(); ctx.arc(0, 16, 3, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+                // 오른팔 (낫을 쥔 손)
+                ctx.save(); ctx.translate(14, -2); ctx.rotate(Math.PI/6 - armS*0.05);
+                ctx.fillStyle = '#111116'; ctx.roundRect(-4, 0, 8, 16, 3); ctx.fill();
+                // 뼈 손
+                ctx.fillStyle = '#f5f6fa'; ctx.beginPath(); ctx.arc(0, 16, 3.5, 0, Math.PI*2); ctx.fill();
+
+                // 낫(Scythe) - 긴 자루와 거대한 은빛 날!
+                ctx.strokeStyle = '#2d3436'; ctx.lineWidth = 3.5; ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.moveTo(0, -45); ctx.lineTo(0, 26); ctx.stroke();
+                // 금속 고정부
+                ctx.fillStyle = '#636e72'; ctx.fillRect(-3, -47, 6, 4);
+                // 은빛 곡선 칼날
+                ctx.shadowColor = '#8e44ad'; ctx.shadowBlur = 10;
+                ctx.fillStyle = '#dfe6e9'; ctx.strokeStyle = '#b2bec3'; ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(0, -45);
+                ctx.bezierCurveTo(15 * facing, -55, 32 * facing, -45, 36 * facing, -28);
+                ctx.bezierCurveTo(28 * facing, -36, 15 * facing, -40, 0, -42);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                ctx.shadowBlur = 0;
+                ctx.restore();
+
+                // 검정색 로브 후드 (머리 감싸는 망토)
+                ctx.fillStyle = '#111116';
+                ctx.beginPath(); ctx.arc(0, -20, 18, 0, Math.PI*2); ctx.fill();
+                // 후드 뾰족한 끝 (뒤쪽으로 살짝 솟음)
+                ctx.beginPath(); ctx.moveTo(-8, -30); ctx.lineTo(0, -36); ctx.lineTo(8, -30); ctx.fill();
+
+                // 후드 안쪽 깊은 어둠
+                ctx.fillStyle = '#050508';
+                ctx.beginPath(); ctx.arc(0, -20, 13, 0, Math.PI*2); ctx.fill();
+
+                // 해골 얼굴 (Skull Face)
+                ctx.fillStyle = '#f5f6fa';
+                ctx.beginPath(); ctx.arc(0, -20, 10, 0, Math.PI*2); ctx.fill();
+                // 턱/광대뼈
+                ctx.beginPath(); ctx.roundRect(-6, -15, 12, 7, 2); ctx.fill();
+
+                // 텅 빈 해골 눈구멍 (Black Sockets with eerie cyan dot)
+                ctx.fillStyle = '#050508';
+                ctx.beginPath(); ctx.ellipse(-4 + (facing*1.5), -21, 2.5, 3, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(4 + (facing*1.5), -21, 2.5, 3, 0, 0, Math.PI*2); ctx.fill();
+
+                // 섬뜩한 눈빛 (신비로운 푸른빛 도트)
+                ctx.fillStyle = '#00cec9';
+                ctx.beginPath(); ctx.arc(-4 + (facing*1.5), -21, 1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(4 + (facing*1.5), -21, 1, 0, Math.PI*2); ctx.fill();
+
+                // 코뼈 구멍 (역삼각형)
+                ctx.fillStyle = '#050508';
+                ctx.beginPath(); ctx.moveTo(0, -17); ctx.lineTo(-1.2, -15); ctx.lineTo(1.2, -15); ctx.closePath(); ctx.fill();
+
+                // 해골 치아 라인
+                ctx.strokeStyle = '#2d3436'; ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(-4, -11); ctx.lineTo(4, -11);
+                ctx.moveTo(-3, -13); ctx.lineTo(-3, -9);
+                ctx.moveTo(0, -13); ctx.lineTo(0, -9);
+                ctx.moveTo(3, -13); ctx.lineTo(3, -9);
+                ctx.stroke();
+
+                // 후드 옷깃 장식
+                ctx.fillStyle = '#1e1e24';
+                ctx.beginPath(); ctx.ellipse(0, -8, 14, 5, 0, 0, Math.PI*2); ctx.fill();
+
+            } else if (useSkin.startsWith('ghost')) {
                 let floatOffset = Math.sin(Date.now() * 0.005) * 5 - bobbing;
                 ctx.translate(0, floatOffset - 10);
                 
