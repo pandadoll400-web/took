@@ -140,9 +140,10 @@
             <div id="shop-limited" style="display: none;">
                 <div class="limited-box">
                     <div class="limited-title">✨ 고대 도끼 한정 조합 ✨</div>
-                    <div class="limited-desc">금 도끼와 잊혀진 심해의 광석을 융합하여 강력한 고대 도끼를 만듭니다. (나무 패는 시간 대폭 감소)</div>
-                    <div class="limited-soldout">매진되었습니다! (시간 초과)</div>
-                    <button class="limited-btn" disabled>매진</button>
+                    <div class="limited-desc">은(철) 도끼와 금 도끼를 융합하여 강력한 고대 도끼를 제작합니다!<br><span style="color:#2ecc71; font-weight:bold;">(나무 패는 시간: 2.7초)</span></div>
+                    <div id="limited-timer-text" style="color: #f1c40f; font-weight: bold; font-size: 15px; margin-bottom: 12px;">남은 시간: 계산 중...</div>
+                    <div id="limited-condition-text" style="color: #bdc3c7; font-size: 13px; margin-bottom: 15px;">필요 재료: 은 도끼 + 금 도끼</div>
+                    <button class="limited-btn" id="btn-craft-ancient" onclick="craftAncientAxe()" style="cursor: pointer; background: #e67e22; color: white;">조합하기</button>
                 </div>
             </div>
 
@@ -447,7 +448,8 @@
             { level: 0, name: '맨손 (기본)', timeText: '나무 패는 시간: 5초', icon: '✊' },
             { level: 1, name: '나무 도끼', timeText: '나무 패는 시간: 4초', icon: '🪓' },
             { level: 2, name: '은(철) 도끼', timeText: '나무 패는 시간: 3.5초', icon: '⛏️' },
-            { level: 3, name: '금 도끼', timeText: '나무 패는 시간: 3.2초', icon: '✨' }
+            { level: 3, name: '금 도끼', timeText: '나무 패는 시간: 3.2초', icon: '✨' },
+            { level: 4, name: '고대 도끼', timeText: '나무 패는 시간: 2.7초', icon: '⚡🪓' }
         ];
         let inventory = {};
         let fishCollection = [];
@@ -654,6 +656,90 @@
             updateShopSkinUI();
         });
 
+        // 고대 도끼 한정 조합 (개발완료 기준 5분 제한)
+        const CRAFT_EXPIRATION_TIME = 1791698460000 + (5 * 60 * 1000); // 개발 완료 시점으로부터 5분
+
+        function updateLimitedUI() {
+            const timerEl = document.getElementById('limited-timer-text');
+            const condEl = document.getElementById('limited-condition-text');
+            const btnEl = document.getElementById('btn-craft-ancient');
+            if (!timerEl || !btnEl) return;
+
+            const now = Date.now();
+            const diff = CRAFT_EXPIRATION_TIME - now;
+
+            if (axeLevel >= 4) {
+                timerEl.innerText = "✨ 고대 도끼 제작 완료!";
+                timerEl.style.color = "#2ecc71";
+                condEl.innerHTML = "<span style='color:#2ecc71;'>이미 고대 도끼를 보유하고 있습니다. (인벤토리에서 장착 가능)</span>";
+                btnEl.innerText = "제작 완료";
+                btnEl.disabled = true;
+                btnEl.style.background = "#95a5a6";
+                btnEl.style.cursor = "not-allowed";
+                return;
+            }
+
+            if (diff <= 0) {
+                timerEl.innerText = "매진되었습니다! (시간 초과)";
+                timerEl.style.color = "#e74c3c";
+                condEl.innerHTML = "<span style='color:#e74c3c;'>5분 한정 조합 기간이 종료되었습니다.</span>";
+                btnEl.innerText = "매진";
+                btnEl.disabled = true;
+                btnEl.style.background = "#8e7a3f";
+                btnEl.style.cursor = "not-allowed";
+                return;
+            }
+
+            const minutes = Math.floor(diff / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            timerEl.innerText = `⏳ 남은 시간: ${minutes}분 ${seconds < 10 ? '0' : ''}${seconds}초`;
+            timerEl.style.color = "#f1c40f";
+
+            // 은도끼와 금도끼를 모두 구매했는지 체크 (axeLevel >= 3이면 은도끼와 금도끼를 모두 거쳐옴)
+            const hasSilverAndGold = (axeLevel >= 3);
+            if (hasSilverAndGold) {
+                condEl.innerHTML = "<span style='color:#2ecc71;'>필요 재료 충족: 은(철) 도끼 ✔ + 금 도끼 ✔</span>";
+                btnEl.innerText = "조합하기";
+                btnEl.disabled = false;
+                btnEl.style.background = "#e67e22";
+                btnEl.style.cursor = "pointer";
+            } else {
+                condEl.innerHTML = "<span style='color:#e74c3c;'>필요 재료 부족: 은 도끼와 금 도끼를 모두 보유해야 합니다.</span>";
+                btnEl.innerText = "재료 부족";
+                btnEl.disabled = true;
+                btnEl.style.background = "#7f8c8d";
+                btnEl.style.cursor = "not-allowed";
+            }
+        }
+
+        setInterval(updateLimitedUI, 1000);
+
+        function craftAncientAxe() {
+            const now = Date.now();
+            if (now > CRAFT_EXPIRATION_TIME) {
+                alert("한정 조합 시간이 만료되어 매진되었습니다!");
+                updateLimitedUI();
+                return;
+            }
+            if (axeLevel < 3) {
+                alert("은 도끼와 금 도끼를 모두 보유하고 있어야 조합할 수 있습니다!");
+                return;
+            }
+            if (axeLevel >= 4) {
+                alert("이미 고대 도끼를 보유하고 있습니다!");
+                return;
+            }
+
+            axeLevel = 4;
+            equippedAxe = 4; // 즉시 장착
+            updateLimitedUI();
+            updateAxeUI();
+            updateInvAxeUI();
+            saveGame();
+            floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `⚡ 고대 도끼(2.7초) 조합 성공!`, color: '#f1c40f', life: 100, size: 22 });
+            alert("축하합니다! 은 도끼와 금 도끼가 융합되어 '고대 도끼(나무 패는 시간: 2.7초)'가 인벤토리로 들어왔습니다!");
+        }
+
         function switchShopTab(tab) {
             document.getElementById('shop-axe').style.display = tab === 'axe' ? 'block' : 'none';
             document.getElementById('shop-limited').style.display = tab === 'limited' ? 'block' : 'none';
@@ -661,6 +747,7 @@
             document.querySelectorAll('.shop-tab-btn').forEach((btn, idx) => {
                 btn.className = (idx === 0 && tab === 'axe') || (idx === 1 && tab === 'limited') || (idx === 2 && tab === 'skin') ? 'shop-tab-btn active' : 'shop-tab-btn';
             });
+            if (tab === 'limited') updateLimitedUI();
         }
 
         function buyAxe(reqLevel, price) {
@@ -1195,6 +1282,7 @@
                         if (equippedAxe === 1) maxP = Math.floor(tree.maxProgress * (4.0 / 5.0)); // 4초
                         else if (equippedAxe === 2) maxP = Math.floor(tree.maxProgress * (3.5 / 5.0)); // 3.5초
                         else if (equippedAxe === 3) maxP = Math.floor(tree.maxProgress * (3.2 / 5.0)); // 3.2초
+                        else if (equippedAxe === 4) maxP = Math.floor(tree.maxProgress * (2.7 / 5.0)); // 2.7초 (고대 도끼)
 
                         if (tree.progress >= maxP) {
                             tree.progress = 0;
@@ -1330,10 +1418,13 @@
             if (!axeType || axeType === 0) return;
             ctx.save();
             // 자루 (Axe Handle)
-            ctx.fillStyle = axeType === 3 ? '#5d4037' : '#8B4513';
+            let handleCol = '#8B4513';
+            if (axeType === 3) handleCol = '#5d4037';
+            else if (axeType === 4) handleCol = '#2d3436';
+            ctx.fillStyle = handleCol;
             ctx.fillRect(-2, -26, 4, 30);
 
-            // 날 색상 결정 (1: 나무도끼 = 나무색 날, 2: 은도끼 = 은색 날, 3: 금도끼 = 금색 날)
+            // 날 색상 결정 (1: 나무도끼 = 나무색 날, 2: 은도끼 = 은색 날, 3: 금도끼 = 금색 날, 4: 고대 도끼 = 신비로운 청록/번개빛 날)
             let bladeColor = '#cd853f'; // 나무도끼는 나무색 날!
             let strokeColor = '#8B4513';
             if (axeType === 2) {
@@ -1342,6 +1433,11 @@
             } else if (axeType === 3) {
                 bladeColor = '#f1c40f'; // 금도끼
                 strokeColor = '#d35400';
+            } else if (axeType === 4) {
+                bladeColor = '#00cec9'; // 고대 도끼 (신비로운 청록/에메랄드 룬 블레이드)
+                strokeColor = '#0984e3';
+                ctx.shadowColor = '#00cec9';
+                ctx.shadowBlur = 8;
             }
 
             // 날카로운 도끼 머리 (Axe Head)
@@ -1365,6 +1461,12 @@
                 // 금도끼 빛나는 하이라이트
                 ctx.fillStyle = '#fff';
                 ctx.beginPath(); ctx.arc(8 * facing, -23, 2, 0, Math.PI*2); ctx.fill();
+            } else if (axeType === 4) {
+                // 고대 도끼 신비로운 번개 룬 빛
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(8 * facing, -23, 2.5, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#ffeaa7';
+                ctx.beginPath(); ctx.arc(4 * facing, -20, 1.5, 0, Math.PI*2); ctx.fill();
             }
             ctx.restore();
         }
@@ -1919,6 +2021,7 @@
                         if (equippedAxe === 1) maxP = Math.floor(t.maxProgress * (4.0 / 5.0));
                         else if (equippedAxe === 2) maxP = Math.floor(t.maxProgress * (3.5 / 5.0));
                         else if (equippedAxe === 3) maxP = Math.floor(t.maxProgress * (3.2 / 5.0));
+                        else if (equippedAxe === 4) maxP = Math.floor(t.maxProgress * (2.7 / 5.0));
                         ctx.fillStyle = '#3498db'; ctx.fillRect(-38, -143, 76 * (t.progress / maxP), 8);
                         ctx.fillStyle = 'white'; ctx.font = '10px Arial'; ctx.textAlign = 'center'; ctx.fillText("흔드는 중...", 0, -150);
                     }
