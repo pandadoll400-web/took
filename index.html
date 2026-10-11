@@ -270,13 +270,13 @@
             blackoutState.active = true;
             blackoutState.text = 'space is coming';
 
-            // 1초 동안 검정 화면에 'space is coming' 표시 후 로케트 사라지고 복귀
+            // 2초 동안 검정 화면에 'space is coming' 표시 후 로케트 사라지고 복귀
             setTimeout(() => {
                 rocket.visible = false;
                 rocket.launched = true;
                 blackoutState.active = false;
                 saveGame();
-            }, 1000);
+            }, 2000);
         }
 
         function handleTreeClick(cx, cy, isSpacebar = false) {
