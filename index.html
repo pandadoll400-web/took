@@ -158,6 +158,7 @@
             <div class="shop-tabs">
                 <button class="shop-tab-btn active" onclick="switchInvTab('items')">과일</button>
                 <button class="shop-tab-btn" onclick="switchInvTab('skins')">스킨</button>
+                <button class="shop-tab-btn" onclick="switchInvTab('axes')">도끼</button>
             </div>
             
             <div id="inv-items" style="display: block;">
@@ -166,6 +167,10 @@
 
             <div id="inv-skins" style="display: none;">
                 <div id="inv-skin-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+            </div>
+
+            <div id="inv-axes" style="display: none;">
+                <div id="inv-axe-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
             </div>
 
             <button class="close-btn" id="close-modal-btn">닫기</button>
@@ -437,6 +442,13 @@
         let level = 1; let xp = 0; let maxXp = 20;
         let money = 0;
         let axeLevel = 0; // 0:기본, 1:나무도끼, 2:철(은)도끼, 3:금도끼
+        let equippedAxe = 0; // 현재 손에 장착 중인 도끼
+        const axesData = [
+            { level: 0, name: '맨손 (기본)', timeText: '나무 패는 시간: 5초', icon: '✊' },
+            { level: 1, name: '나무 도끼', timeText: '나무 패는 시간: 4초', icon: '🪓' },
+            { level: 2, name: '은(철) 도끼', timeText: '나무 패는 시간: 3.5초', icon: '⛏️' },
+            { level: 3, name: '금 도끼', timeText: '나무 패는 시간: 3.2초', icon: '✨' }
+        ];
         let inventory = {};
         let fishCollection = [];
         let radioactiveCollection = [];
@@ -654,8 +666,15 @@
         function buyAxe(reqLevel, price) {
             if (axeLevel >= reqLevel) { alert('이미 더 좋거나 같은 등급의 도끼를 보유 중입니다!'); return; }
             if (money >= price) {
-                money -= price; axeLevel = reqLevel; updateMoney(); updateAxeUI();
-                floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `도끼 업그레이드!`, color: '#2ecc71', life: 60 });
+                money -= price; 
+                axeLevel = reqLevel; 
+                equippedAxe = reqLevel; // 구매 시 자동으로 즉시 장착!
+                updateMoney(); 
+                updateAxeUI();
+                updateInvAxeUI();
+                saveGame();
+                let axeName = axesData.find(a => a.level === reqLevel)?.name || '도끼';
+                floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `${axeName} 구매 및 장착!`, color: '#2ecc71', life: 60 });
             } else { alert('돈이 부족합니다!'); }
         }
 
@@ -668,6 +687,44 @@
                 } else { 
                     btn.innerText = '구매하기'; btn.disabled = false; btn.style.background = '#2ecc71'; 
                 }
+            }
+        }
+
+        function updateInvAxeUI() {
+            const list = document.getElementById('inv-axe-list');
+            if (!list) return;
+            list.innerHTML = '';
+            axesData.forEach(axe => {
+                const isOwned = axeLevel >= axe.level;
+                if (!isOwned) return;
+
+                const isEquipped = equippedAxe === axe.level;
+                let btnHtml = '';
+                if (isEquipped) {
+                    btnHtml = `<button disabled style="background: #e67e22; padding: 8px 15px; color: white; border: none; border-radius: 5px; font-weight: bold;">장착중</button>`;
+                } else {
+                    btnHtml = `<button onclick="equipAxe(${axe.level})" style="background: #2ecc71; padding: 8px 15px; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">장착하기</button>`;
+                }
+
+                list.innerHTML += `
+                    <div class="axe-item" style="display:flex; justify-content:space-between; align-items:center; padding: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.06); border-radius: 8px;">
+                        <div style="text-align:left;">
+                            <h4 style="margin:0 0 5px 0; color:#fff; font-size:16px;">${axe.icon} ${axe.name}</h4>
+                            <p style="margin:0; font-size:12px; color:#bdc3c7;">${axe.timeText}</p>
+                        </div>
+                        <div>${btnHtml}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function equipAxe(lvl) {
+            if (axeLevel >= lvl) {
+                equippedAxe = lvl;
+                updateInvAxeUI();
+                saveGame();
+                let axeName = axesData.find(a => a.level === lvl)?.name || '도끼';
+                floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `${axeName} 장착 완료!`, color: '#2ecc71', life: 60 });
             }
         }
 
@@ -793,9 +850,11 @@
         function switchInvTab(tab) {
             document.getElementById('inv-items').style.display = tab === 'items' ? 'block' : 'none';
             document.getElementById('inv-skins').style.display = tab === 'skins' ? 'block' : 'none';
+            document.getElementById('inv-axes').style.display = tab === 'axes' ? 'block' : 'none';
             document.querySelectorAll('#inventory-modal .shop-tab-btn').forEach((btn, idx) => {
-                btn.className = (idx === 0 && tab === 'items') || (idx === 1 && tab === 'skins') ? 'shop-tab-btn active' : 'shop-tab-btn';
+                btn.className = (idx === 0 && tab === 'items') || (idx === 1 && tab === 'skins') || (idx === 2 && tab === 'axes') ? 'shop-tab-btn active' : 'shop-tab-btn';
             });
+            if (tab === 'axes') updateInvAxeUI();
         }
 
         // 동적 인벤토리 UI 구성
@@ -812,6 +871,7 @@
             if (grid.innerHTML === '') grid.innerHTML = '<p style="grid-column: span 3; text-align:center;">가방이 비어있습니다.</p>';
             
             updateInvSkinUI();
+            updateInvAxeUI();
         });
         document.getElementById('close-modal-btn').addEventListener('click', () => { document.getElementById('inventory-modal').style.display = 'none'; });
 
@@ -917,6 +977,7 @@
             const data = {
                 level: level, xp: xp, maxXp: maxXp, money: money, inventory: inventory,
                 axeLevel: axeLevel,
+                equippedAxe: equippedAxe,
                 ownedSkins: ownedSkins, equippedSkin: equippedSkin,
                 treeUnlocked: trees.map(t => t.unlocked),
                 fishCollection: fishCollection,
@@ -936,6 +997,7 @@
                     xp = Math.min(data.xp || 0, maxXp - 1); // 꽉 찬 경험치 보정
                     money = data.money || 0;
                     axeLevel = data.axeLevel || 0;
+                    equippedAxe = (data.equippedAxe !== undefined) ? data.equippedAxe : axeLevel;
                     if (data.ownedSkins) ownedSkins = data.ownedSkins;
                     if (data.equippedSkin) equippedSkin = data.equippedSkin;
                     if (data.inventory) inventory = { ...inventory, ...data.inventory };
@@ -1130,9 +1192,9 @@
                         tree.progress += 1;
                         
                         let maxP = tree.maxProgress;
-                        if (axeLevel === 1) maxP = Math.floor(tree.maxProgress * (4.0 / 5.0)); // 4초
-                        else if (axeLevel === 2) maxP = Math.floor(tree.maxProgress * (3.5 / 5.0)); // 3.5초
-                        else if (axeLevel === 3) maxP = Math.floor(tree.maxProgress * (3.2 / 5.0)); // 3.2초
+                        if (equippedAxe === 1) maxP = Math.floor(tree.maxProgress * (4.0 / 5.0)); // 4초
+                        else if (equippedAxe === 2) maxP = Math.floor(tree.maxProgress * (3.5 / 5.0)); // 3.5초
+                        else if (equippedAxe === 3) maxP = Math.floor(tree.maxProgress * (3.2 / 5.0)); // 3.2초
 
                         if (tree.progress >= maxP) {
                             tree.progress = 0;
@@ -1262,6 +1324,49 @@
                 floatTexts[i].y -= 1; floatTexts[i].life--;
                 if (floatTexts[i].life <= 0) floatTexts.splice(i, 1);
             }
+        }
+
+        function drawEquippedAxe(ctx, axeType, facing = 1) {
+            if (!axeType || axeType === 0) return;
+            ctx.save();
+            // 자루 (Axe Handle)
+            ctx.fillStyle = axeType === 3 ? '#5d4037' : '#8B4513';
+            ctx.fillRect(-2, -26, 4, 30);
+
+            // 날 색상 결정 (1: 나무도끼 = 나무색 날, 2: 은도끼 = 은색 날, 3: 금도끼 = 금색 날)
+            let bladeColor = '#cd853f'; // 나무도끼는 나무색 날!
+            let strokeColor = '#8B4513';
+            if (axeType === 2) {
+                bladeColor = '#ecf0f1'; // 은(철)도끼
+                strokeColor = '#95a5a6';
+            } else if (axeType === 3) {
+                bladeColor = '#f1c40f'; // 금도끼
+                strokeColor = '#d35400';
+            }
+
+            // 날카로운 도끼 머리 (Axe Head)
+            ctx.fillStyle = bladeColor;
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, -25);
+            ctx.lineTo(13 * facing, -31);
+            ctx.quadraticCurveTo(17 * facing, -23, 13 * facing, -15);
+            ctx.lineTo(0, -19);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // 도끼 뒷머리 둔기 부분
+            ctx.fillStyle = strokeColor;
+            ctx.fillRect(-4 * facing, -23, 4 * facing, 5);
+
+            if (axeType === 3) {
+                // 금도끼 빛나는 하이라이트
+                ctx.fillStyle = '#fff';
+                ctx.beginPath(); ctx.arc(8 * facing, -23, 2, 0, Math.PI*2); ctx.fill();
+            }
+            ctx.restore();
         }
 
         function drawCharacter(ctx, char, x, y, isShaking, walkTimer, forceSkin = null) {
@@ -1515,7 +1620,58 @@
                 else if (skin === 'archaeologist') shirtCol = '#bfa181';
                 torsoGrad.addColorStop(0, shirtCol); torsoGrad.addColorStop(1, '#2c3e50');
                 ctx.fillStyle = torsoGrad; ctx.beginPath(); ctx.roundRect(-15, -5, 30, 22, 5); ctx.fill();
-                if (isShaking) {
+                let hasAxe = (char === player && equippedAxe > 0);
+                if (hasAxe) {
+                    if (isShaking) {
+                        // 장착한 도끼로 나무를 퍽퍽 내리찍으며 휘두르는 역동적인 애니메이션!
+                        let chopCycle = Math.sin(player.shakeTimer * 1.5);
+                        let swingRot = -0.5 + chopCycle * 0.9;
+                        
+                        // 반대쪽 지탱하는 팔
+                        ctx.save();
+                        ctx.translate(-10 * facing, -2);
+                        ctx.rotate((-0.3 + chopCycle * 0.3) * facing);
+                        ctx.fillStyle = char.colors.skin;
+                        ctx.fillRect(-4, -14, 8, 16);
+                        ctx.beginPath(); ctx.arc(0, -14, 4, 0, Math.PI*2); ctx.fill();
+                        ctx.restore();
+
+                        // 도끼 쥔 팔 (내리찍는 모션)
+                        ctx.save();
+                        ctx.translate(12 * facing, -4);
+                        ctx.rotate(swingRot * facing);
+                        ctx.fillStyle = char.colors.skin;
+                        ctx.fillRect(-4, -14, 8, 18);
+                        ctx.beginPath(); ctx.arc(0, -14, 4.5, 0, Math.PI*2); ctx.fill();
+
+                        // 손에 쥔 도끼
+                        ctx.translate(0, -14);
+                        ctx.rotate(0.2 * facing);
+                        drawEquippedAxe(ctx, equippedAxe, facing);
+                        ctx.restore();
+                    } else {
+                        // 평상시 / 걸을 때: 도끼를 손에 쥐고 자연스럽게 들고 다님!
+                        ctx.save();
+                        ctx.translate(-18 * facing, 0);
+                        ctx.rotate((-walkAngle * Math.PI)/180);
+                        ctx.fillStyle = char.colors.skin;
+                        ctx.fillRect(-4, 0, 8, 15);
+                        ctx.beginPath(); ctx.arc(0, 15, 4, 0, Math.PI*2); ctx.fill();
+                        ctx.restore();
+
+                        ctx.save();
+                        ctx.translate(16 * facing, 0);
+                        ctx.rotate(((walkAngle * 0.4) * Math.PI)/180 + 0.1 * facing);
+                        ctx.fillStyle = char.colors.skin;
+                        ctx.fillRect(-4, 0, 8, 15);
+                        ctx.beginPath(); ctx.arc(0, 15, 4, 0, Math.PI*2); ctx.fill();
+                        
+                        ctx.translate(0, 14);
+                        ctx.rotate(-0.4 * facing);
+                        drawEquippedAxe(ctx, equippedAxe, facing);
+                        ctx.restore();
+                    }
+                } else if (isShaking) {
                     let sE = Math.sin(player.shakeTimer * 1.5) * 10; ctx.fillStyle = char.colors.skin;
                     ctx.save(); ctx.translate(-15, 0); ctx.rotate(-Math.PI/4); ctx.fillRect(-4, -20 + sE, 8, 20); ctx.beginPath(); ctx.arc(0, -22 + sE, 6, 0, Math.PI*2); ctx.fill(); ctx.restore();
                     ctx.save(); ctx.translate(15, 0); ctx.rotate(Math.PI/4); ctx.fillRect(-4, -20 - sE, 8, 20); ctx.beginPath(); ctx.arc(0, -22 - sE, 6, 0, Math.PI*2); ctx.fill(); ctx.restore();
@@ -1760,9 +1916,9 @@
                     if (t.progress > 0) {
                         ctx.fillStyle = 'black'; ctx.fillRect(-40, -145, 80, 12);
                         let maxP = t.maxProgress;
-                        if (axeLevel === 1) maxP = Math.floor(t.maxProgress * (4.0 / 5.0));
-                        else if (axeLevel === 2) maxP = Math.floor(t.maxProgress * (3.5 / 5.0));
-                        else if (axeLevel === 3) maxP = Math.floor(t.maxProgress * (3.2 / 5.0));
+                        if (equippedAxe === 1) maxP = Math.floor(t.maxProgress * (4.0 / 5.0));
+                        else if (equippedAxe === 2) maxP = Math.floor(t.maxProgress * (3.5 / 5.0));
+                        else if (equippedAxe === 3) maxP = Math.floor(t.maxProgress * (3.2 / 5.0));
                         ctx.fillStyle = '#3498db'; ctx.fillRect(-38, -143, 76 * (t.progress / maxP), 8);
                         ctx.fillStyle = 'white'; ctx.font = '10px Arial'; ctx.textAlign = 'center'; ctx.fillText("흔드는 중...", 0, -150);
                     }
