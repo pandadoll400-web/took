@@ -287,6 +287,10 @@
             });
 
             if (target) {
+                if (target.type === 'space') {
+                    floatTexts.push({ x: target.x, y: target.y - 120, text: `🌌 다음 업데이트때 공개!`, color: '#a29bfe', life: 70, size: 22 });
+                    return;
+                }
                 if (player.targetTree === target) {
                     player.targetTree = null;
                 } else {
@@ -1029,6 +1033,11 @@
                 unlocked: false, price: 15000000, reqLevel: 85, color1: '#636e72', color2: '#2d3436', drops: [15, 20] 
             },
             {
+                id: 'space', type: 'space', x: GAME_WIDTH / 2, y: -7650, radius: 200, trunkRadius: 75,
+                progress: 0, maxProgress: 500, shakeAngle: 0,
+                unlocked: false, price: 0, reqLevel: 105, color1: '#000000', color2: '#2c003e', drops: [0, 0] 
+            },
+            {
                 id: 'halloween', type: 'halloween', x: GAME_WIDTH / 2, y: 1350, radius: 140, trunkRadius: 40,
                 progress: 0, maxProgress: 300, shakeAngle: 0,
                 unlocked: true, price: 0, reqLevel: 1, color1: '#d35400', color2: '#e67e22', drops: [2, 4]
@@ -1230,7 +1239,7 @@
             } else { player.walkTimer = 0; }
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
-            player.y = Math.max(-6950, Math.min(2000 - player.radius, player.y));
+            player.y = Math.max(-7950, Math.min(2000 - player.radius, player.y));
             
             if (level < 3 && player.y < 30 && player.y > -500) {
                 player.y = 30;
@@ -1253,6 +1262,9 @@
             } else if (level < 85 && player.y < -5970 && player.y > -6500) {
                 player.y = -5970;
                 if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 85 달성 시 통과 가능!`, color: '#636e72', life: 40 });
+            } else if (level < 105 && player.y < -6970 && player.y > -7500) {
+                player.y = -6970;
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 105 달성 시 통과 가능!`, color: '#a29bfe', life: 40 });
             }
 
             shops.forEach(shop => {
@@ -1265,7 +1277,7 @@
             });
 
             let targetCamY = player.y - GAME_HEIGHT / 2 + 100;
-            targetCamY = Math.max(-7000, Math.min(1000, targetCamY));
+            targetCamY = Math.max(-8000, Math.min(1000, targetCamY));
             cameraY += (targetCamY - cameraY) * 0.1;
 
             trees.forEach(tree => {
@@ -1876,6 +1888,26 @@
             ctx.save();
             ctx.translate(0, -cameraY);
 
+            // 우주 배경 (-8000 ~ -7000)
+            ctx.fillStyle = '#050512'; ctx.fillRect(0, -8000, GAME_WIDTH, 1000);
+            let nebulaGrad = ctx.createRadialGradient(GAME_WIDTH/2, -7500, 50, GAME_WIDTH/2, -7500, 500);
+            nebulaGrad.addColorStop(0, 'rgba(108, 92, 231, 0.25)');
+            nebulaGrad.addColorStop(0.5, 'rgba(232, 67, 147, 0.12)');
+            nebulaGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = nebulaGrad; ctx.fillRect(0, -8000, GAME_WIDTH, 1000);
+
+            // 우주 별들 (반짝이는 별 효과)
+            ctx.fillStyle = '#ffffff';
+            for (let i = 0; i < 65; i++) {
+                let sx = (i * 137.5) % GAME_WIDTH;
+                let sy = -8000 + ((i * 93.7 + (i * i * 17)) % 980) + 10;
+                let sSize = (i % 3 === 0) ? 2.5 : 1.5;
+                let alpha = 0.3 + 0.7 * Math.sin((Date.now() * 0.003) + i);
+                ctx.globalAlpha = Math.max(0.2, alpha);
+                ctx.beginPath(); ctx.arc(sx, sy, sSize, 0, Math.PI*2); ctx.fill();
+            }
+            ctx.globalAlpha = 1.0;
+
             ctx.fillStyle = '#1e272e'; ctx.fillRect(0, -7000, GAME_WIDTH, 1000); // Cave
             ctx.fillStyle = '#005f73'; ctx.fillRect(0, -6000, GAME_WIDTH, 1000); // Ocean
             ctx.fillStyle = '#162d16'; ctx.fillRect(0, -5000, GAME_WIDTH, 1000); 
@@ -1885,6 +1917,9 @@
             ctx.fillStyle = '#cf3a24'; ctx.fillRect(0, -1000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#2c124d'; ctx.fillRect(0, 1000, GAME_WIDTH, 1000); // Halloween
+
+            ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -7000); ctx.lineTo(GAME_WIDTH, -7000); ctx.stroke();
+            ctx.fillStyle = '#a29bfe'; ctx.fillText("🚀 미지의 영역: 우주 지역 (레벨 105 진입 가능)", GAME_WIDTH / 2, -7020);
 
             ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1000); ctx.lineTo(GAME_WIDTH, 1000); ctx.stroke();
             ctx.fillStyle = '#f39c12'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("🎃 축제: 할로윈 지역 (레벨 1 진입 가능)", GAME_WIDTH / 2, 1035);
@@ -1911,7 +1946,7 @@
             ctx.fillStyle = '#b2bec3'; ctx.fillText("⛏️ 지하: 동굴 지역 (레벨 85 진입 가능)", GAME_WIDTH / 2, -6020);
 
             ctx.strokeStyle = 'rgba(0,0,0,0.08)'; ctx.lineWidth = 2;
-            for(let cy = -7000; cy <= 2000; cy+=100) {
+            for(let cy = -8000; cy <= 2000; cy+=100) {
                 for(let cx = 0; cx <= GAME_WIDTH; cx+=100) { ctx.beginPath(); ctx.arc(cx+50, cy+50, 15, 0, Math.PI); ctx.stroke(); }
             }
 
@@ -2003,6 +2038,8 @@
                         trunkGrad.addColorStop(0, '#2d3436'); trunkGrad.addColorStop(0.5, '#636e72'); trunkGrad.addColorStop(1, '#1e272e');
                     } else if (t.type === 'halloween') {
                         trunkGrad.addColorStop(0, '#2d3436'); trunkGrad.addColorStop(0.5, '#4a235a'); trunkGrad.addColorStop(1, '#1b1464');
+                    } else if (t.type === 'space') {
+                        trunkGrad.addColorStop(0, '#090a0f'); trunkGrad.addColorStop(0.5, '#2d1345'); trunkGrad.addColorStop(1, '#050508');
                     } else {
                         trunkGrad.addColorStop(0, '#3e1a08'); trunkGrad.addColorStop(0.5, '#5c2a11'); trunkGrad.addColorStop(1, '#2e1003');
                     }
@@ -2010,7 +2047,7 @@
                     ctx.beginPath(); ctx.moveTo(-t.trunkRadius*0.8, -20); ctx.lineTo(t.trunkRadius*0.8, -20);
                     ctx.lineTo(t.trunkRadius*1.2, trunkBottom); ctx.lineTo(-t.trunkRadius*1.2, trunkBottom); ctx.fill();
                     
-                    let strokeColor = (t.type === 'twisted' || t.type === 'electric') ? '#1a252f' : (t.type === 'ice' ? '#636e72' : '#2e1003');
+                    let strokeColor = (t.type === 'twisted' || t.type === 'electric' || t.type === 'space') ? '#1a252f' : (t.type === 'ice' ? '#636e72' : '#2e1003');
                     ctx.strokeStyle = strokeColor; ctx.lineWidth = 3;
                     ctx.beginPath(); ctx.moveTo(-10, 20); ctx.lineTo(-20, trunkBottom); ctx.stroke(); 
                     ctx.beginPath(); ctx.moveTo(10, 10); ctx.lineTo(25, trunkBottom); ctx.stroke();
@@ -2167,6 +2204,94 @@
                             ctx.moveTo(0, -100); ctx.lineTo(-30 + Math.random()*60, -60); 
                             ctx.lineTo(-20 + Math.random()*40, -30); ctx.lineTo(-40 + Math.random()*80, 10); ctx.stroke();
                         }
+                    } else if (t.type === 'space') {
+                        // 블랙홀 느낌의 신비로운 우주 나무
+                        let now = Date.now() * 0.002;
+                        ctx.save();
+                        ctx.translate(0, -t.radius * 0.7);
+                        
+                        // 1. 회전하는 강착원반 (Accretion Disk) - 보라/네온 핑크/오렌지 빛 에너지 소용돌이
+                        for (let r = 0; r < 3; r++) {
+                            ctx.save();
+                            ctx.rotate(-0.35 + Math.sin(now * 0.5) * 0.05);
+                            let diskGrad = ctx.createLinearGradient(-t.radius * 1.5, 0, t.radius * 1.5, 0);
+                            diskGrad.addColorStop(0, 'rgba(253, 203, 110, 0)');
+                            diskGrad.addColorStop(0.2, 'rgba(225, 112, 85, 0.6)');
+                            diskGrad.addColorStop(0.5, 'rgba(253, 121, 168, 0.9)');
+                            diskGrad.addColorStop(0.8, 'rgba(108, 92, 231, 0.8)');
+                            diskGrad.addColorStop(1, 'rgba(9, 132, 227, 0)');
+                            
+                            ctx.strokeStyle = diskGrad;
+                            ctx.lineWidth = 14 - r * 3;
+                            ctx.shadowColor = '#fd79a8';
+                            ctx.shadowBlur = 20;
+                            ctx.beginPath();
+                            ctx.ellipse(0, 0, t.radius * (1.3 - r * 0.15), t.radius * (0.45 - r * 0.05), now + (r * 0.5), 0, Math.PI * 2);
+                            ctx.stroke();
+                            ctx.restore();
+                        }
+                        
+                        // 2. 포톤 링 (빛의 굴절 고리)
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 3;
+                        ctx.shadowColor = '#74b9ff';
+                        ctx.shadowBlur = 25;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, t.radius * 0.65, 0, Math.PI * 2);
+                        ctx.stroke();
+
+                        // 3. 사건의 지평선 (Event Horizon - 중심 칠흑의 구체)
+                        ctx.shadowBlur = 0;
+                        ctx.fillStyle = '#000000';
+                        ctx.beginPath();
+                        ctx.arc(0, 0, t.radius * 0.6, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // 4. 중심 시공간 특이점 펄스
+                        ctx.strokeStyle = '#6c5ce7';
+                        ctx.lineWidth = 2.5;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, t.radius * 0.58, 0, Math.PI * 2);
+                        ctx.stroke();
+
+                        // 5. 나선형으로 빨려들어가는 미세 입자들
+                        ctx.fillStyle = '#ffeaa7';
+                        for (let p = 0; p < 8; p++) {
+                            let pAngle = now * 1.5 + (p * (Math.PI / 4));
+                            let pDist = (t.radius * 0.65) + Math.sin(now * 2 + p) * 20;
+                            let px = Math.cos(pAngle) * pDist;
+                            let py = Math.sin(pAngle) * (pDist * 0.5);
+                            ctx.beginPath();
+                            ctx.arc(px, py, 2, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+
+                        ctx.restore();
+
+                        // "다음 업데이트때 공개!" 네온 타이틀 배너
+                        let pulse = 1 + Math.sin(Date.now() * 0.004) * 0.06;
+                        ctx.save();
+                        ctx.translate(0, -t.radius * 1.5);
+                        ctx.scale(pulse, pulse);
+                        
+                        ctx.fillStyle = 'rgba(15, 12, 34, 0.88)';
+                        ctx.strokeStyle = '#a29bfe';
+                        ctx.lineWidth = 2.5;
+                        ctx.shadowColor = '#6c5ce7';
+                        ctx.shadowBlur = 15;
+                        ctx.beginPath();
+                        ctx.roundRect(-100, -18, 200, 36, 10);
+                        ctx.fill();
+                        ctx.stroke();
+                        
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'bold 15px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.shadowColor = '#fd79a8';
+                        ctx.shadowBlur = 10;
+                        ctx.fillText("🌌 다음 업데이트때 공개!", 0, 0);
+                        ctx.restore();
                     } else {
                         let leafGrad = ctx.createRadialGradient(0, -60, 20, 0, -50, t.radius+40);
                         leafGrad.addColorStop(0, t.color1); leafGrad.addColorStop(1, t.color2);
@@ -2184,7 +2309,7 @@
                         }
                     }
 
-                    if (!t.unlocked) {
+                    if (!t.unlocked && t.type !== 'space') {
                         ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.beginPath(); ctx.arc(0, -50, 40, 0, Math.PI*2); ctx.fill();
                         ctx.fillStyle = 'white'; ctx.font = 'bold 24px Arial'; ctx.textAlign = 'center'; ctx.fillText("🔒", 0, -55);
                         ctx.font = 'bold 16px Arial'; ctx.fillStyle = 'gold'; ctx.fillText(`${t.price} 💰`, 0, -35);
@@ -2192,9 +2317,11 @@
                     ctx.restore();
 
                     if (Math.hypot(player.x - t.x, player.y - t.y - 80) < t.trunkRadius + player.radius + 60 && player.targetTree !== t) {
-                        ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(t.x - 50, t.y - t.radius - 80, 100, 30, 5); ctx.fill();
+                        ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(t.x - 55, t.y - t.radius - 80, 110, 30, 5); ctx.fill();
                         ctx.fillStyle = 'black'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center';
-                        ctx.fillText(t.unlocked ? "👆 클릭!" : "👆 잠금 해제", t.x, t.y - t.radius - 60);
+                        let label = t.unlocked ? "👆 클릭!" : "👆 잠금 해제";
+                        if (t.type === 'space') label = "🔒 업데이트 예정";
+                        ctx.fillText(label, t.x, t.y - t.radius - 60);
                     }
                 }
             });
