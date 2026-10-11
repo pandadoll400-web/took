@@ -426,11 +426,11 @@
         ];
 
         const halloweenDropTables = [
-            { chance: 0.30, name: '일반', price: 10, xp: 3, color: '#e67e22', items: ['주황호박'] },
-            { chance: 0.30, name: '일반', price: 10, xp: 3, color: '#27ae60', items: ['초록호박'] },
-            { chance: 0.30, name: '일반', price: 10, xp: 3, color: '#ecf0f1', items: ['하얀호박'] },
-            { chance: 0.099, name: '전설', price: 150, xp: 50, color: '#f1c40f', items: ['잭오랜턴'] },
-            { chance: 0.001, name: '불멸', price: 3000, xp: 500, color: '#95a5a6', items: ['깨진호박'] }
+            { chance: 0.30, name: '일반', price: 2000, xp: 50, color: '#e67e22', items: ['주황호박'] },
+            { chance: 0.30, name: '일반', price: 2000, xp: 50, color: '#27ae60', items: ['초록호박'] },
+            { chance: 0.30, name: '일반', price: 2000, xp: 50, color: '#ecf0f1', items: ['하얀호박'] },
+            { chance: 0.099, name: '전설', price: 15000, xp: 300, color: '#f1c40f', items: ['잭오랜턴'] },
+            { chance: 0.001, name: '불멸', price: 300000, xp: 5000, color: '#95a5a6', items: ['깨진호박'] }
         ];
 
 
@@ -983,9 +983,9 @@
 
             if (type === 'halloween') {
                 const pumpkinChoices = [
-                    { item: '주황호박', price: 10 },
-                    { item: '초록호박', price: 10 },
-                    { item: '하얀호박', price: 10 }
+                    { item: '주황호박', price: 2000 },
+                    { item: '초록호박', price: 2000 },
+                    { item: '하얀호박', price: 2000 }
                 ];
                 let chosen = pumpkinChoices[Math.floor(Math.random() * pumpkinChoices.length)];
                 fruit = chosen.item;
