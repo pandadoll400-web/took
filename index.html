@@ -252,7 +252,44 @@
         });
         window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = false; });
 
+        // 우주 로케트 (일반 지역 옆 중간 사이즈 로켓)
+        let rocket = {
+            x: 110,
+            y: 370,
+            visible: true,
+            launched: false
+        };
+
+        let blackoutState = {
+            active: false,
+            text: 'space is coming'
+        };
+
+        function triggerRocketLaunch() {
+            if (blackoutState.active || !rocket.visible) return;
+            blackoutState.active = true;
+            blackoutState.text = 'space is coming';
+
+            // 1초 동안 검정 화면에 'space is coming' 표시 후 로케트 사라지고 복귀
+            setTimeout(() => {
+                rocket.visible = false;
+                rocket.launched = true;
+                blackoutState.active = false;
+                saveGame();
+            }, 1000);
+        }
+
         function handleTreeClick(cx, cy, isSpacebar = false) {
+            if (blackoutState.active) return;
+            // 로케트 클릭 감지
+            if (rocket.visible && !rocket.launched) {
+                let rocketClickDist = Math.hypot(cx - rocket.x, cy - rocket.y);
+                let rocketPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - rocket.x, player.y - rocket.y) : 999;
+                if (rocketClickDist < 55 || (isSpacebar && rocketPlayerDist < 70)) {
+                    triggerRocketLaunch();
+                    return;
+                }
+            }
             if (!isSpacebar) {
                 for (let shop of shops) {
                     if (cx > shop.x - 20 && cx < shop.x + 200 && cy > shop.y && cy < shop.y + 210) {
@@ -1078,7 +1115,8 @@
                 treeUnlocked: trees.map(t => t.unlocked),
                 fishCollection: fishCollection,
                 radioactiveCollection: radioactiveCollection,
-                caveCollection: caveCollection
+                caveCollection: caveCollection,
+                rocketLaunched: rocket.launched
             };
             localStorage.setItem('treeGameSave', JSON.stringify(data));
         }
@@ -1100,6 +1138,10 @@
                     if (data.fishCollection) fishCollection = data.fishCollection;
                     if (data.radioactiveCollection) radioactiveCollection = data.radioactiveCollection;
                     if (data.caveCollection) caveCollection = data.caveCollection;
+                    if (data.rocketLaunched !== undefined) {
+                        rocket.launched = data.rocketLaunched;
+                        rocket.visible = !rocket.launched;
+                    }
                     if (data.treeUnlocked) {
                         trees.forEach((t, i) => {
                             if (data.treeUnlocked[i] !== undefined) t.unlocked = data.treeUnlocked[i];
@@ -1212,6 +1254,7 @@
         }
 
         function update() {
+            if (blackoutState.active) return;
             if (document.getElementById('inventory-modal').style.display === 'block') return;
             if (document.getElementById('shop-modal').style.display === 'block') return;
             if (document.getElementById('ocean-modal').style.display === 'block') return;
@@ -1883,6 +1926,117 @@
             ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial'; ctx.textAlign = 'center'; ctx.fillText(shop.name, x + 95, y + 63);
         }
 
+        function drawRocket(ctx, rx, ry) {
+            if (!rocket.visible) return;
+
+            ctx.save();
+            ctx.translate(rx, ry);
+
+            // 그림자
+            ctx.fillStyle = 'rgba(0,0,0,0.25)';
+            ctx.beginPath();
+            ctx.ellipse(0, 38, 28, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 발사대 받침대 (Launch Pad Base)
+            ctx.fillStyle = '#636e72';
+            ctx.fillRect(-22, 34, 44, 5);
+            ctx.fillStyle = '#2d3436';
+            ctx.fillRect(-18, 30, 36, 4);
+
+            // 로켓 엔진 노즐
+            ctx.fillStyle = '#2d3436';
+            ctx.beginPath();
+            ctx.moveTo(-10, 26);
+            ctx.lineTo(10, 26);
+            ctx.lineTo(14, 32);
+            ctx.lineTo(-14, 32);
+            ctx.closePath();
+            ctx.fill();
+
+            // 좌우 날개 (Red Fins)
+            ctx.fillStyle = '#e74c3c';
+            // 좌측 날개
+            ctx.beginPath();
+            ctx.moveTo(-14, 8);
+            ctx.lineTo(-26, 28);
+            ctx.lineTo(-14, 26);
+            ctx.closePath();
+            ctx.fill();
+            // 우측 날개
+            ctx.beginPath();
+            ctx.moveTo(14, 8);
+            ctx.lineTo(26, 28);
+            ctx.lineTo(14, 26);
+            ctx.closePath();
+            ctx.fill();
+            // 중앙 핀
+            ctx.fillStyle = '#c0392b';
+            ctx.fillRect(-2, 10, 4, 18);
+
+            // 로켓 본체 (White Body)
+            ctx.fillStyle = '#f5f6fa';
+            ctx.beginPath();
+            ctx.moveTo(-14, 8);
+            ctx.quadraticCurveTo(-15, -20, 0, -42); // 노즈콘 꼭대기
+            ctx.quadraticCurveTo(15, -20, 14, 8);
+            ctx.lineTo(14, 26);
+            ctx.lineTo(-14, 26);
+            ctx.closePath();
+            ctx.fill();
+
+            // 바디 음영
+            ctx.fillStyle = '#dcdde1';
+            ctx.beginPath();
+            ctx.moveTo(0, -42);
+            ctx.quadraticCurveTo(15, -20, 14, 8);
+            ctx.lineTo(14, 26);
+            ctx.lineTo(0, 26);
+            ctx.closePath();
+            ctx.fill();
+
+            // 빨간색 노즈콘 팁 (Red Nose Cone)
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.moveTo(-9, -23);
+            ctx.quadraticCurveTo(-5, -35, 0, -42);
+            ctx.quadraticCurveTo(5, -35, 9, -23);
+            ctx.closePath();
+            ctx.fill();
+
+            // 둥근 창문 (Porthole Window)
+            ctx.fillStyle = '#7f8c8d';
+            ctx.beginPath();
+            ctx.arc(0, -6, 9, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#0984e3';
+            ctx.beginPath();
+            ctx.arc(0, -6, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#74b9ff';
+            ctx.beginPath();
+            ctx.arc(-2, -8, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 빨간 스트라이프 띠
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(-14, 16, 28, 4);
+
+            // "👆 클릭!" 안내 텍스트
+            let floatY = Math.sin(Date.now() * 0.005) * 4;
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.roundRect(-30, -68 + floatY, 60, 20, 5);
+            ctx.fill();
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("🚀 클릭!", 0, -58 + floatY);
+
+            ctx.restore();
+        }
+
         function draw() {
             ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
             ctx.save();
@@ -1953,6 +2107,9 @@
             let renderList = [];
             fruitsOnGround.forEach(f => renderList.push({ type: 'fruit', obj: f, y: f.y }));
             renderList.push({ type: 'player', obj: player, y: player.y });
+            if (rocket.visible) {
+                renderList.push({ type: 'rocket', obj: rocket, y: rocket.y });
+            }
             
             shops.forEach(shop => {
                 shop.queue.forEach(c => renderList.push({ type: 'customer', obj: c, y: c.y }));
@@ -2323,6 +2480,8 @@
                         if (t.type === 'space') label = "🔒 업데이트 예정";
                         ctx.fillText(label, t.x, t.y - t.radius - 60);
                     }
+                } else if (item.type === 'rocket') {
+                    drawRocket(ctx, item.obj.x, item.obj.y);
                 }
             });
 
@@ -2342,6 +2501,21 @@
                 ctx.beginPath(); ctx.arc(joystick.originX, joystick.originY, 60, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; ctx.fill();
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'; ctx.lineWidth = 2; ctx.stroke();
                 ctx.beginPath(); ctx.arc(joystick.x, joystick.y, 25, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; ctx.fill();
+            }
+
+            // 로케트 클릭 시 1초 동안 검정 화면 및 'space is coming' 문구
+            if (blackoutState.active) {
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 30px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = '#00cec9';
+                ctx.shadowBlur = 20;
+                ctx.fillText(blackoutState.text, GAME_WIDTH / 2, GAME_HEIGHT / 2);
+                ctx.shadowBlur = 0;
             }
         }
 
