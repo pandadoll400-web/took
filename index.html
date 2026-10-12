@@ -242,9 +242,7 @@
                 <!-- 가능한 퓨전 / 등록 영역 -->
                 <div style="margin-bottom: 16px;">
                     <h4 style="margin: 0 0 8px 0; color: #ffffff; text-shadow: 1px 1px 2px #000; font-size: 16px;">확률 및 조합 정보:</h4>
-                    <div id="fuse-possible-box" style="background: rgba(35, 25, 18, 0.85); border: 2px solid #5a3825; border-radius: 8px; min-height: 60px; padding: 12px; display: flex; align-items: center; justify-content: center; color: #b2bec3; font-size: 13px; line-height: 1.5;">
-                        슬롯 3개에 호박을 각 12개씩 채우면 융합 확률이 표시됩니다.
-                    </div>
+                    <div id="fuse-possible-box" style="background: rgba(35, 25, 18, 0.85); border: 2px solid #5a3825; border-radius: 8px; min-height: 60px; padding: 12px; display: flex; align-items: center; justify-content: center; color: #b2bec3; font-size: 13px; line-height: 1.5;"></div>
                 </div>
 
                 <!-- 보유 호박 등록 버튼들 -->
@@ -790,13 +788,8 @@
             const filledCount = fuseSlots.filter(s => s !== null).length;
 
             if (filledCount === 0 && !isFusing && !isFuseCompleted) {
-                // 슬롯이 완전히 비어있을 때는 스킨 카드를 띄우지 않고 대기 안내만 표시
-                possibleBox.innerHTML = `
-                    <div style="text-align: center; color: #b2bec3; font-size: 13px; line-height: 1.6; padding: 15px 0;">
-                        <span>슬롯에 호박을 넣으면 획득 가능한 스킨 사진과 확률이 표시됩니다.</span><br>
-                        <span style="font-size: 11px; color: #f39c12; margin-top: 4px; display: inline-block;">(잭오랜턴 / 깨진호박을 넣으면 히든 특수 라인업으로 전환!)</span>
-                    </div>
-                `;
+                // 슬롯이 완전히 비어있을 때는 글씨나 카드를 전혀 띄우지 않고 깔끔하게 비워둠
+                possibleBox.innerHTML = '';
             } else {
                 let possibleSkins = [];
                 let headerText = '';
