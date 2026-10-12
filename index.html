@@ -209,41 +209,41 @@
             <button class="close-btn" onclick="document.getElementById('halloween-modal').style.display='none'" style="background: #4a235a; border: 1px solid #8e44ad;">닫기</button>
         </div>
 
-        <!-- 퓨즈 브레인로트 모달 (사진 1 참고: 주황색 박쥐/호박 할로윈 배너, 네모 3개) -->
+        <!-- 호박 융합 (퓨즈) 모달 -->
         <div id="fuse-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(30, 20, 10, 0.96); color: white; border-radius: 16px; width: 92%; max-width: 460px; max-height: 85%; overflow-y: auto; display: none; border: 3px solid #d35400; box-shadow: 0 0 25px rgba(230, 126, 34, 0.4); z-index: 45; font-family: 'Arial', sans-serif;">
             <!-- 상단 할로윈 호박/박쥐 장식 배너 -->
             <div style="background: linear-gradient(90deg, #e67e22, #f39c12, #e67e22); padding: 12px 15px; border-top-left-radius: 13px; border-top-right-radius: 13px; border-bottom: 3px solid #ba4a00; display: flex; justify-content: space-between; align-items: center; position: relative;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 26px;">🎃</span>
-                    <h2 style="margin: 0; color: #ffffff; text-shadow: 2px 2px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000; font-size: 22px; font-weight: 900; letter-spacing: -0.5px;">퓨즈 브레인로트</h2>
+                    <h2 style="margin: 0; color: #ffffff; text-shadow: 2px 2px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000; font-size: 22px; font-weight: 900; letter-spacing: -0.5px;">호박 융합</h2>
                     <span style="font-size: 22px;">🦇</span>
                 </div>
                 <button onclick="document.getElementById('fuse-modal').style.display='none'" style="background: #962d22; border: 2px solid #4a110a; color: white; width: 34px; height: 34px; font-weight: 900; font-size: 18px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">X</button>
             </div>
 
             <div style="padding: 18px 15px; text-align: center;">
-                <h3 id="fuse-title-text" style="margin: 0 0 16px 0; color: #ffffff; text-shadow: 2px 2px 2px #000; font-size: 18px; font-weight: bold;">
-                    퓨즈를 위해 <span style="color:#f1c40f; font-size: 22px;">3</span> 브레인로트를 가져오세요
+                <h3 id="fuse-title-text" style="margin: 0 0 16px 0; color: #ffffff; text-shadow: 2px 2px 2px #000; font-size: 16px; font-weight: bold;">
+                    퓨즈를 위해 호박을 각각 <span style="color:#f1c40f; font-size: 20px;">12개씩</span> 가져오세요
                 </h3>
 
-                <!-- 요청된 네모 3개 슬롯 (사진 1 스타일: 어두운 박스 + 붉은 '비어 있음' 텍스트) -->
+                <!-- 요청된 네모 3개 슬롯 -->
                 <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
                     <div id="fuse-slot-0" onclick="clickFuseSlot(0)" style="flex: 1; max-width: 110px; aspect-ratio: 1/1; background: rgba(50, 30, 20, 0.7); border: 2px solid #5a3825; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-                        <span style="color: #ff7675; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000;">비어 있음</span>
+                        <span style="color: #ff7675; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000;">비어 있음<br><span style="font-size:10px; color:#f1c40f;">(12개 필요)</span></span>
                     </div>
                     <div id="fuse-slot-1" onclick="clickFuseSlot(1)" style="flex: 1; max-width: 110px; aspect-ratio: 1/1; background: rgba(50, 30, 20, 0.7); border: 2px solid #5a3825; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-                        <span style="color: #ff7675; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000;">비어 있음</span>
+                        <span style="color: #ff7675; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000;">비어 있음<br><span style="font-size:10px; color:#f1c40f;">(12개 필요)</span></span>
                     </div>
                     <div id="fuse-slot-2" onclick="clickFuseSlot(2)" style="flex: 1; max-width: 110px; aspect-ratio: 1/1; background: rgba(50, 30, 20, 0.7); border: 2px solid #5a3825; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-                        <span style="color: #ff7675; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000;">비어 있음</span>
+                        <span style="color: #ff7675; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000;">비어 있음<br><span style="font-size:10px; color:#f1c40f;">(12개 필요)</span></span>
                     </div>
                 </div>
 
                 <!-- 가능한 퓨전 / 등록 영역 -->
                 <div style="margin-bottom: 16px;">
-                    <h4 style="margin: 0 0 8px 0; color: #ffffff; text-shadow: 1px 1px 2px #000; font-size: 16px;">가능한 퓨전:</h4>
-                    <div id="fuse-possible-box" style="background: rgba(35, 25, 18, 0.85); border: 2px solid #5a3825; border-radius: 8px; min-height: 60px; padding: 12px; display: flex; align-items: center; justify-content: center; color: #b2bec3; font-size: 14px;">
-                        재료를 채워 퓨전을 시작하세요
+                    <h4 style="margin: 0 0 8px 0; color: #ffffff; text-shadow: 1px 1px 2px #000; font-size: 16px;">확률 및 조합 정보:</h4>
+                    <div id="fuse-possible-box" style="background: rgba(35, 25, 18, 0.85); border: 2px solid #5a3825; border-radius: 8px; min-height: 60px; padding: 12px; display: flex; align-items: center; justify-content: center; color: #b2bec3; font-size: 13px; line-height: 1.5;">
+                        슬롯 3개에 호박을 각 12개씩 채우면 융합 확률이 표시됩니다.
                     </div>
                 </div>
 
@@ -364,9 +364,9 @@
                         }
                     }
                 }
-                // 퓨즈 브레인로트 건물 클릭 감지 (할로윈 맵 하단 Y: 2200)
+                // 호박 융합 (퓨즈) 건물 클릭 감지 (할로윈 맵 하단 Y: 2050)
                 if (typeof fuseBuilding !== 'undefined') {
-                    if (cx > fuseBuilding.x - 20 && cx < fuseBuilding.x + 200 && cy > fuseBuilding.y && cy < fuseBuilding.y + 210) {
+                    if (cx > fuseBuilding.x - 20 && cx < fuseBuilding.x + fuseBuilding.width + 20 && cy > fuseBuilding.y && cy < fuseBuilding.y + fuseBuilding.height + 20) {
                         openFuseModal();
                         return;
                     }
@@ -723,11 +723,11 @@
             }
         }
 
-        // 퓨즈 브레인로트 시스템 상태 및 함수
+        // 호박 융합 (퓨즈) 시스템 상태 및 함수
         let fuseSlots = [null, null, null]; // 3개 슬롯
         let activeFuseStartTime = 0;
         let activeFuseDurationMs = 15 * 60 * 1000; // 15분
-        let activeFuseResult = null;
+        let activeFuseResult = null; // 결과 스킨 ID
 
         function openFuseModal() {
             document.getElementById('fuse-modal').style.display = 'block';
@@ -741,7 +741,6 @@
             const isFusing = (activeFuseStartTime > 0 && now < activeFuseStartTime + activeFuseDurationMs);
             const isFuseCompleted = (activeFuseStartTime > 0 && now >= activeFuseStartTime + activeFuseDurationMs);
 
-            // 타이머 표시
             const timerEl = document.getElementById('fuse-timer-display');
             const actionBtn = document.getElementById('fuse-action-btn');
             const possibleBox = document.getElementById('fuse-possible-box');
@@ -750,37 +749,64 @@
                 const remaining = Math.max(0, activeFuseStartTime + activeFuseDurationMs - now);
                 const rmMin = Math.floor(remaining / 60000);
                 const rmSec = Math.floor((remaining % 60000) / 1000);
-                timerEl.innerText = `(${rmMin}분 ${rmSec < 10 ? '0' : ''}${rmSec}초 남음)`;
-                timerEl.style.color = '#e74c3c';
-                actionBtn.innerText = '퓨전 진행 중...';
+                if (timerEl) {
+                    timerEl.innerText = `(${rmMin}분 ${rmSec < 10 ? '0' : ''}${rmSec}초 남음)`;
+                    timerEl.style.color = '#e74c3c';
+                }
+                actionBtn.innerText = '융합 진행 중...';
                 actionBtn.disabled = true;
                 actionBtn.style.background = '#7f8c8d';
                 actionBtn.style.cursor = 'not-allowed';
-                possibleBox.innerHTML = `<span style="color:#f39c12; font-weight:bold;">🔥 브레인로트 퓨징 중입니다... (완료 시 클릭)</span>`;
+                possibleBox.innerHTML = `<span style="color:#f39c12; font-weight:bold;">🔥 호박 융합 진행 중입니다... (완료 시 획득 가능)</span>`;
             } else if (isFuseCompleted) {
-                timerEl.innerText = '(완료!)';
-                timerEl.style.color = '#2ecc71';
-                actionBtn.innerText = '결과 수령하기!';
+                if (timerEl) {
+                    timerEl.innerText = '(완료!)';
+                    timerEl.style.color = '#2ecc71';
+                }
+                actionBtn.innerText = '결과 스킨 수령하기!';
                 actionBtn.disabled = false;
                 actionBtn.style.background = '#2ecc71';
                 actionBtn.style.cursor = 'pointer';
-                possibleBox.innerHTML = `<span style="color:#2ecc71; font-weight:bold; font-size:16px;">✨ 퓨전 완성: [${activeFuseResult || '황금 잭오랜턴'}]</span>`;
+                const skinObj = skinsData.find(s => s.id === activeFuseResult);
+                const skinName = skinObj ? skinObj.name : '스킨';
+                possibleBox.innerHTML = `<span style="color:#2ecc71; font-weight:bold; font-size:15px;">✨ 융합 완료: [${skinName}] 스킨을 수령하세요!</span>`;
             } else {
-                timerEl.innerText = '(15분)';
-                timerEl.style.color = '#f1c40f';
+                if (timerEl) {
+                    timerEl.innerText = '(15분)';
+                    timerEl.style.color = '#f1c40f';
+                }
                 const filledCount = fuseSlots.filter(s => s !== null).length;
                 if (filledCount === 3) {
-                    actionBtn.innerText = '퓨전 시작';
+                    actionBtn.innerText = '호박 융합 시작 (15분)';
                     actionBtn.disabled = false;
                     actionBtn.style.background = '#e67e22';
                     actionBtn.style.cursor = 'pointer';
-                    possibleBox.innerHTML = `<span style="color:#f1c40f; font-weight:bold;">✨ 조합 가능: [호박 융합 브레인로트]</span>`;
+
+                    const hasSpecial = fuseSlots.some(s => s === '잭오랜턴' || s === '깨진호박');
+                    if (hasSpecial) {
+                        possibleBox.innerHTML = `
+                            <div style="text-align:center; font-size:12px; line-height:1.6;">
+                                <strong style="color:#ff7675; font-size:13px;">[잭오랜턴 / 깨진호박 포함 융합]</strong><br>
+                                페도라 유령: <b style="color:#fff;">70%</b> | 클래식 버니: <b style="color:#fff;">13%</b><br>
+                                헤드레스 홀스: <b style="color:#f1c40f;">9%</b> | 불타는 잭오랜턴: <b style="color:#e67e22;">6%</b><br>
+                                <span style="color:#ff4757; font-weight:bold;">할로윈의 악마: 2%</span>
+                            </div>
+                        `;
+                    } else {
+                        possibleBox.innerHTML = `
+                            <div style="text-align:center; font-size:12px; line-height:1.6;">
+                                <strong style="color:#f1c40f; font-size:13px;">[주황/초록/하얀 호박 융합]</strong><br>
+                                페도라 유령: <b style="color:#fff;">85%</b> | 클래식 버니: <b style="color:#fff;">10%</b><br>
+                                주황 잭오랜턴: <b style="color:#e67e22;">5%</b>
+                            </div>
+                        `;
+                    }
                 } else {
-                    actionBtn.innerText = `재료 부족 (${filledCount}/3)`;
+                    actionBtn.innerText = `재료 부족 (${filledCount}/3 슬롯)`;
                     actionBtn.disabled = true;
                     actionBtn.style.background = '#7f8c8d';
                     actionBtn.style.cursor = 'not-allowed';
-                    possibleBox.innerHTML = `<span style="color:#b2bec3;">3개 슬롯을 모두 채우면 퓨전을 시작할 수 있습니다.</span>`;
+                    possibleBox.innerHTML = `<span style="color:#b2bec3;">3개 슬롯에 호박을 각 12개씩(총 36개) 넣으면 융합을 시작할 수 있습니다.</span>`;
                 }
             }
 
@@ -793,14 +819,15 @@
                     slotEl.style.border = '2px solid #e67e22';
                     slotEl.style.background = 'rgba(70, 40, 20, 0.85)';
                     slotEl.innerHTML = `
-                        <div style="font-size: 28px;">🎃</div>
-                        <span style="color: #f1c40f; font-weight: bold; font-size: 12px; margin-top: 4px;">${item}</span>
-                        <span style="font-size: 10px; color: #ff7675; margin-top: 2px;">(클릭 취소)</span>
+                        <div style="font-size: 24px;">🎃</div>
+                        <span style="color: #f1c40f; font-weight: bold; font-size: 11px; margin-top: 3px;">${item}</span>
+                        <span style="font-size: 11px; color: #55efc4; font-weight:bold;">x 12개</span>
+                        <span style="font-size: 9px; color: #ff7675; margin-top: 2px;">(클릭 취소)</span>
                     `;
                 } else {
                     slotEl.style.border = '2px solid #5a3825';
                     slotEl.style.background = 'rgba(50, 30, 20, 0.7)';
-                    slotEl.innerHTML = `<span style="color: #ff7675; font-weight: bold; font-size: 13px; text-shadow: 1px 1px 2px #000;">비어 있음</span>`;
+                    slotEl.innerHTML = `<span style="color: #ff7675; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000;">비어 있음<br><span style="font-size:10px; color:#f1c40f;">(12개 필요)</span></span>`;
                 }
             }
 
@@ -814,9 +841,10 @@
                     const count = inventory[p] || 0;
                     if (count > 0) {
                         hasAny = true;
+                        const canAdd = count >= 12;
                         selectorEl.innerHTML += `
-                            <button onclick="selectFuseItem('${p}')" style="background:#4b382a; color:#fff; border:1px solid #e67e22; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold; display:flex; align-items:center; gap:4px;">
-                                <span>🎃</span> ${p} <span style="color:#f1c40f;">(${count})</span>
+                            <button onclick="selectFuseItem('${p}')" style="background:${canAdd ? '#4b382a' : '#2d1f18'}; color:${canAdd ? '#fff' : '#888'}; border:1px solid ${canAdd ? '#e67e22' : '#555'}; padding:6px 12px; border-radius:6px; cursor:${canAdd ? 'pointer' : 'not-allowed'}; font-size:12px; font-weight:bold; display:flex; align-items:center; gap:4px;">
+                                <span>🎃</span> ${p} <span style="color:${canAdd ? '#f1c40f' : '#ff7675'};">(${count}/12개)</span>
                             </button>
                         `;
                     }
@@ -829,12 +857,12 @@
 
         function clickFuseSlot(slotIdx) {
             if (activeFuseStartTime > 0 && Date.now() < activeFuseStartTime + activeFuseDurationMs) {
-                alert('퓨징 중에는 슬롯을 비울 수 없습니다!');
+                alert('융합 진행 중에는 슬롯을 비울 수 없습니다!');
                 return;
             }
             if (fuseSlots[slotIdx]) {
                 const returnedItem = fuseSlots[slotIdx];
-                inventory[returnedItem] = (inventory[returnedItem] || 0) + 1;
+                inventory[returnedItem] = (inventory[returnedItem] || 0) + 12; // 12개 반환
                 fuseSlots[slotIdx] = null;
                 updateFuseUI();
             }
@@ -842,7 +870,7 @@
 
         function selectFuseItem(itemName) {
             if (activeFuseStartTime > 0 && Date.now() < activeFuseStartTime + activeFuseDurationMs) {
-                alert('이미 퓨징이 진행 중입니다!');
+                alert('이미 융합이 진행 중입니다!');
                 return;
             }
             const emptyIdx = fuseSlots.findIndex(s => s === null);
@@ -850,11 +878,11 @@
                 alert('3개 슬롯이 이미 가득 찼습니다! (취소하려면 슬롯을 클릭하세요)');
                 return;
             }
-            if ((inventory[itemName] || 0) <= 0) {
-                alert('보유 수량이 부족합니다!');
+            if ((inventory[itemName] || 0) < 12) {
+                alert(`${itemName}이(가) 최소 12개 필요합니다! (현재 보유: ${inventory[itemName] || 0}개)`);
                 return;
             }
-            inventory[itemName]--;
+            inventory[itemName] -= 12; // 12개 소모
             fuseSlots[emptyIdx] = itemName;
             updateFuseUI();
         }
@@ -863,30 +891,68 @@
             const now = Date.now();
             // 완료 수령
             if (activeFuseStartTime > 0 && now >= activeFuseStartTime + activeFuseDurationMs) {
-                const rewardItem = activeFuseResult || '황금 잭오랜턴';
-                inventory[rewardItem] = (inventory[rewardItem] || 0) + 1;
+                const rewardSkinId = activeFuseResult || 'ghost_fedora';
+                if (!ownedSkins.includes(rewardSkinId)) {
+                    ownedSkins.push(rewardSkinId);
+                }
+                const skinObj = skinsData.find(s => s.id === rewardSkinId);
+                const skinName = skinObj ? skinObj.name : '할로윈 스킨';
+
                 activeFuseStartTime = 0;
                 activeFuseResult = null;
                 fuseSlots = [null, null, null];
                 updateFuseUI();
+                updateShopSkinUI();
+                updateInvSkinUI();
                 saveGame();
-                floatTexts.push({ x: player.x, y: player.y - 100, text: `✨ [${rewardItem}] 획득!`, color: '#f1c40f', life: 100 });
-                alert(`축하합니다! 퓨즈 브레인로트 완료: [${rewardItem}]을(를) 획득했습니다!`);
+
+                floatTexts.push({ x: player.x, y: player.y - 100, text: `🎉 [${skinName}] 스킨 획득!`, color: '#f1c40f', life: 120, size: 22 });
+                alert(`✨ 축하합니다! 호박 융합 완료!\n[${skinName}] 스킨을 획득하여 옷장에 추가되었습니다!`);
                 return;
             }
 
-            // 퓨전 시작
+            // 융합 시작
             const filledCount = fuseSlots.filter(s => s !== null).length;
             if (filledCount < 3) {
-                alert('3개 슬롯을 모두 채워야 퓨전을 시작할 수 있습니다!');
+                alert('3개 슬롯에 호박을 각 12개씩 모두 채워야 융합을 시작할 수 있습니다!');
                 return;
+            }
+
+            const hasSpecial = fuseSlots.some(s => s === '잭오랜턴' || s === '깨진호박');
+            let rolledSkin = 'ghost_fedora';
+            const rand = Math.random() * 100;
+
+            if (hasSpecial) {
+                // 잭오랜턴~깨진 호박 조합 확률:
+                // 70% 페도라 유령, 13% 클래식 버니, 9% 헤드레스 홀스, 6% 불타는 잭오랜턴, 2% 할로윈의 악마
+                if (rand < 70) {
+                    rolledSkin = 'ghost_fedora';
+                } else if (rand < 83) { // 70 + 13 = 83
+                    rolledSkin = 'classic_bunny';
+                } else if (rand < 92) { // 83 + 9 = 92
+                    rolledSkin = 'headless_horse';
+                } else if (rand < 98) { // 92 + 6 = 98
+                    rolledSkin = 'jack_fiery';
+                } else { // 98 ~ 100 = 2%
+                    rolledSkin = 'halloween_devil';
+                }
+            } else {
+                // 주황호박~하얀 호박 조합 확률:
+                // 85% 페도라 유령, 10% 클래식 버니, 5% 주황 잭오랜턴
+                if (rand < 85) {
+                    rolledSkin = 'ghost_fedora';
+                } else if (rand < 95) { // 85 + 10 = 95
+                    rolledSkin = 'classic_bunny';
+                } else { // 95 ~ 100 = 5%
+                    rolledSkin = 'jack_orange';
+                }
             }
 
             activeFuseStartTime = now;
-            activeFuseResult = (fuseSlots.includes('깨진호박') || fuseSlots.includes('잭오랜턴')) ? '사신 잭오랜턴' : '황금 호박 브레인로트';
+            activeFuseResult = rolledSkin;
             updateFuseUI();
             saveGame();
-            floatTexts.push({ x: player.x, y: player.y - 100, text: `🔥 퓨즈 브레인로트 시작! (15분)`, color: '#e67e22', life: 80 });
+            floatTexts.push({ x: player.x, y: player.y - 100, text: `🔥 호박 융합 시작! (15분 소요)`, color: '#e67e22', life: 90 });
         }
 
         setInterval(() => {
@@ -1098,6 +1164,9 @@
             { id: 'ghost_purple', name: '보라빛 유령', price: 10000, icon: '👻💜' },
             { id: 'jack_orange', name: '주황 잭오랜턴', price: 10000, icon: '🎃' },
             { id: 'jack_fiery', name: '불타는 잭오랜턴', price: 10000, icon: '🎃🔥' },
+            { id: 'classic_bunny', name: '클래식 버니', price: 0, icon: '🐰🩹', isReward: true },
+            { id: 'headless_horse', name: '헤드레스 홀스', price: 0, icon: '🏇🎃', isReward: true },
+            { id: 'halloween_devil', name: '할로윈의 악마', price: 0, icon: '😈🦇', isReward: true },
             { id: 'snorkeling_fisher', name: '스노우쿨링 어부', price: 0, icon: '🤿', isReward: true },
             { id: 'mad_scientist', name: '매드 사이언티스트', price: 0, icon: '🥼', isReward: true },
             { id: 'archaeologist', name: '고고학자', price: 0, icon: '🤠', isReward: true },
@@ -1330,12 +1399,12 @@
             { type: 'halloween', name: '할로윈 상점', x: 420, y: 1680, frontX: shopFrontX, queueY: 1820, queue: [] }
         ];
 
-        // 퓨즈 브레인로트 건물 (할로윈 맵 하단 Y: 2200에 상점과 동일한 크기로 배치)
+        // 호박 융합 (퓨즈) 건물 (할로윈 맵 하단 Y: 2050에 살짝 가로로 넓게 배치)
         const fuseBuilding = {
-            name: '퓨즈 브레인로트',
-            x: 210,
-            y: 2200,
-            width: 180,
+            name: '호박 융합',
+            x: 190,
+            y: 2050,
+            width: 220,
             height: 210
         };
 
@@ -2025,6 +2094,410 @@
                     ctx.lineTo(-6, -32); ctx.lineTo(6, -32); ctx.fill();
                 }
 
+            } else if (useSkin === 'classic_bunny') {
+                // 클래식 버니: 미라처럼 붕대를 두르고 있는 악마토끼
+                ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.translate(0, -bobbing);
+
+                // 악마 꼬리 (붉은색 끝 화살표 꼬리)
+                ctx.strokeStyle = '#c0392b'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(-6 * facing, 14);
+                ctx.quadraticCurveTo(-18 * facing, 18, -14 * facing, 8);
+                ctx.stroke();
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.moveTo(-14 * facing, 8);
+                ctx.lineTo(-20 * facing, 10);
+                ctx.lineTo(-17 * facing, 4);
+                ctx.closePath();
+                ctx.fill();
+
+                // 붕대 감긴 다리
+                ctx.fillStyle = '#ecf0f1';
+                ctx.save(); ctx.translate(-6, 14); ctx.rotate((walkAngle * Math.PI)/180);
+                ctx.fillRect(-4, 0, 8, 12);
+                ctx.strokeStyle = '#bdc3c7'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(-4, 4); ctx.lineTo(4, 7); ctx.moveTo(-4, 8); ctx.lineTo(4, 11); ctx.stroke();
+                ctx.restore();
+
+                ctx.save(); ctx.translate(6, 14); ctx.rotate((-walkAngle * Math.PI)/180);
+                ctx.fillRect(-4, 0, 8, 12);
+                ctx.strokeStyle = '#bdc3c7'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(-4, 4); ctx.lineTo(4, 7); ctx.moveTo(-4, 8); ctx.lineTo(4, 11); ctx.stroke();
+                ctx.restore();
+
+                // 붕대 감긴 몸통
+                ctx.fillStyle = '#f5f6fa';
+                ctx.beginPath(); ctx.roundRect(-13, -7, 26, 22, 6); ctx.fill();
+                ctx.strokeStyle = '#dcdde1'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                // 몸통 붕대 패턴
+                ctx.strokeStyle = '#bdc3c7'; ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(-13, -2); ctx.lineTo(13, 5);
+                ctx.moveTo(-13, 6); ctx.lineTo(13, -1);
+                ctx.moveTo(-13, 11); ctx.lineTo(13, 9);
+                ctx.stroke();
+
+                // 찢어진 붕대 사이 붉은 악마 심장 표식
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath(); ctx.arc(0, 3, 3, 0, Math.PI*2); ctx.fill();
+
+                let armS = isShaking ? Math.sin(Date.now()*0.02)*10 : 0;
+                // 왼팔 (붕대 감긴 토끼 앞발)
+                ctx.fillStyle = '#f5f6fa';
+                ctx.save(); ctx.translate(-14, 0); ctx.rotate(-Math.PI/6 + armS*0.05);
+                ctx.roundRect(-4, 0, 8, 15, 4); ctx.fill();
+                ctx.strokeStyle = '#bdc3c7'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(-4, 6); ctx.lineTo(4, 9); ctx.stroke();
+                ctx.restore();
+
+                // 오른팔 (붕대 감긴 토끼 앞발)
+                ctx.save(); ctx.translate(14, 0); ctx.rotate(Math.PI/6 - armS*0.05);
+                ctx.roundRect(-4, 0, 8, 15, 4); ctx.fill();
+                ctx.strokeStyle = '#bdc3c7'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(-4, 6); ctx.lineTo(4, 9); ctx.stroke();
+                ctx.restore();
+
+                // 붕대 토끼 머리
+                ctx.fillStyle = '#f5f6fa';
+                ctx.beginPath(); ctx.ellipse(0, -20, 16, 14, 0, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#dcdde1'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                // 머리 붕대 줄무늬
+                ctx.strokeStyle = '#bdc3c7'; ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(-14, -26); ctx.lineTo(14, -20);
+                ctx.moveTo(-15, -15); ctx.lineTo(15, -23);
+                ctx.moveTo(-14, -13); ctx.lineTo(14, -15);
+                ctx.stroke();
+
+                // 토끼 귀 (길쭉한 2개의 귀)
+                // 좌측 귀: 곧게 솟은 긴 붕대 귀
+                ctx.save();
+                ctx.translate(-7, -30);
+                ctx.rotate(-0.15);
+                ctx.fillStyle = '#f5f6fa';
+                ctx.beginPath(); ctx.roundRect(-4, -26, 9, 28, 4); ctx.fill();
+                ctx.strokeStyle = '#dcdde1'; ctx.lineWidth = 1.2; ctx.stroke();
+                ctx.fillStyle = '#962d22'; // 악마 귀 안쪽 다크 레드
+                ctx.beginPath(); ctx.roundRect(-2, -22, 5, 20, 2); ctx.fill();
+                // 붕대 감김
+                ctx.strokeStyle = '#bdc3c7'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(-4, -18); ctx.lineTo(5, -14); ctx.moveTo(-4, -8); ctx.lineTo(5, -4); ctx.stroke();
+                ctx.restore();
+
+                // 우측 귀: 살짝 꺾여있는 붕대 귀
+                ctx.save();
+                ctx.translate(7, -30);
+                ctx.rotate(0.25);
+                ctx.fillStyle = '#f5f6fa';
+                ctx.beginPath(); ctx.roundRect(-4, -18, 9, 20, 4); ctx.fill();
+                ctx.strokeStyle = '#dcdde1'; ctx.lineWidth = 1.2; ctx.stroke();
+                ctx.fillStyle = '#962d22';
+                ctx.beginPath(); ctx.roundRect(-2, -15, 5, 14, 2); ctx.fill();
+                // 꺾인 윗부분
+                ctx.translate(1, -17);
+                ctx.rotate(0.7);
+                ctx.fillStyle = '#f5f6fa';
+                ctx.beginPath(); ctx.roundRect(-4, -12, 8, 14, 3); ctx.fill();
+                ctx.strokeStyle = '#bdc3c7'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(-4, -8); ctx.lineTo(4, -4); ctx.stroke();
+                ctx.restore();
+
+                // 번뜩이는 악마의 붉은 눈 (Red Demon Sockets)
+                ctx.fillStyle = '#ff4757';
+                ctx.shadowColor = '#ff4757'; ctx.shadowBlur = 8;
+                ctx.beginPath(); ctx.ellipse(-6 + (facing*2), -22, 3, 4, -0.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(6 + (facing*2), -22, 3, 4, 0.2, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+                // 섬뜩한 동공
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(-6 + (facing*2), -23, 1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(6 + (facing*2), -23, 1, 0, Math.PI*2); ctx.fill();
+
+                // X자 꿰맨 입 (붕대 미라 입)
+                ctx.strokeStyle = '#c0392b'; ctx.lineWidth = 1.5;
+                let mx = facing * 2;
+                ctx.beginPath();
+                ctx.moveTo(mx - 3, -15); ctx.lineTo(mx + 3, -11);
+                ctx.moveTo(mx + 3, -15); ctx.lineTo(mx - 3, -11);
+                ctx.stroke();
+
+            } else if (useSkin === 'headless_horse') {
+                // 헤드레스 홀스: 머리가 없고 말을 타고 있으며 손에 호박을 들고 있음
+                // 말 그림자
+                ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(0, 26, 26, 10, 0, 0, Math.PI*2); ctx.fill();
+                ctx.translate(0, -bobbing);
+
+                // --- 1. 말(Horse) 렌더링 ---
+                // 말 네 다리
+                ctx.fillStyle = '#1e272e';
+                ctx.save(); ctx.translate(-16, 12); ctx.rotate((walkAngle * 0.8 * Math.PI)/180);
+                ctx.fillRect(-3, 0, 6, 15); ctx.fillStyle = '#7f8c8d'; ctx.fillRect(-3, 12, 6, 3); ctx.restore();
+
+                ctx.fillStyle = '#1e272e';
+                ctx.save(); ctx.translate(-8, 12); ctx.rotate((-walkAngle * 0.8 * Math.PI)/180);
+                ctx.fillRect(-3, 0, 6, 15); ctx.fillStyle = '#7f8c8d'; ctx.fillRect(-3, 12, 6, 3); ctx.restore();
+
+                ctx.save(); ctx.translate(10, 12); ctx.rotate((-walkAngle * 0.8 * Math.PI)/180);
+                ctx.fillRect(-3, 0, 6, 15); ctx.fillStyle = '#7f8c8d'; ctx.fillRect(-3, 12, 6, 3); ctx.restore();
+
+                ctx.save(); ctx.translate(18, 12); ctx.rotate((walkAngle * 0.8 * Math.PI)/180);
+                ctx.fillRect(-3, 0, 6, 15); ctx.fillStyle = '#7f8c8d'; ctx.fillRect(-3, 12, 6, 3); ctx.restore();
+
+                // 말 꼬리
+                ctx.fillStyle = '#111';
+                ctx.beginPath();
+                ctx.moveTo(-18 * facing, 6);
+                ctx.quadraticCurveTo(-26 * facing, 18, -20 * facing, 24);
+                ctx.quadraticCurveTo(-22 * facing, 14, -16 * facing, 10);
+                ctx.closePath();
+                ctx.fill();
+
+                // 말 몸통 (타원형 다크 바디)
+                ctx.fillStyle = '#1e272e';
+                ctx.beginPath(); ctx.ellipse(0, 8, 22, 12, 0, 0, Math.PI*2); ctx.fill();
+
+                // 말 목 & 머리 (앞쪽으로 뻗음)
+                ctx.save();
+                ctx.translate(14 * facing, 4);
+                ctx.fillStyle = '#1e272e';
+                ctx.beginPath();
+                ctx.moveTo(-4 * facing, 2);
+                ctx.lineTo(10 * facing, -12);
+                ctx.lineTo(16 * facing, -10);
+                ctx.lineTo(8 * facing, 8);
+                ctx.closePath(); ctx.fill();
+
+                // 말 머리
+                ctx.beginPath();
+                ctx.roundRect(8 * facing, -16, 10 * facing, 8, 2); ctx.fill();
+                // 붉은 말 눈빛
+                ctx.fillStyle = '#ff3838';
+                ctx.shadowColor = '#ff3838'; ctx.shadowBlur = 6;
+                ctx.beginPath(); ctx.arc(13 * facing, -13, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+                // 말 갈기
+                ctx.fillStyle = '#0a0a0d';
+                ctx.beginPath();
+                ctx.moveTo(2 * facing, -2); ctx.lineTo(8 * facing, -15); ctx.lineTo(4 * facing, -8); ctx.fill();
+                ctx.restore();
+
+                // 말 안장 (Saddle)
+                ctx.fillStyle = '#4b382a';
+                ctx.beginPath(); ctx.roundRect(-8, 0, 16, 8, 2); ctx.fill();
+                ctx.fillStyle = '#e67e22'; ctx.fillRect(-6, 2, 12, 2);
+
+                // --- 2. 헤드레스 기사 본체 (머리 없음) ---
+                // 기사 몸통 (다크 아머 & 망토)
+                ctx.fillStyle = '#2c3e50';
+                ctx.beginPath(); ctx.roundRect(-10, -14, 20, 16, 3); ctx.fill();
+                ctx.fillStyle = '#111';
+                // 휘날리는 어깨 망토
+                ctx.beginPath();
+                ctx.moveTo(-10, -12); ctx.lineTo(-18 * facing, 6); ctx.lineTo(-8, 2); ctx.fill();
+
+                // 목 칼라 / 단면 (머리가 없고 피어오르는 보라/청록 불꽃 연기!)
+                ctx.fillStyle = '#3e1b1b';
+                ctx.beginPath(); ctx.ellipse(0, -14, 7, 3, 0, 0, Math.PI*2); ctx.fill();
+                // 오싹한 불꽃 연기
+                let smokeAnim = Math.sin(Date.now() * 0.01) * 3;
+                ctx.fillStyle = '#8e44ad';
+                ctx.shadowColor = '#9b59b6'; ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.moveTo(-4, -14);
+                ctx.quadraticCurveTo(-6 + smokeAnim, -26, 0, -28);
+                ctx.quadraticCurveTo(6 - smokeAnim, -24, 4, -14);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#00cec9';
+                ctx.beginPath(); ctx.arc(0, -22, 2, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+
+                let armS = isShaking ? Math.sin(Date.now()*0.02)*10 : 0;
+                // 왼손: 고삐를 쥐고 있음
+                ctx.fillStyle = '#2c3e50';
+                ctx.save(); ctx.translate(-11, -8); ctx.rotate(-Math.PI/6);
+                ctx.roundRect(-3, 0, 6, 12, 2); ctx.fill();
+                ctx.fillStyle = '#7f8c8d'; ctx.beginPath(); ctx.arc(0, 12, 3, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+                // 오른손: 🔥 활활 타오르는 잭오랜턴 호박을 들고 있음!
+                ctx.save();
+                ctx.translate(11, -10);
+                ctx.rotate(0.3 + armS * 0.05);
+                ctx.fillStyle = '#2c3e50';
+                ctx.roundRect(-3, 0, 6, 14, 2); ctx.fill();
+                ctx.fillStyle = '#7f8c8d'; ctx.beginPath(); ctx.arc(0, 14, 3, 0, Math.PI*2); ctx.fill();
+
+                // 손에 든 잭오랜턴 호박
+                ctx.translate(4, 16);
+                ctx.fillStyle = '#e67e22';
+                ctx.beginPath(); ctx.ellipse(0, 0, 11, 10, 0, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#d35400'; ctx.lineWidth = 1.5; ctx.stroke();
+                // 호박 꼭지
+                ctx.fillStyle = '#27ae60'; ctx.fillRect(-1.5, -13, 3, 4);
+                // 빛나는 눈과 입
+                ctx.fillStyle = '#f1c40f';
+                ctx.shadowColor = '#f39c12'; ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.moveTo(-5, -3); ctx.lineTo(-2, -3); ctx.lineTo(-3.5, 0); ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(2, -3); ctx.lineTo(5, -3); ctx.lineTo(3.5, 0); ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(-5, 3); ctx.lineTo(0, 6); ctx.lineTo(5, 3); ctx.lineTo(0, 4); ctx.closePath(); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.restore();
+
+            } else if (useSkin === 'halloween_devil') {
+                // 할로윈의 악마: 악마 날개와 뿔이 달려있음
+                ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.translate(0, -bobbing);
+
+                // --- 1. 등 뒤의 거대한 악마 날개 (Bat Wings) ---
+                let wingFlap = Math.sin(Date.now() * 0.006) * 0.08;
+                // 좌측 날개
+                ctx.save();
+                ctx.translate(-10, -8);
+                ctx.rotate(-0.2 + wingFlap);
+                ctx.fillStyle = '#3a0511';
+                ctx.strokeStyle = '#c0392b';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(-26, -24);
+                ctx.lineTo(-24, -10);
+                ctx.lineTo(-36, -4);
+                ctx.lineTo(-28, 6);
+                ctx.lineTo(-32, 18);
+                ctx.lineTo(0, 6);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                // 뼈대 끝 뾰족한 갈퀴
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath(); ctx.moveTo(-26, -24); ctx.lineTo(-30, -28); ctx.lineTo(-24, -22); ctx.fill();
+                ctx.restore();
+
+                // 우측 날개
+                ctx.save();
+                ctx.translate(10, -8);
+                ctx.rotate(0.2 - wingFlap);
+                ctx.fillStyle = '#3a0511';
+                ctx.strokeStyle = '#c0392b';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(26, -24);
+                ctx.lineTo(24, -10);
+                ctx.lineTo(36, -4);
+                ctx.lineTo(28, 6);
+                ctx.lineTo(32, 18);
+                ctx.lineTo(0, 6);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                // 뼈대 끝 뾰족한 갈퀴
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath(); ctx.moveTo(26, -24); ctx.lineTo(30, -28); ctx.lineTo(24, -22); ctx.fill();
+                ctx.restore();
+
+                // 악마 꼬리 (Devil Tail)
+                ctx.strokeStyle = '#c0392b'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(-4 * facing, 14);
+                ctx.bezierCurveTo(-20 * facing, 18, -24 * facing, -2, -18 * facing, -6);
+                ctx.stroke();
+                // 삼각 화살표 꼬리 끝
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.moveTo(-18 * facing, -6);
+                ctx.lineTo(-25 * facing, -8);
+                ctx.lineTo(-20 * facing, -1);
+                ctx.closePath(); ctx.fill();
+
+                // 악마 다리 (블랙/다크 레드 바지 & 뾰족 부츠)
+                ctx.fillStyle = '#1e1014';
+                ctx.save(); ctx.translate(-6, 15); ctx.rotate((walkAngle * Math.PI)/180);
+                ctx.fillRect(-4, 0, 8, 14);
+                ctx.fillStyle = '#962d22'; ctx.fillRect(-5, 10, 10, 4); ctx.restore();
+
+                ctx.save(); ctx.translate(6, 15); ctx.rotate((-walkAngle * Math.PI)/180);
+                ctx.fillRect(-4, 0, 8, 14);
+                ctx.fillStyle = '#962d22'; ctx.fillRect(-5, 10, 10, 4); ctx.restore();
+
+                // 악마 몸통 (카리스마 넘치는 로브 & 금장 버클)
+                ctx.fillStyle = '#2c000e';
+                ctx.beginPath(); ctx.roundRect(-13, -7, 26, 22, 5); ctx.fill();
+                ctx.strokeStyle = '#c0392b'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                // 가슴 장식 (황금빛 악마 펜던트)
+                ctx.fillStyle = '#f1c40f';
+                ctx.beginPath(); ctx.arc(0, 2, 4, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath(); ctx.arc(0, 2, 2, 0, Math.PI*2); ctx.fill();
+
+                let armS = isShaking ? Math.sin(Date.now()*0.02)*10 : 0;
+                // 왼팔
+                ctx.fillStyle = '#2c000e';
+                ctx.save(); ctx.translate(-14, -2); ctx.rotate(-Math.PI/6 + armS*0.05);
+                ctx.roundRect(-4, 0, 8, 16, 3); ctx.fill();
+                ctx.fillStyle = '#c0392b'; ctx.beginPath(); ctx.arc(0, 16, 4, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+                // 오른팔
+                ctx.save(); ctx.translate(14, -2); ctx.rotate(Math.PI/6 - armS*0.05);
+                ctx.roundRect(-4, 0, 8, 16, 3); ctx.fill();
+                ctx.fillStyle = '#c0392b'; ctx.beginPath(); ctx.arc(0, 16, 4, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+                // 악마 머리
+                ctx.fillStyle = '#5c121e';
+                ctx.beginPath(); ctx.arc(0, -20, 14, 0, Math.PI*2); ctx.fill();
+
+                // --- 2. 뾰족한 악마 뿔 (Devil Horns) 2개 ---
+                // 좌측 뿔
+                ctx.fillStyle = '#c0392b';
+                ctx.strokeStyle = '#111'; ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(-6, -30);
+                ctx.quadraticCurveTo(-14, -42, -18, -45);
+                ctx.quadraticCurveTo(-10, -36, -2, -32);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                // 뿔 끝부분 흑화
+                ctx.fillStyle = '#111';
+                ctx.beginPath(); ctx.moveTo(-14, -40); ctx.lineTo(-18, -45); ctx.lineTo(-11, -38); ctx.fill();
+
+                // 우측 뿔
+                ctx.fillStyle = '#c0392b';
+                ctx.beginPath();
+                ctx.moveTo(6, -30);
+                ctx.quadraticCurveTo(14, -42, 18, -45);
+                ctx.quadraticCurveTo(10, -36, 2, -32);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#111';
+                ctx.beginPath(); ctx.moveTo(14, -40); ctx.lineTo(18, -45); ctx.lineTo(11, -38); ctx.fill();
+
+                // 타오르는 악마 눈 (Yellow & Red Glowing Eyes)
+                ctx.fillStyle = '#f1c40f';
+                ctx.shadowColor = '#e74c3c'; ctx.shadowBlur = 10;
+                ctx.beginPath(); ctx.ellipse(-5 + (facing*2), -22, 2.5, 3.5, -0.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(5 + (facing*2), -22, 2.5, 3.5, 0.2, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath(); ctx.arc(-5 + (facing*2), -22, 1.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(5 + (facing*2), -22, 1.2, 0, Math.PI*2); ctx.fill();
+
+                // 날카로운 악마 미소
+                ctx.strokeStyle = '#f5f6fa'; ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(-4 + (facing*2), -14);
+                ctx.lineTo(0 + (facing*2), -12);
+                ctx.lineTo(4 + (facing*2), -14);
+                ctx.stroke();
+
             } else {
                 ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
                 ctx.translate(0, -bobbing);
@@ -2187,11 +2660,16 @@
             ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial'; ctx.textAlign = 'center'; ctx.fillText(shop.name, x + 95, y + 63);
         }
 
-        // 사진 2번 완벽 구현: 할로윈 퓨즈 브레인로트 건물 (오싹하고 정교한 할로윈 마녀/괴물 집)
+        // 사진 2번 완벽 구현: 할로윈 호박 융합 (퓨즈) 건물 (오싹하고 정교한 할로윈 마녀/괴물 집)
         function drawFuseBuilding(ctx, bld) {
             const x = bld.x; 
             const y = bld.y;
             ctx.save();
+
+            // 가로로 살짝 늘리기 (1.18배 가로 스케일 적용)
+            ctx.translate(x + 98, y + 105);
+            ctx.scale(1.18, 1.0);
+            ctx.translate(-(x + 98), -(y + 105));
 
             // 1. 바닥 석재 계단 및 그림자 (하단)
             ctx.fillStyle = 'rgba(0,0,0,0.35)';
@@ -2306,8 +2784,7 @@
             ctx.moveTo(x + 42, y + 35); ctx.lineTo(x + 65, y + 25);
             ctx.stroke();
 
-            // 6. 1층 괴물 입/치아 현관문 (사진 2: 나무 셔터 + 노란 뾰족 이빨 플래카드)
-            // 문 주변 나무 기둥 프레임
+            // 6. 1층 괴물 입/치아 현관문
             ctx.fillStyle = '#5d4037';
             ctx.fillRect(x + 35, y + 80, 12, 128); // 좌측 기둥
             ctx.fillRect(x + 150, y + 80, 12, 128); // 우측 기둥
@@ -2321,7 +2798,6 @@
             // 셔터 나무 문 본체
             ctx.fillStyle = '#3e2723';
             ctx.fillRect(x + 47, y + 90, 103, 118);
-            // 가로 줄무늬 널빤지
             ctx.strokeStyle = '#271510'; ctx.lineWidth = 2;
             for (let ly = y + 100; ly < y + 205; ly += 14) {
                 ctx.beginPath(); ctx.moveTo(x + 47, ly); ctx.lineTo(x + 150, ly); ctx.stroke();
@@ -2330,18 +2806,16 @@
             // 으스스한 흰색 천 플래카드 (괴물 입)
             ctx.fillStyle = '#f5f6fa';
             ctx.fillRect(x + 48, y + 128, 101, 46);
-            // 고정 볼트
             ctx.fillStyle = '#718093';
             ctx.beginPath(); ctx.arc(x + 53, y + 133, 3, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(x + 144, y + 133, 3, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(x + 53, y + 169, 3, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(x + 144, y + 169, 3, 0, Math.PI*2); ctx.fill();
 
-            // 노란빛 뾰족뾰족 괴물 이빨 (사진 2 핵심 특징!)
+            // 노란빛 뾰족뾰족 괴물 이빨
             ctx.fillStyle = '#f1c40f';
             ctx.shadowColor = '#f39c12'; ctx.shadowBlur = 8;
             ctx.beginPath();
-            // 윗니
             ctx.moveTo(x + 50, y + 130);
             let toothW = 12;
             for (let i = 0; i < 8; i++) {
@@ -2351,7 +2825,6 @@
             ctx.closePath();
             ctx.fill();
 
-            // 아랫니
             ctx.beginPath();
             ctx.moveTo(x + 50, y + 172);
             for (let i = 0; i < 8; i++) {
@@ -2362,14 +2835,13 @@
             ctx.fill();
             ctx.shadowBlur = 0;
 
-            // 7. 좌우 주황색 호박 랜턴 (걸려 있는 등불)
-            // 좌측 등불
+            // 7. 좌우 주황색 호박 랜턴
             ctx.fillStyle = '#2f3542'; ctx.fillRect(x + 22, y + 135, 12, 4);
             ctx.fillStyle = '#ffa502';
             ctx.shadowColor = '#eccc68'; ctx.shadowBlur = 14;
             ctx.fillRect(x + 23, y + 140, 10, 18);
             ctx.shadowBlur = 0;
-            // 우측 등불
+
             ctx.fillStyle = '#2f3542'; ctx.fillRect(x + 162, y + 135, 12, 4);
             ctx.fillStyle = '#ffa502';
             ctx.shadowColor = '#eccc68'; ctx.shadowBlur = 14;
@@ -2383,14 +2855,14 @@
             ctx.moveTo(x + 170, y + 172); ctx.lineTo(x + 182, y + 180);
             ctx.stroke();
 
-            // 우측 상단 다락방 작은 굴뚝/첨탑
+            // 우측 상단 다락방 작은 굴뚝
             ctx.fillStyle = '#9aa85e';
             ctx.fillRect(x + 145, y - 25, 20, 30);
             ctx.fillStyle = '#222f3e';
             ctx.beginPath(); ctx.moveTo(x + 140, y - 25); ctx.lineTo(x + 155, y - 45); ctx.lineTo(x + 170, y - 25); ctx.fill();
             ctx.fillStyle = '#ff9f43'; ctx.fillRect(x + 150, y - 18, 10, 12);
 
-            // 8. 상단 "퓨즈 브레인로트" 네온 간판 배너
+            // 8. 상단 "호박 융합" 네온 간판 배너
             ctx.fillStyle = '#d35400';
             ctx.fillRect(x + 35, y + 52, 126, 26);
             ctx.strokeStyle = '#f39c12'; ctx.lineWidth = 2;
@@ -2404,17 +2876,55 @@
             ctx.fillText(bld.name, x + 98, y + 65);
             ctx.shadowBlur = 0;
 
-            // 9. 머리 위 클릭 인디케이터 말풍선
+            // 9. 머리 위 클릭 인디케이터 / 퓨즈 타이머 / 퓨즈 완료 상태 외부 표시!
             let floatY = Math.sin(Date.now() * 0.005) * 4;
-            ctx.fillStyle = 'white';
-            ctx.beginPath();
-            ctx.roundRect(x + 55, y - 75 + floatY, 86, 22, 6);
-            ctx.fill();
-            ctx.fillStyle = '#2c3e50';
-            ctx.font = 'bold 11px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText("🎃 퓨즈 클릭!", x + 98, y - 64 + floatY);
+            const now = Date.now();
+            const isFusing = (activeFuseStartTime > 0 && now < activeFuseStartTime + activeFuseDurationMs);
+            const isCompleted = (activeFuseStartTime > 0 && now >= activeFuseStartTime + activeFuseDurationMs);
+
+            if (isCompleted) {
+                // 퓨즈 완료 시 반짝이는 황금/초록 배너
+                ctx.fillStyle = '#2ecc71';
+                ctx.shadowColor = '#2ecc71'; ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.roundRect(x + 40, y - 78 + floatY, 116, 25, 7);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = '#f1c40f'; ctx.lineWidth = 2; ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("✨ 퓨즈 완료!", x + 98, y - 65 + floatY);
+            } else if (isFusing) {
+                // 퓨징 중 외부 타이머 표시 (남은 분/초)
+                const remaining = Math.max(0, activeFuseStartTime + activeFuseDurationMs - now);
+                const rmMin = Math.floor(remaining / 60000);
+                const rmSec = Math.floor((remaining % 60000) / 1000);
+
+                ctx.fillStyle = '#c0392b';
+                ctx.beginPath();
+                ctx.roundRect(x + 36, y - 78 + floatY, 124, 25, 7);
+                ctx.fill();
+                ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 11px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`⏱️ ${rmMin}분 ${rmSec < 10 ? '0' : ''}${rmSec}초 남음`, x + 98, y - 65 + floatY);
+            } else {
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.roundRect(x + 55, y - 75 + floatY, 86, 22, 6);
+                ctx.fill();
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 11px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("🎃 퓨즈 클릭!", x + 98, y - 64 + floatY);
+            }
 
             ctx.restore();
         }
