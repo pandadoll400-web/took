@@ -757,7 +757,6 @@
                 actionBtn.disabled = true;
                 actionBtn.style.background = '#7f8c8d';
                 actionBtn.style.cursor = 'not-allowed';
-                possibleBox.innerHTML = `<span style="color:#f39c12; font-weight:bold;">🔥 호박 융합 진행 중입니다... (완료 시 획득 가능)</span>`;
             } else if (isFuseCompleted) {
                 if (timerEl) {
                     timerEl.innerText = '(완료!)';
@@ -767,9 +766,6 @@
                 actionBtn.disabled = false;
                 actionBtn.style.background = '#2ecc71';
                 actionBtn.style.cursor = 'pointer';
-                const skinObj = skinsData.find(s => s.id === activeFuseResult);
-                const skinName = skinObj ? skinObj.name : '스킨';
-                possibleBox.innerHTML = `<span style="color:#2ecc71; font-weight:bold; font-size:15px;">✨ 융합 완료: [${skinName}] 스킨을 수령하세요!</span>`;
             } else {
                 if (timerEl) {
                     timerEl.innerText = '(15분)';
@@ -781,34 +777,77 @@
                     actionBtn.disabled = false;
                     actionBtn.style.background = '#e67e22';
                     actionBtn.style.cursor = 'pointer';
-
-                    const hasSpecial = fuseSlots.some(s => s === '잭오랜턴' || s === '깨진호박');
-                    if (hasSpecial) {
-                        possibleBox.innerHTML = `
-                            <div style="text-align:center; font-size:12px; line-height:1.6;">
-                                <strong style="color:#ff7675; font-size:13px;">[잭오랜턴 / 깨진호박 포함 융합]</strong><br>
-                                페도라 유령: <b style="color:#fff;">70%</b> | 클래식 버니: <b style="color:#fff;">13%</b><br>
-                                헤드레스 홀스: <b style="color:#f1c40f;">9%</b> | 불타는 잭오랜턴: <b style="color:#e67e22;">6%</b><br>
-                                <span style="color:#ff4757; font-weight:bold;">할로윈의 악마: 2%</span>
-                            </div>
-                        `;
-                    } else {
-                        possibleBox.innerHTML = `
-                            <div style="text-align:center; font-size:12px; line-height:1.6;">
-                                <strong style="color:#f1c40f; font-size:13px;">[주황/초록/하얀 호박 융합]</strong><br>
-                                페도라 유령: <b style="color:#fff;">85%</b> | 클래식 버니: <b style="color:#fff;">10%</b><br>
-                                주황 잭오랜턴: <b style="color:#e67e22;">5%</b>
-                            </div>
-                        `;
-                    }
                 } else {
                     actionBtn.innerText = `재료 부족 (${filledCount}/3 슬롯)`;
                     actionBtn.disabled = true;
                     actionBtn.style.background = '#7f8c8d';
                     actionBtn.style.cursor = 'not-allowed';
-                    possibleBox.innerHTML = `<span style="color:#b2bec3;">3개 슬롯에 호박을 각 12개씩(총 36개) 넣으면 융합을 시작할 수 있습니다.</span>`;
                 }
             }
+
+            // 넣은 호박 재료에 따라 실시간으로 라인업과 퍼센트가 변경되는 스킨 사진 카드 목록
+            const hasSpecial = fuseSlots.some(s => s === '잭오랜턴' || s === '깨진호박');
+            const filledCount = fuseSlots.filter(s => s !== null).length;
+            let possibleSkins = [];
+            let headerText = '';
+
+            if (hasSpecial) {
+                headerText = `<div style="color: #ff7675; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-shadow: 1px 1px 2px #000;">🔥 [특수 호박 라인업] 잭오랜턴 / 깨진호박 포함 확률</div>`;
+                possibleSkins = [
+                    { id: 'ghost_fedora', name: '페도라 유령', percent: '70%', percentColor: '#ffffff', borderColor: '#bdc3c7' },
+                    { id: 'classic_bunny', name: '클래식 버니', percent: '13%', percentColor: '#ff7675', borderColor: '#e17055' },
+                    { id: 'headless_horse', name: '헤드레스 홀스', percent: '9%', percentColor: '#f1c40f', borderColor: '#f39c12' },
+                    { id: 'jack_fiery', name: '불타는 잭오랜턴', percent: '6%', percentColor: '#e67e22', borderColor: '#d35400' },
+                    { id: 'halloween_devil', name: '할로윈의 악마', percent: '2%', percentColor: '#ff4757', borderColor: '#c0392b' }
+                ];
+            } else {
+                headerText = `<div style="color: #f1c40f; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-shadow: 1px 1px 2px #000;">🎃 [기본 호박 라인업] 주황 · 초록 · 하얀 호박 확률</div>`;
+                possibleSkins = [
+                    { id: 'ghost_fedora', name: '페도라 유령', percent: '85%', percentColor: '#ffffff', borderColor: '#bdc3c7' },
+                    { id: 'classic_bunny', name: '클래식 버니', percent: '10%', percentColor: '#ff7675', borderColor: '#e17055' },
+                    { id: 'jack_orange', name: '주황 잭오랜턴', percent: '5%', percentColor: '#e67e22', borderColor: '#d35400' }
+                ];
+            }
+
+            let cardsHtml = `<div style="display: flex; gap: 6px; justify-content: center; align-items: stretch; flex-wrap: wrap;">`;
+            possibleSkins.forEach(item => {
+                cardsHtml += `
+                    <div style="background: rgba(45, 25, 15, 0.92); border: 2px solid ${item.borderColor}; border-radius: 8px; padding: 6px 3px; display: flex; flex-direction: column; align-items: center; width: 68px; box-shadow: 0 3px 6px rgba(0,0,0,0.5);">
+                        <canvas id="fuse-card-${item.id}" width="56" height="72" style="background: rgba(15, 10, 5, 0.7); border-radius: 5px; margin-bottom: 4px;"></canvas>
+                        <span style="font-size: 10px; font-weight: bold; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 64px; text-align: center; text-shadow: 1px 1px 2px #000;">${item.name}</span>
+                        <span style="font-size: 13px; font-weight: 900; color: ${item.percentColor}; margin-top: 2px; text-shadow: 1px 1px 2px #000;">${item.percent}</span>
+                    </div>
+                `;
+            });
+            cardsHtml += `</div>`;
+
+            let subNotice = '';
+            if (isFusing) {
+                headerText = `<div style="color:#f39c12; font-weight:bold; font-size:13px; margin-bottom:8px; text-shadow: 1px 1px 2px #000;">🔥 호박 융합 진행 중... (완료 시 아래 확률로 획득)</div>`;
+            } else if (isFuseCompleted) {
+                const skinObj = skinsData.find(s => s.id === activeFuseResult);
+                const skinName = skinObj ? skinObj.name : '스킨';
+                headerText = `<div style="color:#2ecc71; font-weight:bold; font-size:14px; margin-bottom:8px; text-shadow: 1px 1px 2px #000;">✨ 융합 완료: [${skinName}] 스킨을 수령하세요!</div>`;
+            } else {
+                if (filledCount === 3) {
+                    subNotice = `<div style="font-size: 11px; color: #2ecc71; margin-top: 8px; font-weight: bold;">✨ 재료 충족! '호박 융합 시작' 버튼을 누르세요.</div>`;
+                } else {
+                    subNotice = `<div style="font-size: 11px; color: #b2bec3; margin-top: 8px;">💡 슬롯에 넣는 호박 재료에 따라 스킨 사진과 확률이 실시간 변경됩니다. (슬롯당 12개 필요)</div>`;
+                }
+            }
+
+            possibleBox.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                    ${headerText}
+                    ${cardsHtml}
+                    ${subNotice}
+                </div>
+            `;
+
+            // 스킨 사진 (캔버스) 그리기
+            possibleSkins.forEach(item => {
+                drawPreviewCanvas(`fuse-card-${item.id}`, item.id);
+            });
 
             // 슬롯 3개 렌더링
             for (let i = 0; i < 3; i++) {
@@ -1272,9 +1311,11 @@
             pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
             const dummyChar = { colors: { skin: '#ffeaa7', shirt: '#e67e22', hat: '#8B4513' }, facing: 1 };
             
+            const scale = (pCanvas.width < 60) ? 0.70 : 0.8;
+            const yOffset = (pCanvas.width < 60) ? 12 : 15;
             pCtx.save();
-            pCtx.translate(pCanvas.width / 2, pCanvas.height / 2 + 15);
-            pCtx.scale(0.8, 0.8);
+            pCtx.translate(pCanvas.width / 2, pCanvas.height / 2 + yOffset);
+            pCtx.scale(scale, scale);
             drawCharacter(pCtx, dummyChar, 0, 0, false, 0, skinId);
             pCtx.restore();
         }
