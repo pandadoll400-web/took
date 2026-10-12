@@ -940,11 +940,20 @@
             // 완료 수령
             if (activeFuseStartTime > 0 && now >= activeFuseStartTime + activeFuseDurationMs) {
                 const rewardSkinId = activeFuseResult || 'ghost_fedora';
-                if (!ownedSkins.includes(rewardSkinId)) {
-                    ownedSkins.push(rewardSkinId);
-                }
                 const skinObj = skinsData.find(s => s.id === rewardSkinId);
                 const skinName = skinObj ? skinObj.name : '할로윈 스킨';
+                const isDuplicate = ownedSkins.includes(rewardSkinId);
+
+                if (!isDuplicate) {
+                    ownedSkins.push(rewardSkinId);
+                    floatTexts.push({ x: player.x, y: player.y - 100, text: `🎉 [${skinName}] 스킨 획득!`, color: '#f1c40f', life: 120, size: 22 });
+                    alert(`✨ 축하합니다! 호박 융합 완료!\n[${skinName}] 스킨을 획득하여 옷장에 추가되었습니다!`);
+                } else {
+                    money += 10000;
+                    updateMoney();
+                    floatTexts.push({ x: player.x, y: player.y - 100, text: `💰 [${skinName}] 중복 획득 (+10,000 골드)`, color: '#f1c40f', life: 120, size: 20 });
+                    alert(`✨ 호박 융합 완료!\n이미 보유하고 있는 [${skinName}] 스킨이 나와 10,000 골드로 전환 지급되었습니다! (+10,000 💰)`);
+                }
 
                 activeFuseStartTime = 0;
                 activeFuseResult = null;
@@ -953,9 +962,6 @@
                 updateShopSkinUI();
                 updateInvSkinUI();
                 saveGame();
-
-                floatTexts.push({ x: player.x, y: player.y - 100, text: `🎉 [${skinName}] 스킨 획득!`, color: '#f1c40f', life: 120, size: 22 });
-                alert(`✨ 축하합니다! 호박 융합 완료!\n[${skinName}] 스킨을 획득하여 옷장에 추가되었습니다!`);
                 return;
             }
 
