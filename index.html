@@ -66,6 +66,30 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.5); z-index: 10;
         }
         #shop-btn:active { transform: translateY(2px); }
+
+        #trade-btn {
+            position: absolute; bottom: 20px; left: 180px;
+            background: #00cec9; color: black; font-size: 18px; font-weight: bold;
+            padding: 15px 20px; border-radius: 50%; border: 3px solid #00b894; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5); z-index: 10;
+        }
+        #trade-btn:active { transform: translateY(2px); }
+
+        .trade-slot-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 7px 5px;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+        }
+        .trade-slot-card:hover {
+            border-color: #00cec9;
+            background: rgba(0, 206, 201, 0.18);
+        }
         
         #shop-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -155,6 +179,86 @@
 
         <button id="inventory-btn">가방</button>
         <button id="shop-btn">상점</button>
+        <button id="trade-btn" onclick="openTradeRequestModal()">거래</button>
+
+        <!-- 1. 거래 신청 모달 (상대방 닉네임 입력) -->
+        <div id="trade-request-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 22, 34, 0.98); color: white; padding: 25px 22px; border-radius: 16px; width: 85%; max-width: 360px; display: none; border: 2px solid #00cec9; z-index: 50; text-align: center; box-sizing: border-box; box-shadow: 0 10px 40px rgba(0,0,0,0.85); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="font-size: 30px; margin-bottom: 6px;">🤝</div>
+            <h3 style="margin: 0 0 8px 0; color: #00cec9; font-size: 20px; font-weight: bold;">플레이어와 거래</h3>
+            <p style="color: #a0a0b0; font-size: 13px; margin: 0 0 16px 0; line-height: 1.4;">거래를 신청할 플레이어의 닉네임을 입력하세요.</p>
+            <input id="trade-target-input" type="text" placeholder="플레이어 닉네임" maxlength="20" style="width: 100%; box-sizing: border-box; background: #131722; border: 1.5px solid #2e384d; border-radius: 8px; color: white; padding: 12px 14px; font-size: 14px; text-align: center; outline: none; margin-bottom: 14px;" onkeydown="if(event.key==='Enter') sendTradeRequest()">
+            <div id="trade-req-status" style="display: none; color: #f1c40f; font-size: 13px; margin-bottom: 14px; font-weight: bold;">상대방의 응답을 기다리는 중...</div>
+            <div style="display: flex; gap: 10px;">
+                <button id="trade-req-send-btn" onclick="sendTradeRequest()" style="flex: 1; padding: 12px; background: #00cec9; color: #111; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer;">거래 신청</button>
+                <button onclick="closeTradeRequestModal()" style="flex: 1; padding: 12px; background: #7f8c8d; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer;">닫기</button>
+            </div>
+        </div>
+
+        <!-- 2. 거래 요청 수신 팝업 (화면 가운데 정중앙 배치) -->
+        <div id="trade-incoming-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 20, 32, 0.98); color: white; padding: 28px 22px; border-radius: 18px; width: 88%; max-width: 360px; display: none; border: 2.5px solid #00cec9; z-index: 60; box-shadow: 0 0 35px rgba(0, 206, 201, 0.45); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🤝</div>
+            <h3 style="margin: 0 0 10px 0; color: #00cec9; font-size: 21px; font-weight: bold;">거래 요청 도착!</h3>
+            <p style="color: #ecf0f1; font-size: 15px; margin: 0 0 24px 0; line-height: 1.5;">
+                <strong id="incoming-sender-name" style="color: #f1c40f; font-size: 18px;"></strong> 님이<br>거래를 보냈습니다!
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button onclick="acceptIncomingTrade()" style="flex: 1; padding: 13px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 3px 10px rgba(46, 204, 113, 0.4);">수락</button>
+                <button onclick="declineIncomingTrade()" style="flex: 1; padding: 13px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 3px 10px rgba(231, 76, 60, 0.4);">거절</button>
+            </div>
+        </div>
+
+        <!-- 3. 실시간 거래 창 (아이템 등록, 상대 물품 실시간 확인, 2초 꾹 누르기 수락) -->
+        <div id="trade-window-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 22, 34, 0.98); color: white; padding: 18px 16px; border-radius: 16px; width: 92%; max-width: 460px; max-height: 88%; overflow-y: auto; display: none; border: 2px solid #00cec9; z-index: 55; box-shadow: 0 12px 45px rgba(0,0,0,0.9); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 8px; margin-bottom: 12px;">
+                <h3 style="margin: 0; color: #00cec9; font-size: 17px; display: flex; align-items: center; gap: 6px;">
+                    <span>🤝</span> 실시간 거래
+                </h3>
+                <button onclick="cancelActiveTrade()" style="background: rgba(255,255,255,0.1); border: none; color: #bbb; width: 28px; height: 28px; border-radius: 50%; font-size: 13px; cursor: pointer;">✕</button>
+            </div>
+
+            <!-- 거래 물품 2개 박스 (나 vs 상대방) -->
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <!-- 내 거래 물품 -->
+                <div style="flex: 1; background: rgba(0,0,0,0.38); border: 1.5px solid #3498db; border-radius: 10px; padding: 8px; min-height: 130px; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span id="trade-my-name" style="font-weight: bold; color: #74b9ff; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 90px;">내 물품</span>
+                        <span id="trade-my-status" style="font-size: 10px; padding: 2px 5px; border-radius: 4px; background: #555; color: #eee; font-weight: bold;">대기중</span>
+                    </div>
+                    <div id="trade-my-items" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; flex: 1; align-content: start;">
+                    </div>
+                    <span style="font-size: 9px; color: #888; text-align: center; margin-top: 4px;">클릭 시 물품 회수</span>
+                </div>
+
+                <!-- 상대방 거래 물품 -->
+                <div style="flex: 1; background: rgba(0,0,0,0.38); border: 1.5px solid #e67e22; border-radius: 10px; padding: 8px; min-height: 130px; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span id="trade-partner-name" style="font-weight: bold; color: #f39c12; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 90px;">상대방 물품</span>
+                        <span id="trade-partner-status" style="font-size: 10px; padding: 2px 5px; border-radius: 4px; background: #555; color: #eee; font-weight: bold;">대기중</span>
+                    </div>
+                    <div id="trade-partner-items" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; flex: 1; align-content: start;">
+                    </div>
+                    <span style="font-size: 9px; color: #888; text-align: center; margin-top: 4px;">상대방 실시간 현황</span>
+                </div>
+            </div>
+
+            <!-- 내 가방에서 아이템 올리기 영역 -->
+            <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 8px; margin-bottom: 12px;">
+                <div style="font-weight: bold; font-size: 12px; color: #00cec9; margin-bottom: 6px;">📦 가방에서 올릴 물품 선택 (클릭 시 1개씩 추가):</div>
+                <div id="trade-inv-picker" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; max-height: 110px; overflow-y: auto;">
+                </div>
+            </div>
+
+            <!-- 하단 2초 꾹 누르기 수락 버튼 & 취소 버튼 -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div id="trade-hold-btn" style="position: relative; overflow: hidden; border-radius: 10px; border: 2px solid #2ecc71; background: #1a252c; cursor: pointer; user-select: none; -webkit-user-select: none;">
+                    <div id="trade-hold-progress" style="position: absolute; top: 0; left: 0; width: 0%; height: 100%; background: #2ecc71; opacity: 0.65; transition: width 0.05s linear; pointer-events: none;"></div>
+                    <div id="trade-hold-text" style="position: relative; z-index: 2; padding: 13px 8px; text-align: center; font-weight: bold; font-size: 14px; color: white;">
+                        수락 (2초간 꾹 누르기)
+                    </div>
+                </div>
+                <button onclick="cancelActiveTrade()" style="padding: 9px; background: rgba(231, 76, 60, 0.2); color: #ff7675; border: 1px solid #e74c3c; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">거래 취소</button>
+            </div>
+        </div>
         
         <div id="shop-modal">
             <h2>상점</h2>
@@ -1628,6 +1732,8 @@
             
             // 다른 계정으로 로그인하거나 새 계정을 만들 때 이전 계정 데이터가 남지 않도록 게임 상태 완전 초기화
             resetGameToDefault();
+            stopTradeIncomingListener();
+            closeActiveTradeModal();
             
             updateUserBadgeUI();
             closeLoginModal();
@@ -1691,6 +1797,7 @@
                         }
                         closeLoginModal();
                         updateUserBadgeUI();
+                        startTradeIncomingListener();
                         saveGame();
                         floatTexts.push({ x: player.x, y: player.y - 100, text: `✨ [${username}] 로그인 성공!`, color: '#2ecc71', life: 100, size: 20 });
                     } else {
@@ -1711,6 +1818,7 @@
                     applyLoadedGameData(newGameSave);
                     closeLoginModal();
                     updateUserBadgeUI();
+                    startTradeIncomingListener();
                     saveGame();
                     floatTexts.push({ x: player.x, y: player.y - 100, text: `🎉 [${username}] 신규 계정 생성 완료! (LV. 1)`, color: '#38bdf8', life: 100, size: 20 });
                 }
@@ -1800,6 +1908,521 @@
             }
         }
 
+        // ==========================================
+        // 🤝 실시간 유저 간 거래 시스템 (Player Trading)
+        // ==========================================
+        let activeTradeId = null;
+        let activeTradeDoc = null;
+        let unsubscribeActiveTrade = null;
+        let unsubscribeIncomingTrades = null;
+        let incomingTradeId = null;
+        let myOfferedItems = {};
+        let tradeLocalProcessed = false;
+        let holdInterval = null;
+        let isHolding = false;
+
+        function startTradeIncomingListener() {
+            if (unsubscribeIncomingTrades) {
+                unsubscribeIncomingTrades();
+                unsubscribeIncomingTrades = null;
+            }
+            if (!currentUser || !db) return;
+
+            unsubscribeIncomingTrades = db.collection('trades')
+                .where('receiverLower', '==', currentUser.toLowerCase())
+                .where('status', '==', 'pending')
+                .onSnapshot(snapshot => {
+                    if (snapshot.empty) {
+                        document.getElementById('trade-incoming-modal').style.display = 'none';
+                        incomingTradeId = null;
+                        return;
+                    }
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        // 5분 이상 지난 오래된 거래는 무시
+                        if (Date.now() - (data.createdAt || 0) > 300000) return;
+                        incomingTradeId = doc.id;
+                        document.getElementById('incoming-sender-name').innerText = data.sender;
+                        document.getElementById('trade-incoming-modal').style.display = 'block';
+                    });
+                }, err => console.warn('Trade incoming error:', err));
+        }
+
+        function stopTradeIncomingListener() {
+            if (unsubscribeIncomingTrades) {
+                unsubscribeIncomingTrades();
+                unsubscribeIncomingTrades = null;
+            }
+            document.getElementById('trade-incoming-modal').style.display = 'none';
+            incomingTradeId = null;
+        }
+
+        function openTradeRequestModal() {
+            if (!currentUser) {
+                alert('플레이어 간 거래를 이용하려면 먼저 로그인해야 합니다!');
+                openLoginModal();
+                return;
+            }
+            document.getElementById('trade-request-modal').style.display = 'block';
+            document.getElementById('trade-target-input').value = '';
+            document.getElementById('trade-req-status').style.display = 'none';
+            document.getElementById('trade-req-send-btn').disabled = false;
+            resetJoyMouse();
+            player.targetTree = null;
+        }
+
+        function closeTradeRequestModal() {
+            document.getElementById('trade-request-modal').style.display = 'none';
+            if (activeTradeId && activeTradeDoc && activeTradeDoc.status === 'pending') {
+                cancelActiveTrade();
+            }
+        }
+
+        async function sendTradeRequest() {
+            if (!currentUser) {
+                alert('로그인이 필요합니다!');
+                openLoginModal();
+                return;
+            }
+            if (!db) {
+                alert('서버 연결을 확인해주세요.');
+                return;
+            }
+
+            const targetInput = document.getElementById('trade-target-input');
+            const targetUsername = targetInput.value.trim();
+
+            if (!targetUsername) {
+                alert('거래할 상대방의 닉네임을 입력해주세요.');
+                return;
+            }
+            if (targetUsername.toLowerCase() === currentUser.toLowerCase()) {
+                alert('자기 자신에게는 거래를 신청할 수 없습니다!');
+                return;
+            }
+
+            const statusEl = document.getElementById('trade-req-status');
+            const sendBtn = document.getElementById('trade-req-send-btn');
+            statusEl.innerText = `'${targetUsername}' 플레이어 찾는 중...`;
+            statusEl.style.display = 'block';
+            sendBtn.disabled = true;
+
+            try {
+                const targetDoc = await db.collection('users').doc(targetUsername.toLowerCase()).get();
+                if (!targetDoc.exists) {
+                    alert(`[${targetUsername}] 플레이어를 찾을 수 없습니다. 닉네임을 다시 확인해주세요.`);
+                    statusEl.style.display = 'none';
+                    sendBtn.disabled = false;
+                    return;
+                }
+
+                const targetData = targetDoc.data();
+                const realTargetName = targetData.username || targetUsername;
+
+                statusEl.innerText = `'${realTargetName}' 님의 응답을 기다리는 중...`;
+
+                const tradeRef = await db.collection('trades').add({
+                    sender: currentUser,
+                    senderLower: currentUser.toLowerCase(),
+                    receiver: realTargetName,
+                    receiverLower: realTargetName.toLowerCase(),
+                    status: 'pending',
+                    senderItems: {},
+                    receiverItems: {},
+                    senderConfirmed: false,
+                    receiverConfirmed: false,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
+                });
+
+                activeTradeId = tradeRef.id;
+                subscribeToActiveTrade(activeTradeId);
+            } catch (err) {
+                console.error('거래 신청 에러:', err);
+                alert('거래 신청 중 오류가 발생했습니다: ' + err.message);
+                statusEl.style.display = 'none';
+                sendBtn.disabled = false;
+            }
+        }
+
+        async function acceptIncomingTrade() {
+            if (!incomingTradeId || !db) return;
+            try {
+                const tId = incomingTradeId;
+                await db.collection('trades').doc(tId).update({
+                    status: 'active',
+                    updatedAt: Date.now()
+                });
+                document.getElementById('trade-incoming-modal').style.display = 'none';
+                incomingTradeId = null;
+                activeTradeId = tId;
+                subscribeToActiveTrade(tId);
+            } catch (err) {
+                console.error('거래 수락 에러:', err);
+                alert('거래 수락 중 오류가 발생했습니다.');
+            }
+        }
+
+        async function declineIncomingTrade() {
+            if (!incomingTradeId || !db) return;
+            try {
+                const tId = incomingTradeId;
+                await db.collection('trades').doc(tId).update({
+                    status: 'declined',
+                    updatedAt: Date.now()
+                });
+                document.getElementById('trade-incoming-modal').style.display = 'none';
+                incomingTradeId = null;
+            } catch (err) {
+                console.error('거래 거절 에러:', err);
+            }
+        }
+
+        function subscribeToActiveTrade(tradeId) {
+            if (unsubscribeActiveTrade) {
+                unsubscribeActiveTrade();
+                unsubscribeActiveTrade = null;
+            }
+            myOfferedItems = {};
+            tradeLocalProcessed = false;
+            resetHoldButton();
+
+            unsubscribeActiveTrade = db.collection('trades').doc(tradeId).onSnapshot(doc => {
+                if (!doc.exists) {
+                    closeActiveTradeModal();
+                    return;
+                }
+                const data = doc.data();
+                activeTradeDoc = data;
+
+                const isSender = (currentUser.toLowerCase() === data.senderLower);
+                const partnerName = isSender ? data.receiver : data.sender;
+
+                if (data.status === 'declined') {
+                    alert(`상대방(${partnerName}) 님이 거래를 거절했습니다.`);
+                    closeActiveTradeModal();
+                    return;
+                }
+                if (data.status === 'cancelled') {
+                    alert(`상대방(${partnerName}) 님이 거래를 취소했습니다.`);
+                    closeActiveTradeModal();
+                    return;
+                }
+                if (data.status === 'completed') {
+                    if (!tradeLocalProcessed) {
+                        tradeLocalProcessed = true;
+                        executeTradeLocally(data, isSender, partnerName);
+                    }
+                    return;
+                }
+
+                if (data.status === 'active') {
+                    document.getElementById('trade-request-modal').style.display = 'none';
+                    document.getElementById('trade-incoming-modal').style.display = 'none';
+                    document.getElementById('trade-window-modal').style.display = 'block';
+
+                    const myItems = isSender ? (data.senderItems || {}) : (data.receiverItems || {});
+                    const partnerItems = isSender ? (data.receiverItems || {}) : (data.senderItems || {});
+                    const myConfirmed = isSender ? !!data.senderConfirmed : !!data.receiverConfirmed;
+                    const partnerConfirmed = isSender ? !!data.receiverConfirmed : !!data.senderConfirmed;
+
+                    myOfferedItems = { ...myItems };
+                    renderTradeUI(data, isSender, partnerName, myItems, partnerItems, myConfirmed, partnerConfirmed);
+
+                    // 두 플레이어가 모두 2초 꾹 눌러 수락을 마쳤을 때 자동 체결
+                    if (data.senderConfirmed && data.receiverConfirmed && !tradeLocalProcessed) {
+                        if (isSender) {
+                            db.collection('trades').doc(tradeId).update({
+                                status: 'completed',
+                                updatedAt: Date.now()
+                            }).catch(e => console.warn('Complete err:', e));
+                        }
+                    }
+                }
+            }, err => console.warn('Active trade err:', err));
+        }
+
+        function renderTradeUI(data, isSender, partnerName, myItems, partnerItems, myConfirmed, partnerConfirmed) {
+            document.getElementById('trade-my-name').innerText = `나 (${currentUser})`;
+            document.getElementById('trade-partner-name').innerText = `${partnerName}`;
+
+            const myStatusEl = document.getElementById('trade-my-status');
+            const partnerStatusEl = document.getElementById('trade-partner-status');
+
+            if (myConfirmed) {
+                myStatusEl.innerText = '✅ 수락 완료';
+                myStatusEl.style.background = '#2ecc71';
+                myStatusEl.style.color = '#fff';
+            } else {
+                myStatusEl.innerText = '대기중';
+                myStatusEl.style.background = '#555';
+                myStatusEl.style.color = '#eee';
+            }
+
+            if (partnerConfirmed) {
+                partnerStatusEl.innerText = '✅ 수락 완료';
+                partnerStatusEl.style.background = '#2ecc71';
+                partnerStatusEl.style.color = '#fff';
+            } else {
+                partnerStatusEl.innerText = '대기중';
+                partnerStatusEl.style.background = '#555';
+                partnerStatusEl.style.color = '#eee';
+            }
+
+            // 내가 올린 아이템 렌더링
+            const myItemsBox = document.getElementById('trade-my-items');
+            myItemsBox.innerHTML = '';
+            let myCount = 0;
+            for (const item in myItems) {
+                if (myItems[item] > 0) {
+                    myCount++;
+                    let color = getItemColor(item);
+                    myItemsBox.innerHTML += `
+                        <div class="trade-slot-card" style="border-color:${color};" onclick="removeTradeItem('${item}')" title="클릭 시 1개 회수">
+                            <span style="color:${color}; font-weight:bold; font-size:11px;">${item}</span><br>
+                            <span style="color:#fff; font-weight:bold;">x ${myItems[item]}</span>
+                        </div>`;
+                }
+            }
+            if (myCount === 0) {
+                myItemsBox.innerHTML = `<span style="grid-column: span 2; font-size: 11px; color: #777; text-align: center; padding: 15px 0;">(올린 물품 없음)</span>`;
+            }
+
+            // 상대방이 올린 아이템 렌더링
+            const partnerItemsBox = document.getElementById('trade-partner-items');
+            partnerItemsBox.innerHTML = '';
+            let pCount = 0;
+            for (const item in partnerItems) {
+                if (partnerItems[item] > 0) {
+                    pCount++;
+                    let color = getItemColor(item);
+                    partnerItemsBox.innerHTML += `
+                        <div class="trade-slot-card" style="border-color:${color}; cursor:default;">
+                            <span style="color:${color}; font-weight:bold; font-size:11px;">${item}</span><br>
+                            <span style="color:#fff; font-weight:bold;">x ${partnerItems[item]}</span>
+                        </div>`;
+                }
+            }
+            if (pCount === 0) {
+                partnerItemsBox.innerHTML = `<span style="grid-column: span 2; font-size: 11px; color: #777; text-align: center; padding: 15px 0;">(올린 물품 없음)</span>`;
+            }
+
+            // 내 가방에서 올릴 수 있는 아이템 목록 (선택기)
+            const pickerBox = document.getElementById('trade-inv-picker');
+            pickerBox.innerHTML = '';
+            let availableCount = 0;
+            for (const item in inventory) {
+                const totalOwned = inventory[item] || 0;
+                const alreadyOffered = myItems[item] || 0;
+                const canAdd = totalOwned - alreadyOffered;
+                if (canAdd > 0) {
+                    availableCount++;
+                    let color = getItemColor(item);
+                    pickerBox.innerHTML += `
+                        <div class="trade-slot-card" style="border-color:${color};" onclick="addTradeItem('${item}')" title="클릭 시 거래창에 1개 올림">
+                            <span style="color:${color}; font-weight:bold; font-size:11px;">${item}</span><br>
+                            <span style="color:#2ecc71; font-weight:bold;">+ ${canAdd}개 가능</span>
+                        </div>`;
+                }
+            }
+            if (availableCount === 0) {
+                pickerBox.innerHTML = `<span style="grid-column: span 3; font-size: 11px; color: #777; text-align: center; padding: 10px 0;">올릴 수 있는 아이템이 없습니다.</span>`;
+            }
+
+            // 수락 버튼 텍스트 업데이트
+            const holdTextEl = document.getElementById('trade-hold-text');
+            if (myConfirmed) {
+                holdTextEl.innerText = '✅ 수락 완료 (상대방 대기 중...) - 다시 누르면 취소';
+                document.getElementById('trade-hold-progress').style.width = '100%';
+            } else {
+                holdTextEl.innerText = '수락 (2초간 꾹 누르기)';
+                document.getElementById('trade-hold-progress').style.width = '0%';
+            }
+        }
+
+        async function addTradeItem(itemName) {
+            if (!activeTradeId || !db || !activeTradeDoc) return;
+            const isSender = (currentUser.toLowerCase() === activeTradeDoc.senderLower);
+            const myItems = isSender ? (activeTradeDoc.senderItems || {}) : (activeTradeDoc.receiverItems || {});
+
+            const totalOwned = inventory[itemName] || 0;
+            const currentOffered = myItems[itemName] || 0;
+            if (currentOffered >= totalOwned) {
+                alert('가방에 보유한 수량을 초과할 수 없습니다.');
+                return;
+            }
+
+            const updated = { ...myItems, [itemName]: currentOffered + 1 };
+            const updatePayload = {
+                senderConfirmed: false,
+                receiverConfirmed: false,
+                updatedAt: Date.now()
+            };
+            if (isSender) updatePayload.senderItems = updated;
+            else updatePayload.receiverItems = updated;
+
+            try {
+                await db.collection('trades').doc(activeTradeId).update(updatePayload);
+            } catch (err) {
+                console.warn('아이템 추가 실패:', err);
+            }
+        }
+
+        async function removeTradeItem(itemName) {
+            if (!activeTradeId || !db || !activeTradeDoc) return;
+            const isSender = (currentUser.toLowerCase() === activeTradeDoc.senderLower);
+            const myItems = isSender ? (activeTradeDoc.senderItems || {}) : (activeTradeDoc.receiverItems || {});
+
+            const currentOffered = myItems[itemName] || 0;
+            if (currentOffered <= 0) return;
+
+            const updated = { ...myItems };
+            if (currentOffered === 1) delete updated[itemName];
+            else updated[itemName] = currentOffered - 1;
+
+            const updatePayload = {
+                senderConfirmed: false,
+                receiverConfirmed: false,
+                updatedAt: Date.now()
+            };
+            if (isSender) updatePayload.senderItems = updated;
+            else updatePayload.receiverItems = updated;
+
+            try {
+                await db.collection('trades').doc(activeTradeId).update(updatePayload);
+            } catch (err) {
+                console.warn('아이템 회수 실패:', err);
+            }
+        }
+
+        async function cancelActiveTrade() {
+            if (activeTradeId && db) {
+                try {
+                    await db.collection('trades').doc(activeTradeId).update({
+                        status: 'cancelled',
+                        updatedAt: Date.now()
+                    });
+                } catch (e) {
+                    console.warn('Cancel fail:', e);
+                }
+            }
+            closeActiveTradeModal();
+        }
+
+        function closeActiveTradeModal() {
+            if (unsubscribeActiveTrade) {
+                unsubscribeActiveTrade();
+                unsubscribeActiveTrade = null;
+            }
+            activeTradeId = null;
+            activeTradeDoc = null;
+            myOfferedItems = {};
+            resetHoldButton();
+            document.getElementById('trade-request-modal').style.display = 'none';
+            document.getElementById('trade-window-modal').style.display = 'none';
+        }
+
+        function executeTradeLocally(data, isSender, partnerName) {
+            const myGiveItems = isSender ? (data.senderItems || {}) : (data.receiverItems || {});
+            const myTakeItems = isSender ? (data.receiverItems || {}) : (data.senderItems || {});
+
+            // 내가 준 물품 인벤토리 차감
+            for (const item in myGiveItems) {
+                const count = myGiveItems[item] || 0;
+                if (inventory[item]) {
+                    inventory[item] = Math.max(0, inventory[item] - count);
+                    if (inventory[item] === 0) delete inventory[item];
+                }
+            }
+
+            // 상대가 준 물품 인벤토리 추가
+            let summaryText = [];
+            for (const item in myTakeItems) {
+                const count = myTakeItems[item] || 0;
+                inventory[item] = (inventory[item] || 0) + count;
+                summaryText.push(`${item} x${count}`);
+            }
+
+            saveGame();
+            closeActiveTradeModal();
+
+            const receivedStr = summaryText.length > 0 ? summaryText.join(', ') : '없음';
+            floatTexts.push({ x: player.x, y: player.y - 100, text: `🎉 [${partnerName}] 거래 완료!`, color: '#00cec9', life: 120, size: 22 });
+            alert(`🎉 [${partnerName}] 님과의 거래가 성공적으로 체결되었습니다!\n\n획득한 아이템: ${receivedStr}`);
+        }
+
+        // --- 2초 꾹 누르기 수락 버튼 핸들링 ---
+        function resetHoldButton() {
+            if (holdInterval) {
+                clearInterval(holdInterval);
+                holdInterval = null;
+            }
+            isHolding = false;
+            const prog = document.getElementById('trade-hold-progress');
+            if (prog) prog.style.width = '0%';
+        }
+
+        function initTradeHoldEvents() {
+            const btn = document.getElementById('trade-hold-btn');
+            if (!btn) return;
+
+            const startHold = (e) => {
+                if (e.cancelable) e.preventDefault();
+                if (!activeTradeId || !activeTradeDoc || activeTradeDoc.status !== 'active') return;
+
+                const isSender = (currentUser.toLowerCase() === activeTradeDoc.senderLower);
+                const myConfirmed = isSender ? !!activeTradeDoc.senderConfirmed : !!activeTradeDoc.receiverConfirmed;
+
+                // 이미 수락 완료 상태에서 다시 누르면 수락 취소
+                if (myConfirmed) {
+                    const updatePayload = { updatedAt: Date.now() };
+                    if (isSender) updatePayload.senderConfirmed = false;
+                    else updatePayload.receiverConfirmed = false;
+                    db.collection('trades').doc(activeTradeId).update(updatePayload);
+                    return;
+                }
+
+                if (isHolding) return;
+                isHolding = true;
+                const startTime = Date.now();
+                const prog = document.getElementById('trade-hold-progress');
+
+                holdInterval = setInterval(() => {
+                    const elapsed = Date.now() - startTime;
+                    const pct = Math.min(100, (elapsed / 2000) * 100);
+                    if (prog) prog.style.width = pct + '%';
+
+                    if (elapsed >= 2000) {
+                        clearInterval(holdInterval);
+                        holdInterval = null;
+                        isHolding = false;
+                        // 2초 채움 -> Firestore에 수락 기록!
+                        const updatePayload = { updatedAt: Date.now() };
+                        if (isSender) updatePayload.senderConfirmed = true;
+                        else updatePayload.receiverConfirmed = true;
+                        db.collection('trades').doc(activeTradeId).update(updatePayload);
+                    }
+                }, 40);
+            };
+
+            const endHold = () => {
+                if (!isHolding) return;
+                clearInterval(holdInterval);
+                holdInterval = null;
+                isHolding = false;
+                const prog = document.getElementById('trade-hold-progress');
+                if (prog) prog.style.width = '0%';
+            };
+
+            btn.addEventListener('mousedown', startHold);
+            btn.addEventListener('mouseup', endHold);
+            btn.addEventListener('mouseleave', endHold);
+
+            btn.addEventListener('touchstart', startHold, { passive: false });
+            btn.addEventListener('touchend', endHold);
+            btn.addEventListener('touchcancel', endHold);
+        }
+
         async function loadGame() {
             // 로컬 데이터 우선 로드
             const saved = localStorage.getItem('treeGameSave');
@@ -1811,6 +2434,7 @@
             }
 
             updateUserBadgeUI();
+            initTradeHoldEvents();
 
             // 만약 이미 로그인된 계정이 있다면, 클라우드에서 최신 데이터를 가져와 자동 동기화!
             if (currentUser && db) {
@@ -1822,6 +2446,7 @@
                             applyLoadedGameData(userData.gameData);
                         }
                     }
+                    startTradeIncomingListener();
                 } catch (err) {
                     console.warn('Cloud load fail:', err);
                 }
