@@ -722,6 +722,17 @@
         let activeFuseResult = null; // 결과 스킨 ID
 
         function openFuseModal() {
+            const now = Date.now();
+            const isFusing = (activeFuseStartTime > 0 && now < activeFuseStartTime + activeFuseDurationMs);
+            if (isFusing) {
+                const remaining = Math.max(0, activeFuseStartTime + activeFuseDurationMs - now);
+                const rmMin = Math.floor(remaining / 60000);
+                const rmSec = Math.floor((remaining % 60000) / 1000);
+                const fx = (typeof fuseBuilding !== 'undefined' ? fuseBuilding.x + 98 : player.x);
+                const fy = (typeof fuseBuilding !== 'undefined' ? fuseBuilding.y - 70 : player.y - 100);
+                floatTexts.push({ x: fx, y: fy, text: `⏱️ 융합 진행 중입니다! (${rmMin}분 ${rmSec < 10 ? '0' : ''}${rmSec}초 남음)`, color: '#e67e22', life: 70, size: 16 });
+                return;
+            }
             document.getElementById('fuse-modal').style.display = 'block';
             resetJoyMouse();
             player.targetTree = null;
@@ -987,7 +998,7 @@
 
             activeFuseStartTime = now;
             activeFuseResult = rolledSkin;
-            updateFuseUI();
+            document.getElementById('fuse-modal').style.display = 'none'; // 융합 시작 즉시 모달 창 닫기
             saveGame();
             floatTexts.push({ x: player.x, y: player.y - 100, text: `🔥 호박 융합 시작! (15분 소요)`, color: '#e67e22', life: 90 });
         }
