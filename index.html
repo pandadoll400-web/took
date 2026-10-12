@@ -56,36 +56,29 @@
 
         #bottom-btn-group {
             position: absolute; bottom: 20px; left: 20px;
-            display: flex; gap: 10px; align-items: center; z-index: 25;
+            display: flex; gap: 12px; align-items: center; z-index: 25;
         }
 
         #inventory-btn {
-            background: #8e44ad; color: white; font-size: 16px; font-weight: bold;
-            padding: 13px 16px; border-radius: 50%; border: 3px solid #9b59b6; cursor: pointer;
+            background: #8e44ad; color: white; font-size: 17px; font-weight: bold;
+            padding: 14px 18px; border-radius: 50%; border: 3px solid #9b59b6; cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.5);
         }
         #inventory-btn:active { transform: translateY(2px); }
 
         #shop-btn {
-            background: #f1c40f; color: black; font-size: 16px; font-weight: bold;
-            padding: 13px 16px; border-radius: 50%; border: 3px solid #f39c12; cursor: pointer;
+            background: #f1c40f; color: black; font-size: 17px; font-weight: bold;
+            padding: 14px 18px; border-radius: 50%; border: 3px solid #f39c12; cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.5);
         }
         #shop-btn:active { transform: translateY(2px); }
 
         #trade-btn {
-            background: #00cec9; color: black; font-size: 16px; font-weight: bold;
-            padding: 13px 16px; border-radius: 50%; border: 3px solid #00b894; cursor: pointer;
+            background: #00cec9; color: black; font-size: 17px; font-weight: bold;
+            padding: 14px 18px; border-radius: 50%; border: 3px solid #00b894; cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.5);
         }
         #trade-btn:active { transform: translateY(2px); }
-
-        #teleport-btn {
-            background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; font-size: 15px; font-weight: bold;
-            padding: 12px 14px; border-radius: 50%; border: 3px solid #dcdde1; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.7);
-        }
-        #teleport-btn:active { transform: translateY(2px); }
 
         .trade-slot-card {
             background: rgba(255, 255, 255, 0.08);
@@ -193,7 +186,6 @@
             <button id="inventory-btn">가방</button>
             <button id="shop-btn">상점</button>
             <button id="trade-btn" onclick="openTradeRequestModal()">거래</button>
-            <button id="teleport-btn" onclick="enterBossDimension()" title="고차원 원숭이 보스전 텔레포트">🌀보스</button>
         </div>
 
         <!-- 1. 거래 신청 모달 (상대방 닉네임 입력) -->
@@ -495,11 +487,11 @@
             launched: false
         };
 
-        // 🌀 고차원 텔레포트 장치 (일반 나무 오른쪽 옆에 위치)
+        // 🌀 고차원 텔레포트 장치 (일반 나무 오른쪽 옆, 잎과 겹치지 않도록 배치)
         let teleporter = {
-            x: 480,
+            x: 515,
             y: 360,
-            radius: 36
+            radius: 45
         };
 
         // 보스전 & 쪽지 조각 시스템 상태
@@ -971,13 +963,13 @@
             let pulse = 1 + Math.sin(time * 2.5) * 0.12;
 
             // 1. 바닥 차원 마법진 & 빛나는 아우라
-            let auraGrad = ctx.createRadialGradient(0, 15, 8, 0, 15, 65 * pulse);
+            let auraGrad = ctx.createRadialGradient(0, 15, 8, 0, 15, 54 * pulse);
             auraGrad.addColorStop(0, 'rgba(155, 89, 182, 0.85)');
             auraGrad.addColorStop(0.4, 'rgba(52, 152, 219, 0.5)');
             auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
             ctx.fillStyle = auraGrad;
             ctx.beginPath();
-            ctx.ellipse(0, 15, 65 * pulse, 32 * pulse, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 15, 54 * pulse, 28 * pulse, 0, 0, Math.PI * 2);
             ctx.fill();
 
             // 바닥 미래형 금속 단상 발판
@@ -985,7 +977,7 @@
             ctx.strokeStyle = '#6c5ce7';
             ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.ellipse(0, 15, 52, 22, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 15, 46, 20, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
 
@@ -996,12 +988,12 @@
             ctx.lineWidth = 2.5;
             ctx.setLineDash([12, 8]);
             ctx.beginPath();
-            ctx.ellipse(0, 0, 42, 22, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 0, 36, 18, 0, 0, Math.PI * 2);
             ctx.stroke();
             ctx.restore();
 
-            // 2. 좌우 거대한 고차원 에너지 오벨리스크 기둥 타워
-            [-42, 42].forEach((px, idx) => {
+            // 2. 좌우 거대한 고차원 에너지 오벨리스크 기둥 타워 (폭 36으로 나무 잎과 간격 유지)
+            [-36, 36].forEach((px, idx) => {
                 let colGrad = ctx.createLinearGradient(px, 15, px, -70);
                 colGrad.addColorStop(0, '#1e272e');
                 colGrad.addColorStop(0.5, '#34495e');
@@ -1011,7 +1003,7 @@
                 ctx.lineWidth = 2;
 
                 ctx.beginPath();
-                ctx.roundRect(px - 9, -60, 18, 75, 4);
+                ctx.roundRect(px - 8, -60, 16, 75, 4);
                 ctx.fill();
                 ctx.stroke();
 
@@ -1032,7 +1024,7 @@
             });
 
             // 3. 중앙 수직 차원 소용돌이 포탈 (Warp Vortex)
-            let portalGrad = ctx.createRadialGradient(0, -25, 4, 0, -25, 36 * pulse);
+            let portalGrad = ctx.createRadialGradient(0, -25, 4, 0, -25, 32 * pulse);
             portalGrad.addColorStop(0, '#ffffff');
             portalGrad.addColorStop(0.3, '#00cec9');
             portalGrad.addColorStop(0.7, '#6c5ce7');
@@ -1041,7 +1033,7 @@
             ctx.shadowColor = '#00cec9';
             ctx.shadowBlur = 25;
             ctx.beginPath();
-            ctx.ellipse(0, -25, 26 * pulse, 48 * pulse, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, -25, 22 * pulse, 45 * pulse, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.shadowBlur = 0;
 
@@ -1053,7 +1045,7 @@
             ctx.lineWidth = 2;
             for(let a = 0; a < 4; a++) {
                 ctx.beginPath();
-                ctx.arc(0, 0, 16 * pulse, a * Math.PI / 2, a * Math.PI / 2 + 0.8);
+                ctx.arc(0, 0, 14 * pulse, a * Math.PI / 2, a * Math.PI / 2 + 0.8);
                 ctx.stroke();
             }
             ctx.restore();
@@ -1069,20 +1061,20 @@
             ctx.shadowColor = '#6c5ce7';
             ctx.shadowBlur = 12;
             ctx.beginPath();
-            ctx.roundRect(-85, -20, 170, 40, 10);
+            ctx.roundRect(-68, -20, 136, 38, 8);
             ctx.fill();
             ctx.stroke();
             ctx.shadowBlur = 0;
 
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 13px Arial';
+            ctx.font = 'bold 12px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText("🌀 고차원 텔레포트", 0, -7);
+            ctx.fillText("🌀 고차원 텔레포트", 0, -6);
 
             ctx.fillStyle = '#f1c40f';
-            ctx.font = 'bold 11px Arial';
-            ctx.fillText("⚔️ [원숭이 보스전 입장]", 0, 9);
+            ctx.font = 'bold 10px Arial';
+            ctx.fillText("⚔️ [원숭이 보스전]", 0, 9);
             ctx.restore();
 
             // 5. 플레이어 접근 시 터치/클릭 안내 말풍선
@@ -1092,15 +1084,15 @@
                 ctx.strokeStyle = '#d35400';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.roundRect(-75, -145, 150, 30, 8);
+                ctx.roundRect(-65, -145, 130, 28, 8);
                 ctx.fill();
                 ctx.stroke();
 
                 ctx.fillStyle = '#2c3e50';
-                ctx.font = 'bold 12px Arial';
+                ctx.font = 'bold 11px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText("👆 클릭하여 보스전 입장!", 0, -130);
+                ctx.fillText("👆 클릭하여 보스전 입장!", 0, -131);
                 ctx.restore();
             }
 
