@@ -1578,12 +1578,57 @@
             document.getElementById('login-modal-overlay').style.display = 'none';
         }
 
-        function handleTreeGameLogout() {
+        function getDefaultGameData() {
+            return {
+                level: 1,
+                xp: 0,
+                maxXp: 20,
+                money: 0,
+                axeLevel: 0,
+                equippedAxe: 0,
+                ownedSkins: ['default'],
+                equippedSkin: 'default',
+                inventory: {},
+                fishCollection: [],
+                radioactiveCollection: [],
+                caveCollection: [],
+                rocketLaunched: false,
+                fuseSlots: [null, null, null],
+                activeFuseStartTime: 0,
+                activeFuseResult: null,
+                treeUnlocked: trees.map((t, idx) => idx === 0)
+            };
+        }
+
+        function resetGameToDefault() {
+            player.x = GAME_WIDTH / 2;
+            player.y = GAME_HEIGHT / 2;
+            cameraY = 0;
+            player.targetTree = null;
+            applyLoadedGameData(getDefaultGameData());
+            localStorage.removeItem('treeGameSave');
+        }
+
+        async function handleTreeGameLogout() {
             if (!currentUser) return;
-            saveGame(); // 로그아웃 전 마지막 클라우드 저장 보존
             const oldUser = currentUser;
+            // 로그아웃 전 현재 계정의 진행 상황을 Firebase 클라우드에 확실히 즉시 저장
+            if (db) {
+                try {
+                    await db.collection('users').doc(oldUser.toLowerCase()).set({
+                        gameData: getSaveData(),
+                        lastSaved: Date.now()
+                    }, { merge: true });
+                } catch (e) {
+                    console.warn('Logout save fail:', e);
+                }
+            }
             currentUser = null;
             localStorage.removeItem('treegame_user');
+            
+            // 다른 계정으로 로그인하거나 새 계정을 만들 때 이전 계정 데이터가 남지 않도록 게임 상태 완전 초기화
+            resetGameToDefault();
+            
             updateUserBadgeUI();
             closeLoginModal();
             floatTexts.push({ x: player.x, y: player.y - 100, text: `로그아웃 되었습니다. (계정 데이터 보존됨)`, color: '#e74c3c', life: 100, size: 18 });
@@ -1641,6 +1686,8 @@
                         localStorage.setItem('treegame_user', currentUser);
                         if (userData.gameData) {
                             applyLoadedGameData(userData.gameData);
+                        } else {
+                            applyLoadedGameData(getDefaultGameData());
                         }
                         closeLoginModal();
                         updateUserBadgeUI();
@@ -1650,21 +1697,22 @@
                         alert('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
                     }
                 } else {
-                    // 신규 계정: 회원가입 버튼 없이 즉시 계정 생성 및 현재 진행상황 클라우드 저장
-                    const currentSave = getSaveData();
+                    // 신규 계정: 이전 계정의 데이터가 섞이지 않도록 순수 신규 데이터(레벨 1, 0 골드)로 계정 생성
+                    const newGameSave = getDefaultGameData();
                     await userDocRef.set({
                         username: username,
                         password: password,
-                        gameData: currentSave,
+                        gameData: newGameSave,
                         createdAt: Date.now(),
                         lastSaved: Date.now()
                     });
                     currentUser = username;
                     localStorage.setItem('treegame_user', currentUser);
+                    applyLoadedGameData(newGameSave);
                     closeLoginModal();
                     updateUserBadgeUI();
                     saveGame();
-                    floatTexts.push({ x: player.x, y: player.y - 100, text: `🎉 [${username}] 계정 생성 & 로그인 완료!`, color: '#38bdf8', life: 100, size: 20 });
+                    floatTexts.push({ x: player.x, y: player.y - 100, text: `🎉 [${username}] 신규 계정 생성 완료! (LV. 1)`, color: '#38bdf8', life: 100, size: 20 });
                 }
             } catch (err) {
                 console.error('로그인 에러:', err);
@@ -1700,23 +1748,28 @@
             money = data.money || 0;
             axeLevel = data.axeLevel || 0;
             equippedAxe = (data.equippedAxe !== undefined) ? data.equippedAxe : axeLevel;
-            if (data.ownedSkins) ownedSkins = data.ownedSkins;
-            if (data.equippedSkin) equippedSkin = data.equippedSkin;
-            if (data.inventory) inventory = { ...inventory, ...data.inventory };
-            if (data.fishCollection) fishCollection = data.fishCollection;
-            if (data.radioactiveCollection) radioactiveCollection = data.radioactiveCollection;
-            if (data.caveCollection) caveCollection = data.caveCollection;
+            ownedSkins = (data.ownedSkins && data.ownedSkins.length > 0) ? [...data.ownedSkins] : ['default'];
+            equippedSkin = data.equippedSkin || 'default';
+            inventory = data.inventory ? { ...data.inventory } : {};
+            fishCollection = data.fishCollection ? [...data.fishCollection] : [];
+            radioactiveCollection = data.radioactiveCollection ? [...data.radioactiveCollection] : [];
+            caveCollection = data.caveCollection ? [...data.caveCollection] : [];
             if (data.rocketLaunched !== undefined) {
                 rocket.launched = data.rocketLaunched;
                 rocket.visible = !rocket.launched;
+            } else {
+                rocket.launched = false;
+                rocket.visible = true;
             }
-            if (data.fuseSlots) fuseSlots = data.fuseSlots;
-            if (data.activeFuseStartTime) activeFuseStartTime = data.activeFuseStartTime;
-            if (data.activeFuseResult) activeFuseResult = data.activeFuseResult;
+            fuseSlots = (data.fuseSlots && data.fuseSlots.length === 3) ? [...data.fuseSlots] : [null, null, null];
+            activeFuseStartTime = data.activeFuseStartTime || 0;
+            activeFuseResult = data.activeFuseResult || null;
             if (data.treeUnlocked) {
                 trees.forEach((t, i) => {
-                    if (data.treeUnlocked[i] !== undefined) t.unlocked = data.treeUnlocked[i];
+                    t.unlocked = (data.treeUnlocked[i] !== undefined) ? data.treeUnlocked[i] : (i === 0);
                 });
+            } else {
+                trees.forEach((t, i) => { t.unlocked = (i === 0); });
             }
 
             if (level >= 10000 || maxXp >= 999999999) {
@@ -1726,6 +1779,11 @@
             document.getElementById('level-text').innerText = `LV. ${level}`;
             document.getElementById('xp-bar-fill').style.width = `${(xp / maxXp) * 100}%`;
             updateMoney();
+            updateAxeUI();
+            updateInvAxeUI();
+            updateShopSkinUI();
+            updateInvSkinUI();
+            if (typeof updateFuseUI === 'function') updateFuseUI();
         }
 
         function saveGame() {
