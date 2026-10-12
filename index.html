@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>나무 흔들기 게임 - 특성 시스템 및 대규모 밸런스 패치</title>
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -53,29 +56,36 @@
 
         #bottom-btn-group {
             position: absolute; bottom: 20px; left: 20px;
-            display: flex; gap: 12px; align-items: center; z-index: 25;
+            display: flex; gap: 10px; align-items: center; z-index: 25;
         }
 
         #inventory-btn {
-            background: #8e44ad; color: white; font-size: 17px; font-weight: bold;
-            padding: 14px 18px; border-radius: 50%; border: 3px solid #9b59b6; cursor: pointer;
+            background: #8e44ad; color: white; font-size: 16px; font-weight: bold;
+            padding: 13px 16px; border-radius: 50%; border: 3px solid #9b59b6; cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.5);
         }
         #inventory-btn:active { transform: translateY(2px); }
 
         #shop-btn {
-            background: #f1c40f; color: black; font-size: 17px; font-weight: bold;
-            padding: 14px 18px; border-radius: 50%; border: 3px solid #f39c12; cursor: pointer;
+            background: #f1c40f; color: black; font-size: 16px; font-weight: bold;
+            padding: 13px 16px; border-radius: 50%; border: 3px solid #f39c12; cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.5);
         }
         #shop-btn:active { transform: translateY(2px); }
 
         #trade-btn {
-            background: #00cec9; color: black; font-size: 17px; font-weight: bold;
-            padding: 14px 18px; border-radius: 50%; border: 3px solid #00b894; cursor: pointer;
+            background: #00cec9; color: black; font-size: 16px; font-weight: bold;
+            padding: 13px 16px; border-radius: 50%; border: 3px solid #00b894; cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.5);
         }
         #trade-btn:active { transform: translateY(2px); }
+
+        #teleport-btn {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; font-size: 15px; font-weight: bold;
+            padding: 12px 14px; border-radius: 50%; border: 3px solid #dcdde1; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.7);
+        }
+        #teleport-btn:active { transform: translateY(2px); }
 
         .trade-slot-card {
             background: rgba(255, 255, 255, 0.08);
@@ -183,6 +193,7 @@
             <button id="inventory-btn">가방</button>
             <button id="shop-btn">상점</button>
             <button id="trade-btn" onclick="openTradeRequestModal()">거래</button>
+            <button id="teleport-btn" onclick="enterBossDimension()" title="고차원 원숭이 보스전 텔레포트">🌀보스</button>
         </div>
 
         <!-- 1. 거래 신청 모달 (상대방 닉네임 입력) -->
@@ -418,6 +429,26 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const container = document.getElementById('game-container');
+
+        // 브라우저 호환성을 위한 roundRect 폴리필 (구형 모바일 및 인앱 브라우저 지원)
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (typeof r === 'undefined') r = 0;
+                let radius = typeof r === 'number' ? { tl: r, tr: r, br: r, bl: r } : Object.assign({ tl: 0, tr: 0, br: 0, bl: 0 }, r);
+                this.beginPath();
+                this.moveTo(x + radius.tl, y);
+                this.lineTo(x + w - radius.tr, y);
+                this.quadraticCurveTo(x + w, y, x + w, y + radius.tr);
+                this.lineTo(x + w, y + h - radius.br);
+                this.quadraticCurveTo(x + w, y + h, x + w - radius.br, y + h);
+                this.lineTo(x + radius.bl, y + h);
+                this.quadraticCurveTo(x, y + h, x, y + h - radius.bl);
+                this.lineTo(x, y + radius.tl);
+                this.quadraticCurveTo(x, y, x + radius.tl, y);
+                this.closePath();
+                return this;
+            };
+        }
 
         const GAME_WIDTH = 600;
         const GAME_HEIGHT = 1000;
@@ -937,85 +968,140 @@
             ctx.translate(x, y);
 
             let time = Date.now() * 0.003;
-            let pulse = 1 + Math.sin(time * 2) * 0.08;
+            let pulse = 1 + Math.sin(time * 2.5) * 0.12;
 
-            // 포탈 바닥 오라
-            let auraGrad = ctx.createRadialGradient(0, 0, 5, 0, 0, 48 * pulse);
-            auraGrad.addColorStop(0, 'rgba(155, 89, 182, 0.7)');
-            auraGrad.addColorStop(0.5, 'rgba(52, 152, 219, 0.4)');
+            // 1. 바닥 차원 마법진 & 빛나는 아우라
+            let auraGrad = ctx.createRadialGradient(0, 15, 8, 0, 15, 65 * pulse);
+            auraGrad.addColorStop(0, 'rgba(155, 89, 182, 0.85)');
+            auraGrad.addColorStop(0.4, 'rgba(52, 152, 219, 0.5)');
             auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
             ctx.fillStyle = auraGrad;
             ctx.beginPath();
-            ctx.ellipse(0, 10, 48 * pulse, 28 * pulse, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 15, 65 * pulse, 32 * pulse, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // 회전 룬 링
-            ctx.save();
-            ctx.rotate(time * 0.7);
-            ctx.strokeStyle = '#9b59b6';
+            // 바닥 미래형 금속 단상 발판
+            ctx.fillStyle = '#2c3e50';
+            ctx.strokeStyle = '#6c5ce7';
             ctx.lineWidth = 3;
-            ctx.setLineDash([14, 10]);
             ctx.beginPath();
-            ctx.ellipse(0, 0, 36, 22, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 15, 52, 22, 0, 0, Math.PI * 2);
+            ctx.fill();
             ctx.stroke();
-            ctx.restore();
 
+            // 내부 회전 룬 문자 링
             ctx.save();
-            ctx.rotate(-time * 1.1);
-            ctx.strokeStyle = '#00cec9';
+            ctx.rotate(time * 0.8);
+            ctx.strokeStyle = '#a29bfe';
             ctx.lineWidth = 2.5;
-            ctx.setLineDash([10, 8]);
+            ctx.setLineDash([12, 8]);
             ctx.beginPath();
-            ctx.ellipse(0, 0, 26, 16, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 0, 42, 22, 0, 0, Math.PI * 2);
             ctx.stroke();
             ctx.restore();
 
-            // 중심 차원 코어
-            let coreGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 16);
-            coreGrad.addColorStop(0, '#ffffff');
-            coreGrad.addColorStop(0.4, '#a29bfe');
-            coreGrad.addColorStop(1, '#6c5ce7');
-            ctx.fillStyle = coreGrad;
-            ctx.shadowColor = '#a29bfe';
-            ctx.shadowBlur = 18;
+            // 2. 좌우 거대한 고차원 에너지 오벨리스크 기둥 타워
+            [-42, 42].forEach((px, idx) => {
+                let colGrad = ctx.createLinearGradient(px, 15, px, -70);
+                colGrad.addColorStop(0, '#1e272e');
+                colGrad.addColorStop(0.5, '#34495e');
+                colGrad.addColorStop(1, '#6c5ce7');
+                ctx.fillStyle = colGrad;
+                ctx.strokeStyle = '#a29bfe';
+                ctx.lineWidth = 2;
+
+                ctx.beginPath();
+                ctx.roundRect(px - 9, -60, 18, 75, 4);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.strokeStyle = (idx === 0) ? '#00cec9' : '#f1c40f';
+                ctx.lineWidth = 3;
+                ctx.shadowColor = ctx.strokeStyle;
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.moveTo(px, -50);
+                ctx.lineTo(px, 5);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                ctx.fillStyle = (idx === 0) ? '#00cec9' : '#f1c40f';
+                ctx.beginPath();
+                ctx.arc(px, -66, 7 * pulse, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // 3. 중앙 수직 차원 소용돌이 포탈 (Warp Vortex)
+            let portalGrad = ctx.createRadialGradient(0, -25, 4, 0, -25, 36 * pulse);
+            portalGrad.addColorStop(0, '#ffffff');
+            portalGrad.addColorStop(0.3, '#00cec9');
+            portalGrad.addColorStop(0.7, '#6c5ce7');
+            portalGrad.addColorStop(1, 'rgba(108, 92, 231, 0)');
+            ctx.fillStyle = portalGrad;
+            ctx.shadowColor = '#00cec9';
+            ctx.shadowBlur = 25;
             ctx.beginPath();
-            ctx.arc(0, 0, 15 * pulse, 0, Math.PI * 2);
+            ctx.ellipse(0, -25, 26 * pulse, 48 * pulse, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.shadowBlur = 0;
 
-            // 기둥 포디엄
-            ctx.fillStyle = '#2d3436';
-            ctx.strokeStyle = '#6c5ce7';
+            // 포탈 안쪽 회전 스파크
+            ctx.save();
+            ctx.translate(0, -25);
+            ctx.rotate(-time * 1.5);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
             ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.roundRect(-42, -18, 10, 28, 4); ctx.fill(); ctx.stroke();
-            ctx.beginPath(); ctx.roundRect(32, -18, 10, 28, 4); ctx.fill(); ctx.stroke();
-            ctx.fillStyle = '#00cec9';
-            ctx.beginPath(); ctx.arc(-37, -22, 5, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(37, -22, 5, 0, Math.PI * 2); ctx.fill();
-
-            // 상단 라벨
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 12px Arial';
-            ctx.textAlign = 'center';
-            ctx.shadowColor = '#6c5ce7';
-            ctx.shadowBlur = 8;
-            ctx.fillText("🌀 고차원 텔레포트", 0, -42);
-            ctx.font = 'bold 10px Arial';
-            ctx.fillStyle = '#f1c40f';
-            ctx.fillText("⚔️ [보스: 원숭이]", 0, -28);
-
-            // 근접 시 안내
-            if (typeof player !== 'undefined' && Math.hypot(player.x - x, player.y - y) < 90) {
-                ctx.fillStyle = 'rgba(20, 15, 45, 0.88)';
-                ctx.strokeStyle = '#f1c40f';
-                ctx.lineWidth = 1.5;
+            for(let a = 0; a < 4; a++) {
                 ctx.beginPath();
-                ctx.roundRect(-60, -78, 120, 24, 6);
-                ctx.fill(); ctx.stroke();
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 11px Arial';
-                ctx.shadowBlur = 0;
-                ctx.fillText("👆 클릭하여 보스전 입장", 0, -62);
+                ctx.arc(0, 0, 16 * pulse, a * Math.PI / 2, a * Math.PI / 2 + 0.8);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            // 4. 상단 네온 홀로그램 전광판 간판
+            ctx.save();
+            let bob = Math.sin(time * 2) * 4;
+            ctx.translate(0, -90 + bob);
+
+            ctx.fillStyle = 'rgba(15, 12, 34, 0.92)';
+            ctx.strokeStyle = '#a29bfe';
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = '#6c5ce7';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.roundRect(-85, -20, 170, 40, 10);
+            ctx.fill();
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 13px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("🌀 고차원 텔레포트", 0, -7);
+
+            ctx.fillStyle = '#f1c40f';
+            ctx.font = 'bold 11px Arial';
+            ctx.fillText("⚔️ [원숭이 보스전 입장]", 0, 9);
+            ctx.restore();
+
+            // 5. 플레이어 접근 시 터치/클릭 안내 말풍선
+            if (typeof player !== 'undefined' && Math.hypot(player.x - x, player.y - y) < 110) {
+                ctx.save();
+                ctx.fillStyle = '#f1c40f';
+                ctx.strokeStyle = '#d35400';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(-75, -145, 150, 30, 8);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("👆 클릭하여 보스전 입장!", 0, -130);
+                ctx.restore();
             }
 
             ctx.restore();
@@ -1031,7 +1117,6 @@
             blackoutState.active = true;
             blackoutState.text = 'space is coming';
 
-            // 2초 동안 검정 화면에 'space is coming' 표시 후 로케트 사라지고 복귀
             setTimeout(() => {
                 rocket.visible = false;
                 rocket.launched = true;
@@ -1054,10 +1139,10 @@
                 return;
             }
 
-            // 고차원 텔레포트 장치 클릭 감지 (나무 옆)
+            // 고차원 텔레포트 장치 클릭 감지 (나무 옆) - 판정 범위 넉넉하게 75px
             let tpDist = Math.hypot(cx - teleporter.x, cy - teleporter.y);
             let tpPlayerDist = Math.hypot(player.x - teleporter.x, player.y - teleporter.y);
-            if (tpDist < 55 || (isSpacebar && tpPlayerDist < 75)) {
+            if (tpDist < 75 || (isSpacebar && tpPlayerDist < 90)) {
                 enterBossDimension();
                 return;
             }
@@ -5094,6 +5179,24 @@
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
                         ctx.fillText(`📜 쪽지 심어짐! (${noteTreeHits}/3)`, 0, 0);
+                        ctx.restore();
+                    } else if (t.id === 'normal' && Math.hypot(player.x - t.x, player.y - t.y) < 200) {
+                        ctx.save();
+                        let bobTp = Math.sin(Date.now() * 0.006) * 4;
+                        ctx.translate(t.x + 85, t.y - t.radius - 35 + bobTp);
+                        ctx.fillStyle = 'rgba(108, 92, 231, 0.92)';
+                        ctx.strokeStyle = '#a29bfe';
+                        ctx.lineWidth = 1.5;
+                        ctx.beginPath();
+                        ctx.roundRect(-70, -14, 140, 28, 6);
+                        ctx.fill();
+                        ctx.stroke();
+
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'bold 11px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText("👉 우측: 🌀보스 텔포", 0, 0);
                         ctx.restore();
                     }
                 } else if (item.type === 'rocket') {
