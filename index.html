@@ -228,15 +228,9 @@
 
                 <!-- 요청된 네모 3개 슬롯 -->
                 <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
-                    <div id="fuse-slot-0" onclick="clickFuseSlot(0)" style="flex: 1; max-width: 110px; aspect-ratio: 1/1; background: rgba(50, 30, 20, 0.7); border: 2px solid #5a3825; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-                        <span style="color: #ff7675; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000;">비어 있음<br><span style="font-size:10px; color:#f1c40f;">(12개 필요)</span></span>
-                    </div>
-                    <div id="fuse-slot-1" onclick="clickFuseSlot(1)" style="flex: 1; max-width: 110px; aspect-ratio: 1/1; background: rgba(50, 30, 20, 0.7); border: 2px solid #5a3825; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-                        <span style="color: #ff7675; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000;">비어 있음<br><span style="font-size:10px; color:#f1c40f;">(12개 필요)</span></span>
-                    </div>
-                    <div id="fuse-slot-2" onclick="clickFuseSlot(2)" style="flex: 1; max-width: 110px; aspect-ratio: 1/1; background: rgba(50, 30, 20, 0.7); border: 2px solid #5a3825; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-                        <span style="color: #ff7675; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000;">비어 있음<br><span style="font-size:10px; color:#f1c40f;">(12개 필요)</span></span>
-                    </div>
+                    <div id="fuse-slot-0" onclick="clickFuseSlot(0)" style="flex: 1; max-width: 110px; aspect-ratio: 1/1; background: rgba(50, 30, 20, 0.7); border: 2px solid #5a3825; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;"></div>
+                    <div id="fuse-slot-1" onclick="clickFuseSlot(1)" style="flex: 1; max-width: 110px; aspect-ratio: 1/1; background: rgba(50, 30, 20, 0.7); border: 2px solid #5a3825; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;"></div>
+                    <div id="fuse-slot-2" onclick="clickFuseSlot(2)" style="flex: 1; max-width: 110px; aspect-ratio: 1/1; background: rgba(50, 30, 20, 0.7); border: 2px solid #5a3825; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;"></div>
                 </div>
 
                 <!-- 가능한 퓨전 / 등록 영역 -->
@@ -870,7 +864,7 @@
                 } else {
                     slotEl.style.border = '2px solid #5a3825';
                     slotEl.style.background = 'rgba(50, 30, 20, 0.7)';
-                    slotEl.innerHTML = `<span style="color: #ff7675; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 2px #000;">비어 있음<br><span style="font-size:10px; color:#f1c40f;">(12개 필요)</span></span>`;
+                    slotEl.innerHTML = '';
                 }
             }
 
