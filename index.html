@@ -132,7 +132,7 @@
                 <!-- 타이틀: treegame -->
                 <h2 style="margin: 0 0 8px 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">treegame</h2>
                 
-                <p style="margin: 0 0 22px 0; color: #8e8ea0; font-size: 13px; line-height: 1.45;">
+                <p id="login-desc-text" style="margin: 0 0 22px 0; color: #8e8ea0; font-size: 13px; line-height: 1.45;">
                     회원가입 없이도 플레이할 수 있어요.<br>
                     진행 상황을 저장하려면 로그인/시작하세요.
                 </p>
@@ -143,8 +143,12 @@
                     <input id="login-pw" type="password" placeholder="비밀번호 (6자 이상)" maxlength="30" style="background: #181625; border: 1px solid #2e2c3d; border-radius: 8px; color: #ffffff; padding: 13px 15px; font-size: 14px; outline: none; transition: border 0.2s; box-sizing: border-box; width: 100%;" onfocus="this.style.borderColor='#38bdf8'" onblur="this.style.borderColor='#2e2c3d'" onkeydown="if(event.key==='Enter') handleTreeGameLogin()">
                 </div>
 
-                <!-- 로그인 버튼 (유저 요청: 회원가입 버튼은 제거) -->
+                <!-- 로그인 버튼 -->
                 <button id="login-btn-submit" onclick="handleTreeGameLogin()" style="background: #2b6cb0; color: #ffffff; border: none; border-radius: 8px; padding: 13px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; transition: background 0.2s; box-shadow: 0 4px 15px rgba(43, 108, 176, 0.4);">로그인</button>
+                
+                <!-- 로그아웃 버튼 (로그인 버튼 바로 아래 배치) -->
+                <button id="logout-btn" onclick="handleTreeGameLogout()" style="display: none; margin-top: 10px; background: rgba(231, 76, 60, 0.15); color: #ff7675; border: 1.5px solid #e74c3c; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; transition: all 0.2s;">로그아웃</button>
+
                 <div id="login-loading-text" style="display: none; color: #38bdf8; font-size: 12px; margin-top: 10px; font-weight: bold;">연결 및 동기화 중...</div>
             </div>
         </div>
@@ -1548,10 +1552,42 @@
             document.getElementById('login-modal-overlay').style.display = 'flex';
             resetJoyMouse();
             player.targetTree = null;
+
+            const logoutBtn = document.getElementById('logout-btn');
+            const idInput = document.getElementById('login-id');
+            const pwInput = document.getElementById('login-pw');
+            const submitBtn = document.getElementById('login-btn-submit');
+            const descText = document.getElementById('login-desc-text');
+
+            if (currentUser) {
+                if (logoutBtn) logoutBtn.style.display = 'block';
+                if (idInput) idInput.value = currentUser;
+                if (pwInput) pwInput.value = '';
+                if (submitBtn) submitBtn.innerText = '계정 전환 / 재로그인';
+                if (descText) descText.innerHTML = `현재 <b style="color:#2ecc71;">[${currentUser}]</b> 계정으로 로그인되어 있습니다.<br>(클라우드 서버에 데이터가 안전하게 자동 저장 중)`;
+            } else {
+                if (logoutBtn) logoutBtn.style.display = 'none';
+                if (idInput) idInput.value = '';
+                if (pwInput) pwInput.value = '';
+                if (submitBtn) submitBtn.innerText = '로그인';
+                if (descText) descText.innerHTML = `회원가입 없이도 플레이할 수 있어요.<br>진행 상황을 저장하려면 로그인/시작하세요.`;
+            }
         }
 
         function closeLoginModal() {
             document.getElementById('login-modal-overlay').style.display = 'none';
+        }
+
+        function handleTreeGameLogout() {
+            if (!currentUser) return;
+            saveGame(); // 로그아웃 전 마지막 클라우드 저장 보존
+            const oldUser = currentUser;
+            currentUser = null;
+            localStorage.removeItem('treegame_user');
+            updateUserBadgeUI();
+            closeLoginModal();
+            floatTexts.push({ x: player.x, y: player.y - 100, text: `로그아웃 되었습니다. (계정 데이터 보존됨)`, color: '#e74c3c', life: 100, size: 18 });
+            alert(`[${oldUser}] 계정에서 로그아웃되었습니다!\n서버에 계정 정보와 진행 데이터는 안전하게 보존되어 있으니, 언제든 다시 로그인하시면 됩니다.`);
         }
 
         function updateUserBadgeUI() {
