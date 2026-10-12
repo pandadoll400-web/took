@@ -464,6 +464,563 @@
             launched: false
         };
 
+        // 🌀 고차원 텔레포트 장치 (일반 나무 오른쪽 옆에 위치)
+        let teleporter = {
+            x: 480,
+            y: 360,
+            radius: 36
+        };
+
+        // 보스전 & 쪽지 조각 시스템 상태
+        let inBossRoom = false;
+        let savedWorldPos = { x: 300, y: 500, cameraY: 0 };
+        let noteEmbedded = false;
+        let noteTreeHits = 0;
+        let slashEffects = [];
+
+        let monkeyBoss = {
+            x: 300,
+            y: 340,
+            radius: 46,
+            maxHp: 100,
+            hp: 100,
+            facing: 1,
+            flinchTimer: 0,
+            walkTimer: 0,
+            moveSpeed: 2.2,
+            defeated: false
+        };
+
+        function enterBossDimension() {
+            if (equippedAxe === 0 && axeLevel === 0) {
+                floatTexts.push({ x: teleporter.x, y: teleporter.y - 70, text: `❌ 도끼가 없으면 들어갈 수 없습니다!`, color: '#e74c3c', life: 80, size: 16 });
+                alert("❌ 고차원 공간은 위험합니다!\n도끼를 장착해야 들어갈 수 있습니다.\n(상점에서 도끼를 구매하고 가방에서 장착하세요)");
+                return;
+            }
+
+            savedWorldPos = { x: player.x, y: player.y, cameraY: cameraY };
+            inBossRoom = true;
+            player.x = 300;
+            player.y = 740;
+            player.vx = 0;
+            player.vy = 0;
+            player.targetTree = null;
+            player.axeSwingTimer = 0;
+            cameraY = 0;
+
+            monkeyBoss.hp = 100;
+            monkeyBoss.x = 300;
+            monkeyBoss.y = 340;
+            monkeyBoss.flinchTimer = 0;
+            monkeyBoss.defeated = false;
+            slashEffects = [];
+
+            floatTexts.push({ x: 300, y: 280, text: `👑 숲의 수호자 원숭이 보스 출현!`, color: '#f1c40f', life: 100, size: 24 });
+        }
+
+        function exitBossDimension() {
+            inBossRoom = false;
+            player.x = savedWorldPos.x;
+            player.y = savedWorldPos.y;
+            cameraY = savedWorldPos.cameraY;
+            player.targetTree = null;
+            player.axeSwingTimer = 0;
+        }
+
+        function playerAttackInBossRoom(targetX, targetY) {
+            if (!inBossRoom || monkeyBoss.defeated) return;
+
+            player.axeSwingTimer = 16;
+            let dx = monkeyBoss.x - player.x;
+            player.facing = dx >= 0 ? 1 : -1;
+
+            let dist = Math.hypot(player.x - monkeyBoss.x, player.y - monkeyBoss.y);
+            if (dist < 135) {
+                // 금도끼 10방, 은도끼 20방, 나머지 25방
+                let damage = 4;
+                if (equippedAxe === 3) damage = 10;
+                else if (equippedAxe === 2) damage = 5;
+                else damage = 4;
+
+                monkeyBoss.hp = Math.max(0, monkeyBoss.hp - damage);
+                monkeyBoss.flinchTimer = 16;
+
+                // 타격 슬래시 이펙트 생성
+                slashEffects.push({
+                    x: (player.x + monkeyBoss.x) / 2,
+                    y: (player.y + monkeyBoss.y) / 2 - 10,
+                    life: 14,
+                    facing: player.facing
+                });
+
+                const monkeyCries = ['끼에에엑! 🐒', '우끼끼! 💥', '끼약! 💢', '우끼익! ⚡'];
+                const cry = monkeyCries[Math.floor(Math.random() * monkeyCries.length)];
+                floatTexts.push({ x: monkeyBoss.x, y: monkeyBoss.y - 70, text: `-${damage}% (${cry})`, color: '#ff4757', life: 45, size: 18 });
+
+                if (monkeyBoss.hp <= 0 && !monkeyBoss.defeated) {
+                    monkeyBoss.defeated = true;
+                    floatTexts.push({ x: 300, y: 350, text: `💥 원숭이 보스 격퇴 완료!`, color: '#f1c40f', life: 90, size: 26 });
+                    setTimeout(() => {
+                        exitBossDimension();
+                        noteEmbedded = true;
+                        noteTreeHits = 0;
+                        saveGame();
+                        floatTexts.push({ x: 300, y: 300, text: `📜 쪽지 조각이 일반 나무에 심어졌습니다!`, color: '#f1c40f', life: 120, size: 22 });
+                        alert("🎉 원숭이 보스를 쓰러뜨렸습니다!\n\n📜 신비로운 [쪽지 조각]이 원래 세계의 일반 나무에 심어졌습니다!\n일반 나무를 3번 완전히 부수면(쓰러뜨리면) 쪽지 조각이 나타납니다! (현재: 0/3)");
+                    }, 1000);
+                }
+            }
+        }
+
+        function updateBossRoom() {
+            let moveX = 0, moveY = 0;
+            if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
+            if (keys.a) moveX -= 1; if (keys.d) moveX += 1;
+            
+            if (moveX !== 0 || moveY !== 0) {
+                let mag = Math.hypot(moveX, moveY);
+                player.vx = (moveX / mag) * player.speed;
+                player.vy = (moveY / mag) * player.speed;
+            } else if (joystick.active) {
+                player.vx = joystick.dx * player.speed;
+                player.vy = joystick.dy * player.speed;
+            } else {
+                player.vx *= 0.8;
+                player.vy *= 0.8;
+            }
+
+            let isMoving = Math.hypot(player.vx, player.vy) > 0.5;
+            if (isMoving) {
+                player.walkTimer++;
+                player.x += player.vx;
+                player.y += player.vy;
+                if (Math.abs(player.vx) > 0.1) player.facing = player.vx > 0 ? 1 : -1;
+            } else {
+                player.walkTimer = 0;
+            }
+
+            // 보스 방 경계 제한 (중앙 600x800 아레나)
+            player.x = Math.max(player.radius + 20, Math.min(GAME_WIDTH - player.radius - 20, player.x));
+            player.y = Math.max(130 + player.radius, Math.min(GAME_HEIGHT - player.radius - 30, player.y));
+
+            if (player.axeSwingTimer > 0) player.axeSwingTimer--;
+
+            // 원숭이 보스 이동 및 피격 AI
+            if (!monkeyBoss.defeated) {
+                monkeyBoss.walkTimer++;
+                if (monkeyBoss.flinchTimer > 0) {
+                    monkeyBoss.flinchTimer--;
+                } else {
+                    let bdx = player.x - monkeyBoss.x;
+                    let bdy = player.y - monkeyBoss.y;
+                    let bdist = Math.hypot(bdx, bdy);
+
+                    if (bdist > 80) {
+                        monkeyBoss.x += (bdx / bdist) * monkeyBoss.moveSpeed;
+                        monkeyBoss.y += (bdy / bdist) * monkeyBoss.moveSpeed;
+                    } else if (bdist < 60) {
+                        monkeyBoss.x -= (bdx / bdist) * monkeyBoss.moveSpeed;
+                        monkeyBoss.y -= (bdy / bdist) * monkeyBoss.moveSpeed;
+                    }
+                    if (Math.abs(bdx) > 5) monkeyBoss.facing = bdx >= 0 ? 1 : -1;
+                }
+            }
+
+            // 슬래시 이펙트 수명
+            for (let i = slashEffects.length - 1; i >= 0; i--) {
+                slashEffects[i].life--;
+                if (slashEffects[i].life <= 0) slashEffects.splice(i, 1);
+            }
+
+            // 데미지 텍스트 갱신
+            for (let i = floatTexts.length - 1; i >= 0; i--) {
+                floatTexts[i].y -= 1.2;
+                floatTexts[i].life--;
+                if (floatTexts[i].life <= 0) floatTexts.splice(i, 1);
+            }
+        }
+
+        function drawBossRoom() {
+            ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+            // 신비로운 고차원 이공간 배경
+            let bgGrad = ctx.createRadialGradient(GAME_WIDTH/2, GAME_HEIGHT/2, 50, GAME_WIDTH/2, GAME_HEIGHT/2, 520);
+            bgGrad.addColorStop(0, '#1a103c');
+            bgGrad.addColorStop(0.6, '#0b081a');
+            bgGrad.addColorStop(1, '#05030a');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+            // 차원 그리드 바닥 효과
+            ctx.strokeStyle = 'rgba(155, 89, 182, 0.15)';
+            ctx.lineWidth = 1.5;
+            let timeGrid = (Date.now() * 0.02) % 40;
+            for (let x = 0; x <= GAME_WIDTH; x += 40) {
+                ctx.beginPath(); ctx.moveTo(x, 90); ctx.lineTo(x, GAME_HEIGHT); ctx.stroke();
+            }
+            for (let y = 90 + timeGrid; y <= GAME_HEIGHT; y += 40) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(GAME_WIDTH, y); ctx.stroke();
+            }
+
+            // 아레나 결계 원형 링
+            let ringPulse = Math.sin(Date.now() * 0.003) * 10;
+            ctx.save();
+            ctx.strokeStyle = 'rgba(162, 155, 254, 0.45)';
+            ctx.lineWidth = 3.5;
+            ctx.setLineDash([12, 8]);
+            ctx.beginPath();
+            ctx.ellipse(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 50, 260 + ringPulse, 320 + ringPulse, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+
+            // 도망치기 버튼 (좌측 상단)
+            ctx.save();
+            ctx.fillStyle = 'rgba(231, 76, 60, 0.9)';
+            ctx.strokeStyle = '#c0392b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(15, 15, 110, 42, 8);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 15px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("🚪 도망치기", 70, 36);
+            ctx.restore();
+
+            // 상단 보스 체력바 & UI
+            ctx.save();
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 17px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#f1c40f';
+            ctx.shadowBlur = 10;
+            ctx.fillText("👑 [고차원 보스] 숲의 지배자 원숭이", GAME_WIDTH / 2, 32);
+            ctx.shadowBlur = 0;
+
+            let barW = 340, barH = 20, barX = (GAME_WIDTH - barW) / 2, barY = 48;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.beginPath();
+            ctx.roundRect(barX, barY, barW, barH, 10);
+            ctx.fill();
+            ctx.strokeStyle = '#f1c40f';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            let hpRatio = Math.max(0, monkeyBoss.hp / monkeyBoss.maxHp);
+            let hpGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+            hpGrad.addColorStop(0, '#ff4757');
+            hpGrad.addColorStop(0.5, '#ffa502');
+            hpGrad.addColorStop(1, '#2ed573');
+            ctx.fillStyle = hpGrad;
+            ctx.beginPath();
+            ctx.roundRect(barX + 2, barY + 2, Math.max(0, (barW - 4) * hpRatio), barH - 4, 8);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 13px Arial';
+            ctx.fillText(`${monkeyBoss.hp} / ${monkeyBoss.maxHp} HP (${Math.round(hpRatio * 100)}%)`, GAME_WIDTH / 2, barY + 14);
+
+            ctx.font = 'bold 12px Arial';
+            ctx.fillStyle = '#f5f6fa';
+            ctx.fillText("🪓 공격 가이드: 금도끼(10방) | 은도끼(20방) | 나머지(25방)", GAME_WIDTH / 2, barY + 36);
+            ctx.restore();
+
+            // 슬래시 타격 이펙트
+            slashEffects.forEach(s => {
+                ctx.save();
+                ctx.translate(s.x, s.y);
+                ctx.rotate(s.facing > 0 ? -0.4 : 0.4);
+                let alpha = s.life / 14;
+                ctx.strokeStyle = `rgba(255, 234, 167, ${alpha})`;
+                ctx.lineWidth = 6;
+                ctx.shadowColor = '#f1c40f';
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(0, 0, 45, -0.6 * Math.PI, 0.3 * Math.PI);
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            // 원숭이 보스 & 플레이어 렌더링
+            let bossList = [
+                { type: 'boss', y: monkeyBoss.y },
+                { type: 'player', y: player.y }
+            ];
+            bossList.sort((a, b) => a.y - b.y);
+
+            bossList.forEach(item => {
+                if (item.type === 'boss') {
+                    drawMonkeyBoss(ctx, monkeyBoss);
+                } else if (item.type === 'player') {
+                    drawCharacter(ctx, player, player.x, player.y, player.axeSwingTimer > 0, player.walkTimer);
+                }
+            });
+
+            // 플로팅 텍스트
+            floatTexts.forEach(t => {
+                ctx.save();
+                ctx.fillStyle = t.color;
+                ctx.globalAlpha = Math.min(1.0, t.life / 30);
+                let size = t.size || 18;
+                ctx.font = `bold ${size}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.shadowColor = 'black';
+                ctx.shadowBlur = 5;
+                ctx.fillText(t.text, t.x, t.y);
+                ctx.restore();
+            });
+
+            // 모바일 조이스틱
+            if (joystick.active) {
+                ctx.beginPath(); ctx.arc(joystick.originX, joystick.originY, 60, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'; ctx.lineWidth = 2; ctx.stroke();
+                ctx.beginPath(); ctx.arc(joystick.x, joystick.y, 25, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; ctx.fill();
+            }
+
+            // 하단 조작 가이드 안내
+            ctx.save();
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+            ctx.beginPath();
+            ctx.roundRect(GAME_WIDTH / 2 - 170, GAME_HEIGHT - 48, 340, 36, 18);
+            ctx.fill();
+            ctx.fillStyle = '#f1c40f';
+            ctx.font = 'bold 13px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("⚔️ 원숭이 보스 근처 터치/클릭 or 스페이스바로 공격!", GAME_WIDTH / 2, GAME_HEIGHT - 30);
+            ctx.restore();
+        }
+
+        function drawMonkeyBoss(ctx, boss) {
+            ctx.save();
+            let bob = boss.defeated ? 25 : Math.sin(boss.walkTimer * 0.12) * 6;
+            let flinch = boss.flinchTimer > 0;
+            let facing = boss.facing || 1;
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+            ctx.beginPath();
+            ctx.ellipse(boss.x, boss.y + 40, 34, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.translate(boss.x, boss.y + bob);
+
+            if (boss.defeated) {
+                ctx.rotate(0.5 * facing);
+                ctx.globalAlpha = 0.6;
+            }
+
+            // 긴 꼬리
+            ctx.save();
+            ctx.strokeStyle = flinch ? '#ff7675' : '#6d4c41';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            let tailWiggle = Math.sin(boss.walkTimer * 0.15) * 15;
+            ctx.beginPath();
+            ctx.moveTo(-16 * facing, 20);
+            ctx.bezierCurveTo(-38 * facing, 25 + tailWiggle, -48 * facing, -5 + tailWiggle, -36 * facing, -20);
+            ctx.stroke();
+            ctx.restore();
+
+            // 몸통
+            ctx.fillStyle = flinch ? '#ff7675' : '#795548';
+            ctx.beginPath();
+            ctx.ellipse(0, 10, 26, 30, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 배
+            ctx.fillStyle = flinch ? '#fab1a0' : '#d7ccc8';
+            ctx.beginPath();
+            ctx.ellipse(3 * facing, 12, 16, 20, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 다리
+            let legWalk = Math.sin(boss.walkTimer * 0.2) * 8;
+            ctx.fillStyle = flinch ? '#ff7675' : '#5d4037';
+            ctx.beginPath(); ctx.ellipse(-14, 34 + legWalk, 9, 8, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(14, 34 - legWalk, 9, 8, 0, 0, Math.PI * 2); ctx.fill();
+
+            // 팔
+            let armSwing = Math.sin(boss.walkTimer * 0.18) * 12;
+            ctx.fillStyle = flinch ? '#ff7675' : '#6d4c41';
+            ctx.save();
+            ctx.translate(-22 * facing, 5);
+            ctx.rotate((-armSwing * 0.05) * facing);
+            ctx.beginPath(); ctx.roundRect(-7, -2, 14, 28, 7); ctx.fill();
+            ctx.restore();
+
+            ctx.save();
+            ctx.translate(22 * facing, 5);
+            ctx.rotate((armSwing * 0.05) * facing);
+            ctx.beginPath(); ctx.roundRect(-7, -2, 14, 28, 7); ctx.fill();
+            ctx.fillStyle = '#f1c40f';
+            ctx.strokeStyle = '#d35400';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(4 * facing, 26, 9, 0, Math.PI * 2);
+            ctx.fill(); ctx.stroke();
+            ctx.restore();
+
+            // 귀
+            ctx.fillStyle = flinch ? '#ff7675' : '#795548';
+            ctx.beginPath(); ctx.arc(-26, -24, 12, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(26, -24, 12, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = flinch ? '#fab1a0' : '#d7ccc8';
+            ctx.beginPath(); ctx.arc(-26, -24, 7, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(26, -24, 7, 0, Math.PI * 2); ctx.fill();
+
+            // 머리
+            ctx.fillStyle = flinch ? '#ff7675' : '#795548';
+            ctx.beginPath();
+            ctx.arc(0, -22, 25, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 얼굴 안면 마스크
+            ctx.fillStyle = flinch ? '#fab1a0' : '#d7ccc8';
+            ctx.beginPath();
+            ctx.ellipse(-7, -24, 11, 14, 0, 0, Math.PI * 2);
+            ctx.ellipse(7, -24, 11, 14, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(0, -14, 15, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 눈
+            ctx.fillStyle = '#2c3e50';
+            ctx.beginPath(); ctx.arc(-7 + (facing * 2), -24, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(7 + (facing * 2), -24, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath(); ctx.arc(-8 + (facing * 2), -25, 1.5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(6 + (facing * 2), -25, 1.5, 0, Math.PI * 2); ctx.fill();
+
+            // 코 & 입
+            ctx.fillStyle = '#4e342e';
+            ctx.beginPath(); ctx.arc(0, -16, 3, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#4e342e'; ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, -13, 6, 0.1 * Math.PI, 0.9 * Math.PI);
+            ctx.stroke();
+
+            // 황금 왕관
+            ctx.save();
+            ctx.fillStyle = '#f1c40f';
+            ctx.strokeStyle = '#e67e22';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(-16, -42);
+            ctx.lineTo(-12, -54);
+            ctx.lineTo(-4, -45);
+            ctx.lineTo(0, -58);
+            ctx.lineTo(4, -45);
+            ctx.lineTo(12, -54);
+            ctx.lineTo(16, -42);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath(); ctx.arc(0, -47, 3, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#000000';
+            ctx.shadowBlur = 4;
+            ctx.fillText("👑 보스 원숭이", 0, -65);
+
+            ctx.restore();
+        }
+
+        function drawTeleporter(ctx, x, y) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            let time = Date.now() * 0.003;
+            let pulse = 1 + Math.sin(time * 2) * 0.08;
+
+            // 포탈 바닥 오라
+            let auraGrad = ctx.createRadialGradient(0, 0, 5, 0, 0, 48 * pulse);
+            auraGrad.addColorStop(0, 'rgba(155, 89, 182, 0.7)');
+            auraGrad.addColorStop(0.5, 'rgba(52, 152, 219, 0.4)');
+            auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = auraGrad;
+            ctx.beginPath();
+            ctx.ellipse(0, 10, 48 * pulse, 28 * pulse, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 회전 룬 링
+            ctx.save();
+            ctx.rotate(time * 0.7);
+            ctx.strokeStyle = '#9b59b6';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([14, 10]);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 36, 22, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+
+            ctx.save();
+            ctx.rotate(-time * 1.1);
+            ctx.strokeStyle = '#00cec9';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([10, 8]);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 26, 16, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+
+            // 중심 차원 코어
+            let coreGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 16);
+            coreGrad.addColorStop(0, '#ffffff');
+            coreGrad.addColorStop(0.4, '#a29bfe');
+            coreGrad.addColorStop(1, '#6c5ce7');
+            ctx.fillStyle = coreGrad;
+            ctx.shadowColor = '#a29bfe';
+            ctx.shadowBlur = 18;
+            ctx.beginPath();
+            ctx.arc(0, 0, 15 * pulse, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 기둥 포디엄
+            ctx.fillStyle = '#2d3436';
+            ctx.strokeStyle = '#6c5ce7';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.roundRect(-42, -18, 10, 28, 4); ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.roundRect(32, -18, 10, 28, 4); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#00cec9';
+            ctx.beginPath(); ctx.arc(-37, -22, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(37, -22, 5, 0, Math.PI * 2); ctx.fill();
+
+            // 상단 라벨
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#6c5ce7';
+            ctx.shadowBlur = 8;
+            ctx.fillText("🌀 고차원 텔레포트", 0, -42);
+            ctx.font = 'bold 10px Arial';
+            ctx.fillStyle = '#f1c40f';
+            ctx.fillText("⚔️ [보스: 원숭이]", 0, -28);
+
+            // 근접 시 안내
+            if (typeof player !== 'undefined' && Math.hypot(player.x - x, player.y - y) < 90) {
+                ctx.fillStyle = 'rgba(20, 15, 45, 0.88)';
+                ctx.strokeStyle = '#f1c40f';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.roundRect(-60, -78, 120, 24, 6);
+                ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 11px Arial';
+                ctx.shadowBlur = 0;
+                ctx.fillText("👆 클릭하여 보스전 입장", 0, -62);
+            }
+
+            ctx.restore();
+        }
+
         let blackoutState = {
             active: false,
             text: 'space is coming'
@@ -485,6 +1042,26 @@
 
         function handleTreeClick(cx, cy, isSpacebar = false) {
             if (blackoutState.active) return;
+
+            // 보스 방 안에서의 클릭 처리 (도망치기 또는 공격)
+            if (inBossRoom) {
+                if (!isSpacebar && cx > 15 && cx < 125 && cy > 15 && cy < 60) {
+                    exitBossDimension();
+                    floatTexts.push({ x: player.x, y: player.y - 80, text: `보스 방에서 도망쳤습니다!`, color: '#e74c3c', life: 60 });
+                    return;
+                }
+                playerAttackInBossRoom(cx, cy);
+                return;
+            }
+
+            // 고차원 텔레포트 장치 클릭 감지 (나무 옆)
+            let tpDist = Math.hypot(cx - teleporter.x, cy - teleporter.y);
+            let tpPlayerDist = Math.hypot(player.x - teleporter.x, player.y - teleporter.y);
+            if (tpDist < 55 || (isSpacebar && tpPlayerDist < 75)) {
+                enterBossDimension();
+                return;
+            }
+
             // 로케트 클릭 감지
             if (rocket.visible && !rocket.launched) {
                 let rocketClickDist = Math.hypot(cx - rocket.x, cy - rocket.y);
@@ -1192,6 +1769,7 @@
         let floatTexts = [];
 
         function getItemColor(itemName) {
+            if (itemName === '쪽지 조각') return '#f1c40f';
             let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '').replace('동굴 ', '').replace('할로윈 ', '');
             let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables];
             for (let t of tables) {
@@ -1704,7 +2282,9 @@
                 fuseSlots: [null, null, null],
                 activeFuseStartTime: 0,
                 activeFuseResult: null,
-                treeUnlocked: trees.map((t, idx) => idx === 0)
+                treeUnlocked: trees.map((t, idx) => idx === 0),
+                noteEmbedded: false,
+                noteTreeHits: 0
             };
         }
 
@@ -1848,7 +2428,9 @@
                 rocketLaunched: rocket.launched,
                 fuseSlots: fuseSlots,
                 activeFuseStartTime: activeFuseStartTime,
-                activeFuseResult: activeFuseResult
+                activeFuseResult: activeFuseResult,
+                noteEmbedded: noteEmbedded,
+                noteTreeHits: noteTreeHits
             };
         }
 
@@ -1876,6 +2458,8 @@
             fuseSlots = (data.fuseSlots && data.fuseSlots.length === 3) ? [...data.fuseSlots] : [null, null, null];
             activeFuseStartTime = data.activeFuseStartTime || 0;
             activeFuseResult = data.activeFuseResult || null;
+            noteEmbedded = !!data.noteEmbedded;
+            noteTreeHits = data.noteTreeHits || 0;
             if (data.treeUnlocked) {
                 trees.forEach((t, i) => {
                     t.unlocked = (data.treeUnlocked[i] !== undefined) ? data.treeUnlocked[i] : (i === 0);
@@ -2554,6 +3138,10 @@
         }
 
         function update() {
+            if (inBossRoom) {
+                updateBossRoom();
+                return;
+            }
             if (blackoutState.active) return;
             if (document.getElementById('inventory-modal').style.display === 'block') return;
             if (document.getElementById('shop-modal').style.display === 'block') return;
@@ -2654,6 +3242,23 @@
                             tree.progress = 0;
                             let dropCount = Math.floor(Math.random() * (tree.drops[1] - tree.drops[0] + 1)) + tree.drops[0];
                             for(let i=0; i<dropCount; i++) spawnFruit(tree.x, tree.y, tree.type);
+
+                            // 쪽지가 심어진 일반 나무 벌목 카운트 (3번 완전히 부수면 쪽지 조각 드롭)
+                            if (noteEmbedded && tree.id === 'normal') {
+                                noteTreeHits++;
+                                if (noteTreeHits >= 3) {
+                                    noteEmbedded = false;
+                                    noteTreeHits = 0;
+                                    if (inventory['쪽지 조각'] === undefined) inventory['쪽지 조각'] = 0;
+                                    inventory['쪽지 조각']++;
+                                    saveGame();
+                                    floatTexts.push({ x: tree.x, y: tree.y - 120, text: `📜 [쪽지 조각]을 발견하여 획득했습니다! (3/3)`, color: '#f1c40f', life: 120, size: 20 });
+                                    alert("📜 나무가 3번째로 완전히 쓰러지며 안쪽에서 신비로운 [쪽지 조각]이 튀어나왔습니다!\n인벤토리에 획득 완료되었습니다.");
+                                } else {
+                                    saveGame();
+                                    floatTexts.push({ x: tree.x, y: tree.y - 100, text: `📜 쪽지가 나무 속에서 빛납니다! (${noteTreeHits}/3)`, color: '#f1c40f', life: 80, size: 18 });
+                                }
+                            }
                         }
                     }
                 } else {
@@ -3492,11 +4097,12 @@
                 else if (skin === 'archaeologist') shirtCol = '#bfa181';
                 torsoGrad.addColorStop(0, shirtCol); torsoGrad.addColorStop(1, '#2c3e50');
                 ctx.fillStyle = torsoGrad; ctx.beginPath(); ctx.roundRect(-15, -5, 30, 22, 5); ctx.fill();
-                let hasAxe = (char === player && equippedAxe > 0);
+                let hasAxe = (char === player && (equippedAxe > 0 || axeLevel > 0));
                 if (hasAxe) {
-                    if (isShaking) {
-                        // 장착한 도끼로 나무를 퍽퍽 내리찍으며 휘두르는 역동적인 애니메이션!
-                        let chopCycle = Math.sin(player.shakeTimer * 1.5);
+                    let isSwingingAxe = isShaking || (char === player && player.axeSwingTimer > 0);
+                    if (isSwingingAxe) {
+                        // 장착한 도끼로 내리찍으며 휘두르는 역동적인 애니메이션!
+                        let chopCycle = isShaking ? Math.sin(player.shakeTimer * 1.5) : Math.sin((16 - player.axeSwingTimer) * 0.45);
                         let swingRot = -0.5 + chopCycle * 0.9;
                         
                         // 반대쪽 지탱하는 팔
@@ -4022,6 +4628,10 @@
         }
 
         function draw() {
+            if (inBossRoom) {
+                drawBossRoom();
+                return;
+            }
             ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
             ctx.save();
             ctx.translate(0, -cameraY);
@@ -4100,6 +4710,7 @@
             });
             
             trees.forEach(t => renderList.push({ type: 'tree', obj: t, y: t.y }));
+            renderList.push({ type: 'teleporter', obj: teleporter, y: teleporter.y });
             renderList.sort((a, b) => a.y - b.y);
 
             renderList.forEach(item => {
@@ -4464,8 +5075,31 @@
                         if (t.type === 'space') label = "🔒 업데이트 예정";
                         ctx.fillText(label, t.x, t.y - t.radius - 60);
                     }
+
+                    // 쪽지가 심어진 일반 나무 상단 안내 배너
+                    if (t.id === 'normal' && noteEmbedded) {
+                        ctx.save();
+                        let bobNote = Math.sin(Date.now() * 0.005) * 4;
+                        ctx.translate(t.x, t.y - t.radius - 98 + bobNote);
+                        ctx.fillStyle = 'rgba(241, 196, 15, 0.95)';
+                        ctx.strokeStyle = '#d35400';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.roundRect(-85, -16, 170, 32, 8);
+                        ctx.fill();
+                        ctx.stroke();
+
+                        ctx.fillStyle = '#2c3e50';
+                        ctx.font = 'bold 12px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(`📜 쪽지 심어짐! (${noteTreeHits}/3)`, 0, 0);
+                        ctx.restore();
+                    }
                 } else if (item.type === 'rocket') {
                     drawRocket(ctx, item.obj.x, item.obj.y);
+                } else if (item.type === 'teleporter') {
+                    drawTeleporter(ctx, item.obj.x, item.obj.y);
                 }
             });
 
