@@ -313,10 +313,10 @@
                 </div>
             </div>
 
-            <!-- 30분 쿨타임 안내 카드 -->
+            <!-- 오픈 일정 안내 카드 -->
             <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
-                <span style="color: #bbb;">⏱️ 30분 입장 쿨타임:</span>
-                <span id="boss-cooldown-status-badge" style="font-weight: bold; color: #2ecc71;">✅ 입장 가능</span>
+                <span style="color: #bbb;">📅 보스전 오픈 일정:</span>
+                <span id="boss-cooldown-status-badge" style="font-weight: bold; color: #ff7675;">🔒 토요일 10시 공개!</span>
             </div>
 
             <!-- 내 보스 처치 수 기록 -->
@@ -326,7 +326,7 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button id="boss-enter-btn" onclick="enterBossDimension('devil')" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);">⚔️ 보스전 입장하기</button>
+                <button id="boss-enter-btn" onclick="enterBossDimension('devil')" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #7f8c8d, #4b5563); color: white; border: 1px solid #f39c12; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);">🔒 토요일 10시 공개!</button>
                 <div style="display: flex; gap: 8px;">
                     <button onclick="openRankingModal('boss'); closeBossPortalModal();" style="flex: 1; padding: 10px; background: #8e44ad; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🏆 최다 처치 랭킹</button>
                     <button onclick="closeBossPortalModal()" style="flex: 1; padding: 10px; background: rgba(255,255,255,0.12); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">닫기</button>
@@ -687,26 +687,19 @@
             const modal = document.getElementById('boss-portal-modal');
             if (!modal) return;
 
-            const now = Date.now();
-            const elapsed = now - (lastBossFightTime || 0);
             const badge = document.getElementById('boss-cooldown-status-badge');
             const killsEl = document.getElementById('my-boss-kills-display');
+            const enterBtn = document.getElementById('boss-enter-btn');
 
             if (killsEl) killsEl.innerText = `${bossKills || 0}회`;
 
-            if (elapsed < BOSS_COOLDOWN_MS) {
-                const remainMs = BOSS_COOLDOWN_MS - elapsed;
-                const remainMin = Math.floor(remainMs / 60000);
-                const remainSec = Math.floor((remainMs % 60000) / 1000);
-                if (badge) {
-                    badge.innerText = `⏳ ${remainMin}분 ${remainSec}초 대기`;
-                    badge.style.color = '#ff7675';
-                }
-            } else {
-                if (badge) {
-                    badge.innerText = `✅ 즉시 입장 가능!`;
-                    badge.style.color = '#2ecc71';
-                }
+            if (badge) {
+                badge.innerText = `🔒 토요일 10시 공개!`;
+                badge.style.color = '#ff7675';
+            }
+            if (enterBtn) {
+                enterBtn.innerText = `🔒 토요일 10시 공개!`;
+                enterBtn.style.background = `linear-gradient(135deg, #7f8c8d, #4b5563)`;
             }
 
             modal.style.display = 'block';
@@ -714,7 +707,8 @@
 
         function closeBossPortalModal() {
             const modal = document.getElementById('boss-portal-modal');
-            if (modal) modal.style.display = 'none';
+            if (!modal) return;
+            modal.style.display = 'none';
         }
 
         function setBossRoomHUDVisible(show) {
@@ -733,6 +727,14 @@
 
             const spawnX = (bossType === 'devil') ? teleporterHalloween.x : teleporter.x;
             const spawnY = (bossType === 'devil') ? teleporterHalloween.y : teleporter.y;
+
+            // 🔒 지금은 악마 보스전 입장 불가 (토요일 10시 공개)
+            if (bossType === 'devil') {
+                closeBossPortalModal();
+                floatTexts.push({ x: spawnX, y: spawnY - 70, text: `🔒 토요일 10시 공개!`, color: '#ff7675', life: 100, size: 20 });
+                alert("🔒 [악마 보스전 예고]\n\n악마 보스전은 지금은 입장할 수 없습니다.\n10월 17일 토요일 밤 10시에 전격 공개됩니다!\n'Halloween omega ax'를 획득하고 모험을 준비해 주세요!");
+                return;
+            }
 
             if (equippedAxe === 0 && axeLevel === 0) {
                 floatTexts.push({ x: spawnX, y: spawnY - 70, text: `❌ 도끼가 없으면 들어갈 수 없습니다!`, color: '#e74c3c', life: 80, size: 16 });
@@ -1659,29 +1661,23 @@
             ctx.stroke();
             ctx.shadowBlur = 0;
 
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 12px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText("🌀 고차원 텔레포트", 0, -6);
-
             if (isDevil) {
-                // 악마 보스전 30분 쿨타임 실시간 현황 표기
-                const now = Date.now();
-                const elapsed = now - (lastBossFightTime || 0);
-                if (elapsed < BOSS_COOLDOWN_MS) {
-                    const remainMs = BOSS_COOLDOWN_MS - elapsed;
-                    const rMin = Math.floor(remainMs / 60000);
-                    const rSec = Math.floor((remainMs % 60000) / 1000);
-                    ctx.fillStyle = '#ff7675';
-                    ctx.font = 'bold 10px Arial';
-                    ctx.fillText(`⏳ 대기: ${String(rMin).padStart(2,'0')}:${String(rSec).padStart(2,'0')}`, 0, 9);
-                } else {
-                    ctx.fillStyle = '#f1c40f';
-                    ctx.font = 'bold 10px Arial';
-                    ctx.fillText("😈 [악마 보스전]", 0, 9);
-                }
+                ctx.fillStyle = '#ff7675';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("😈 악마 보스전", 0, -6);
+
+                ctx.fillStyle = '#f1c40f';
+                ctx.font = 'bold 11px Arial';
+                ctx.fillText("토요일 10시 공개!", 0, 9);
             } else {
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("🌀 고차원 텔레포트", 0, -6);
+
                 ctx.fillStyle = '#f1c40f';
                 ctx.font = 'bold 10px Arial';
                 ctx.fillText("👑 [원숭이 보스전]", 0, 9);
@@ -1691,19 +1687,19 @@
             // 5. 플레이어 접근 시 터치/클릭 안내 말풍선
             if (typeof player !== 'undefined' && Math.hypot(player.x - x, player.y - y) < 110) {
                 ctx.save();
-                ctx.fillStyle = '#f1c40f';
-                ctx.strokeStyle = '#d35400';
+                ctx.fillStyle = isDevil ? 'rgba(30, 10, 18, 0.95)' : '#f1c40f';
+                ctx.strokeStyle = isDevil ? '#e74c3c' : '#d35400';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.roundRect(-75, -145, 150, 28, 8);
+                ctx.roundRect(-80, -145, 160, 28, 8);
                 ctx.fill();
                 ctx.stroke();
 
-                ctx.fillStyle = '#2c3e50';
+                ctx.fillStyle = isDevil ? '#ff7675' : '#2c3e50';
                 ctx.font = 'bold 11px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                let tipText = isDevil ? "👆 클릭: 악마 보스전 & 랭킹!" : "👆 클릭하여 원숭이 보스전!";
+                let tipText = isDevil ? "토요일 10시 공개!" : "👆 클릭하여 원숭이 보스전!";
                 ctx.fillText(tipText, 0, -131);
                 ctx.restore();
             }
@@ -6197,7 +6193,7 @@
                         ctx.strokeStyle = '#ff7675';
                         ctx.lineWidth = 1.5;
                         ctx.beginPath();
-                        ctx.roundRect(-70, -14, 140, 28, 6);
+                        ctx.roundRect(-80, -14, 160, 28, 6);
                         ctx.fill();
                         ctx.stroke();
 
@@ -6205,7 +6201,7 @@
                         ctx.font = 'bold 11px Arial';
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
-                        ctx.fillText("👉 우측: 😈악마 보스", 0, 0);
+                        ctx.fillText("👉 우측: 토요일 10시 공개!", 0, 0);
                         ctx.restore();
                     }
                 } else if (item.type === 'rocket') {
