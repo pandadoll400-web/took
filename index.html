@@ -640,6 +640,10 @@
 
         // ⏱️ 악마 보스전 30분 입장 쿨타임 & 최다 처치 기록
         const BOSS_COOLDOWN_MS = 30 * 60 * 1000; // 30분 (1,800,000ms)
+        const BOSS_EVENT_START_MS = new Date('2026-10-17T22:00:00+09:00').getTime();
+        function isBossEventStarted() {
+            return Date.now() >= BOSS_EVENT_START_MS;
+        }
         let lastBossFightTime = 0;
         let bossKills = 0;
 
@@ -691,7 +695,8 @@
             const killsEl = document.getElementById('my-boss-kills-display');
             const enterBtn = document.getElementById('boss-enter-btn');
 
-            if (killsEl) killsEl.innerText = `${bossKills || 0}회`;
+            const currentDisplayKills = isBossEventStarted() ? (bossKills || 0) : 0;
+            if (killsEl) killsEl.innerText = `${currentDisplayKills}회`;
 
             if (badge) {
                 badge.innerText = `🔒 토요일 10시 공개!`;
@@ -1880,7 +1885,7 @@
                         const uname = d.username || doc.id;
                         const uLevel = Number(d.level || (d.gameData && d.gameData.level) || 1);
                         const uXp = Number((d.gameData && d.gameData.xp) || 0);
-                        const uBossKills = Number(d.bossKills || (d.gameData && d.gameData.bossKills) || 0);
+                        const uBossKills = isBossEventStarted() ? Number(d.bossKills || (d.gameData && d.gameData.bossKills) || 0) : 0;
                         if (uname && !isNaN(uLevel)) {
                             rankersMap.set(uname.toLowerCase(), { username: uname, level: uLevel, xp: uXp, bossKills: uBossKills });
                         }
@@ -1891,12 +1896,13 @@
             }
 
             // 2. 현재 로그인된 유저가 있다면 최신 데이터 반영
+            const effectiveBossKills = isBossEventStarted() ? (bossKills || 0) : 0;
             if (currentUser) {
                 rankersMap.set(currentUser.toLowerCase(), {
                     username: currentUser,
                     level: level,
                     xp: xp,
-                    bossKills: bossKills || 0,
+                    bossKills: effectiveBossKills,
                     isMe: true
                 });
             } else if (rankersMap.size === 0) {
@@ -1905,7 +1911,7 @@
                     username: '게스트(나)',
                     level: level,
                     xp: xp,
-                    bossKills: bossKills || 0,
+                    bossKills: effectiveBossKills,
                     isMe: true
                 });
             }
@@ -1927,7 +1933,7 @@
             const myIdx = sortedRankers.findIndex(r => r.username.toLowerCase() === activeUser.toLowerCase());
             if (myRankVal) {
                 if (isBossTab) {
-                    myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🗡️ ${bossKills || 0}회 처치)` : `처치 ${bossKills || 0}회`;
+                    myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🗡️ ${effectiveBossKills}회 처치)` : `처치 ${effectiveBossKills}회`;
                 } else {
                     myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / LV. ${level})` : `LV. ${level}`;
                 }
@@ -3471,7 +3477,7 @@
                 activeFuseResult: activeFuseResult,
                 noteEmbedded: noteEmbedded,
                 noteTreeHits: noteTreeHits,
-                bossKills: bossKills || 0,
+                bossKills: isBossEventStarted() ? (bossKills || 0) : 0,
                 lastBossFightTime: lastBossFightTime || 0
             };
         }
@@ -3502,7 +3508,19 @@
             activeFuseResult = data.activeFuseResult || null;
             noteEmbedded = !!data.noteEmbedded;
             noteTreeHits = data.noteTreeHits || 0;
-            bossKills = Number(data.bossKills || 0);
+            if (!isBossEventStarted()) {
+                bossKills = 0;
+                try {
+                    const s = localStorage.getItem('treeGameSave');
+                    if (s) {
+                        let parsed = JSON.parse(s);
+                        parsed.bossKills = 0;
+                        localStorage.setItem('treeGameSave', JSON.stringify(parsed));
+                    }
+                } catch(e) {}
+            } else {
+                bossKills = Number(data.bossKills || 0);
+            }
             lastBossFightTime = Number(data.lastBossFightTime || 0);
             if (data.treeUnlocked) {
                 trees.forEach((t, i) => {
@@ -4085,6 +4103,14 @@
                     startTradeIncomingListener();
                 } catch (err) {
                     console.warn('Cloud load fail:', err);
+                }
+                if (!isBossEventStarted() && currentUser && db) {
+                    try {
+                        db.collection('users').doc(currentUser.toLowerCase()).update({
+                            bossKills: 0,
+                            'gameData.bossKills': 0
+                        });
+                    } catch (e) {}
                 }
                 setTimeout(checkAndShowHalloweenNotice, 600);
             } else if (!currentUser) {
