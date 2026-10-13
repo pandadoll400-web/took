@@ -515,17 +515,17 @@
         });
         window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = false; });
 
-        // 우주 로케트 (일반 지역 옆 중간 사이즈 로켓)
+        // 우주 로케트 (일반 지역 상단 왼쪽 우주 발사대)
         let rocket = {
-            x: 90,
-            y: 370,
+            x: 80,
+            y: 220,
             visible: true,
             launched: false
         };
 
-        // 🏆 레벨 랭킹 보드 (일반 나무 왼쪽 옆에 위치)
+        // 🏆 레벨 랭킹 보드 (일반 나무 왼쪽 옆, 나무 잎과 겹치지 않도록 깔끔하게 배치)
         let rankingBoard = {
-            x: 175,
+            x: 80,
             y: 380,
             radius: 36
         };
