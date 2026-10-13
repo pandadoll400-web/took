@@ -214,11 +214,11 @@
             </div>
         </div>
 
-        <!-- 🏆 레벨 랭킹 TOP 5 모달 -->
+        <!-- 🏆 레벨 랭킹 TOP 10 모달 -->
         <div id="ranking-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 16, 32, 0.98); color: white; padding: 22px 20px; border-radius: 18px; width: 88%; max-width: 380px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #f1c40f; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.85), 0 0 25px rgba(241, 196, 15, 0.35); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(241, 196, 15, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
                 <h3 style="margin: 0; color: #f1c40f; font-size: 18px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);">
-                    <span>🏆</span> 명예의 전당 (레벨 TOP 5)
+                    <span>🏆</span> 명예의 전당 (레벨 TOP 10)
                 </h3>
                 <button onclick="closeRankingModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
             </div>
@@ -235,7 +235,7 @@
             </div>
             
             <div id="ranking-list" style="display: none; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <!-- 1등~5등 동적 렌더링 -->
+                <!-- 1등~10등 동적 렌더링 -->
             </div>
             
             <!-- 내 순위 정보 카드 -->
@@ -1218,7 +1218,7 @@
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 11px Arial';
-            ctx.fillText("🏆 랭킹 보드", 0, 0);
+            ctx.fillText("🏆 레벨 TOP 10", 0, 0);
             ctx.restore();
 
             // 6. 플레이어 접근 시 터치/클릭 안내
@@ -1317,10 +1317,10 @@
                 myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / LV. ${level})` : `LV. ${level}`;
             }
 
-            // TOP 5 추출 (실제 등록된 유저만)
-            const top5 = sortedRankers.slice(0, 5);
+            // TOP 10 추출 (실제 등록된 유저만)
+            const top10 = sortedRankers.slice(0, 10);
 
-            if (top5.length === 0) {
+            if (top10.length === 0) {
                 listEl.innerHTML = `<div style="text-align: center; color: #888; padding: 20px 0; font-size: 13px;">아직 등록된 실제 플레이어가 없습니다.</div>`;
                 loadingEl.style.display = 'none';
                 listEl.style.display = 'flex';
@@ -1328,33 +1328,33 @@
             }
 
             let html = '';
-            const medals = ['🥇', '🥈', '🥉', '4위', '5위'];
+            const medals = ['🥇', '🥈', '🥉', '4위', '5위', '6위', '7위', '8위', '9위', '10위'];
             const badgeColors = [
                 'linear-gradient(135deg, rgba(241, 196, 15, 0.28), rgba(230, 126, 34, 0.18))',
                 'linear-gradient(135deg, rgba(189, 195, 199, 0.25), rgba(127, 140, 141, 0.15))',
-                'linear-gradient(135deg, rgba(211, 84, 0, 0.25), rgba(186, 74, 0, 0.15))',
-                'rgba(255, 255, 255, 0.05)',
-                'rgba(255, 255, 255, 0.05)'
+                'linear-gradient(135deg, rgba(211, 84, 0, 0.25), rgba(186, 74, 0, 0.15))'
             ];
-            const borderColors = ['#f1c40f', '#bdc3c7', '#e67e22', 'rgba(255,255,255,0.15)', 'rgba(255,255,255,0.15)'];
+            const borderColors = ['#f1c40f', '#bdc3c7', '#e67e22'];
 
-            top5.forEach((r, idx) => {
+            top10.forEach((r, idx) => {
                 const isCurrentMe = r.isMe || (currentUser && r.username.toLowerCase() === currentUser.toLowerCase());
                 const meTag = isCurrentMe ? ` <span style="background: #27ae60; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 4px;">ME</span>` : '';
-                const rankBadge = (idx < 3) ? `<span style="font-size: 22px;">${medals[idx]}</span>` : `<span style="font-size: 13px; font-weight: bold; color: #aaa; width: 24px; text-align: center;">${medals[idx]}</span>`;
+                const rankBadge = (idx < 3) ? `<span style="font-size: 20px;">${medals[idx]}</span>` : `<span style="font-size: 13px; font-weight: bold; color: #888; width: 26px; text-align: center;">${medals[idx]}</span>`;
+                const bg = idx < 3 ? badgeColors[idx] : 'rgba(255, 255, 255, 0.04)';
+                const border = idx < 3 ? borderColors[idx] : 'rgba(255, 255, 255, 0.12)';
                 
                 html += `
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: ${badgeColors[idx]}; border: 1.5px solid ${borderColors[idx]}; border-radius: 12px; ${isCurrentMe ? 'box-shadow: 0 0 12px rgba(46, 204, 113, 0.4); border-color: #2ecc71;' : ''}">
-                    <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; background: ${bg}; border: 1.5px solid ${border}; border-radius: 12px; ${isCurrentMe ? 'box-shadow: 0 0 12px rgba(46, 204, 113, 0.4); border-color: #2ecc71;' : ''}">
+                    <div style="display: flex; align-items: center; gap: 10px;">
                         ${rankBadge}
                         <div>
-                            <div style="font-weight: bold; font-size: 14px; color: ${idx === 0 ? '#f1c40f' : '#ffffff'};">
+                            <div style="font-weight: bold; font-size: 13.5px; color: ${idx === 0 ? '#f1c40f' : '#ffffff'};">
                                 ${r.username}${meTag}
                             </div>
                         </div>
                     </div>
                     <div style="text-align: right;">
-                        <span style="font-size: 15px; font-weight: 800; color: #38bdf8; letter-spacing: -0.5px;">LV. ${r.level}</span>
+                        <span style="font-size: 14px; font-weight: 800; color: #38bdf8; letter-spacing: -0.5px;">LV. ${r.level}</span>
                     </div>
                 </div>
                 `;
