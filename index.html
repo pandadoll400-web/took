@@ -214,13 +214,19 @@
             </div>
         </div>
 
-        <!-- 🏆 레벨 랭킹 TOP 10 모달 -->
+        <!-- 🏆 레벨 & 보스 최다 처치 랭킹 모달 -->
         <div id="ranking-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 16, 32, 0.98); color: white; padding: 22px 20px; border-radius: 18px; width: 88%; max-width: 380px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #f1c40f; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.85), 0 0 25px rgba(241, 196, 15, 0.35); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(241, 196, 15, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
-                <h3 style="margin: 0; color: #f1c40f; font-size: 18px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);">
+                <h3 id="ranking-modal-title" style="margin: 0; color: #f1c40f; font-size: 18px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);">
                     <span>🏆</span> 명예의 전당 (레벨 TOP 10)
                 </h3>
                 <button onclick="closeRankingModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
+            </div>
+
+            <!-- 랭킹 탭 선택: 레벨 TOP 10 vs 보스 처치 TOP 10 -->
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <button id="rank-tab-level-btn" onclick="switchLeaderboardTab('level')" style="flex: 1; padding: 9px; background: #f1c40f; color: #111; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.2s;">⭐ 레벨 TOP 10</button>
+                <button id="rank-tab-boss-btn" onclick="switchLeaderboardTab('boss')" style="flex: 1; padding: 9px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.2s;">😈 보스 처치 TOP 10</button>
             </div>
 
             <!-- ⏱️ 10분 주기 자동 리롤 타이머 표시 -->
@@ -247,6 +253,47 @@
             <div style="display: flex; gap: 10px;">
                 <button onclick="fetchLeaderboard(true)" style="flex: 1; padding: 11px; background: #2980b9; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(41, 128, 185, 0.4);">🔄 새로고침</button>
                 <button onclick="closeRankingModal()" style="flex: 1; padding: 11px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);">닫기</button>
+            </div>
+        </div>
+
+        <!-- 🌀 고차원 악마 보스 텔레포트 게이트 모달 -->
+        <div id="boss-portal-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 12, 30, 0.98); color: white; padding: 22px 20px; border-radius: 18px; width: 88%; max-width: 380px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #a29bfe; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.85), 0 0 25px rgba(162, 155, 254, 0.4); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(162, 155, 254, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
+                <h3 style="margin: 0; color: #a29bfe; font-size: 18px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(162, 155, 254, 0.5);">
+                    <span>🌀</span> 고차원 악마 보스전
+                </h3>
+                <button onclick="closeBossPortalModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
+            </div>
+
+            <!-- 보스 프로필 카드 -->
+            <div style="background: rgba(231, 76, 60, 0.12); border: 1.5px solid #e74c3c; border-radius: 12px; padding: 14px; margin-bottom: 14px; text-align: center;">
+                <div style="font-size: 40px; margin-bottom: 4px;">😈</div>
+                <div style="font-size: 17px; font-weight: bold; color: #ff7675; margin-bottom: 6px;">어둠의 악마 보스</div>
+                <div style="font-size: 12px; color: #ecf0f1; line-height: 1.55;">
+                    🔥 <strong>공격 패턴:</strong> 초고속 돌진 및 강타 (피격 시 -10 HP)<br>
+                    ❤️ <strong>내 체력:</strong> 100 HP | <strong>보스 체력:</strong> 100 HP<br>
+                    🪓 <strong>도끼 필수:</strong> 금도끼 10방 / 은도끼 20방 / 기타 25방
+                </div>
+            </div>
+
+            <!-- 30분 쿨타임 안내 카드 -->
+            <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #bbb;">⏱️ 30분 입장 쿨타임:</span>
+                <span id="boss-cooldown-status-badge" style="font-weight: bold; color: #2ecc71;">✅ 입장 가능</span>
+            </div>
+
+            <!-- 내 보스 처치 수 기록 -->
+            <div style="background: rgba(255,255,255,0.06); border: 1px dashed rgba(162, 155, 254, 0.6); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 13px;">
+                <span style="color: #bbb;">🏆 내 악마 처치 기록:</span>
+                <span id="my-boss-kills-display" style="color: #f1c40f; font-weight: bold;">0회</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button id="boss-enter-btn" onclick="enterBossDimension()" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);">⚔️ 보스전 입장하기</button>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="openRankingModal('boss'); closeBossPortalModal();" style="flex: 1; padding: 10px; background: #8e44ad; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🏆 최다 처치 랭킹</button>
+                    <button onclick="closeBossPortalModal()" style="flex: 1; padding: 10px; background: rgba(255,255,255,0.12); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">닫기</button>
+                </div>
             </div>
         </div>
 
@@ -544,25 +591,106 @@
         let noteTreeHits = 0;
         let slashEffects = [];
 
-        let monkeyBoss = {
+        // ⏱️ 30분 보스전 입장 쿨타임 & 최다 처치 기록
+        const BOSS_COOLDOWN_MS = 30 * 60 * 1000; // 30분 (1,800,000ms)
+        let lastBossFightTime = 0;
+        let bossKills = 0;
+
+        // 플레이어 보스전 체력 (100 HP)
+        let playerBossHp = 100;
+        const PLAYER_MAX_BOSS_HP = 100;
+
+        // 😈 고차원 악마 보스 (돌진 & 강타 패턴)
+        let devilBoss = {
             x: 300,
-            y: 340,
+            y: 320,
             radius: 46,
             maxHp: 100,
             hp: 100,
             facing: 1,
             flinchTimer: 0,
             walkTimer: 0,
-            moveSpeed: 2.2,
+            moveSpeed: 2.3,
+            state: 'chase', // 'chase', 'charge_telegraph', 'charging', 'recovery'
+            stateTimer: 0,
+            chargeTargetX: 300,
+            chargeTargetY: 300,
+            chargeDirX: 0,
+            chargeDirY: 0,
+            hasHitDuringDash: false,
+            attackCooldown: 60,
             defeated: false
         };
 
+        function openBossPortalModal() {
+            const modal = document.getElementById('boss-portal-modal');
+            if (!modal) return;
+
+            const now = Date.now();
+            const elapsed = now - (lastBossFightTime || 0);
+            const badge = document.getElementById('boss-cooldown-status-badge');
+            const killsEl = document.getElementById('my-boss-kills-display');
+
+            if (killsEl) killsEl.innerText = `${bossKills || 0}회`;
+
+            if (elapsed < BOSS_COOLDOWN_MS) {
+                const remainMs = BOSS_COOLDOWN_MS - elapsed;
+                const remainMin = Math.floor(remainMs / 60000);
+                const remainSec = Math.floor((remainMs % 60000) / 1000);
+                if (badge) {
+                    badge.innerText = `⏳ ${remainMin}분 ${remainSec}초 대기`;
+                    badge.style.color = '#ff7675';
+                }
+            } else {
+                if (badge) {
+                    badge.innerText = `✅ 즉시 입장 가능!`;
+                    badge.style.color = '#2ecc71';
+                }
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function closeBossPortalModal() {
+            const modal = document.getElementById('boss-portal-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function setBossRoomHUDVisible(show) {
+            const moneyEl = document.getElementById('money-display');
+            const levelEl = document.getElementById('level-container');
+            const badgeEl = document.getElementById('user-profile-badge');
+            const btnGroup = document.getElementById('bottom-btn-group');
+            if (moneyEl) moneyEl.style.display = show ? 'block' : 'none';
+            if (levelEl) levelEl.style.display = show ? 'block' : 'none';
+            if (badgeEl) badgeEl.style.display = show ? 'flex' : 'none';
+            if (btnGroup) btnGroup.style.display = show ? 'flex' : 'none';
+        }
+
         function enterBossDimension() {
+            closeBossPortalModal();
+
             if (equippedAxe === 0 && axeLevel === 0) {
                 floatTexts.push({ x: teleporter.x, y: teleporter.y - 70, text: `❌ 도끼가 없으면 들어갈 수 없습니다!`, color: '#e74c3c', life: 80, size: 16 });
-                alert("❌ 고차원 공간은 위험합니다!\n도끼를 장착해야 들어갈 수 있습니다.\n(상점에서 도끼를 구매하고 가방에서 장착하세요)");
+                alert("❌ 고차원 악마의 영역은 위험합니다!\n도끼를 장착해야 들어갈 수 있습니다.\n(상점에서 도끼를 구매하고 가방에서 장착하세요)");
                 return;
             }
+
+            // ⏱️ 30분 쿨타임 체크 (30분마다 1번씩만 입장 가능)
+            const now = Date.now();
+            const elapsed = now - (lastBossFightTime || 0);
+            if (elapsed < BOSS_COOLDOWN_MS) {
+                const remainMs = BOSS_COOLDOWN_MS - elapsed;
+                const remainMin = Math.floor(remainMs / 60000);
+                const remainSec = Math.floor((remainMs % 60000) / 1000);
+                floatTexts.push({ x: teleporter.x, y: teleporter.y - 70, text: `⏳ 30분 쿨타임! (${remainMin}분 ${remainSec}초 남음)`, color: '#e74c3c', life: 90, size: 16 });
+                alert(`⏳ 악마 보스전은 30분에 1번씩만 도전할 수 있습니다!\n남은 대기 시간: ${remainMin}분 ${remainSec}초`);
+                return;
+            }
+
+            // 쿨타임 갱신 & 저장
+            lastBossFightTime = Date.now();
+            saveGame();
 
             savedWorldPos = { x: player.x, y: player.y, cameraY: cameraY };
             inBossRoom = true;
@@ -574,14 +702,26 @@
             player.axeSwingTimer = 0;
             cameraY = 0;
 
-            monkeyBoss.hp = 100;
-            monkeyBoss.x = 300;
-            monkeyBoss.y = 340;
-            monkeyBoss.flinchTimer = 0;
-            monkeyBoss.defeated = false;
+            // 내 체력 100 초기화
+            playerBossHp = 100;
+
+            // 악마 보스 초기화
+            devilBoss.hp = 100;
+            devilBoss.maxHp = 100;
+            devilBoss.x = 300;
+            devilBoss.y = 320;
+            devilBoss.flinchTimer = 0;
+            devilBoss.state = 'chase';
+            devilBoss.stateTimer = 0;
+            devilBoss.attackCooldown = 60;
+            devilBoss.hasHitDuringDash = false;
+            devilBoss.defeated = false;
             slashEffects = [];
 
-            floatTexts.push({ x: 300, y: 280, text: `👑 숲의 수호자 원숭이 보스 출현!`, color: '#f1c40f', life: 100, size: 24 });
+            // 보스전 중에는 내 체력과 보스 체력만 표시되도록 일반 HUD 일체 숨김
+            setBossRoomHUDVisible(false);
+
+            floatTexts.push({ x: 300, y: 280, text: `😈 어둠의 악마 보스 출현!`, color: '#e74c3c', life: 100, size: 24 });
         }
 
         function exitBossDimension() {
@@ -591,16 +731,27 @@
             cameraY = savedWorldPos.cameraY;
             player.targetTree = null;
             player.axeSwingTimer = 0;
+
+            // 일반 월드 HUD 복구
+            setBossRoomHUDVisible(true);
+        }
+
+        function handlePlayerBossDefeat() {
+            floatTexts.push({ x: player.x, y: player.y - 70, text: `💀 패배하였습니다...`, color: '#e74c3c', life: 90, size: 24 });
+            setTimeout(() => {
+                exitBossDimension();
+                alert("💀 악마 보스에게 패배하여 원래 세계로 돌아왔습니다...\n돌진 패턴을 피해 다시 도전해보세요!");
+            }, 700);
         }
 
         function playerAttackInBossRoom(targetX, targetY) {
-            if (!inBossRoom || monkeyBoss.defeated) return;
+            if (!inBossRoom || devilBoss.defeated || playerBossHp <= 0) return;
 
             player.axeSwingTimer = 16;
-            let dx = monkeyBoss.x - player.x;
+            let dx = devilBoss.x - player.x;
             player.facing = dx >= 0 ? 1 : -1;
 
-            let dist = Math.hypot(player.x - monkeyBoss.x, player.y - monkeyBoss.y);
+            let dist = Math.hypot(player.x - devilBoss.x, player.y - devilBoss.y);
             if (dist < 135) {
                 // 금도끼 10방, 은도끼 20방, 나머지 25방
                 let damage = 4;
@@ -608,31 +759,33 @@
                 else if (equippedAxe === 2) damage = 5;
                 else damage = 4;
 
-                monkeyBoss.hp = Math.max(0, monkeyBoss.hp - damage);
-                monkeyBoss.flinchTimer = 16;
+                devilBoss.hp = Math.max(0, devilBoss.hp - damage);
+                devilBoss.flinchTimer = 16;
 
                 // 타격 슬래시 이펙트 생성
                 slashEffects.push({
-                    x: (player.x + monkeyBoss.x) / 2,
-                    y: (player.y + monkeyBoss.y) / 2 - 10,
+                    x: (player.x + devilBoss.x) / 2,
+                    y: (player.y + devilBoss.y) / 2 - 10,
                     life: 14,
                     facing: player.facing
                 });
 
-                const monkeyCries = ['끼에에엑! 🐒', '우끼끼! 💥', '끼약! 💢', '우끼익! ⚡'];
-                const cry = monkeyCries[Math.floor(Math.random() * monkeyCries.length)];
-                floatTexts.push({ x: monkeyBoss.x, y: monkeyBoss.y - 70, text: `-${damage}% (${cry})`, color: '#ff4757', life: 45, size: 18 });
+                const devilCries = ['크아악! 💢', '키에에! 💥', '감히 나를?! ⚡', '큭...! 🔥'];
+                const cry = devilCries[Math.floor(Math.random() * devilCries.length)];
+                floatTexts.push({ x: devilBoss.x, y: devilBoss.y - 70, text: `-${damage}% (${cry})`, color: '#ff4757', life: 45, size: 18 });
 
-                if (monkeyBoss.hp <= 0 && !monkeyBoss.defeated) {
-                    monkeyBoss.defeated = true;
-                    floatTexts.push({ x: 300, y: 350, text: `💥 원숭이 보스 격퇴 완료!`, color: '#f1c40f', life: 90, size: 26 });
+                if (devilBoss.hp <= 0 && !devilBoss.defeated) {
+                    devilBoss.defeated = true;
+                    bossKills = (bossKills || 0) + 1;
+                    saveGame();
+                    floatTexts.push({ x: 300, y: 350, text: `💥 악마 보스 격퇴 완료! (총 ${bossKills}회 처치)`, color: '#f1c40f', life: 90, size: 26 });
                     setTimeout(() => {
                         exitBossDimension();
                         noteEmbedded = true;
                         noteTreeHits = 0;
                         saveGame();
                         floatTexts.push({ x: 300, y: 300, text: `📜 쪽지 조각이 일반 나무에 심어졌습니다!`, color: '#f1c40f', life: 120, size: 22 });
-                        alert("🎉 원숭이 보스를 쓰러뜨렸습니다!\n\n📜 신비로운 [쪽지 조각]이 원래 세계의 일반 나무에 심어졌습니다!\n일반 나무를 3번 완전히 부수면(쓰러뜨리면) 쪽지 조각이 나타납니다! (현재: 0/3)");
+                        alert(`🎉 어둠의 악마 보스를 성공적으로 쓰러뜨렸습니다!\n\n😈 악마 보스 최다 처치 기록: 총 ${bossKills}회 달성!\n📜 신비로운 [쪽지 조각]이 원래 세계의 일반 나무에 심어졌습니다!\n일반 나무를 3번 완전히 부수면(쓰러뜨리면) 쪽지 조각이 나타납니다! (현재: 0/3)`);
                     }, 1000);
                 }
             }
@@ -671,24 +824,106 @@
 
             if (player.axeSwingTimer > 0) player.axeSwingTimer--;
 
-            // 원숭이 보스 이동 및 피격 AI
-            if (!monkeyBoss.defeated) {
-                monkeyBoss.walkTimer++;
-                if (monkeyBoss.flinchTimer > 0) {
-                    monkeyBoss.flinchTimer--;
-                } else {
-                    let bdx = player.x - monkeyBoss.x;
-                    let bdy = player.y - monkeyBoss.y;
-                    let bdist = Math.hypot(bdx, bdy);
+            // 😈 악마 보스 AI (추적 -> 돌진 조짐 -> 초고속 돌진 및 때리기(10 데미지) -> 회복/빈틈)
+            if (!devilBoss.defeated && playerBossHp > 0) {
+                devilBoss.walkTimer++;
+                if (devilBoss.flinchTimer > 0) {
+                    devilBoss.flinchTimer--;
+                }
 
-                    if (bdist > 80) {
-                        monkeyBoss.x += (bdx / bdist) * monkeyBoss.moveSpeed;
-                        monkeyBoss.y += (bdy / bdist) * monkeyBoss.moveSpeed;
-                    } else if (bdist < 60) {
-                        monkeyBoss.x -= (bdx / bdist) * monkeyBoss.moveSpeed;
-                        monkeyBoss.y -= (bdy / bdist) * monkeyBoss.moveSpeed;
+                let bdx = player.x - devilBoss.x;
+                let bdy = player.y - devilBoss.y;
+                let bdist = Math.hypot(bdx, bdy);
+
+                if (devilBoss.state === 'chase') {
+                    // 1. 추격 단계
+                    if (Math.abs(bdx) > 5) devilBoss.facing = bdx >= 0 ? 1 : -1;
+
+                    if (bdist > 70) {
+                        devilBoss.x += (bdx / bdist) * devilBoss.moveSpeed;
+                        devilBoss.y += (bdy / bdist) * devilBoss.moveSpeed;
                     }
-                    if (Math.abs(bdx) > 5) monkeyBoss.facing = bdx >= 0 ? 1 : -1;
+
+                    // 근접 시 기본 때리기 (피격 시 -10 HP)
+                    if (devilBoss.attackCooldown > 0) {
+                        devilBoss.attackCooldown--;
+                    } else if (bdist < 65) {
+                        devilBoss.attackCooldown = 75;
+                        playerBossHp = Math.max(0, playerBossHp - 10);
+                        slashEffects.push({ x: player.x, y: player.y - 10, life: 14, facing: devilBoss.facing });
+                        floatTexts.push({ x: player.x, y: player.y - 65, text: `💥 -10 HP (악마의 공격!)`, color: '#e74c3c', life: 45, size: 20 });
+                        if (playerBossHp <= 0) {
+                            handlePlayerBossDefeat();
+                            return;
+                        }
+                    }
+
+                    devilBoss.stateTimer++;
+                    // 약 2초 추격 후 돌진 패턴 발동!
+                    if (devilBoss.stateTimer > 120 && bdist > 90) {
+                        devilBoss.state = 'charge_telegraph';
+                        devilBoss.stateTimer = 40; // 약 0.7초 차징 경고
+                        devilBoss.chargeTargetX = player.x;
+                        devilBoss.chargeTargetY = player.y;
+                        let tdx = devilBoss.chargeTargetX - devilBoss.x;
+                        let tdy = devilBoss.chargeTargetY - devilBoss.y;
+                        let tdist = Math.hypot(tdx, tdy) || 1;
+                        devilBoss.chargeDirX = tdx / tdist;
+                        devilBoss.chargeDirY = tdy / tdist;
+                        floatTexts.push({ x: devilBoss.x, y: devilBoss.y - 75, text: `💢 돌진 준비!`, color: '#f1c40f', life: 40, size: 20 });
+                    }
+
+                } else if (devilBoss.state === 'charge_telegraph') {
+                    // 2. 돌진 준비 (경고선 표시 & 힘 모으기)
+                    devilBoss.stateTimer--;
+                    if (Math.abs(devilBoss.chargeDirX) > 0.1) {
+                        devilBoss.facing = devilBoss.chargeDirX >= 0 ? 1 : -1;
+                    }
+                    if (devilBoss.stateTimer <= 0) {
+                        devilBoss.state = 'charging';
+                        devilBoss.stateTimer = 25; // 돌진 지속 시간
+                        devilBoss.hasHitDuringDash = false;
+                        floatTexts.push({ x: devilBoss.x, y: devilBoss.y - 75, text: `⚡ 악마의 돌진!`, color: '#ff4757', life: 40, size: 22 });
+                    }
+
+                } else if (devilBoss.state === 'charging') {
+                    // 3. 초고속 돌진 실행 (속도 13.5)
+                    devilBoss.x += devilBoss.chargeDirX * 13.5;
+                    devilBoss.y += devilBoss.chargeDirY * 13.5;
+
+                    // 화면 경계 제한
+                    devilBoss.x = Math.max(devilBoss.radius + 15, Math.min(GAME_WIDTH - devilBoss.radius - 15, devilBoss.x));
+                    devilBoss.y = Math.max(130 + devilBoss.radius, Math.min(GAME_HEIGHT - devilBoss.radius - 25, devilBoss.y));
+
+                    // 플레이어 충돌 및 때리기 판정 (피격 시 -10 HP & 넉백)
+                    let hitDist = Math.hypot(player.x - devilBoss.x, player.y - devilBoss.y);
+                    if (!devilBoss.hasHitDuringDash && hitDist < player.radius + devilBoss.radius + 12) {
+                        devilBoss.hasHitDuringDash = true;
+                        playerBossHp = Math.max(0, playerBossHp - 10);
+                        player.x += devilBoss.chargeDirX * 40;
+                        player.y += devilBoss.chargeDirY * 40;
+                        slashEffects.push({ x: player.x, y: player.y - 10, life: 16, facing: devilBoss.facing });
+                        floatTexts.push({ x: player.x, y: player.y - 70, text: `💥 -10 HP (돌진 강타!)`, color: '#e74c3c', life: 55, size: 22 });
+                        if (playerBossHp <= 0) {
+                            handlePlayerBossDefeat();
+                            return;
+                        }
+                    }
+
+                    devilBoss.stateTimer--;
+                    if (devilBoss.stateTimer <= 0) {
+                        devilBoss.state = 'recovery';
+                        devilBoss.stateTimer = 50; // 약 0.8초 후딜레이 (플레이어의 반격 찬스!)
+                        floatTexts.push({ x: devilBoss.x, y: devilBoss.y - 65, text: `💫 빈틈!`, color: '#38bdf8', life: 45, size: 18 });
+                    }
+
+                } else if (devilBoss.state === 'recovery') {
+                    // 4. 후딜레이 (그로기/빈틈)
+                    devilBoss.stateTimer--;
+                    if (devilBoss.stateTimer <= 0) {
+                        devilBoss.state = 'chase';
+                        devilBoss.stateTimer = 0;
+                    }
                 }
             }
 
@@ -709,35 +944,49 @@
         function drawBossRoom() {
             ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-            // 신비로운 고차원 이공간 배경
-            let bgGrad = ctx.createRadialGradient(GAME_WIDTH/2, GAME_HEIGHT/2, 50, GAME_WIDTH/2, GAME_HEIGHT/2, 520);
-            bgGrad.addColorStop(0, '#1a103c');
-            bgGrad.addColorStop(0.6, '#0b081a');
-            bgGrad.addColorStop(1, '#05030a');
+            // 일반 지형을 닮은 신비로운 숲속 결투 아레나 배경
+            let bgGrad = ctx.createRadialGradient(GAME_WIDTH/2, GAME_HEIGHT/2 + 40, 50, GAME_WIDTH/2, GAME_HEIGHT/2 + 40, 520);
+            bgGrad.addColorStop(0, '#2d5a27'); // 풍성한 잔디 녹색
+            bgGrad.addColorStop(0.5, '#1e3f1b');
+            bgGrad.addColorStop(1, '#0e200c'); // 짙은 숲속 어둠
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-            // 차원 그리드 바닥 효과
-            ctx.strokeStyle = 'rgba(155, 89, 182, 0.15)';
+            // 잔디 결투장 그리드 바닥 패턴
+            ctx.strokeStyle = 'rgba(46, 204, 113, 0.08)';
             ctx.lineWidth = 1.5;
-            let timeGrid = (Date.now() * 0.02) % 40;
             for (let x = 0; x <= GAME_WIDTH; x += 40) {
                 ctx.beginPath(); ctx.moveTo(x, 90); ctx.lineTo(x, GAME_HEIGHT); ctx.stroke();
             }
-            for (let y = 90 + timeGrid; y <= GAME_HEIGHT; y += 40) {
+            for (let y = 90; y <= GAME_HEIGHT; y += 40) {
                 ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(GAME_WIDTH, y); ctx.stroke();
             }
 
-            // 아레나 결계 원형 링
-            let ringPulse = Math.sin(Date.now() * 0.003) * 10;
+            // 고대 스톤 아레나 결계 링
+            let ringPulse = Math.sin(Date.now() * 0.003) * 8;
             ctx.save();
-            ctx.strokeStyle = 'rgba(162, 155, 254, 0.45)';
+            ctx.strokeStyle = 'rgba(241, 196, 15, 0.35)';
             ctx.lineWidth = 3.5;
-            ctx.setLineDash([12, 8]);
+            ctx.setLineDash([14, 10]);
             ctx.beginPath();
             ctx.ellipse(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 50, 260 + ringPulse, 320 + ringPulse, 0, 0, Math.PI * 2);
             ctx.stroke();
             ctx.restore();
+
+            // ⚠️ 돌진 차징 중일 때 붉은 경고 궤적 레이저 표시!
+            if (devilBoss.state === 'charge_telegraph') {
+                ctx.save();
+                ctx.strokeStyle = 'rgba(231, 76, 60, 0.65)';
+                ctx.lineWidth = 26;
+                ctx.lineCap = 'round';
+                ctx.setLineDash([18, 12]);
+                ctx.lineDashOffset = -(Date.now() * 0.05) % 30;
+                ctx.beginPath();
+                ctx.moveTo(devilBoss.x, devilBoss.y);
+                ctx.lineTo(devilBoss.x + devilBoss.chargeDirX * 380, devilBoss.y + devilBoss.chargeDirY * 380);
+                ctx.stroke();
+                ctx.restore();
+            }
 
             // 도망치기 버튼 (좌측 상단)
             ctx.save();
@@ -745,52 +994,83 @@
             ctx.strokeStyle = '#c0392b';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.roundRect(15, 15, 110, 42, 8);
+            ctx.roundRect(15, 15, 105, 40, 8);
             ctx.fill();
             ctx.stroke();
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 15px Arial';
+            ctx.font = 'bold 14px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText("🚪 도망치기", 70, 36);
+            ctx.fillText("🚪 도망치기", 67, 35);
             ctx.restore();
 
-            // 상단 보스 체력바 & UI
+            // ==========================================
+            // "보스전에는 내 체력, 보스 체력밖에 표시 안됨"
+            // ==========================================
+            let barW = 380, barH = 22, barX = (GAME_WIDTH - barW) / 2;
+
+            // 1. 😈 보스 체력바 (상단)
+            let bRatio = Math.max(0, devilBoss.hp / devilBoss.maxHp);
+            let bBarY = 20;
             ctx.save();
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 17px Arial';
-            ctx.textAlign = 'center';
-            ctx.shadowColor = '#f1c40f';
-            ctx.shadowBlur = 10;
-            ctx.fillText("👑 [고차원 보스] 숲의 지배자 원숭이", GAME_WIDTH / 2, 32);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.78)';
+            ctx.beginPath();
+            ctx.roundRect(barX, bBarY, barW, barH, 11);
+            ctx.fill();
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = '#e74c3c';
+            ctx.shadowBlur = 8;
+            ctx.stroke();
             ctx.shadowBlur = 0;
 
-            let barW = 340, barH = 20, barX = (GAME_WIDTH - barW) / 2, barY = 48;
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            let bGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+            bGrad.addColorStop(0, '#c0392b');
+            bGrad.addColorStop(0.6, '#e74c3c');
+            bGrad.addColorStop(1, '#ff7675');
+            ctx.fillStyle = bGrad;
             ctx.beginPath();
-            ctx.roundRect(barX, barY, barW, barH, 10);
-            ctx.fill();
-            ctx.strokeStyle = '#f1c40f';
-            ctx.lineWidth = 2.5;
-            ctx.stroke();
-
-            let hpRatio = Math.max(0, monkeyBoss.hp / monkeyBoss.maxHp);
-            let hpGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
-            hpGrad.addColorStop(0, '#ff4757');
-            hpGrad.addColorStop(0.5, '#ffa502');
-            hpGrad.addColorStop(1, '#2ed573');
-            ctx.fillStyle = hpGrad;
-            ctx.beginPath();
-            ctx.roundRect(barX + 2, barY + 2, Math.max(0, (barW - 4) * hpRatio), barH - 4, 8);
+            ctx.roundRect(barX + 2, bBarY + 2, Math.max(0, (barW - 4) * bRatio), barH - 4, 9);
             ctx.fill();
 
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 13px Arial';
-            ctx.fillText(`${monkeyBoss.hp} / ${monkeyBoss.maxHp} HP (${Math.round(hpRatio * 100)}%)`, GAME_WIDTH / 2, barY + 14);
+            ctx.font = 'bold 12.5px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`😈 [어둠의 악마]  ${devilBoss.hp} / ${devilBoss.maxHp} HP (${Math.round(bRatio * 100)}%)`, GAME_WIDTH / 2, bBarY + 11);
+            ctx.restore();
 
-            ctx.font = 'bold 12px Arial';
-            ctx.fillStyle = '#f5f6fa';
-            ctx.fillText("🪓 공격 가이드: 금도끼(10방) | 은도끼(20방) | 나머지(25방)", GAME_WIDTH / 2, barY + 36);
+            // 2. ❤️ 내 체력바 (보스 체력바 바로 아래)
+            let pRatio = Math.max(0, playerBossHp / PLAYER_MAX_BOSS_HP);
+            let pBarY = 50;
+            ctx.save();
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.78)';
+            ctx.beginPath();
+            ctx.roundRect(barX, pBarY, barW, barH, 11);
+            ctx.fill();
+            ctx.strokeStyle = playerBossHp <= 30 ? '#ff4757' : '#2ecc71';
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = ctx.strokeStyle;
+            ctx.shadowBlur = 8;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            let pGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+            if (playerBossHp <= 30) {
+                pGrad.addColorStop(0, '#c0392b'); pGrad.addColorStop(1, '#ff4757');
+            } else {
+                pGrad.addColorStop(0, '#27ae60'); pGrad.addColorStop(1, '#2ecc71');
+            }
+            ctx.fillStyle = pGrad;
+            ctx.beginPath();
+            ctx.roundRect(barX + 2, pBarY + 2, Math.max(0, (barW - 4) * pRatio), barH - 4, 9);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12.5px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`❤️ [내 체력]  ${playerBossHp} / ${PLAYER_MAX_BOSS_HP} HP (${Math.round(pRatio * 100)}%)`, GAME_WIDTH / 2, pBarY + 11);
             ctx.restore();
 
             // 슬래시 타격 이펙트
@@ -809,22 +1089,22 @@
                 ctx.restore();
             });
 
-            // 원숭이 보스 & 플레이어 렌더링
+            // 악마 보스 & 플레이어 Y축 정렬 렌더링
             let bossList = [
-                { type: 'boss', y: monkeyBoss.y },
+                { type: 'boss', y: devilBoss.y },
                 { type: 'player', y: player.y }
             ];
             bossList.sort((a, b) => a.y - b.y);
 
             bossList.forEach(item => {
                 if (item.type === 'boss') {
-                    drawMonkeyBoss(ctx, monkeyBoss);
+                    drawDevilBoss(ctx, devilBoss);
                 } else if (item.type === 'player') {
                     drawCharacter(ctx, player, player.x, player.y, player.axeSwingTimer > 0, player.walkTimer);
                 }
             });
 
-            // 플로팅 텍스트
+            // 플로팅 데미지 텍스트
             floatTexts.forEach(t => {
                 ctx.save();
                 ctx.fillStyle = t.color;
@@ -844,156 +1124,52 @@
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'; ctx.lineWidth = 2; ctx.stroke();
                 ctx.beginPath(); ctx.arc(joystick.x, joystick.y, 25, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; ctx.fill();
             }
-
-            // 하단 조작 가이드 안내
-            ctx.save();
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
-            ctx.beginPath();
-            ctx.roundRect(GAME_WIDTH / 2 - 170, GAME_HEIGHT - 48, 340, 36, 18);
-            ctx.fill();
-            ctx.fillStyle = '#f1c40f';
-            ctx.font = 'bold 13px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText("⚔️ 원숭이 보스 근처 터치/클릭 or 스페이스바로 공격!", GAME_WIDTH / 2, GAME_HEIGHT - 30);
-            ctx.restore();
         }
 
-        function drawMonkeyBoss(ctx, boss) {
+        // 😈 고차원 악마 보스 렌더링 (악마 스킨 기반 + 1.65배 거대화 + 아우라)
+        function drawDevilBoss(ctx, boss) {
             ctx.save();
-            let bob = boss.defeated ? 25 : Math.sin(boss.walkTimer * 0.12) * 6;
+            ctx.translate(boss.x, boss.y);
+
             let flinch = boss.flinchTimer > 0;
             let facing = boss.facing || 1;
 
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+            // 1. 바닥 붉은 어둠의 아우라 그림자
+            let auraPulse = Math.sin(Date.now() * 0.008) * 6;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
             ctx.beginPath();
-            ctx.ellipse(boss.x, boss.y + 40, 34, 12, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 36, 42 + auraPulse, 16, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.translate(boss.x, boss.y + bob);
-
-            if (boss.defeated) {
-                ctx.rotate(0.5 * facing);
-                ctx.globalAlpha = 0.6;
+            // 돌진 중 불꽃 잔상 효과
+            if (boss.state === 'charging') {
+                ctx.fillStyle = 'rgba(231, 76, 60, 0.45)';
+                ctx.beginPath();
+                ctx.arc(-boss.chargeDirX * 18, -boss.chargeDirY * 18, 38, 0, Math.PI * 2);
+                ctx.fill();
             }
 
-            // 긴 꼬리
-            ctx.save();
-            ctx.strokeStyle = flinch ? '#ff7675' : '#6d4c41';
-            ctx.lineWidth = 8;
-            ctx.lineCap = 'round';
-            let tailWiggle = Math.sin(boss.walkTimer * 0.15) * 15;
-            ctx.beginPath();
-            ctx.moveTo(-16 * facing, 20);
-            ctx.bezierCurveTo(-38 * facing, 25 + tailWiggle, -48 * facing, -5 + tailWiggle, -36 * facing, -20);
-            ctx.stroke();
-            ctx.restore();
+            // 거대한 보스 스케일 (1.65배)
+            ctx.scale(1.65, 1.65);
 
-            // 몸통
-            ctx.fillStyle = flinch ? '#ff7675' : '#795548';
-            ctx.beginPath();
-            ctx.ellipse(0, 10, 26, 30, 0, 0, Math.PI * 2);
-            ctx.fill();
+            if (flinch) {
+                ctx.filter = 'brightness(1.8) contrast(1.3)';
+            }
 
-            // 배
-            ctx.fillStyle = flinch ? '#fab1a0' : '#d7ccc8';
-            ctx.beginPath();
-            ctx.ellipse(3 * facing, 12, 16, 20, 0, 0, Math.PI * 2);
-            ctx.fill();
+            // 악마 스킨 캐릭터 그리기
+            let bossProxy = {
+                facing: facing,
+                colors: { skin: '#5c121e', shirt: '#2c000e', hat: '#c0392b' }
+            };
+            drawCharacter(ctx, bossProxy, 0, 0, boss.state === 'charging', boss.walkTimer, 'halloween_devil');
 
-            // 다리
-            let legWalk = Math.sin(boss.walkTimer * 0.2) * 8;
-            ctx.fillStyle = flinch ? '#ff7675' : '#5d4037';
-            ctx.beginPath(); ctx.ellipse(-14, 34 + legWalk, 9, 8, 0, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.ellipse(14, 34 - legWalk, 9, 8, 0, 0, Math.PI * 2); ctx.fill();
-
-            // 팔
-            let armSwing = Math.sin(boss.walkTimer * 0.18) * 12;
-            ctx.fillStyle = flinch ? '#ff7675' : '#6d4c41';
-            ctx.save();
-            ctx.translate(-22 * facing, 5);
-            ctx.rotate((-armSwing * 0.05) * facing);
-            ctx.beginPath(); ctx.roundRect(-7, -2, 14, 28, 7); ctx.fill();
-            ctx.restore();
-
-            ctx.save();
-            ctx.translate(22 * facing, 5);
-            ctx.rotate((armSwing * 0.05) * facing);
-            ctx.beginPath(); ctx.roundRect(-7, -2, 14, 28, 7); ctx.fill();
-            ctx.fillStyle = '#f1c40f';
-            ctx.strokeStyle = '#d35400';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(4 * facing, 26, 9, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-            ctx.restore();
-
-            // 귀
-            ctx.fillStyle = flinch ? '#ff7675' : '#795548';
-            ctx.beginPath(); ctx.arc(-26, -24, 12, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(26, -24, 12, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = flinch ? '#fab1a0' : '#d7ccc8';
-            ctx.beginPath(); ctx.arc(-26, -24, 7, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(26, -24, 7, 0, Math.PI * 2); ctx.fill();
-
-            // 머리
-            ctx.fillStyle = flinch ? '#ff7675' : '#795548';
-            ctx.beginPath();
-            ctx.arc(0, -22, 25, 0, Math.PI * 2);
-            ctx.fill();
-
-            // 얼굴 안면 마스크
-            ctx.fillStyle = flinch ? '#fab1a0' : '#d7ccc8';
-            ctx.beginPath();
-            ctx.ellipse(-7, -24, 11, 14, 0, 0, Math.PI * 2);
-            ctx.ellipse(7, -24, 11, 14, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(0, -14, 15, 12, 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // 눈
-            ctx.fillStyle = '#2c3e50';
-            ctx.beginPath(); ctx.arc(-7 + (facing * 2), -24, 4, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(7 + (facing * 2), -24, 4, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath(); ctx.arc(-8 + (facing * 2), -25, 1.5, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(6 + (facing * 2), -25, 1.5, 0, Math.PI * 2); ctx.fill();
-
-            // 코 & 입
-            ctx.fillStyle = '#4e342e';
-            ctx.beginPath(); ctx.arc(0, -16, 3, 0, Math.PI * 2); ctx.fill();
-            ctx.strokeStyle = '#4e342e'; ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(0, -13, 6, 0.1 * Math.PI, 0.9 * Math.PI);
-            ctx.stroke();
-
-            // 황금 왕관
-            ctx.save();
-            ctx.fillStyle = '#f1c40f';
-            ctx.strokeStyle = '#e67e22';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(-16, -42);
-            ctx.lineTo(-12, -54);
-            ctx.lineTo(-4, -45);
-            ctx.lineTo(0, -58);
-            ctx.lineTo(4, -45);
-            ctx.lineTo(12, -54);
-            ctx.lineTo(16, -42);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-            ctx.fillStyle = '#e74c3c';
-            ctx.beginPath(); ctx.arc(0, -47, 3, 0, Math.PI * 2); ctx.fill();
-            ctx.restore();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 12px Arial';
-            ctx.textAlign = 'center';
-            ctx.shadowColor = '#000000';
-            ctx.shadowBlur = 4;
-            ctx.fillText("👑 보스 원숭이", 0, -65);
+            // 후딜레이(빈틈) 시 기절 별 장식
+            if (boss.state === 'recovery') {
+                ctx.fillStyle = '#f1c40f';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("💫", 0, -42);
+            }
 
             ctx.restore();
         }
@@ -1093,7 +1269,7 @@
             }
             ctx.restore();
 
-            // 4. 상단 네온 홀로그램 전광판 간판
+            // 4. 상단 네온 홀로그램 전광판 간판 (악마 보스전)
             ctx.save();
             let bob = Math.sin(time * 2) * 4;
             ctx.translate(0, -90 + bob);
@@ -1115,9 +1291,21 @@
             ctx.textBaseline = 'middle';
             ctx.fillText("🌀 고차원 텔레포트", 0, -6);
 
-            ctx.fillStyle = '#f1c40f';
-            ctx.font = 'bold 10px Arial';
-            ctx.fillText("⚔️ [원숭이 보스전]", 0, 9);
+            // 30분 쿨타임 실시간 현황 표기
+            const now = Date.now();
+            const elapsed = now - (lastBossFightTime || 0);
+            if (elapsed < BOSS_COOLDOWN_MS) {
+                const remainMs = BOSS_COOLDOWN_MS - elapsed;
+                const rMin = Math.floor(remainMs / 60000);
+                const rSec = Math.floor((remainMs % 60000) / 1000);
+                ctx.fillStyle = '#ff7675';
+                ctx.font = 'bold 10px Arial';
+                ctx.fillText(`⏳ 대기: ${String(rMin).padStart(2,'0')}:${String(rSec).padStart(2,'0')}`, 0, 9);
+            } else {
+                ctx.fillStyle = '#f1c40f';
+                ctx.font = 'bold 10px Arial';
+                ctx.fillText("⚔️ [악마 보스전]", 0, 9);
+            }
             ctx.restore();
 
             // 5. 플레이어 접근 시 터치/클릭 안내 말풍선
@@ -1127,7 +1315,7 @@
                 ctx.strokeStyle = '#d35400';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.roundRect(-65, -145, 130, 28, 8);
+                ctx.roundRect(-75, -145, 150, 28, 8);
                 ctx.fill();
                 ctx.stroke();
 
@@ -1135,7 +1323,7 @@
                 ctx.font = 'bold 11px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText("👆 클릭하여 보스전 입장!", 0, -131);
+                ctx.fillText("👆 클릭: 보스전 & 랭킹 확인!", 0, -131);
                 ctx.restore();
             }
 
@@ -1243,11 +1431,47 @@
             ctx.restore();
         }
 
-        function openRankingModal() {
+        let currentLeaderboardTab = 'level';
+
+        function switchLeaderboardTab(tab) {
+            currentLeaderboardTab = tab;
+            const tabLevel = document.getElementById('rank-tab-level-btn');
+            const tabBoss = document.getElementById('rank-tab-boss-btn');
+            const modalTitle = document.getElementById('ranking-modal-title');
+
+            if (tab === 'boss') {
+                if (tabLevel) {
+                    tabLevel.style.background = 'rgba(255,255,255,0.08)';
+                    tabLevel.style.color = '#ecf0f1';
+                    tabLevel.style.border = '1px solid rgba(255,255,255,0.18)';
+                }
+                if (tabBoss) {
+                    tabBoss.style.background = '#e74c3c';
+                    tabBoss.style.color = '#ffffff';
+                    tabBoss.style.border = 'none';
+                }
+                if (modalTitle) modalTitle.innerHTML = '<span>😈</span> 악마 보스 최다 처치 TOP 10';
+            } else {
+                if (tabLevel) {
+                    tabLevel.style.background = '#f1c40f';
+                    tabLevel.style.color = '#111';
+                    tabLevel.style.border = 'none';
+                }
+                if (tabBoss) {
+                    tabBoss.style.background = 'rgba(255,255,255,0.08)';
+                    tabBoss.style.color = '#ecf0f1';
+                    tabBoss.style.border = '1px solid rgba(255,255,255,0.18)';
+                }
+                if (modalTitle) modalTitle.innerHTML = '<span>🏆</span> 명예의 전당 (레벨 TOP 10)';
+            }
+            fetchLeaderboard();
+        }
+
+        function openRankingModal(tab = 'level') {
             const modal = document.getElementById('ranking-modal');
             if (modal) {
                 modal.style.display = 'block';
-                fetchLeaderboard();
+                switchLeaderboardTab(tab);
             }
         }
 
@@ -1279,8 +1503,9 @@
                         const uname = d.username || doc.id;
                         const uLevel = Number(d.level || (d.gameData && d.gameData.level) || 1);
                         const uXp = Number((d.gameData && d.gameData.xp) || 0);
+                        const uBossKills = Number(d.bossKills || (d.gameData && d.gameData.bossKills) || 0);
                         if (uname && !isNaN(uLevel)) {
-                            rankersMap.set(uname.toLowerCase(), { username: uname, level: uLevel, xp: uXp });
+                            rankersMap.set(uname.toLowerCase(), { username: uname, level: uLevel, xp: uXp, bossKills: uBossKills });
                         }
                     });
                 } catch (err) {
@@ -1288,12 +1513,13 @@
                 }
             }
 
-            // 2. 현재 로그인된 유저가 있다면 최신 레벨 반영
+            // 2. 현재 로그인된 유저가 있다면 최신 데이터 반영
             if (currentUser) {
                 rankersMap.set(currentUser.toLowerCase(), {
                     username: currentUser,
                     level: level,
                     xp: xp,
+                    bossKills: bossKills || 0,
                     isMe: true
                 });
             } else if (rankersMap.size === 0) {
@@ -1302,19 +1528,32 @@
                     username: '게스트(나)',
                     level: level,
                     xp: xp,
+                    bossKills: bossKills || 0,
                     isMe: true
                 });
             }
 
-            // 3. 내림차순 정렬 (레벨 높은 순, 경험치 높은 순)
             let sortedRankers = Array.from(rankersMap.values());
-            sortedRankers.sort((a, b) => (b.level - a.level) || (b.xp - a.xp));
+            const isBossTab = (currentLeaderboardTab === 'boss');
+
+            // 3. 탭 모드에 따른 정렬
+            if (isBossTab) {
+                // 보스 처치 수 내림차순, 같으면 레벨 순
+                sortedRankers.sort((a, b) => (b.bossKills - a.bossKills) || (b.level - a.level));
+            } else {
+                // 레벨 내림차순, 같으면 경험치 순
+                sortedRankers.sort((a, b) => (b.level - a.level) || (b.xp - a.xp));
+            }
 
             // 내 순위 정보 갱신
             const activeUser = currentUser || '게스트(나)';
             const myIdx = sortedRankers.findIndex(r => r.username.toLowerCase() === activeUser.toLowerCase());
             if (myRankVal) {
-                myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / LV. ${level})` : `LV. ${level}`;
+                if (isBossTab) {
+                    myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🗡️ ${bossKills || 0}회 처치)` : `처치 ${bossKills || 0}회`;
+                } else {
+                    myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / LV. ${level})` : `LV. ${level}`;
+                }
             }
 
             // TOP 10 추출 (실제 등록된 유저만)
@@ -1343,6 +1582,10 @@
                 const bg = idx < 3 ? badgeColors[idx] : 'rgba(255, 255, 255, 0.04)';
                 const border = idx < 3 ? borderColors[idx] : 'rgba(255, 255, 255, 0.12)';
                 
+                const valueText = isBossTab 
+                    ? `<span style="font-size: 14px; font-weight: 800; color: #ff7675; letter-spacing: -0.5px;">🗡️ ${r.bossKills}회 처치</span>`
+                    : `<span style="font-size: 14px; font-weight: 800; color: #38bdf8; letter-spacing: -0.5px;">LV. ${r.level}</span>`;
+
                 html += `
                 <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; background: ${bg}; border: 1.5px solid ${border}; border-radius: 12px; ${isCurrentMe ? 'box-shadow: 0 0 12px rgba(46, 204, 113, 0.4); border-color: #2ecc71;' : ''}">
                     <div style="display: flex; align-items: center; gap: 10px;">
@@ -1354,7 +1597,7 @@
                         </div>
                     </div>
                     <div style="text-align: right;">
-                        <span style="font-size: 14px; font-weight: 800; color: #38bdf8; letter-spacing: -0.5px;">LV. ${r.level}</span>
+                        ${valueText}
                     </div>
                 </div>
                 `;
@@ -1430,7 +1673,7 @@
             let tpDist = Math.hypot(cx - teleporter.x, cy - teleporter.y);
             let tpPlayerDist = Math.hypot(player.x - teleporter.x, player.y - teleporter.y);
             if (tpDist < 75 || (isSpacebar && tpPlayerDist < 90)) {
-                enterBossDimension();
+                openBossPortalModal();
                 return;
             }
 
@@ -2664,7 +2907,9 @@
                 activeFuseResult: null,
                 treeUnlocked: trees.map((t, idx) => idx === 0),
                 noteEmbedded: false,
-                noteTreeHits: 0
+                noteTreeHits: 0,
+                bossKills: 0,
+                lastBossFightTime: 0
             };
         }
 
@@ -2810,7 +3055,9 @@
                 activeFuseStartTime: activeFuseStartTime,
                 activeFuseResult: activeFuseResult,
                 noteEmbedded: noteEmbedded,
-                noteTreeHits: noteTreeHits
+                noteTreeHits: noteTreeHits,
+                bossKills: bossKills || 0,
+                lastBossFightTime: lastBossFightTime || 0
             };
         }
 
@@ -2840,6 +3087,8 @@
             activeFuseResult = data.activeFuseResult || null;
             noteEmbedded = !!data.noteEmbedded;
             noteTreeHits = data.noteTreeHits || 0;
+            bossKills = Number(data.bossKills || 0);
+            lastBossFightTime = Number(data.lastBossFightTime || 0);
             if (data.treeUnlocked) {
                 trees.forEach((t, i) => {
                     t.unlocked = (data.treeUnlocked[i] !== undefined) ? data.treeUnlocked[i] : (i === 0);
@@ -2872,6 +3121,8 @@
                 db.collection('users').doc(currentUser.toLowerCase()).set({
                     username: currentUser,
                     level: level,
+                    bossKills: bossKills || 0,
+                    lastBossFightTime: lastBossFightTime || 0,
                     gameData: data,
                     lastSaved: Date.now()
                 }, { merge: true }).catch(err => console.warn('Cloud save fail:', err));
