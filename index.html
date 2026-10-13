@@ -214,6 +214,36 @@
             </div>
         </div>
 
+        <!-- 🏆 레벨 랭킹 TOP 5 모달 -->
+        <div id="ranking-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 16, 32, 0.98); color: white; padding: 22px 20px; border-radius: 18px; width: 88%; max-width: 380px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #f1c40f; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.85), 0 0 25px rgba(241, 196, 15, 0.35); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(241, 196, 15, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
+                <h3 style="margin: 0; color: #f1c40f; font-size: 18px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);">
+                    <span>🏆</span> 명예의 전당 (레벨 TOP 5)
+                </h3>
+                <button onclick="closeRankingModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
+            </div>
+            
+            <div id="ranking-loading" style="text-align: center; padding: 25px 0; color: #38bdf8; font-size: 14px; font-weight: bold;">
+                <div style="font-size: 28px; margin-bottom: 8px;">⏳</div>
+                실시간 랭킹 집계 중...
+            </div>
+            
+            <div id="ranking-list" style="display: none; flex-direction: column; gap: 8px; margin-bottom: 14px;">
+                <!-- 1등~5등 동적 렌더링 -->
+            </div>
+            
+            <!-- 내 순위 정보 카드 -->
+            <div id="my-ranking-card" style="background: rgba(255,255,255,0.06); border: 1px dashed rgba(241, 196, 15, 0.6); border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 13px;">
+                <span style="color: #bbb;">내 순위 정보:</span>
+                <span id="my-ranking-val" style="color: #f1c40f; font-weight: bold;">-</span>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="fetchLeaderboard()" style="flex: 1; padding: 11px; background: #2980b9; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(41, 128, 185, 0.4);">🔄 새로고침</button>
+                <button onclick="closeRankingModal()" style="flex: 1; padding: 11px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);">닫기</button>
+            </div>
+        </div>
+
         <!-- 3. 실시간 거래 창 (아이템 등록, 상대 물품 실시간 확인, 2초 꾹 누르기 수락) -->
         <div id="trade-window-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 22, 34, 0.98); color: white; padding: 18px 16px; border-radius: 16px; width: 92%; max-width: 460px; max-height: 88%; overflow-y: auto; display: none; border: 2px solid #00cec9; z-index: 55; box-shadow: 0 12px 45px rgba(0,0,0,0.9); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 8px; margin-bottom: 12px;">
@@ -481,10 +511,17 @@
 
         // 우주 로케트 (일반 지역 옆 중간 사이즈 로켓)
         let rocket = {
-            x: 110,
+            x: 90,
             y: 370,
             visible: true,
             launched: false
+        };
+
+        // 🏆 레벨 랭킹 보드 (일반 나무 왼쪽 옆에 위치)
+        let rankingBoard = {
+            x: 175,
+            y: 380,
+            radius: 36
         };
 
         // 🌀 고차원 텔레포트 장치 (일반 나무 오른쪽 옆, 잎과 겹치지 않도록 배치)
@@ -1099,6 +1136,219 @@
             ctx.restore();
         }
 
+        // 🏆 랭킹 보드 그리기
+        function drawRankingBoard(ctx, x, y) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            let time = Date.now() * 0.003;
+            let bob = Math.sin(time * 2.5) * 3;
+
+            // 1. 바닥 그림자
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
+            ctx.beginPath();
+            ctx.ellipse(0, 16, 32, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 2. 바닥 나무 발판 베이스
+            ctx.fillStyle = '#5d4037';
+            ctx.strokeStyle = '#3e2723';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(-30, 8, 60, 10, 3);
+            ctx.fill();
+            ctx.stroke();
+
+            // 3. 두 개의 튼튼한 기둥
+            ctx.fillStyle = '#6d4c41';
+            ctx.strokeStyle = '#4e342e';
+            ctx.lineWidth = 1.5;
+            [-20, 14].forEach(px => {
+                ctx.beginPath();
+                ctx.roundRect(px, -42, 6, 52, 2);
+                ctx.fill();
+                ctx.stroke();
+            });
+
+            // 4. 중앙 게시판 (Leaderboard Frame)
+            ctx.fillStyle = '#1e1b2e';
+            ctx.strokeStyle = '#f1c40f';
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = 'rgba(241, 196, 15, 0.4)';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.roundRect(-28, -50, 56, 46, 6);
+            ctx.fill();
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // 보드판 내부 장식 (황금 트로피 & 미니 랭킹 바)
+            ctx.font = '18px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("🏆", 0, -32);
+
+            // 미니 순위 바 그래픽 (1, 2, 3등 줄무늬)
+            ctx.fillStyle = '#f1c40f';
+            ctx.fillRect(-18, -18, 36, 3);
+            ctx.fillStyle = '#bdc3c7';
+            ctx.fillRect(-14, -12, 28, 2.5);
+            ctx.fillStyle = '#e67e22';
+            ctx.fillRect(-10, -6, 20, 2);
+
+            // 5. 상단 네온 홀로그램 랭킹 간판
+            ctx.save();
+            ctx.translate(0, -68 + bob);
+            ctx.fillStyle = 'rgba(20, 15, 38, 0.92)';
+            ctx.strokeStyle = '#f1c40f';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = '#f1c40f';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.roundRect(-54, -14, 108, 26, 6);
+            ctx.fill();
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11px Arial';
+            ctx.fillText("🏆 랭킹 보드", 0, 0);
+            ctx.restore();
+
+            // 6. 플레이어 접근 시 터치/클릭 안내
+            if (typeof player !== 'undefined' && Math.hypot(player.x - x, player.y - y) < 95) {
+                ctx.save();
+                ctx.fillStyle = '#f1c40f';
+                ctx.strokeStyle = '#d35400';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.roundRect(-60, -112, 120, 24, 6);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 11px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("👆 클릭하여 랭킹 보기!", 0, -100);
+                ctx.restore();
+            }
+
+            ctx.restore();
+        }
+
+        function openRankingModal() {
+            const modal = document.getElementById('ranking-modal');
+            if (modal) {
+                modal.style.display = 'block';
+                fetchLeaderboard();
+            }
+        }
+
+        function closeRankingModal() {
+            const modal = document.getElementById('ranking-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function fetchLeaderboard() {
+            const loadingEl = document.getElementById('ranking-loading');
+            const listEl = document.getElementById('ranking-list');
+            const myRankVal = document.getElementById('my-ranking-val');
+            if (!loadingEl || !listEl) return;
+
+            loadingEl.style.display = 'block';
+            listEl.style.display = 'none';
+
+            // 기본 NPC / fallback 랭커 데이터
+            const fallbackRankers = [
+                { username: '숲의수호자', level: 45, xp: 50 },
+                { username: '황금벌목꾼', level: 32, xp: 20 },
+                { username: '도끼마스터', level: 25, xp: 80 },
+                { username: '초록나무꾼', level: 18, xp: 10 },
+                { username: '새싹벌목러', level: 12, xp: 5 }
+            ];
+
+            let rankersMap = new Map();
+            fallbackRankers.forEach(r => rankersMap.set(r.username.toLowerCase(), { ...r }));
+
+            // Firestore 실제 유저 데이터 불러오기
+            if (typeof db !== 'undefined' && db) {
+                try {
+                    const snap = await db.collection('users').limit(60).get();
+                    snap.forEach(doc => {
+                        const d = doc.data();
+                        const uname = d.username || doc.id;
+                        const uLevel = Number(d.level || (d.gameData && d.gameData.level) || 1);
+                        const uXp = Number((d.gameData && d.gameData.xp) || 0);
+                        if (uname && !isNaN(uLevel)) {
+                            rankersMap.set(uname.toLowerCase(), { username: uname, level: uLevel, xp: uXp });
+                        }
+                    });
+                } catch (err) {
+                    console.warn('Leaderboard fetch warning:', err);
+                }
+            }
+
+            // 현재 플레이어 데이터 포함
+            const myName = currentUser || '나(플레이어)';
+            rankersMap.set(myName.toLowerCase(), {
+                username: myName,
+                level: level,
+                xp: xp,
+                isMe: true
+            });
+
+            // 내림차순 정렬
+            let sortedRankers = Array.from(rankersMap.values());
+            sortedRankers.sort((a, b) => (b.level - a.level) || (b.xp - a.xp));
+
+            // 내 순위 정보 갱신
+            const myIdx = sortedRankers.findIndex(r => r.username.toLowerCase() === myName.toLowerCase());
+            if (myRankVal) {
+                myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${myName} / LV. ${level})` : `LV. ${level}`;
+            }
+
+            // TOP 5 추출
+            const top5 = sortedRankers.slice(0, 5);
+
+            let html = '';
+            const medals = ['🥇', '🥈', '🥉', '4위', '5위'];
+            const badgeColors = [
+                'linear-gradient(135deg, rgba(241, 196, 15, 0.28), rgba(230, 126, 34, 0.18))',
+                'linear-gradient(135deg, rgba(189, 195, 199, 0.25), rgba(127, 140, 141, 0.15))',
+                'linear-gradient(135deg, rgba(211, 84, 0, 0.25), rgba(186, 74, 0, 0.15))',
+                'rgba(255, 255, 255, 0.05)',
+                'rgba(255, 255, 255, 0.05)'
+            ];
+            const borderColors = ['#f1c40f', '#bdc3c7', '#e67e22', 'rgba(255,255,255,0.15)', 'rgba(255,255,255,0.15)'];
+
+            top5.forEach((r, idx) => {
+                const isCurrentMe = r.isMe || (currentUser && r.username.toLowerCase() === currentUser.toLowerCase());
+                const meTag = isCurrentMe ? ` <span style="background: #27ae60; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 4px;">ME</span>` : '';
+                const rankBadge = (idx < 3) ? `<span style="font-size: 22px;">${medals[idx]}</span>` : `<span style="font-size: 13px; font-weight: bold; color: #aaa; width: 24px; text-align: center;">${medals[idx]}</span>`;
+                
+                html += `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: ${badgeColors[idx]}; border: 1.5px solid ${borderColors[idx]}; border-radius: 12px; ${isCurrentMe ? 'box-shadow: 0 0 12px rgba(46, 204, 113, 0.4); border-color: #2ecc71;' : ''}">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        ${rankBadge}
+                        <div>
+                            <div style="font-weight: bold; font-size: 14px; color: ${idx === 0 ? '#f1c40f' : '#ffffff'};">
+                                ${r.username}${meTag}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 15px; font-weight: 800; color: #38bdf8; letter-spacing: -0.5px;">LV. ${r.level}</span>
+                    </div>
+                </div>
+                `;
+            });
+
+            listEl.innerHTML = html;
+            loadingEl.style.display = 'none';
+            listEl.style.display = 'flex';
+        }
+
         let blackoutState = {
             active: false,
             text: 'space is coming'
@@ -1136,6 +1386,14 @@
             let tpPlayerDist = Math.hypot(player.x - teleporter.x, player.y - teleporter.y);
             if (tpDist < 75 || (isSpacebar && tpPlayerDist < 90)) {
                 enterBossDimension();
+                return;
+            }
+
+            // 🏆 랭킹 보드 클릭 감지 (일반 나무 왼쪽)
+            let rbDist = Math.hypot(cx - rankingBoard.x, cy - rankingBoard.y);
+            let rbPlayerDist = Math.hypot(player.x - rankingBoard.x, player.y - rankingBoard.y);
+            if (rbDist < 55 || (isSpacebar && rbPlayerDist < 75)) {
+                openRankingModal();
                 return;
             }
 
@@ -2567,6 +2825,8 @@
             if (currentUser && db && Date.now() - lastCloudSaveTime > 5000) {
                 lastCloudSaveTime = Date.now();
                 db.collection('users').doc(currentUser.toLowerCase()).set({
+                    username: currentUser,
+                    level: level,
                     gameData: data,
                     lastSaved: Date.now()
                 }, { merge: true }).catch(err => console.warn('Cloud save fail:', err));
@@ -3227,6 +3487,7 @@
             if (document.getElementById('cave-modal').style.display === 'block') return;
             if (document.getElementById('halloween-modal').style.display === 'block') return;
             if (document.getElementById('fuse-modal').style.display === 'block') return;
+            if (document.getElementById('ranking-modal') && document.getElementById('ranking-modal').style.display === 'block') return;
 
             let moveX = 0, moveY = 0;
             if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
@@ -4788,6 +5049,7 @@
             
             trees.forEach(t => renderList.push({ type: 'tree', obj: t, y: t.y }));
             renderList.push({ type: 'teleporter', obj: teleporter, y: teleporter.y });
+            renderList.push({ type: 'rankingBoard', obj: rankingBoard, y: rankingBoard.y });
             renderList.sort((a, b) => a.y - b.y);
 
             renderList.forEach(item => {
@@ -5190,11 +5452,32 @@
                         ctx.textBaseline = 'middle';
                         ctx.fillText("👉 우측: 🌀보스 텔포", 0, 0);
                         ctx.restore();
+
+                        // 👈 좌측 랭킹 보드 안내 풍선
+                        ctx.save();
+                        let bobRb = Math.sin(Date.now() * 0.005) * 4;
+                        ctx.translate(t.x - 85, t.y - t.radius - 35 + bobRb);
+                        ctx.fillStyle = 'rgba(241, 196, 15, 0.92)';
+                        ctx.strokeStyle = '#d35400';
+                        ctx.lineWidth = 1.5;
+                        ctx.beginPath();
+                        ctx.roundRect(-68, -14, 136, 28, 6);
+                        ctx.fill();
+                        ctx.stroke();
+
+                        ctx.fillStyle = '#2c3e50';
+                        ctx.font = 'bold 11px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText("👈 좌측: 🏆랭킹 보드", 0, 0);
+                        ctx.restore();
                     }
                 } else if (item.type === 'rocket') {
                     drawRocket(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'teleporter') {
                     drawTeleporter(ctx, item.obj.x, item.obj.y);
+                } else if (item.type === 'rankingBoard') {
+                    drawRankingBoard(ctx, item.obj.x, item.obj.y);
                 }
             });
 
