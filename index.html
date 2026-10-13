@@ -182,6 +182,43 @@
             </div>
         </div>
 
+        <!-- 🎃 할로윈 보스 & 오메가 액스 사전 공지 팝업 (1회 한정 표시) -->
+        <div id="halloween-event-notice-overlay" onclick="if(event.target === this) closeHalloweenNoticeModal()" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 120;">
+            <div style="position: relative; background: linear-gradient(180deg, #1d122b 0%, #100b1a 100%); border: 2.5px solid #f39c12; border-radius: 22px; padding: 26px 20px 20px 20px; width: 90%; max-width: 370px; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(243, 156, 18, 0.45); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                <!-- 우측 상단 닫기 X 버튼 -->
+                <button onclick="closeHalloweenNoticeModal()" style="position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #ecf0f1; width: 32px; height: 32px; border-radius: 50%; font-size: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="닫기">✕</button>
+
+                <!-- 상단 헤더 뱃지 -->
+                <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(230, 126, 34, 0.2); border: 1px solid #e67e22; border-radius: 20px; padding: 5px 14px; margin-bottom: 14px;">
+                    <span style="font-size: 14px;">🎃</span>
+                    <span style="color: #f39c12; font-size: 12px; font-weight: 800; letter-spacing: 0.5px;">HALLOWEEN SPECIAL EVENT</span>
+                </div>
+
+                <!-- 사진 (Halloween Omega Axe) -->
+                <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+                    <img src="halloween_omega_axe.png" alt="Halloween Omega Axe" style="width: 100%; max-width: 240px; height: auto; border-radius: 14px; border: 2px solid #f1c40f; box-shadow: 0 6px 25px rgba(241, 196, 15, 0.4); object-fit: contain; display: block;">
+                </div>
+
+                <!-- 텍스트 안내 영역 -->
+                <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(243, 156, 18, 0.3); border-radius: 12px; padding: 14px 10px; margin-bottom: 16px;">
+                    <div style="color: #ff9f43; font-size: 15px; font-weight: 800; margin-bottom: 7px; line-height: 1.45; word-break: keep-all;">
+                        🎃Halloween boss가 우릴 찾으러 나섭니다!
+                    </div>
+                    <div style="color: #f1c40f; font-size: 13.5px; font-weight: 700; margin-bottom: 8px; line-height: 1.45; word-break: keep-all;">
+                        Halloween omega ax 로 보스를 무찔러 주세요!
+                    </div>
+                    <div style="color: #ff6b6b; font-size: 14px; font-weight: 800; line-height: 1.45; text-shadow: 0 0 10px rgba(255, 107, 107, 0.6); word-break: keep-all;">
+                        10월 17일 토 밤10시에 꼭 찾아오세요!
+                    </div>
+                </div>
+
+                <!-- 하단 확인 버튼 -->
+                <button onclick="closeHalloweenNoticeModal()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #e67e22, #d35400); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.45);">
+                    확인
+                </button>
+            </div>
+        </div>
+
         <div id="bottom-btn-group">
             <button id="inventory-btn">가방</button>
             <button id="shop-btn">상점</button>
@@ -3237,6 +3274,36 @@
 
         function closeLoginModal() {
             document.getElementById('login-modal-overlay').style.display = 'none';
+            setTimeout(checkAndShowHalloweenNotice, 300);
+        }
+
+        // 🎃 할로윈 보스 & 오메가 액스 사전 공지 팝업 제어 (딱 1번만 표시)
+        function checkAndShowHalloweenNotice() {
+            try {
+                if (localStorage.getItem('halloween_boss_event_notice_seen_v1')) {
+                    return;
+                }
+                const loginOverlay = document.getElementById('login-modal-overlay');
+                if (loginOverlay && loginOverlay.style.display !== 'none' && loginOverlay.style.display !== '') {
+                    return; // 로그인 창이 떠 있는 동안에는 로그인 후 또는 닫은 후 띄움
+                }
+                const noticeOverlay = document.getElementById('halloween-event-notice-overlay');
+                if (noticeOverlay) {
+                    noticeOverlay.style.display = 'flex';
+                }
+            } catch (e) {
+                console.warn('Halloween notice error:', e);
+            }
+        }
+
+        function closeHalloweenNoticeModal() {
+            try {
+                localStorage.setItem('halloween_boss_event_notice_seen_v1', 'true');
+            } catch (e) {}
+            const noticeOverlay = document.getElementById('halloween-event-notice-overlay');
+            if (noticeOverlay) {
+                noticeOverlay.style.display = 'none';
+            }
         }
 
         function getDefaultGameData() {
@@ -4023,6 +4090,7 @@
                 } catch (err) {
                     console.warn('Cloud load fail:', err);
                 }
+                setTimeout(checkAndShowHalloweenNotice, 600);
             } else if (!currentUser) {
                 // 게임에 처음 접속했거나 로그인되지 않은 유저에게 treegame 로그인 창 띄우기 (처음 1회)
                 setTimeout(() => {
@@ -4032,6 +4100,7 @@
         }
 
         loadGame(); 
+        setTimeout(checkAndShowHalloweenNotice, 1500);
         setInterval(saveGame, 1000); 
 
         function getTables(type) {
