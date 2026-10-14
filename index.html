@@ -375,6 +375,46 @@
             </div>
         </div>
 
+        <!-- 🎰 할로윈 행운의 룰렛 모달 -->
+        <div id="roulette-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 12, 30, 0.98); color: white; padding: 20px 18px; border-radius: 20px; width: 90%; max-width: 370px; max-height: 90%; overflow-y: auto; display: none; border: 2.5px solid #f39c12; z-index: 60; box-shadow: 0 10px 45px rgba(0,0,0,0.95), 0 0 30px rgba(243, 156, 18, 0.4); box-sizing: border-box; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(243, 156, 18, 0.3); padding-bottom: 8px; margin-bottom: 12px;">
+                <h3 style="margin: 0; color: #f39c12; font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(243, 156, 18, 0.6);">
+                    <span>🎰</span> 할로윈 행운의 룰렛
+                </h3>
+                <button onclick="closeRouletteModal()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
+            </div>
+
+            <!-- 룰렛 캔버스 영역 -->
+            <div style="position: relative; width: 280px; height: 280px; margin: 0 auto 12px auto;">
+                <canvas id="roulette-canvas" width="280" height="280" style="display: block; width: 280px; height: 280px;"></canvas>
+                <!-- 상단 골드 화살표 포인터 (아래를 가리킴) -->
+                <div style="position: absolute; top: -4px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 24px solid #f1c40f; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.85)); z-index: 5;"></div>
+            </div>
+
+            <!-- 결과 안내 배너 -->
+            <div id="roulette-result-banner" style="background: rgba(0,0,0,0.38); border: 1px solid rgba(243, 156, 18, 0.3); border-radius: 10px; padding: 10px; margin-bottom: 12px; min-height: 22px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: #f1c40f;">
+                행운을 시험해보세요!
+            </div>
+
+            <!-- 돌리기 버튼 -->
+            <button id="roulette-spin-btn" onclick="startRouletteSpin()" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #e67e22, #d35400); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.5); margin-bottom: 12px; transition: transform 0.1s;">
+                🎰 룰렛 돌리기!
+            </button>
+
+            <!-- 6개 칸 확률 정보 표 -->
+            <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 10px 12px; font-size: 12px; text-align: left; line-height: 1.6;">
+                <div style="font-weight: bold; color: #f39c12; margin-bottom: 4px; text-align: center;">📊 룰렛 당첨 확률</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px;">
+                    <div>💰 10,000원: <strong style="color: #2ecc71;">70%</strong></div>
+                    <div>💎 150,000원: <strong style="color: #38bdf8;">12%</strong></div>
+                    <div>👑 1,000,000원: <strong style="color: #f1c40f;">8%</strong></div>
+                    <div>🪓 금도끼: <strong style="color: #e67e22;">5%</strong></div>
+                    <div>🏇 헤드리스 홀스: <strong style="color: #a29bfe;">4%</strong></div>
+                    <div>💨 꽝: <strong style="color: #95a5a6;">1%</strong></div>
+                </div>
+            </div>
+        </div>
+
         <!-- 3. 실시간 거래 창 (아이템 등록, 상대 물품 실시간 확인, 2초 꾹 누르기 수락) -->
         <div id="trade-window-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 22, 34, 0.98); color: white; padding: 18px 16px; border-radius: 16px; width: 92%; max-width: 460px; max-height: 88%; overflow-y: auto; display: none; border: 2px solid #00cec9; z-index: 55; box-shadow: 0 12px 45px rgba(0,0,0,0.9); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 8px; margin-bottom: 12px;">
@@ -670,6 +710,26 @@
             radius: 45,
             type: 'devil'
         };
+
+        // 🎰 할로윈 행운의 룰렛 머신 (할로윈 퓨즈머신 x:190, y:2050 옆: x:85, y:2140)
+        let rouletteMachine = {
+            x: 85,
+            y: 2140,
+            radius: 38
+        };
+
+        const ROULETTE_ITEMS = [
+            { name: '10,000원', type: 'money', amount: 10000, rate: 70, color: '#27ae60', textColor: '#ffffff', icon: '💰' },
+            { name: '150,000원', type: 'money', amount: 150000, rate: 12, color: '#2980b9', textColor: '#ffffff', icon: '💎' },
+            { name: '1,000,000원', type: 'money', amount: 1000000, rate: 8, color: '#d35400', textColor: '#ffffff', icon: '👑' },
+            { name: '금도끼', type: 'axe', level: 3, rate: 5, color: '#f1c40f', textColor: '#111111', icon: '🪓' },
+            { name: '헤드리스 홀스', type: 'skin', skinId: 'headless_horse', rate: 4, color: '#8e44ad', textColor: '#ffffff', icon: '🏇' },
+            { name: '꽝', type: 'dud', rate: 1, color: '#4b6584', textColor: '#ffffff', icon: '💨' }
+        ];
+
+        let rouletteAngle = 0;
+        let isRouletteSpinning = false;
+        let rouletteAnimId = null;
 
         // 보스전 & 쪽지 조각 시스템 상태
         let inBossRoom = false;
@@ -2061,6 +2121,386 @@
             }
         }, 1000);
 
+        // 🎰 할로윈 행운의 룰렛 머신 월드 그리기 (x: 85, y: 2140)
+        function drawRouletteMachine(ctx, x, y) {
+            ctx.save();
+
+            // 1. 바닥 그림자
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.beginPath();
+            ctx.ellipse(x, y + 26, 32, 11, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 2. 나무 받침대 다리 (A자형 지지대)
+            ctx.strokeStyle = '#4a2810';
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(x - 22, y + 26);
+            ctx.lineTo(x, y - 5);
+            ctx.lineTo(x + 22, y + 26);
+            ctx.stroke();
+
+            // 지지대 가로 버팀목
+            ctx.strokeStyle = '#8e44ad';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(x - 14, y + 15);
+            ctx.lineTo(x + 14, y + 15);
+            ctx.stroke();
+
+            // 3. 룰렛 원형 판 외곽 금테두리
+            const r = rouletteMachine.radius;
+            const now = Date.now();
+
+            ctx.fillStyle = '#1e102e';
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#f39c12';
+            ctx.lineWidth = 5;
+            ctx.stroke();
+
+            // 4. 내부 6칸 회전 슬라이스 (월드에서는 평소 천천히 살랑살랑 돌거나 모달 회전 각도 연동)
+            const displayAngle = isRouletteSpinning ? rouletteAngle : (now * 0.0008);
+            const sliceAngle = (Math.PI * 2) / 6;
+
+            for (let i = 0; i < 6; i++) {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.arc(x, y, r - 3, displayAngle + i * sliceAngle, displayAngle + (i + 1) * sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = ROULETTE_ITEMS[i].color;
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+
+            // 5. 외곽 전구 8개 (깜빡임 효과)
+            for (let j = 0; j < 8; j++) {
+                const bAngle = (j / 8) * Math.PI * 2;
+                const bx = x + Math.cos(bAngle) * (r - 1);
+                const by = y + Math.sin(bAngle) * (r - 1);
+                const isBlink = (j + Math.floor(now / 250)) % 2 === 0;
+                ctx.fillStyle = isBlink ? '#fffa65' : '#ff9f43';
+                ctx.beginPath();
+                ctx.arc(bx, by, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 6. 중심 골드 펌킨 허브
+            ctx.fillStyle = '#e67e22';
+            ctx.beginPath();
+            ctx.arc(x, y, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#f1c40f';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // 7. 상단 골드 바늘 (아래쪽을 가리킴)
+            ctx.fillStyle = '#f1c40f';
+            ctx.strokeStyle = '#b7791f';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(x, y - r + 8);
+            ctx.lineTo(x - 6, y - r - 8);
+            ctx.lineTo(x + 6, y - r - 8);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // 8. 상단 네온 명판 (🎰 할로윈 룰렛)
+            ctx.save();
+            const signY = y - r - 22;
+            ctx.fillStyle = 'rgba(26, 15, 46, 0.92)';
+            ctx.strokeStyle = '#f39c12';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x - 52, signY - 12, 104, 24, 6);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#f1c40f';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("🎰 할로윈 룰렛", x, signY);
+            ctx.restore();
+
+            // 9. 플레이어가 가까이 오면 상단에 안내 말풍선 표시
+            const distToPlayer = Math.hypot(player.x - x, player.y - y);
+            if (distToPlayer < 120) {
+                ctx.save();
+                const bob = Math.sin(now * 0.006) * 3;
+                const tipY = signY - 26 + bob;
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+                ctx.strokeStyle = '#f39c12';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.roundRect(x - 90, tipY - 11, 180, 22, 6);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("👉 [스페이스바] 또는 클릭하여 룰렛!", x, tipY);
+                ctx.restore();
+            }
+
+            ctx.restore();
+        }
+
+        // 🎰 모달 내 룰렛 캔버스(280x280) 그리기
+        function drawRouletteWheel(angle) {
+            const canvasEl = document.getElementById('roulette-canvas');
+            if (!canvasEl) return;
+            const ctxWheel = canvasEl.getContext('2d');
+            if (!ctxWheel) return;
+
+            const cx = 140;
+            const cy = 140;
+            const radius = 130;
+            const numSlices = ROULETTE_ITEMS.length;
+            const sliceAngle = (Math.PI * 2) / numSlices;
+
+            ctxWheel.clearRect(0, 0, 280, 280);
+
+            // 1. 외곽 골드 프레임 그림자 & 링
+            ctxWheel.save();
+            ctxWheel.fillStyle = '#1e102e';
+            ctxWheel.beginPath();
+            ctxWheel.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctxWheel.fill();
+
+            // 2. 6개 슬라이스 부채꼴 채우기
+            for (let i = 0; i < numSlices; i++) {
+                const item = ROULETTE_ITEMS[i];
+                const startA = angle + i * sliceAngle;
+                const endA = angle + (i + 1) * sliceAngle;
+
+                ctxWheel.beginPath();
+                ctxWheel.moveTo(cx, cy);
+                ctxWheel.arc(cx, cy, radius - 8, startA, endA);
+                ctxWheel.closePath();
+                ctxWheel.fillStyle = item.color;
+                ctxWheel.fill();
+                ctxWheel.strokeStyle = 'rgba(0,0,0,0.35)';
+                ctxWheel.lineWidth = 2;
+                ctxWheel.stroke();
+
+                // 슬라이스 텍스트 & 아이콘 (부채꼴 중앙 각도)
+                ctxWheel.save();
+                ctxWheel.translate(cx, cy);
+                ctxWheel.rotate(startA + sliceAngle / 2);
+
+                // 아이콘
+                ctxWheel.font = '22px Arial';
+                ctxWheel.textAlign = 'center';
+                ctxWheel.textBaseline = 'middle';
+                ctxWheel.fillText(item.icon, 82, 0);
+
+                // 이름 텍스트
+                ctxWheel.fillStyle = item.textColor || '#ffffff';
+                ctxWheel.font = 'bold 11px Arial';
+                ctxWheel.textAlign = 'center';
+                ctxWheel.textBaseline = 'middle';
+                ctxWheel.fillText(item.name, 45, -5);
+
+                // 확률 표시 (예: 70%, 12%)
+                ctxWheel.fillStyle = 'rgba(255, 255, 255, 0.88)';
+                ctxWheel.font = 'bold 9px Arial';
+                ctxWheel.fillText(`${item.rate}%`, 45, 8);
+
+                ctxWheel.restore();
+            }
+
+            // 3. 외곽 골드 림
+            ctxWheel.beginPath();
+            ctxWheel.arc(cx, cy, radius - 4, 0, Math.PI * 2);
+            ctxWheel.strokeStyle = '#f39c12';
+            ctxWheel.lineWidth = 9;
+            ctxWheel.stroke();
+
+            // 4. 외곽 테두리 12개 전구 조명
+            const now = Date.now();
+            for (let j = 0; j < 12; j++) {
+                const bAngle = (j / 12) * Math.PI * 2;
+                const bx = cx + Math.cos(bAngle) * (radius - 4);
+                const by = cy + Math.sin(bAngle) * (radius - 4);
+                const isBlink = (j + Math.floor(now / 200)) % 2 === 0;
+                ctxWheel.fillStyle = isBlink ? '#fffa65' : '#e67e22';
+                ctxWheel.beginPath();
+                ctxWheel.arc(bx, by, 3.5, 0, Math.PI * 2);
+                ctxWheel.fill();
+                ctxWheel.strokeStyle = '#ffffff';
+                ctxWheel.lineWidth = 0.8;
+                ctxWheel.stroke();
+            }
+
+            // 5. 중앙 장식 허브 (호박 & 황금 엠블럼)
+            ctxWheel.beginPath();
+            ctxWheel.arc(cx, cy, 26, 0, Math.PI * 2);
+            ctxWheel.fillStyle = '#2c124d';
+            ctxWheel.fill();
+            ctxWheel.strokeStyle = '#f1c40f';
+            ctxWheel.lineWidth = 3.5;
+            ctxWheel.stroke();
+
+            ctxWheel.font = '18px Arial';
+            ctxWheel.textAlign = 'center';
+            ctxWheel.textBaseline = 'middle';
+            ctxWheel.fillText('🎃', cx, cy + 1);
+
+            ctxWheel.restore();
+        }
+
+        // 🎰 6개 칸 확률 가중치 추첨 함수 (정확히 70%, 12%, 8%, 5%, 4%, 1%)
+        function rollRouletteWinnerIndex() {
+            const rand = Math.random() * 100;
+            if (rand < 70) return 0; // 💰 돈 10,000원 (70%)
+            if (rand < 82) return 1; // 💎 돈 150,000원 (12%)
+            if (rand < 90) return 2; // 👑 돈 1,000,000원 (8%)
+            if (rand < 95) return 3; // 🪓 금도끼 (5%)
+            if (rand < 99) return 4; // 🏇 헤드리스 홀스 스킨 (4%)
+            return 5;                // 💨 꽝 (1%)
+        }
+
+        // 🎰 룰렛 돌리기 버튼 클릭 시 회전 애니메이션 시작
+        function startRouletteSpin() {
+            if (isRouletteSpinning) return;
+            isRouletteSpinning = true;
+
+            const spinBtn = document.getElementById('roulette-spin-btn');
+            const banner = document.getElementById('roulette-result-banner');
+            if (spinBtn) {
+                spinBtn.disabled = true;
+                spinBtn.style.opacity = '0.6';
+                spinBtn.style.cursor = 'not-allowed';
+                spinBtn.innerText = '🌀 회전하는 중...';
+            }
+            if (banner) {
+                banner.innerHTML = '✨ 행운의 룰렛이 빠르게 돌아갑니다!';
+                banner.style.color = '#f39c12';
+            }
+
+            const winnerIdx = rollRouletteWinnerIndex();
+            const sliceAngle = (2 * Math.PI) / ROULETTE_ITEMS.length;
+
+            // 상단 포인터 위치는 1.5 * PI (270도 / 12시 방향)
+            let baseTarget = (1.5 * Math.PI - (winnerIdx + 0.5) * sliceAngle) % (2 * Math.PI);
+            if (baseTarget < 0) baseTarget += 2 * Math.PI;
+
+            let currentNorm = rouletteAngle % (2 * Math.PI);
+            if (currentNorm < 0) currentNorm += 2 * Math.PI;
+
+            let delta = baseTarget - currentNorm;
+            if (delta <= 0) delta += 2 * Math.PI;
+
+            // 7~9바퀴 고속 회전 추가 후 당첨 슬라이스 중심에 안착
+            const extraSpins = 7 + Math.floor(Math.random() * 3);
+            const totalRotation = Math.PI * 2 * extraSpins + delta;
+
+            const startAngle = rouletteAngle;
+            const targetAngle = startAngle + totalRotation;
+            const duration = 4300; // 4.3초 동안 회전
+            const startTime = performance.now();
+
+            function easeOutQuart(x) {
+                return 1 - Math.pow(1 - x, 4);
+            }
+
+            function animate(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(1, elapsed / duration);
+                const ease = easeOutQuart(progress);
+
+                rouletteAngle = startAngle + totalRotation * ease;
+                drawRouletteWheel(rouletteAngle);
+
+                if (progress < 1) {
+                    rouletteAnimId = requestAnimationFrame(animate);
+                } else {
+                    rouletteAngle = targetAngle;
+                    drawRouletteWheel(rouletteAngle);
+                    isRouletteSpinning = false;
+                    rouletteAnimId = null;
+
+                    if (spinBtn) {
+                        spinBtn.disabled = false;
+                        spinBtn.style.opacity = '1';
+                        spinBtn.style.cursor = 'pointer';
+                        spinBtn.innerText = '🎰 룰렛 돌리기!';
+                    }
+
+                    applyRouletteReward(ROULETTE_ITEMS[winnerIdx]);
+                }
+            }
+
+            rouletteAnimId = requestAnimationFrame(animate);
+        }
+
+        // 🎰 룰렛 결과에 따른 보상 지급 및 안내
+        function applyRouletteReward(item) {
+            const banner = document.getElementById('roulette-result-banner');
+
+            if (item.type === 'money') {
+                money += item.amount;
+                updateMoney();
+                saveGame();
+                if (banner) {
+                    banner.innerHTML = `<span style="color:${item.color}; font-size:15px;">🎉 축하합니다! ${item.icon} [${item.name}] 당첨!</span>`;
+                }
+                floatTexts.push({ x: player.x, y: player.y - 80, text: `💰 +${item.amount.toLocaleString()} 골드 획득!`, color: item.color, life: 110, size: 22 });
+            } else if (item.type === 'axe') {
+                if (axeLevel < item.level) {
+                    axeLevel = item.level;
+                }
+                equippedAxe = item.level;
+                updateAxeUI();
+                updateInvAxeUI();
+                saveGame();
+                if (banner) {
+                    banner.innerHTML = `<span style="color:#f1c40f; font-size:15px;">🎉 대박! ${item.icon} [금도끼(3.2초)] 획득 & 장착!</span>`;
+                }
+                floatTexts.push({ x: player.x, y: player.y - 80, text: `🪓 [금도끼(3.2초)] 획득 & 장착 완료!`, color: '#f1c40f', life: 120, size: 22 });
+            } else if (item.type === 'skin') {
+                if (!ownedSkins.includes(item.skinId)) {
+                    ownedSkins.push(item.skinId);
+                }
+                equippedSkin = item.skinId;
+                updateShopSkinUI();
+                updateInvSkinUI();
+                saveGame();
+                if (banner) {
+                    banner.innerHTML = `<span style="color:#a29bfe; font-size:15px;">🎉 초대박! ${item.icon} [헤드리스 홀스] 스킨 획득!</span>`;
+                }
+                floatTexts.push({ x: player.x, y: player.y - 80, text: `🏇 [헤드리스 홀스] 스킨 획득 & 착용 완료!`, color: '#9b59b6', life: 120, size: 22 });
+            } else if (item.type === 'dud') {
+                if (banner) {
+                    banner.innerHTML = `<span style="color:#95a5a6; font-size:14px;">💨 아쉽지만 [꽝]입니다! 다음 기회에...</span>`;
+                }
+                floatTexts.push({ x: player.x, y: player.y - 80, text: `💨 아쉽지만 꽝입니다!`, color: '#95a5a6', life: 90, size: 18 });
+            }
+        }
+
+        function openRouletteModal() {
+            const modal = document.getElementById('roulette-modal');
+            if (!modal) return;
+            modal.style.display = 'block';
+            if (typeof resetJoyMouse === 'function') resetJoyMouse();
+            if (typeof player !== 'undefined') player.targetTree = null;
+            drawRouletteWheel(rouletteAngle);
+        }
+
+        function closeRouletteModal() {
+            const modal = document.getElementById('roulette-modal');
+            if (!modal) return;
+            modal.style.display = 'none';
+        }
+
         let blackoutState = {
             active: false,
             text: 'space is coming'
@@ -2115,6 +2555,16 @@
             if (rbDist < 55 || (isSpacebar && rbPlayerDist < 75)) {
                 openRankingModal();
                 return;
+            }
+
+            // 🎰 할로윈 행운의 룰렛 머신 클릭 감지 (할로윈 퓨즈머신 옆)
+            if (typeof rouletteMachine !== 'undefined') {
+                let rlDist = Math.hypot(cx - rouletteMachine.x, cy - rouletteMachine.y);
+                let rlPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - rouletteMachine.x, player.y - rouletteMachine.y) : 999;
+                if (rlDist < 60 || (isSpacebar && rlPlayerDist < 85)) {
+                    openRouletteModal();
+                    return;
+                }
             }
 
             // 로케트 클릭 감지
@@ -4329,10 +4779,23 @@
             // 퓨즈 브레인로트 건물 충돌 판정
             if (typeof fuseBuilding !== 'undefined') {
                 let fx = fuseBuilding.x - 20, fy = fuseBuilding.y;
-                if (player.x > fx - player.radius && player.y > fy - player.radius && player.y < fy + 210 + player.radius) {
+                let fw = 270, fh = 210;
+                if (player.x > fx - player.radius && player.x < fx + fw + player.radius && player.y > fy - player.radius && player.y < fy + fh + player.radius) {
                     if (player.x - player.vx <= fx - player.radius) player.x = fx - player.radius;
+                    else if (player.x - player.vx >= fx + fw + player.radius) player.x = fx + fw + player.radius;
                     else if (player.y - player.vy <= fy - player.radius) player.y = fy - player.radius;
-                    else if (player.y - player.vy >= fy + 210 + player.radius) player.y = fy + 210 + player.radius;
+                    else if (player.y - player.vy >= fy + fh + player.radius) player.y = fy + fh + player.radius;
+                }
+            }
+
+            // 🎰 할로윈 룰렛 머신 충돌 판정 (원형 반경)
+            if (typeof rouletteMachine !== 'undefined') {
+                let dR = Math.hypot(player.x - rouletteMachine.x, player.y - rouletteMachine.y);
+                let minR = rouletteMachine.radius + player.radius;
+                if (dR < minR && dR > 0) {
+                    let pushAngle = Math.atan2(player.y - rouletteMachine.y, player.x - rouletteMachine.x);
+                    player.x = rouletteMachine.x + Math.cos(pushAngle) * minR;
+                    player.y = rouletteMachine.y + Math.sin(pushAngle) * minR;
                 }
             }
 
@@ -5831,6 +6294,7 @@
             renderList.push({ type: 'teleporter', obj: teleporter, y: teleporter.y });
             renderList.push({ type: 'teleporterHalloween', obj: teleporterHalloween, y: teleporterHalloween.y });
             renderList.push({ type: 'rankingBoard', obj: rankingBoard, y: rankingBoard.y });
+            renderList.push({ type: 'rouletteMachine', obj: rouletteMachine, y: rouletteMachine.y });
             renderList.sort((a, b) => a.y - b.y);
 
             renderList.forEach(item => {
@@ -6279,6 +6743,8 @@
                     drawTeleporter(ctx, item.obj.x, item.obj.y, 'devil');
                 } else if (item.type === 'rankingBoard') {
                     drawRankingBoard(ctx, item.obj.x, item.obj.y);
+                } else if (item.type === 'rouletteMachine') {
+                    drawRouletteMachine(ctx, item.obj.x, item.obj.y);
                 }
             });
 
