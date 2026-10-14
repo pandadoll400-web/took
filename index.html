@@ -420,6 +420,27 @@
             </div>
         </div>
 
+        <!-- 👽 외계 과학자 대화 모달 (우주 나무) -->
+        <div id="alien-scientist-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 16, 32, 0.98); color: white; padding: 20px 18px; border-radius: 18px; width: 92%; max-width: 400px; display: none; border: 2.5px solid #00f2fe; z-index: 60; box-shadow: 0 10px 45px rgba(0,0,0,0.95), 0 0 30px rgba(0, 242, 254, 0.45); box-sizing: border-box; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(0, 242, 254, 0.3); padding-bottom: 8px; margin-bottom: 12px;">
+                <h3 style="margin: 0; color: #00f2fe; font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(0, 242, 254, 0.6);">
+                    <span>🧪</span> 외계 과학자 (우주 나무)
+                </h3>
+                <button onclick="closeAlienScientistModal()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
+            </div>
+
+            <div style="font-size: 46px; margin-bottom: 8px; filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.8));">
+                👽
+            </div>
+
+            <div id="alien-dialog-text" style="background: rgba(0,0,0,0.45); border: 1px solid rgba(0, 242, 254, 0.25); border-radius: 12px; padding: 14px; margin-bottom: 14px; font-size: 13.5px; line-height: 1.6; color: #ecf0f1; text-align: left; word-break: keep-all;">
+                ...
+            </div>
+
+            <div id="alien-dialog-buttons" style="display: flex; flex-direction: column; gap: 8px;">
+            </div>
+        </div>
+
         <!-- 3. 실시간 거래 창 (아이템 등록, 상대 물품 실시간 확인, 2초 꾹 누르기 수락) -->
         <div id="trade-window-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 22, 34, 0.98); color: white; padding: 18px 16px; border-radius: 16px; width: 92%; max-width: 460px; max-height: 88%; overflow-y: auto; display: none; border: 2px solid #00cec9; z-index: 55; box-shadow: 0 12px 45px rgba(0,0,0,0.9); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 8px; margin-bottom: 12px;">
@@ -739,6 +760,43 @@
         // ⏱️ 할로윈 룰렛 1시간 쿨타임 시스템 (60분 = 3,600,000ms)
         const ROULETTE_COOLDOWN_MS = 60 * 60 * 1000;
         let lastRouletteSpinTime = Number(localStorage.getItem('last_roulette_spin_time') || 0);
+
+        // 👽 우주 나무 외계 과학자 & 감염된 고릴라 실험실 퀘스트 상태
+        let alienQuestDone = (localStorage.getItem('alien_quest_done') === 'true');
+        let inAlienLab = false;
+        let alienLabState = 'intro'; // 'intro', 'breakout', 'battle', 'berserk_strike', 'imprisoned', 'escape_teleport'
+        let alienLabTimer = 0;
+        let alienScientist = {
+            x: 410,
+            y: -7550,
+            radius: 36
+        };
+        let spaceReturnPad = {
+            x: 180,
+            y: -7540
+        };
+        let alienScientistInLab = {
+            x: 180,
+            y: 520,
+            hp: 100,
+            facing: 1,
+            state: 'standing',
+            shootCooldown: 0
+        };
+        let infectedGorilla = {
+            x: 300,
+            y: 290,
+            hp: 100,
+            maxHp: 100,
+            facing: 1,
+            flinchTimer: 0,
+            walkTimer: 0,
+            state: 'contained',
+            speed: 2.4
+        };
+        let labLasers = [];
+        let labSparks = [];
+        let labShards = [];
 
         // 보스전 & 쪽지 조각 시스템 상태
         let inBossRoom = false;
@@ -2594,26 +2652,1054 @@
             modal.style.display = 'none';
         }
 
+        // ==========================================
+        // 👽 우주 나무 외계 과학자 & 감염된 고릴라 실험실 이벤트
+        // ==========================================
+        function openAlienScientistModal() {
+            if (alienQuestDone) return;
+            const modal = document.getElementById('alien-scientist-modal');
+            if (!modal) return;
+
+            const dialogText = document.getElementById('alien-dialog-text');
+            const buttonsDiv = document.getElementById('alien-dialog-buttons');
+            const hasNote = (inventory['쪽지 조각'] || 0) > 0;
+
+            if (hasNote) {
+                dialogText.innerHTML = `
+                    <div style="color: #00f2fe; font-weight: bold; margin-bottom: 6px;">외계 과학자:</div>
+                    "오오...! 네가 지닌 그것은 숲의 수호자(원숭이 보스)가 숨겨두었던 <b>[쪽지 조각]</b>...?!<br><br>
+                    그 고대 데이터 암호만 있다면 내 일생일대의 생체 실험을 마침내 완성할 수 있어!<br>
+                    어서 내게 쪽지를 넘겨주게! 자네에게 엄청난 우주의 비밀을 보여주겠네... 크하하!"
+                `;
+                buttonsDiv.innerHTML = `
+                    <button onclick="giveNoteToAlienScientist(false)" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #00cec9, #0984e3); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 206, 201, 0.4);">
+                        📜 [쪽지 조각] 건네기 (실험실로 이동)
+                    </button>
+                    <button onclick="closeAlienScientistModal()" style="width: 100%; padding: 9px; background: rgba(255,255,255,0.1); color: #ccc; border: none; border-radius: 8px; font-size: 13px; cursor: pointer;">
+                        닫기
+                    </button>
+                `;
+            } else {
+                dialogText.innerHTML = `
+                    <div style="color: #00f2fe; font-weight: bold; margin-bottom: 6px;">외계 과학자:</div>
+                    "크크크... 나는 먼 은하에서 온 외계 과학자다.<br><br>
+                    내 최고 기밀 연구실의 문을 열려면, 숲의 수호자(원숭이 보스)가 일반 나무 깊숙이 숨겨둔 <b>[쪽지 조각]</b>이 필요해!<br><br>
+                    <span style="color: #f1c40f; font-size: 12px;">(원숭이 보스를 격파한 후, 일반 나무를 3번 패면 쪽지 조각 획득 가능)</span>"
+                `;
+                buttonsDiv.innerHTML = `
+                    <button onclick="giveNoteToAlienScientist(true)" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #a29bfe, #6c5ce7); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);">
+                        🧪 [체험 테스트] 쪽지 조각을 받고 바로 이동하기
+                    </button>
+                    <button onclick="closeAlienScientistModal()" style="width: 100%; padding: 9px; background: rgba(255,255,255,0.1); color: #ccc; border: none; border-radius: 8px; font-size: 13px; cursor: pointer;">
+                        닫기
+                    </button>
+                `;
+            }
+
+            modal.style.display = 'block';
+            if (typeof resetJoyMouse === 'function') resetJoyMouse();
+            if (typeof player !== 'undefined') player.targetTree = null;
+        }
+
+        function closeAlienScientistModal() {
+            const modal = document.getElementById('alien-scientist-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function giveNoteToAlienScientist(isTest = false) {
+            closeAlienScientistModal();
+            if (isTest) {
+                if (!inventory['쪽지 조각']) inventory['쪽지 조각'] = 0;
+                inventory['쪽지 조각']++;
+            }
+            if (inventory['쪽지 조각'] > 0) {
+                inventory['쪽지 조각']--;
+            }
+            saveGame();
+
+            startAlienLabSequence();
+        }
+
+        function startAlienLabSequence() {
+            blackoutState.active = true;
+            blackoutState.text = '⚡ 차원 왜곡 발동! 고급 외계 실험실로 전송 중...';
+            setBossRoomHUDVisible(false);
+
+            setTimeout(() => {
+                blackoutState.active = false;
+                inAlienLab = true;
+                initAlienLab();
+            }, 1800);
+        }
+
+        function initAlienLab() {
+            alienLabState = 'intro';
+            alienLabTimer = 0;
+            player.x = 300;
+            player.y = 750;
+            player.vx = 0;
+            player.vy = 0;
+            player.axeSwingTimer = 0;
+
+            alienScientistInLab = {
+                x: 180,
+                y: 520,
+                hp: 100,
+                facing: 1,
+                state: 'standing',
+                shootCooldown: 0
+            };
+
+            infectedGorilla = {
+                x: 300,
+                y: 290,
+                hp: 100,
+                maxHp: 100,
+                facing: 1,
+                flinchTimer: 0,
+                walkTimer: 0,
+                state: 'contained',
+                speed: 2.3
+            };
+
+            labLasers = [];
+            labSparks = [];
+            labShards = [];
+        }
+
+        function exitAlienLab() {
+            inAlienLab = false;
+            player.x = 300;
+            player.y = 500;
+            cameraY = 0;
+            player.targetTree = null;
+            player.axeSwingTimer = 0;
+
+            setBossRoomHUDVisible(true);
+
+            alienQuestDone = true;
+            try { localStorage.setItem('alien_quest_done', 'true'); } catch(e) {}
+            saveGame();
+
+            setTimeout(() => {
+                alert("💥 [외계 실험실 비상 탈출 완료!]\n\n감염된 고릴라가 외계 과학자를 격리실에 감금한 직후,\n과학자가 열어준 비상 차원문을 통해 일반 지형으로 무사히 탈출했습니다!\n\n그와 관련된 외계 실험실의 모든 흔적이 차원 너머로 사라졌습니다...");
+                floatTexts.push({ x: player.x, y: player.y - 100, text: `💥 외계 실험실 탈출 성공! 모든 흔적이 사라졌습니다.`, color: '#00cec9', life: 140, size: 20 });
+            }, 300);
+        }
+
+        function drawAlienScientistAtTree(ctx, x, y) {
+            if (alienQuestDone) return;
+
+            ctx.save();
+            const now = Date.now();
+            const floatBob = Math.sin(now * 0.003) * 2;
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.beginPath();
+            ctx.ellipse(x, y + 16, 24, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.roundRect(x - 20, y + 2, 40, 15, 4);
+            ctx.fill();
+            ctx.strokeStyle = '#00cec9';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.fillStyle = '#475569';
+            ctx.beginPath();
+            ctx.ellipse(x - 10, y + 10, 11, 7, -0.2, 0, Math.PI * 2);
+            ctx.ellipse(x + 10, y + 10, 11, 7, 0.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            ctx.roundRect(x - 14, y - 14, 28, 22, 5);
+            ctx.fill();
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.fillStyle = '#6c5ce7';
+            ctx.fillRect(x - 4, y - 10, 8, 12);
+            ctx.fillStyle = '#00cec9';
+            ctx.beginPath();
+            ctx.arc(x + 8, y - 8, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#00f2fe';
+            ctx.shadowColor = '#00f2fe';
+            ctx.shadowBlur = 8;
+            ctx.fillRect(x - 10, y - 2, 20, 4);
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#1dd1a1';
+            ctx.beginPath();
+            ctx.ellipse(x, y - 24 + floatBob, 14, 16, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#111827';
+            ctx.beginPath();
+            ctx.ellipse(x - 6, y - 24 + floatBob, 5, 7, -0.3, 0, Math.PI * 2);
+            ctx.ellipse(x + 6, y - 24 + floatBob, 5, 7, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(x - 7, y - 26 + floatBob, 1.8, 0, Math.PI * 2);
+            ctx.arc(x + 5, y - 26 + floatBob, 1.8, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#00f2fe';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(x + 6, y - 24 + floatBob, 6, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#10ac84';
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(x - 4, y - 38 + floatBob);
+            ctx.quadraticCurveTo(x - 12, y - 48 + floatBob, x - 10, y - 51 + floatBob);
+            ctx.moveTo(x + 4, y - 38 + floatBob);
+            ctx.quadraticCurveTo(x + 12, y - 48 + floatBob, x + 10, y - 51 + floatBob);
+            ctx.stroke();
+
+            ctx.fillStyle = '#00f2fe';
+            ctx.shadowColor = '#00f2fe';
+            ctx.shadowBlur = 6;
+            ctx.beginPath();
+            ctx.arc(x - 10, y - 51 + floatBob, 3, 0, Math.PI * 2);
+            ctx.arc(x + 10, y - 51 + floatBob, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            const signY = y - 62 + floatBob;
+            ctx.fillStyle = 'rgba(10, 16, 32, 0.88)';
+            ctx.strokeStyle = '#00f2fe';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(x - 48, signY - 11, 96, 22, 6);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#00f2fe';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("🧪 외계 과학자", x, signY);
+
+            const distToPlayer = Math.hypot(player.x - x, player.y - y);
+            if (distToPlayer < 120) {
+                const tipY = signY - 26;
+                const hasNote = (inventory['쪽지 조각'] || 0) > 0;
+                const tipText = hasNote ? "👉 [스페이스바] 쪽지 조각 전달하기!" : "👉 [스페이스바] 대화하기";
+                const tipColor = hasNote ? '#f1c40f' : '#ffffff';
+                const tipBorder = hasNote ? '#f1c40f' : '#00f2fe';
+
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+                ctx.strokeStyle = tipBorder;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.roundRect(x - 85, tipY - 11, 170, 22, 6);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = tipColor;
+                ctx.font = 'bold 10px Arial';
+                ctx.fillText(tipText, x, tipY);
+            }
+
+            ctx.restore();
+        }
+
+        function drawInfectedGorilla(ctx, gorilla) {
+            ctx.save();
+            const bob = Math.sin(gorilla.walkTimer * 0.12) * 4;
+            const flinch = gorilla.flinchTimer > 0;
+            const facing = gorilla.facing || 1;
+            const isBerserk = gorilla.state === 'berserk';
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+            ctx.beginPath();
+            ctx.ellipse(gorilla.x, gorilla.y + 44, 40, 14, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.translate(gorilla.x, gorilla.y + bob);
+
+            if (isBerserk) {
+                ctx.fillStyle = 'rgba(255, 0, 85, 0.25)';
+                ctx.beginPath();
+                ctx.arc(0, 0, 60, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            const armSwing = Math.sin(gorilla.walkTimer * 0.18) * 10;
+            const armColor = flinch ? '#ff7675' : '#241038';
+            ctx.fillStyle = armColor;
+
+            ctx.save();
+            ctx.translate(-30 * facing, 8);
+            ctx.rotate((-armSwing * 0.05) * facing);
+            ctx.beginPath();
+            ctx.roundRect(-10, -5, 20, 42, 10);
+            ctx.fill();
+            ctx.fillStyle = flinch ? '#ff7675' : '#160824';
+            ctx.beginPath();
+            ctx.arc(0, 38, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.fillStyle = flinch ? '#ff7675' : '#32164d';
+            ctx.beginPath();
+            ctx.ellipse(0, 12, 34, 32, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = flinch ? '#fab1a0' : '#49226e';
+            ctx.beginPath();
+            ctx.ellipse(4 * facing, 10, 22, 22, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#ff007f';
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = '#ff007f';
+            ctx.shadowBlur = 6;
+            ctx.beginPath();
+            ctx.moveTo(0, 0); ctx.lineTo(-10 * facing, 14); ctx.lineTo(-4 * facing, 24);
+            ctx.moveTo(6 * facing, 2); ctx.lineTo(14 * facing, 12); ctx.lineTo(8 * facing, 22);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#00f2fe';
+            ctx.shadowColor = '#00f2fe';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.roundRect(-24 * facing, -12, 8, 16, 3);
+            ctx.roundRect(16 * facing, -12, 8, 16, 3);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            ctx.save();
+            ctx.fillStyle = armColor;
+            ctx.translate(28 * facing, 8);
+            ctx.rotate((armSwing * 0.05) * facing);
+            ctx.beginPath();
+            ctx.roundRect(-10, -5, 20, 42, 10);
+            ctx.fill();
+            ctx.fillStyle = flinch ? '#ff7675' : '#160824';
+            ctx.beginPath();
+            ctx.arc(0, 38, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.fillStyle = flinch ? '#ff7675' : '#241038';
+            ctx.beginPath();
+            ctx.ellipse(-16, 36, 11, 10, 0, 0, Math.PI * 2);
+            ctx.ellipse(16, 36, 11, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = flinch ? '#ff7675' : '#32164d';
+            ctx.beginPath();
+            ctx.ellipse(0, -22, 24, 22, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = flinch ? '#ff7675' : '#241038';
+            ctx.beginPath();
+            ctx.ellipse(0, -32, 16, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = flinch ? '#fab1a0' : '#160824';
+            ctx.beginPath();
+            ctx.ellipse(-8, -24, 9, 12, 0, 0, Math.PI * 2);
+            ctx.ellipse(8, -24, 9, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(0, -14, 16, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#0a0312';
+            ctx.beginPath();
+            ctx.ellipse(-4, -15, 2.5, 3.5, -0.2, 0, Math.PI * 2);
+            ctx.ellipse(4, -15, 2.5, 3.5, 0.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#ff0055';
+            ctx.shadowColor = '#ff0055';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.arc(-8 + (facing * 2), -24, 4.5, 0, Math.PI * 2);
+            ctx.arc(8 + (facing * 2), -24, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(-8 + (facing * 2), -24, 1.5, 0, Math.PI * 2);
+            ctx.arc(8 + (facing * 2), -24, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            ctx.moveTo(-9, -8); ctx.lineTo(-6, -2); ctx.lineTo(-3, -8);
+            ctx.moveTo(9, -8); ctx.lineTo(6, -2); ctx.lineTo(3, -8);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawAlienScientistInLab(ctx, sci) {
+            if (sci.state === 'trapped') return;
+
+            ctx.save();
+            const x = sci.x;
+            const y = sci.y;
+            const facing = sci.facing || 1;
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.beginPath();
+            ctx.ellipse(x, y + 22, 20, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (sci.state === 'injured') {
+                ctx.translate(x, y + 10);
+                ctx.rotate(0.6 * facing);
+
+                if (Math.random() < 0.4) {
+                    ctx.strokeStyle = '#00f2fe';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0); ctx.lineTo((Math.random()-0.5)*30, (Math.random()-0.5)*30);
+                    ctx.stroke();
+                }
+
+                ctx.fillStyle = '#f8fafc';
+                ctx.beginPath();
+                ctx.roundRect(-12, -8, 24, 16, 4);
+                ctx.fill();
+
+                ctx.fillStyle = '#1dd1a1';
+                ctx.beginPath();
+                ctx.arc(12 * facing, -12, 11, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#111';
+                ctx.beginPath();
+                ctx.arc(14 * facing, -12, 3.5, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+                return;
+            }
+
+            ctx.translate(x, y);
+
+            ctx.fillStyle = '#334155';
+            ctx.beginPath();
+            ctx.roundRect(-9, 8, 7, 16, 3);
+            ctx.roundRect(2, 8, 7, 16, 3);
+            ctx.fill();
+
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            ctx.roundRect(-14, -14, 28, 26, 5);
+            ctx.fill();
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.fillStyle = '#6c5ce7';
+            ctx.fillRect(-3, -12, 6, 14);
+
+            if (sci.state === 'fighting') {
+                ctx.save();
+                ctx.translate(10 * facing, -2);
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, -4, 22 * facing, 8);
+                ctx.fillStyle = '#00f2fe';
+                ctx.shadowColor = '#00f2fe';
+                ctx.shadowBlur = 8;
+                ctx.fillRect(4 * facing, -2, 10 * facing, 4);
+                ctx.shadowBlur = 0;
+                ctx.restore();
+            }
+
+            ctx.fillStyle = '#1dd1a1';
+            ctx.beginPath();
+            ctx.ellipse(0, -25, 13, 15, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#111827';
+            ctx.beginPath();
+            ctx.ellipse(-5 * facing, -25, 4.5, 6.5, -0.2 * facing, 0, Math.PI * 2);
+            ctx.ellipse(5 * facing, -25, 4.5, 6.5, 0.2 * facing, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(-5 * facing, -27, 1.5, 0, Math.PI * 2);
+            ctx.arc(5 * facing, -27, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#00f2fe';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(5 * facing, -25, 5.5, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#10ac84';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(-3, -39); ctx.lineTo(-8, -48);
+            ctx.moveTo(3, -39); ctx.lineTo(8, -48);
+            ctx.stroke();
+            ctx.fillStyle = '#00f2fe';
+            ctx.beginPath();
+            ctx.arc(-8, -48, 2.5, 0, Math.PI * 2);
+            ctx.arc(8, -48, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawContainmentCapsule(ctx, x, y, state) {
+            ctx.save();
+            const w = 120;
+            const h = 180;
+            const topY = y - h / 2;
+            const botY = y + h / 2;
+
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(x - w / 2 - 10, botY - 18, w + 20, 26);
+            ctx.fillStyle = '#f1c40f';
+            ctx.fillRect(x - w / 2 - 8, botY - 8, w + 16, 6);
+
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(x - w / 2 - 10, topY - 14, w + 20, 24);
+            ctx.strokeStyle = '#00cec9';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x - w / 2 - 10, topY - 14, w + 20, 24);
+
+            if (state === 'intro') {
+                ctx.fillStyle = 'rgba(0, 206, 201, 0.18)';
+                ctx.fillRect(x - w / 2, topY + 10, w, h - 28);
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x - w / 2 + 10, topY + 15);
+                ctx.lineTo(x - w / 2 + 25, botY - 25);
+                ctx.stroke();
+
+                const now = Date.now() * 0.003;
+                ctx.fillStyle = 'rgba(0, 242, 254, 0.6)';
+                for (let b = 0; b < 5; b++) {
+                    let bx = x - 35 + ((b * 19) % 70);
+                    let by = botY - 30 - ((now * 25 + b * 30) % (h - 40));
+                    ctx.beginPath();
+                    ctx.arc(bx, by, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                drawInfectedGorilla(ctx, infectedGorilla);
+            } else if (state === 'imprisoned' || state === 'escape_teleport') {
+                ctx.fillStyle = 'rgba(255, 0, 85, 0.15)';
+                ctx.fillRect(x - w / 2, topY + 10, w, h - 28);
+
+                ctx.save();
+                ctx.translate(x, y + 20);
+                ctx.fillStyle = '#f8fafc';
+                ctx.fillRect(-14, -10, 28, 26);
+                ctx.fillStyle = '#1dd1a1';
+                ctx.beginPath(); ctx.ellipse(0, -22, 13, 15, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#111';
+                ctx.beginPath(); ctx.arc(-5, -22, 4, 0, Math.PI * 2); ctx.arc(5, -22, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#1dd1a1';
+                ctx.beginPath();
+                ctx.ellipse(-24, -14, 6, 8, 0.2, 0, Math.PI * 2);
+                ctx.ellipse(24, -14, 6, 8, -0.2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                ctx.strokeStyle = '#ff0055';
+                ctx.lineWidth = 3;
+                ctx.shadowColor = '#ff0055';
+                ctx.shadowBlur = 10;
+                for (let lx = x - 42; lx <= x + 42; lx += 21) {
+                    ctx.beginPath();
+                    ctx.moveTo(lx, topY + 10);
+                    ctx.lineTo(lx, botY - 18);
+                    ctx.stroke();
+                }
+                ctx.shadowBlur = 0;
+
+                ctx.fillStyle = '#ff0055';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("🔒 EMERGENCY LOCKED", x, botY - 30);
+            } else {
+                ctx.strokeStyle = 'rgba(0, 242, 254, 0.4)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x - w / 2, topY + 10);
+                ctx.lineTo(x - w / 2, topY + 40);
+                ctx.lineTo(x - w / 2 + 20, topY + 20);
+                ctx.moveTo(x - w / 2, botY - 18);
+                ctx.lineTo(x - w / 2, botY - 50);
+                ctx.lineTo(x - w / 2 + 25, botY - 30);
+                ctx.moveTo(x + w / 2, topY + 10);
+                ctx.lineTo(x + w / 2, topY + 45);
+                ctx.lineTo(x + w / 2 - 20, topY + 25);
+                ctx.moveTo(x + w / 2, botY - 18);
+                ctx.lineTo(x + w / 2, botY - 45);
+                ctx.stroke();
+
+                ctx.fillStyle = '#ff4757';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("🚨 CONTAINMENT BREACH", x, y - 10);
+            }
+
+            ctx.restore();
+        }
+
+        function drawAlienLab() {
+            ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+            ctx.save();
+
+            ctx.fillStyle = '#080d1a';
+            ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+            ctx.strokeStyle = 'rgba(0, 206, 201, 0.08)';
+            ctx.lineWidth = 1;
+            for (let gx = 0; gx < GAME_WIDTH; gx += 50) {
+                ctx.beginPath(); ctx.moveTo(gx, 250); ctx.lineTo(gx, GAME_HEIGHT); ctx.stroke();
+            }
+            for (let gy = 250; gy < GAME_HEIGHT; gy += 50) {
+                ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(GAME_WIDTH, gy); ctx.stroke();
+            }
+
+            ctx.strokeStyle = '#00f2fe';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#00f2fe';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.moveTo(60, GAME_HEIGHT); ctx.lineTo(60, 420); ctx.lineTo(240, 360);
+            ctx.moveTo(540, GAME_HEIGHT); ctx.lineTo(540, 420); ctx.lineTo(360, 360);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, GAME_WIDTH, 240);
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(0, 0, GAME_WIDTH, 240);
+
+            const now = Date.now();
+            for (let sx = 20; sx < 180; sx += 40) {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(sx, 70, 30, 150);
+                for (let led = 0; led < 6; led++) {
+                    const isLit = (Math.floor(now / 150) + sx + led) % 3 === 0;
+                    ctx.fillStyle = isLit ? '#00f2fe' : (led % 2 === 0 ? '#2ecc71' : '#f1c40f');
+                    ctx.beginPath();
+                    ctx.arc(sx + 8, 85 + led * 22, 2.5, 0, Math.PI * 2);
+                    ctx.arc(sx + 20, 85 + led * 22, 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            ctx.fillStyle = 'rgba(0, 242, 254, 0.12)';
+            ctx.strokeStyle = '#00f2fe';
+            ctx.lineWidth = 1.5;
+            ctx.fillRect(420, 70, 160, 150);
+            ctx.strokeRect(420, 70, 160, 150);
+
+            ctx.fillStyle = '#00f2fe';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText("🧬 DNA VIRUS SEQUENCE", 500, 90);
+
+            ctx.strokeStyle = '#ff007f';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let px = 430; px <= 570; px += 5) {
+                let py = 150 + Math.sin((px * 0.08) + (now * 0.005)) * 25;
+                if (px === 430) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            drawContainmentCapsule(ctx, 300, 280, alienLabState);
+
+            if (alienLabState !== 'intro') {
+                drawInfectedGorilla(ctx, infectedGorilla);
+            }
+
+            drawAlienScientistInLab(ctx, alienScientistInLab);
+            drawCharacter(ctx, player, player.x, player.y, player.axeSwingTimer > 0, player.walkTimer);
+
+            labLasers.forEach(laser => {
+                ctx.save();
+                ctx.strokeStyle = '#00f2fe';
+                ctx.lineWidth = 5;
+                ctx.shadowColor = '#00f2fe';
+                ctx.shadowBlur = 12;
+                ctx.beginPath();
+                ctx.moveTo(laser.x1, laser.y1);
+                ctx.lineTo(laser.x2, laser.y2);
+                ctx.stroke();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(laser.x2, laser.y2, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            labShards.forEach(sh => {
+                ctx.fillStyle = 'rgba(0, 242, 254, 0.7)';
+                ctx.beginPath();
+                ctx.arc(sh.x, sh.y, sh.size || 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            labSparks.forEach(sp => {
+                ctx.fillStyle = sp.color || '#f1c40f';
+                ctx.beginPath();
+                ctx.arc(sp.x, sp.y, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            slashEffects.forEach(s => {
+                ctx.save();
+                ctx.translate(s.x, s.y);
+                ctx.strokeStyle = '#ff4757';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(0, 0, 35, -Math.PI / 3, Math.PI / 3);
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            if (alienLabState === 'intro') {
+                ctx.save();
+                ctx.fillStyle = 'rgba(10, 16, 32, 0.9)';
+                ctx.strokeStyle = '#00f2fe';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(60, 440, 480, 50, 10);
+                ctx.fill(); ctx.stroke();
+
+                ctx.fillStyle = '#00f2fe';
+                ctx.font = 'bold 13px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("👨‍🔬 외계 과학자: \"보아라! 이것이 쪽지의 암호로 활성화된 내 궁극의 연구체, '감염된 고릴라'다!\"", 300, 462);
+                ctx.fillStyle = '#ecf0f1';
+                ctx.font = '12px Arial';
+                ctx.fillText("잠시 후 바이러스 수치를 안정화시키면... 어?! 잠깐만!", 300, 480);
+                ctx.restore();
+            } else if (alienLabState === 'breakout') {
+                ctx.fillStyle = 'rgba(255, 0, 0, ' + (Math.sin(now * 0.015) * 0.25 + 0.25) + ')';
+                ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+                ctx.save();
+                ctx.fillStyle = '#ff4757';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("🚨 경보 발령! 실험체 격리 챔버 파괴 및 탈출! 🚨", 300, 180);
+                ctx.restore();
+            } else if (alienLabState === 'battle') {
+                ctx.save();
+                const barX = 100, barY = 22, barW = 400, barH = 22;
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.beginPath();
+                ctx.roundRect(barX, barY, barW, barH, 10);
+                ctx.fill();
+                ctx.strokeStyle = '#ff007f';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                let hpRatio = Math.max(0, infectedGorilla.hp / infectedGorilla.maxHp);
+                let grad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+                grad.addColorStop(0, '#ff0055');
+                grad.addColorStop(1, '#a29bfe');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.roundRect(barX + 2, barY + 2, (barW - 4) * hpRatio, barH - 4, 8);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`🧪 감염된 고릴라 (Infected Gorilla) HP: ${infectedGorilla.hp} / 100`, 300, barY + 15);
+
+                ctx.font = 'bold 11px Arial';
+                ctx.fillStyle = '#00f2fe';
+                ctx.fillText("⚔️ 외계 과학자와 협동하여 공격하세요! (도끼 클릭 또는 스페이스바)", 300, barY + 36);
+                ctx.restore();
+            } else if (alienLabState === 'berserk_strike') {
+                ctx.save();
+                ctx.fillStyle = '#ff4757';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("💥 고릴라의 광폭화 돌진! 외계 과학자 강타!", 300, 180);
+                ctx.restore();
+            } else if (alienLabState === 'imprisoned') {
+                ctx.save();
+                ctx.translate(player.x, player.y + 16);
+                ctx.rotate(now * 0.008);
+                let pGrad = ctx.createRadialGradient(0, 0, 5, 0, 0, 45);
+                pGrad.addColorStop(0, '#ffffff');
+                pGrad.addColorStop(0.5, '#00f2fe');
+                pGrad.addColorStop(1, 'rgba(0, 242, 254, 0)');
+                ctx.fillStyle = pGrad;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 45, 25, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                ctx.save();
+                ctx.fillStyle = 'rgba(10, 16, 32, 0.95)';
+                ctx.strokeStyle = '#ff0055';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(70, 440, 460, 50, 10);
+                ctx.fill(); ctx.stroke();
+
+                ctx.fillStyle = '#ff7675';
+                ctx.font = 'bold 12.5px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("🔒 외계 과학자가 격리실에 감금되었습니다!", 300, 460);
+                ctx.fillStyle = '#00f2fe';
+                ctx.font = 'bold 11.5px Arial';
+                ctx.fillText("과학자: \"쿨럭... 자네만이라도 탈출하게! 비상 포탈로 뛰어들어...!!\"", 300, 478);
+                ctx.restore();
+            } else if (alienLabState === 'escape_teleport') {
+                let flashAlpha = Math.min(1, alienLabTimer / 35);
+                ctx.fillStyle = `rgba(255, 255, 255, ${flashAlpha})`;
+                ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+                ctx.fillStyle = '#0984e3';
+                ctx.font = 'bold 22px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("⚡ 일반 지형으로 비상 차원 전송 중... ⚡", 300, 500);
+            }
+
+            floatTexts.forEach(t => {
+                ctx.fillStyle = t.color; ctx.globalAlpha = Math.max(0, t.life / 40);
+                let size = t.size || 18; ctx.font = `bold ${size}px Arial`; ctx.textAlign = 'center';
+                ctx.fillText(t.text, t.x, t.y);
+            });
+            ctx.globalAlpha = 1.0;
+
+            ctx.restore();
+        }
+
+        function updateAlienLab() {
+            alienLabTimer++;
+
+            let moveX = 0, moveY = 0;
+            if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
+            if (keys.a) moveX -= 1; if (keys.d) moveX += 1;
+            if (joystick.active) {
+                player.vx = joystick.dx * player.speed;
+                player.vy = joystick.dy * player.speed;
+            } else if (moveX !== 0 || moveY !== 0) {
+                let mag = Math.hypot(moveX, moveY);
+                player.vx = (moveX / mag) * player.speed;
+                player.vy = (moveY / mag) * player.speed;
+            } else {
+                player.vx *= 0.8;
+                player.vy *= 0.8;
+            }
+            player.x += player.vx;
+            player.y += player.vy;
+            if (Math.abs(player.vx) > 0.1) player.facing = player.vx > 0 ? 1 : -1;
+            if (Math.hypot(player.vx, player.vy) > 0.5) player.walkTimer++;
+
+            player.x = Math.max(50, Math.min(GAME_WIDTH - 50, player.x));
+            player.y = Math.max(380, Math.min(GAME_HEIGHT - 80, player.y));
+
+            if (player.axeSwingTimer > 0) player.axeSwingTimer--;
+
+            slashEffects.forEach(s => s.life--);
+            slashEffects = slashEffects.filter(s => s.life > 0);
+            floatTexts.forEach(f => { f.y -= 1; f.life--; });
+            floatTexts = floatTexts.filter(f => f.life > 0);
+            labLasers.forEach(l => l.life--);
+            labLasers = labLasers.filter(l => l.life > 0);
+            labSparks.forEach(s => { s.x += s.vx; s.y += s.vy; s.life--; });
+            labSparks = labSparks.filter(s => s.life > 0);
+            labShards.forEach(s => { s.x += s.vx; s.y += s.vy; s.vy += 0.2; s.life--; });
+            labShards = labShards.filter(s => s.life > 0);
+
+            if (infectedGorilla.flinchTimer > 0) infectedGorilla.flinchTimer--;
+
+            if (alienLabState === 'intro') {
+                if (alienLabTimer > 150) {
+                    alienLabState = 'breakout';
+                    alienLabTimer = 0;
+                    for (let i = 0; i < 30; i++) {
+                        let a = Math.random() * Math.PI * 2;
+                        let sp = Math.random() * 6 + 2;
+                        labShards.push({ x: 300, y: 280, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, size: Math.random() * 4 + 2, life: 60 });
+                        labSparks.push({ x: 300, y: 280, vx: Math.cos(a) * (sp*1.5), vy: Math.sin(a) * (sp*1.5), color: '#00f2fe', life: 30 });
+                    }
+                }
+            } else if (alienLabState === 'breakout') {
+                infectedGorilla.y += (420 - infectedGorilla.y) * 0.15;
+                if (alienLabTimer > 75) {
+                    alienLabState = 'battle';
+                    alienLabTimer = 0;
+                    infectedGorilla.state = 'fighting';
+                    alienScientistInLab.state = 'fighting';
+                    floatTexts.push({ x: infectedGorilla.x, y: infectedGorilla.y - 60, text: `🚨 감염된 고릴라 탈출!`, color: '#ff0055', life: 70, size: 22 });
+                }
+            } else if (alienLabState === 'battle') {
+                infectedGorilla.walkTimer++;
+
+                const targetObj = (Math.sin(alienLabTimer * 0.05) > 0) ? player : alienScientistInLab;
+                const gdx = targetObj.x - infectedGorilla.x;
+                const gdy = targetObj.y - infectedGorilla.y;
+                const gDist = Math.hypot(gdx, gdy);
+                if (gDist > 45) {
+                    infectedGorilla.x += (gdx / gDist) * infectedGorilla.speed;
+                    infectedGorilla.y += (gdy / gDist) * infectedGorilla.speed;
+                    infectedGorilla.facing = gdx > 0 ? 1 : -1;
+                }
+
+                alienScientistInLab.shootCooldown++;
+                const sGdx = infectedGorilla.x - alienScientistInLab.x;
+                const sGdy = infectedGorilla.y - alienScientistInLab.y;
+                const sDist = Math.hypot(sGdx, sGdy);
+                alienScientistInLab.facing = sGdx > 0 ? 1 : -1;
+
+                if (sDist < 120) {
+                    alienScientistInLab.x -= (sGdx / sDist) * 1.8;
+                    alienScientistInLab.y -= (sGdy / sDist) * 1.8;
+                } else if (sDist > 180) {
+                    alienScientistInLab.x += (sGdx / sDist) * 1.5;
+                    alienScientistInLab.y += (sGdy / sDist) * 1.5;
+                }
+
+                if (alienScientistInLab.shootCooldown >= 75) {
+                    alienScientistInLab.shootCooldown = 0;
+                    labLasers.push({
+                        x1: alienScientistInLab.x + (alienScientistInLab.facing * 15),
+                        y1: alienScientistInLab.y - 2,
+                        x2: infectedGorilla.x,
+                        y2: infectedGorilla.y + 5,
+                        life: 14
+                    });
+                    infectedGorilla.hp = Math.max(0, infectedGorilla.hp - 10);
+                    infectedGorilla.flinchTimer = 8;
+                    floatTexts.push({ x: infectedGorilla.x + (Math.random()*20 - 10), y: infectedGorilla.y - 45, text: `⚡ -10`, color: '#00f2fe', life: 35, size: 18 });
+                }
+
+                if (infectedGorilla.hp <= 25 || alienLabTimer > 750) {
+                    alienLabState = 'berserk_strike';
+                    alienLabTimer = 0;
+                    infectedGorilla.state = 'berserk';
+                    floatTexts.push({ x: infectedGorilla.x, y: infectedGorilla.y - 70, text: `💥 폭주 (BERSERK)!!`, color: '#ff0055', life: 80, size: 24 });
+                }
+            } else if (alienLabState === 'berserk_strike') {
+                const bdx = alienScientistInLab.x - infectedGorilla.x;
+                const bdy = alienScientistInLab.y - infectedGorilla.y;
+                const bDist = Math.hypot(bdx, bdy);
+                if (bDist > 30) {
+                    infectedGorilla.x += (bdx / bDist) * 4.5;
+                    infectedGorilla.y += (bdy / bDist) * 4.5;
+                    infectedGorilla.facing = bdx > 0 ? 1 : -1;
+                }
+
+                if (alienLabTimer === 35) {
+                    alienScientistInLab.state = 'injured';
+                    for (let i = 0; i < 15; i++) {
+                        let a = Math.random() * Math.PI * 2;
+                        let sp = Math.random() * 4 + 1;
+                        labSparks.push({ x: alienScientistInLab.x, y: alienScientistInLab.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: '#ff4757', life: 25 });
+                    }
+                    floatTexts.push({ x: alienScientistInLab.x, y: alienScientistInLab.y - 50, text: `💥 콰앙! 과학자 피격!`, color: '#ff4757', life: 50, size: 20 });
+                }
+
+                if (alienLabTimer === 75) {
+                    alienScientistInLab.state = 'trapped';
+                    alienScientistInLab.x = 300;
+                    alienScientistInLab.y = 310;
+                    infectedGorilla.x = 300;
+                    infectedGorilla.y = 420;
+                    alienLabState = 'imprisoned';
+                    alienLabTimer = 0;
+                    floatTexts.push({ x: 300, y: 220, text: `🔒 과학자 감금 완료!`, color: '#ff0055', life: 80, size: 22 });
+                }
+            } else if (alienLabState === 'imprisoned') {
+                infectedGorilla.facing = (player.x > infectedGorilla.x) ? 1 : -1;
+                if (alienLabTimer > 100) {
+                    alienLabState = 'escape_teleport';
+                    alienLabTimer = 0;
+                }
+            } else if (alienLabState === 'escape_teleport') {
+                if (alienLabTimer > 50) {
+                    exitAlienLab();
+                }
+            }
+        }
+
+        function handleAlienLabClick(cx, cy, isSpacebar = false) {
+            if (alienLabState !== 'battle') return;
+
+            player.axeSwingTimer = 15;
+            let distToGorilla = Math.hypot(player.x - infectedGorilla.x, player.y - infectedGorilla.y);
+            let clickDist = Math.hypot(cx - infectedGorilla.x, cy - infectedGorilla.y);
+
+            if (distToGorilla < 120 || (!isSpacebar && clickDist < 80)) {
+                let dmg = 15;
+                if (equippedAxe === 4) dmg = 25;
+                else if (equippedAxe === 3) dmg = 20;
+                else if (equippedAxe === 2) dmg = 16;
+                else if (equippedAxe === 1) dmg = 13;
+
+                infectedGorilla.hp = Math.max(0, infectedGorilla.hp - dmg);
+                infectedGorilla.flinchTimer = 10;
+                slashEffects.push({ x: infectedGorilla.x, y: infectedGorilla.y, life: 12 });
+                floatTexts.push({ x: infectedGorilla.x + (Math.random()*30 - 15), y: infectedGorilla.y - 40, text: `💥 -${dmg}`, color: '#ff4757', life: 40, size: 20 });
+
+                for (let i = 0; i < 6; i++) {
+                    let a = Math.random() * Math.PI * 2;
+                    let sp = Math.random() * 4 + 2;
+                    labSparks.push({ x: infectedGorilla.x, y: infectedGorilla.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, color: '#ff007f', life: 20 });
+                }
+            }
+        }
+
         let blackoutState = {
             active: false,
             text: 'space is coming'
         };
 
         function triggerRocketLaunch() {
-            if (blackoutState.active || !rocket.visible) return;
+            if (blackoutState.active) return;
             blackoutState.active = true;
-            blackoutState.text = 'space is coming';
+            blackoutState.text = '🚀 우주를 향해 발사 중... (SPACE LAUNCH)';
 
             setTimeout(() => {
                 rocket.visible = false;
                 rocket.launched = true;
                 blackoutState.active = false;
+                player.x = 300;
+                player.y = -7520;
+                cameraY = -7650;
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '🌌 우주 지역에 도착했습니다!', color: '#00e5ff', life: 90 });
                 saveGame();
             }, 2000);
         }
 
         function handleTreeClick(cx, cy, isSpacebar = false) {
             if (blackoutState.active) return;
+
+            // 🧪 외계 과학자 실험실 내부에서의 클릭/공격 처리
+            if (inAlienLab) {
+                handleAlienLabClick(cx, cy, isSpacebar);
+                return;
+            }
 
             // 보스 방 안에서의 클릭 처리 (도망치기 또는 공격)
             if (inBossRoom) {
@@ -2660,12 +3746,40 @@
                 }
             }
 
-            // 로케트 클릭 감지
-            if (rocket.visible && !rocket.launched) {
-                let rocketClickDist = Math.hypot(cx - rocket.x, cy - rocket.y);
-                let rocketPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - rocket.x, player.y - rocket.y) : 999;
-                if (rocketClickDist < 55 || (isSpacebar && rocketPlayerDist < 70)) {
+            // 👽 우주 나무 외계 과학자 클릭 감지 (우주 나무 x: 300, y: -7650, 외계 과학자 x: 410, y: -7550)
+            if (!alienQuestDone && typeof alienScientist !== 'undefined') {
+                let sciDist = Math.hypot(cx - alienScientist.x, cy - alienScientist.y);
+                let sciPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - alienScientist.x, player.y - alienScientist.y) : 999;
+                if (sciDist < 60 || (isSpacebar && sciPlayerDist < 85)) {
+                    openAlienScientistModal();
+                    return;
+                }
+            }
+
+            // 🚀 로케트 / 우주 워프 패드 클릭 감지
+            let rocketClickDist = Math.hypot(cx - rocket.x, cy - rocket.y);
+            let rocketPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - rocket.x, player.y - rocket.y) : 999;
+            if (rocketClickDist < 55 || (isSpacebar && rocketPlayerDist < 75)) {
+                if (!rocket.launched) {
                     triggerRocketLaunch();
+                } else {
+                    player.x = 300;
+                    player.y = -7520;
+                    cameraY = -7650;
+                    floatTexts.push({ x: player.x, y: player.y - 80, text: '🌌 우주 나무로 워프했습니다!', color: '#00e5ff', life: 75 });
+                }
+                return;
+            }
+
+            // 🌍 우주에서 지구 귀환 워프 패드 클릭 감지
+            if (rocket.launched && typeof spaceReturnPad !== 'undefined') {
+                let retDist = Math.hypot(cx - spaceReturnPad.x, cy - spaceReturnPad.y);
+                let retPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - spaceReturnPad.x, player.y - spaceReturnPad.y) : 999;
+                if (retDist < 55 || (isSpacebar && retPlayerDist < 75)) {
+                    player.x = 80;
+                    player.y = 300;
+                    cameraY = 0;
+                    floatTexts.push({ x: player.x, y: player.y - 80, text: '🌍 지구로 귀환했습니다!', color: '#2ecc71', life: 75 });
                     return;
                 }
             }
@@ -3915,7 +5029,8 @@
                 noteTreeHits: 0,
                 bossKills: 0,
                 lastBossFightTime: 0,
-                lastRouletteSpinTime: 0
+                lastRouletteSpinTime: 0,
+                alienQuestDone: false
             };
         }
 
@@ -4064,7 +5179,8 @@
                 noteTreeHits: noteTreeHits,
                 bossKills: isBossEventStarted() ? (bossKills || 0) : 0,
                 lastBossFightTime: lastBossFightTime || 0,
-                lastRouletteSpinTime: lastRouletteSpinTime || 0
+                lastRouletteSpinTime: lastRouletteSpinTime || 0,
+                alienQuestDone: alienQuestDone || false
             };
         }
 
@@ -4109,6 +5225,7 @@
             }
             lastBossFightTime = Number(data.lastBossFightTime || 0);
             lastRouletteSpinTime = Number(data.lastRouletteSpinTime || localStorage.getItem('last_roulette_spin_time') || 0);
+            alienQuestDone = (data.alienQuestDone !== undefined) ? !!data.alienQuestDone : (localStorage.getItem('alien_quest_done') === 'true');
             if (data.treeUnlocked) {
                 trees.forEach((t, i) => {
                     t.unlocked = (data.treeUnlocked[i] !== undefined) ? data.treeUnlocked[i] : (i === 0);
@@ -4145,6 +5262,7 @@
                     bossKills: bossKills || 0,
                     lastBossFightTime: lastBossFightTime || 0,
                     lastRouletteSpinTime: lastRouletteSpinTime || 0,
+                    alienQuestDone: alienQuestDone || false,
                     gameData: data,
                     lastSaved: Date.now()
                 }, { merge: true }).catch(err => console.warn('Cloud save fail:', err));
@@ -4807,6 +5925,10 @@
                 updateBossRoom();
                 return;
             }
+            if (inAlienLab) {
+                updateAlienLab();
+                return;
+            }
             if (blackoutState.active) return;
             if (document.getElementById('inventory-modal').style.display === 'block') return;
             if (document.getElementById('shop-modal').style.display === 'block') return;
@@ -4816,6 +5938,8 @@
             if (document.getElementById('halloween-modal').style.display === 'block') return;
             if (document.getElementById('fuse-modal').style.display === 'block') return;
             if (document.getElementById('ranking-modal') && document.getElementById('ranking-modal').style.display === 'block') return;
+            if (document.getElementById('alien-scientist-modal') && document.getElementById('alien-scientist-modal').style.display === 'block') return;
+            if (document.getElementById('roulette-modal') && document.getElementById('roulette-modal').style.display === 'block') return;
 
             let moveX = 0, moveY = 0;
             if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
@@ -6196,7 +7320,64 @@
         }
 
         function drawRocket(ctx, rx, ry) {
-            if (!rocket.visible) return;
+            if (!rocket.visible && !rocket.launched) return;
+
+            if (rocket.launched) {
+                // 🚀 발사 후: 우주로 바로 갈 수 있는 워프 패드 렌더링
+                ctx.save();
+                ctx.translate(rx, ry);
+                let time = Date.now() * 0.003;
+                let glow = Math.sin(time) * 0.3 + 0.7;
+
+                // 워프 패드 바닥 그림자 및 베이스
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.beginPath();
+                ctx.ellipse(0, 24, 34, 14, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#1e272e';
+                ctx.beginPath();
+                ctx.ellipse(0, 20, 28, 12, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#00cec9';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // 에너지 기둥 이펙트
+                let grad = ctx.createLinearGradient(0, 20, 0, -35);
+                grad.addColorStop(0, `rgba(0, 206, 201, ${0.45 * glow})`);
+                grad.addColorStop(0.7, `rgba(108, 92, 231, ${0.25 * glow})`);
+                grad.addColorStop(1, 'rgba(0, 206, 201, 0)');
+                ctx.fillStyle = grad;
+                ctx.fillRect(-16, -35, 32, 55);
+
+                // 에너지 입자
+                for (let i = 0; i < 3; i++) {
+                    let py = -30 + ((Date.now() * 0.05 + i * 20) % 50);
+                    ctx.fillStyle = '#00f2fe';
+                    ctx.beginPath();
+                    ctx.arc((Math.sin(i * 2 + time * 2) * 10), py, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // 상단 안내 라벨
+                let floatY = Math.sin(Date.now() * 0.005) * 4;
+                ctx.fillStyle = 'rgba(10, 15, 30, 0.9)';
+                ctx.strokeStyle = '#00cec9';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.roundRect(-42, -56 + floatY, 84, 22, 6);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#00f2fe';
+                ctx.font = 'bold 11px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("🌌 우주 워프", 0, -45 + floatY);
+
+                ctx.restore();
+                return;
+            }
 
             ctx.save();
             ctx.translate(rx, ry);
@@ -6306,9 +7487,58 @@
             ctx.restore();
         }
 
+        function drawSpaceReturnPad(ctx, sx, sy) {
+            ctx.save();
+            ctx.translate(sx, sy);
+            let time = Date.now() * 0.003;
+            let glow = Math.sin(time) * 0.3 + 0.7;
+
+            // 패드 그림자 & 바닥 베이스
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.beginPath();
+            ctx.ellipse(0, 20, 32, 13, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#1e272e';
+            ctx.beginPath();
+            ctx.ellipse(0, 16, 26, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#2ecc71';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // 홀로그램 초록 기둥
+            let grad = ctx.createLinearGradient(0, 16, 0, -32);
+            grad.addColorStop(0, `rgba(46, 204, 113, ${0.4 * glow})`);
+            grad.addColorStop(1, 'rgba(46, 204, 113, 0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(-15, -32, 30, 48);
+
+            // 상단 안내 라벨
+            let floatY = Math.sin(Date.now() * 0.005) * 4;
+            ctx.fillStyle = 'rgba(10, 30, 15, 0.9)';
+            ctx.strokeStyle = '#2ecc71';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(-42, -52 + floatY, 84, 22, 6);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = '#2ecc71';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("🌍 지구 귀환", 0, -41 + floatY);
+
+            ctx.restore();
+        }
+
         function draw() {
             if (inBossRoom) {
                 drawBossRoom();
+                return;
+            }
+            if (inAlienLab) {
+                drawAlienLab();
                 return;
             }
             ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
@@ -6380,8 +7610,14 @@
             let renderList = [];
             fruitsOnGround.forEach(f => renderList.push({ type: 'fruit', obj: f, y: f.y }));
             renderList.push({ type: 'player', obj: player, y: player.y });
-            if (rocket.visible) {
+            if (rocket.visible || rocket.launched) {
                 renderList.push({ type: 'rocket', obj: rocket, y: rocket.y });
+            }
+            if (!alienQuestDone && typeof alienScientist !== 'undefined') {
+                renderList.push({ type: 'alienScientist', obj: alienScientist, y: alienScientist.y });
+            }
+            if (rocket.launched && typeof spaceReturnPad !== 'undefined') {
+                renderList.push({ type: 'spaceReturnPad', obj: spaceReturnPad, y: spaceReturnPad.y });
             }
             
             shops.forEach(shop => {
@@ -6835,6 +8071,10 @@
                     }
                 } else if (item.type === 'rocket') {
                     drawRocket(ctx, item.obj.x, item.obj.y);
+                } else if (item.type === 'alienScientist') {
+                    drawAlienScientistAtTree(ctx, item.obj.x, item.obj.y);
+                } else if (item.type === 'spaceReturnPad') {
+                    drawSpaceReturnPad(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'teleporter') {
                     drawTeleporter(ctx, item.obj.x, item.obj.y, 'monkey');
                 } else if (item.type === 'teleporterHalloween') {
