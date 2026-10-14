@@ -278,8 +278,42 @@
                 <button onclick="adminEnterDevilBoss()" style="padding: 10px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">😈 할로윈 악마 보스전 바로 입장</button>
                 <button onclick="adminEnterMonkeyBoss()" style="padding: 10px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🐵 원숭이 보스전 바로 입장</button>
                 <button onclick="adminResetAlienQuest()" style="padding: 10px; background: linear-gradient(135deg, #00cec9, #0984e3); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🧪 외계인 퀘스트 리셋 (재테스트)</button>
+                <button onclick="adminWarpToSwords()" style="padding: 10px; background: linear-gradient(135deg, #e17055, #d63031); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">⚔️ 전설의 검 2자루 위치로 이동</button>
                 <button onclick="adminRefillAll()" style="padding: 10px; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🎒 모든 과일/암석/물고기 999개 충전</button>
                 <button onclick="adminWarpToEarth()" style="padding: 10px; background: rgba(255,255,255,0.12); color: #ddd; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🌍 지상 마을(시작점)로 이동</button>
+            </div>
+        </div>
+
+        <!-- ⚔️ 어드민 전용 전설의 검 강화 & PVP 모달 (스크린샷 스타일 완벽 구현) -->
+        <div id="sword-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #151c28; color: white; padding: 22px 20px; border-radius: 24px; width: 92%; max-width: 370px; display: none; border: 2px solid #233554; z-index: 75; box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(43, 122, 240, 0.28); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <!-- 상단 닫기 버튼 -->
+            <div style="position: absolute; top: 16px; right: 18px;">
+                <button onclick="closeAdminSwordModal()" style="background: rgba(255,255,255,0.1); border: none; color: #aaa; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1;">✕</button>
+            </div>
+
+            <!-- 내부 카드 컨테이너 (스크린샷 그대로) -->
+            <div style="background: #111726; border: 1.5px solid #233554; border-radius: 18px; padding: 22px 16px 18px 16px; margin-bottom: 14px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);">
+                <!-- 검 이름 -->
+                <h2 id="sword-modal-title" style="margin: 0 0 12px 0; color: #ffffff; font-size: 26px; font-weight: 900; letter-spacing: -0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">초보자의 칼</h2>
+                
+                <!-- 데미지 & 강화 단계 -->
+                <div style="display: flex; justify-content: center; gap: 20px; font-size: 14px; color: #a0aec0; margin-bottom: 14px;">
+                    <div>데미지: <b id="sword-modal-dmg" style="color: #ffffff; font-size: 15px; font-weight: 800;">300.0</b></div>
+                    <div>강화 단계: <b id="sword-modal-tier" style="color: #ffffff; font-size: 15px; font-weight: 800;">[+0]</b></div>
+                </div>
+
+                <!-- 검 일러스트 캔버스 -->
+                <canvas id="sword-modal-canvas" width="100" height="150" style="display: block; margin: 0 auto; filter: drop-shadow(0 0 12px rgba(255,255,255,0.15));"></canvas>
+            </div>
+
+            <!-- 버튼 영역: 검이름 / 강화하기 / pvp입성하기만 있게 구성 -->
+            <div style="display: flex; flex-direction: column; gap: 9px;">
+                <button id="sword-upgrade-btn" onclick="upgradeAdminSword()" style="width: 100%; padding: 14px; background: #2b7af0; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(43, 122, 240, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>🔨</span> <span id="sword-upgrade-btn-text">강화하기 (비용: 100원)</span>
+                </button>
+                <button id="sword-pvp-btn" onclick="startPvpWithActiveSword()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>⚔️</span> <span>PVP 입성하기</span>
+                </button>
             </div>
         </div>
 
@@ -868,6 +902,57 @@
         // 플레이어 보스전 체력 (100 HP, 악마 보스 공격 시 -10 HP)
         let playerBossHp = 100;
         const PLAYER_MAX_BOSS_HP = 100;
+
+        // ==========================================
+        // ⚔️ 어드민 전용 전설의 검 2자루 & PVP 결투장 시스템
+        // ==========================================
+        let adminSwords = [
+            { id: 'sword_light', namePrefix: '빛의 검', x: 180, y: 810, tier: 0, type: 'light' },
+            { id: 'sword_dark', namePrefix: '어둠의 검', x: 235, y: 810, tier: 0, type: 'dark' }
+        ];
+
+        const swordTiersData = {
+            light: [
+                { tier: 0, name: '초보자의 칼', damage: 300.0, cost: 100, bladeColor: '#dcdde1', glow: 'none', titleColor: '#ffffff' },
+                { tier: 1, name: '강화된 초보자의 정수', damage: 450.5, cost: 300, bladeColor: '#74b9ff', glow: '0 0 10px #74b9ff', titleColor: '#74b9ff' },
+                { tier: 2, name: '중수의 검', damage: 600.0, cost: 800, bladeColor: '#00cec9', glow: '0 0 12px #00cec9', titleColor: '#81ecec' },
+                { tier: 3, name: '숙련자의 검', damage: 750.5, cost: 3000, bladeColor: '#2ecc71', glow: '0 0 14px #2ecc71', titleColor: '#2ecc71' },
+                { tier: 4, name: '전설의 검', damage: 1000.0, cost: 10000, bladeColor: '#a29bfe', glow: '0 0 18px #a29bfe', titleColor: '#a29bfe' },
+                { tier: 5, name: '진화의 검', damage: 1500.0, cost: 30000, bladeColor: '#f1c40f', glow: '0 0 25px #f1c40f', titleColor: '#f39c12' }
+            ],
+            dark: [
+                { tier: 0, name: '어둠의 초보자검', damage: 300.0, cost: 100, bladeColor: '#b2bec3', glow: 'none', titleColor: '#ffffff' },
+                { tier: 1, name: '강화된 심연의 정수', damage: 450.5, cost: 300, bladeColor: '#ff7675', glow: '0 0 10px #ff7675', titleColor: '#ff7675' },
+                { tier: 2, name: '심연 중수의 검', damage: 600.0, cost: 800, bladeColor: '#e84393', glow: '0 0 12px #e84393', titleColor: '#fd79a8' },
+                { tier: 3, name: '숙련자의 마검', damage: 750.5, cost: 3000, bladeColor: '#e17055', glow: '0 0 14px #e17055', titleColor: '#e17055' },
+                { tier: 4, name: '전설의 칠흑검', damage: 1000.0, cost: 10000, bladeColor: '#9b59b6', glow: '0 0 18px #9b59b6', titleColor: '#be2edd' },
+                { tier: 5, name: '진화의 멸망검', damage: 1500.0, cost: 30000, bladeColor: '#ff4757', glow: '0 0 25px #ff4757', titleColor: '#ff4757' }
+            ]
+        };
+
+        let inPvpArena = false;
+        let currentPvpSwordIndex = 0;
+        let activeSwordModalIndex = 0;
+        let playerPvpHp = 3000;
+        const PLAYER_MAX_PVP_HP = 3000;
+        let pvpWins = 0;
+
+        let pvpOpponent = {
+            x: 300,
+            y: 280,
+            hp: 3000,
+            maxHp: 3000,
+            facing: 1,
+            flinchTimer: 0,
+            attackCooldown: 60,
+            speed: 2.5,
+            state: 'chase',
+            defeated: false,
+            respawnTimer: 0,
+            name: '도전자 섀도우 검사'
+        };
+
+        let pvpSlashEffects = [];
 
         // 👑 숲의 수호자 원숭이 보스 (일반 지형 보스)
         let monkeyBoss = {
@@ -3759,6 +3844,16 @@
         function handleTreeClick(cx, cy, isSpacebar = false) {
             if (blackoutState.active) return;
 
+            // ⚔️ PVP 결투장 내부에서의 클릭/공격 처리
+            if (inPvpArena) {
+                if (!isSpacebar && cx > GAME_WIDTH - 130 && cx < GAME_WIDTH - 25 && cy > 20 && cy < 65) {
+                    exitPvpArena();
+                    return;
+                }
+                playerAttackInPvpArena(cx, cy);
+                return;
+            }
+
             // 🧪 외계 과학자 실험실 내부에서의 클릭/공격 처리
             if (inAlienLab) {
                 handleAlienLabClick(cx, cy, isSpacebar);
@@ -3807,6 +3902,19 @@
                 if (rlDist < 60 || (isSpacebar && rlPlayerDist < 85)) {
                     openRouletteModal();
                     return;
+                }
+            }
+
+            // ⚔️ 어드민 전용 전설의 검 2자루 클릭 감지 (일반 지형 x: 180, y: 810 및 x: 235, y: 810)
+            if (isAdmin() && typeof adminSwords !== 'undefined') {
+                for (let i = 0; i < adminSwords.length; i++) {
+                    const sw = adminSwords[i];
+                    let swDist = Math.hypot(cx - sw.x, cy - sw.y);
+                    let swPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - sw.x, player.y - sw.y) : 999;
+                    if (swDist < 55 || (isSpacebar && swPlayerDist < 75)) {
+                        openAdminSwordModal(i);
+                        return;
+                    }
                 }
             }
 
@@ -5251,11 +5359,666 @@
             if (!isAdmin()) return;
             closeAdminPanelModal();
             if (inBossRoom) exitBossDimension();
+            if (inPvpArena) exitPvpArena();
             player.x = GAME_WIDTH / 2;
             player.y = 800;
             cameraY = 0;
             player.targetTree = null;
             floatTexts.push({ x: player.x, y: player.y - 80, text: '🌍 지상 마을로 복귀!', color: '#2ecc71', life: 90, size: 20 });
+        }
+
+        function adminWarpToSwords() {
+            if (!isAdmin()) return;
+            closeAdminPanelModal();
+            if (inBossRoom) exitBossDimension();
+            if (inPvpArena) exitPvpArena();
+            player.x = 210;
+            player.y = 850;
+            cameraY = 0;
+            player.targetTree = null;
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '⚔️ 전설의 검 2자루 앞으로 이동!', color: '#f1c40f', life: 90, size: 20 });
+        }
+
+        // ==========================================
+        // ⚔️ 어드민 전설의 검 UI & 강화 & PVP 핸들러
+        // ==========================================
+        function openAdminSwordModal(index) {
+            if (!isAdmin()) return;
+            activeSwordModalIndex = index;
+            const modal = document.getElementById('sword-modal');
+            if (!modal) return;
+            modal.style.display = 'block';
+            resetJoyMouse();
+            player.targetTree = null;
+            updateAdminSwordModalUI();
+        }
+
+        function closeAdminSwordModal() {
+            const modal = document.getElementById('sword-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function drawSwordCanvas(canvasId, type, tier) {
+            const cvs = document.getElementById(canvasId);
+            if (!cvs) return;
+            const c = cvs.getContext('2d');
+            c.clearRect(0, 0, cvs.width, cvs.height);
+
+            const tiers = swordTiersData[type] || swordTiersData.light;
+            const data = tiers[tier] || tiers[0];
+            const cx = cvs.width / 2;
+            const cy = cvs.height / 2;
+
+            c.save();
+            c.translate(cx, cy + 4);
+
+            if (tier >= 3) {
+                c.shadowColor = data.bladeColor;
+                c.shadowBlur = (tier === 3) ? 12 : (tier === 4) ? 22 : 32;
+            }
+
+            // 1. Blade
+            c.fillStyle = data.bladeColor;
+            c.beginPath();
+            c.moveTo(0, -56);
+            c.lineTo(13, -38);
+            c.lineTo(13, 10);
+            c.lineTo(-13, 10);
+            c.lineTo(-13, -38);
+            c.closePath();
+            c.fill();
+
+            // Blade center highlight
+            c.fillStyle = 'rgba(255, 255, 255, 0.45)';
+            c.beginPath();
+            c.moveTo(0, -52);
+            c.lineTo(4, -36);
+            c.lineTo(4, 10);
+            c.lineTo(0, 10);
+            c.closePath();
+            c.fill();
+
+            c.strokeStyle = 'rgba(255,255,255,0.7)';
+            c.lineWidth = 1.5;
+            c.beginPath();
+            c.moveTo(0, -52);
+            c.lineTo(0, 10);
+            c.stroke();
+
+            // 2. Crossguard
+            c.shadowBlur = 0;
+            c.fillStyle = (type === 'light') ? ((tier >= 4) ? '#f1c40f' : '#4b6584') : ((tier >= 4) ? '#8e44ad' : '#2d3436');
+            c.strokeStyle = '#ffffff';
+            c.lineWidth = 1.2;
+            c.beginPath();
+            if (c.roundRect) {
+                c.roundRect(-24, 10, 48, 10, 4);
+            } else {
+                c.rect(-24, 10, 48, 10);
+            }
+            c.fill();
+            c.stroke();
+
+            if (tier >= 2) {
+                c.fillStyle = data.bladeColor;
+                c.beginPath();
+                c.arc(0, 15, 3.5, 0, Math.PI * 2);
+                c.fill();
+            }
+
+            // 3. Grip
+            c.fillStyle = (type === 'light') ? '#8d5524' : '#2f3542';
+            c.fillRect(-4.5, 20, 9, 24);
+
+            c.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            c.lineWidth = 1;
+            for (let gy = 24; gy <= 40; gy += 4) {
+                c.beginPath();
+                c.moveTo(-4.5, gy);
+                c.lineTo(4.5, gy);
+                c.stroke();
+            }
+
+            // 4. Pommel
+            c.fillStyle = (tier >= 4) ? '#f1c40f' : '#95a5a6';
+            c.beginPath();
+            c.arc(0, 48, 6, 0, Math.PI * 2);
+            c.fill();
+            c.strokeStyle = '#fff';
+            c.lineWidth = 1;
+            c.stroke();
+
+            c.restore();
+        }
+
+        function updateAdminSwordModalUI() {
+            const sw = adminSwords[activeSwordModalIndex] || adminSwords[0];
+            const tiers = swordTiersData[sw.type] || swordTiersData.light;
+            const curTierData = tiers[sw.tier] || tiers[0];
+
+            const titleEl = document.getElementById('sword-modal-title');
+            const dmgEl = document.getElementById('sword-modal-dmg');
+            const tierEl = document.getElementById('sword-modal-tier');
+            const btnText = document.getElementById('sword-upgrade-btn-text');
+            const upgradeBtn = document.getElementById('sword-upgrade-btn');
+
+            if (titleEl) {
+                titleEl.innerText = curTierData.name;
+                titleEl.style.color = curTierData.titleColor;
+                titleEl.style.textShadow = curTierData.glow !== 'none' ? curTierData.glow : '0 2px 8px rgba(0,0,0,0.8)';
+            }
+            if (dmgEl) dmgEl.innerText = curTierData.damage.toFixed(1);
+            if (tierEl) tierEl.innerText = `[+${sw.tier}]`;
+
+            if (sw.tier >= 5) {
+                if (btnText) btnText.innerText = '✨ 최고 강화 단계 달성 [+5]';
+                if (upgradeBtn) {
+                    upgradeBtn.disabled = true;
+                    upgradeBtn.style.background = '#7f8c8d';
+                    upgradeBtn.style.cursor = 'default';
+                }
+            } else {
+                const nextTierData = tiers[sw.tier + 1];
+                if (btnText) btnText.innerText = `강화하기 (비용: ${nextTierData.cost.toLocaleString()}원)`;
+                if (upgradeBtn) {
+                    upgradeBtn.disabled = false;
+                    upgradeBtn.style.background = '#2b7af0';
+                    upgradeBtn.style.cursor = 'pointer';
+                }
+            }
+
+            drawSwordCanvas('sword-modal-canvas', sw.type, sw.tier);
+        }
+
+        function upgradeAdminSword() {
+            if (!isAdmin()) return;
+            const sw = adminSwords[activeSwordModalIndex];
+            if (!sw || sw.tier >= 5) return;
+
+            const tiers = swordTiersData[sw.type] || swordTiersData.light;
+            const nextTierData = tiers[sw.tier + 1];
+
+            sw.tier++;
+            saveGame();
+            updateAdminSwordModalUI();
+
+            floatTexts.push({
+                x: player.x,
+                y: player.y - 100,
+                text: `✨ 강화 성공! [${nextTierData.name} (+${sw.tier})]`,
+                color: nextTierData.titleColor,
+                life: 100,
+                size: 22
+            });
+        }
+
+        function startPvpWithActiveSword() {
+            if (!isAdmin()) return;
+            closeAdminSwordModal();
+            enterPvpArena(activeSwordModalIndex);
+        }
+
+        function enterPvpArena(swordIndex = 0) {
+            if (!isAdmin()) return;
+            currentPvpSwordIndex = swordIndex;
+            savedWorldPos = { x: player.x, y: player.y, cameraY: cameraY };
+
+            inPvpArena = true;
+            playerPvpHp = PLAYER_MAX_PVP_HP;
+
+            player.x = 300;
+            player.y = 660;
+            player.vx = 0;
+            player.vy = 0;
+            player.targetTree = null;
+            player.axeSwingTimer = 0;
+            cameraY = 0;
+
+            pvpOpponent.x = 300;
+            pvpOpponent.y = 280;
+            pvpOpponent.hp = 3000;
+            pvpOpponent.maxHp = 3000;
+            pvpOpponent.flinchTimer = 0;
+            pvpOpponent.attackCooldown = 60;
+            pvpOpponent.defeated = false;
+            pvpOpponent.respawnTimer = 0;
+
+            pvpSlashEffects = [];
+            setBossRoomHUDVisible(false);
+
+            const sw = adminSwords[swordIndex] || adminSwords[0];
+            const tiers = swordTiersData[sw.type] || swordTiersData.light;
+            const curTierData = tiers[sw.tier] || tiers[0];
+
+            floatTexts.push({
+                x: 300,
+                y: 350,
+                text: `⚔️ PVP 결투장 입장! [${curTierData.name} (+${sw.tier})] 장착`,
+                color: '#f1c40f',
+                life: 110,
+                size: 22
+            });
+        }
+
+        function exitPvpArena() {
+            inPvpArena = false;
+            player.x = savedWorldPos.x || (GAME_WIDTH / 2);
+            player.y = savedWorldPos.y || 800;
+            cameraY = savedWorldPos.cameraY || 0;
+            player.targetTree = null;
+            player.axeSwingTimer = 0;
+
+            setBossRoomHUDVisible(true);
+            floatTexts.push({
+                x: player.x,
+                y: player.y - 80,
+                text: `🌍 원래 세계로 복귀했습니다!`,
+                color: '#2ecc71',
+                life: 70
+            });
+        }
+
+        function updatePvpArena() {
+            let moveX = 0, moveY = 0;
+            if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
+            if (keys.a) moveX -= 1; if (keys.d) moveX += 1;
+
+            if (moveX !== 0 || moveY !== 0) {
+                let mag = Math.hypot(moveX, moveY);
+                player.vx = (moveX / mag) * player.speed;
+                player.vy = (moveY / mag) * player.speed;
+            } else if (joystick.active) {
+                player.vx = joystick.dx * player.speed;
+                player.vy = joystick.dy * player.speed;
+            } else {
+                player.vx *= 0.8;
+                player.vy *= 0.8;
+            }
+
+            player.x = Math.max(70, Math.min(GAME_WIDTH - 70, player.x + player.vx));
+            player.y = Math.max(140, Math.min(GAME_HEIGHT - 70, player.y + player.vy));
+
+            if (Math.abs(player.vx) > 0.1) player.facing = player.vx > 0 ? 1 : -1;
+            if (player.axeSwingTimer > 0) player.axeSwingTimer--;
+
+            if (!pvpOpponent.defeated) {
+                if (pvpOpponent.flinchTimer > 0) {
+                    pvpOpponent.flinchTimer--;
+                } else {
+                    let dx = player.x - pvpOpponent.x;
+                    let dy = player.y - pvpOpponent.y;
+                    let dist = Math.hypot(dx, dy);
+
+                    if (dist > 75) {
+                        pvpOpponent.x += (dx / dist) * pvpOpponent.speed;
+                        pvpOpponent.y += (dy / dist) * pvpOpponent.speed;
+                        pvpOpponent.facing = dx >= 0 ? 1 : -1;
+                    }
+
+                    if (pvpOpponent.attackCooldown > 0) {
+                        pvpOpponent.attackCooldown--;
+                    } else if (dist <= 90) {
+                        pvpOpponent.attackCooldown = 70;
+                        let damage = 350;
+                        playerPvpHp = Math.max(0, playerPvpHp - damage);
+
+                        pvpSlashEffects.push({
+                            x: (player.x + pvpOpponent.x) / 2,
+                            y: (player.y + pvpOpponent.y) / 2 - 10,
+                            life: 14,
+                            color: '#ff4757',
+                            facing: pvpOpponent.facing
+                        });
+
+                        floatTexts.push({
+                            x: player.x,
+                            y: player.y - 70,
+                            text: `-${damage}`,
+                            color: '#ff4757',
+                            life: 50,
+                            size: 20
+                        });
+
+                        if (playerPvpHp <= 0) {
+                            floatTexts.push({ x: player.x, y: player.y - 100, text: `💀 패배... (체력 3000 회복됨)`, color: '#e74c3c', life: 90, size: 24 });
+                            setTimeout(() => {
+                                playerPvpHp = PLAYER_MAX_PVP_HP;
+                            }, 1200);
+                        }
+                    }
+                }
+            } else {
+                pvpOpponent.respawnTimer++;
+                if (pvpOpponent.respawnTimer > 90) {
+                    pvpOpponent.defeated = false;
+                    pvpOpponent.respawnTimer = 0;
+                    pvpOpponent.hp = 3000;
+                    pvpOpponent.x = 300;
+                    pvpOpponent.y = 280;
+                    floatTexts.push({ x: 300, y: 280, text: `⚔️ 새로운 도전자 등장!`, color: '#f1c40f', life: 90, size: 22 });
+                }
+            }
+
+            pvpSlashEffects.forEach(s => s.life--);
+            pvpSlashEffects = pvpSlashEffects.filter(s => s.life > 0);
+        }
+
+        function playerAttackInPvpArena(targetX, targetY) {
+            if (!inPvpArena || pvpOpponent.defeated) return;
+
+            const sw = adminSwords[currentPvpSwordIndex] || adminSwords[0];
+            const tiers = swordTiersData[sw.type] || swordTiersData.light;
+            const curTierData = tiers[sw.tier] || tiers[0];
+            const damage = curTierData.damage;
+
+            player.axeSwingTimer = 16;
+            let dx = pvpOpponent.x - player.x;
+            player.facing = dx >= 0 ? 1 : -1;
+
+            let dist = Math.hypot(player.x - pvpOpponent.x, player.y - pvpOpponent.y);
+            if (dist < 135) {
+                pvpOpponent.hp = Math.max(0, pvpOpponent.hp - damage);
+                pvpOpponent.flinchTimer = 16;
+
+                pvpSlashEffects.push({
+                    x: (player.x + pvpOpponent.x) / 2,
+                    y: (player.y + pvpOpponent.y) / 2 - 10,
+                    life: 14,
+                    color: curTierData.bladeColor,
+                    facing: player.facing
+                });
+
+                floatTexts.push({
+                    x: pvpOpponent.x,
+                    y: pvpOpponent.y - 70,
+                    text: `-${damage.toFixed(1)}! 💥`,
+                    color: curTierData.titleColor,
+                    life: 55,
+                    size: 22
+                });
+
+                if (pvpOpponent.hp <= 0 && !pvpOpponent.defeated) {
+                    pvpOpponent.defeated = true;
+                    pvpWins++;
+                    floatTexts.push({
+                        x: 300,
+                        y: 350,
+                        text: `🏆 도전자 격퇴 완료! (총 ${pvpWins}승)`,
+                        color: '#f1c40f',
+                        life: 100,
+                        size: 26
+                    });
+                }
+            }
+        }
+
+        function drawPvpArena() {
+            ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+            // 1. 바닥 링
+            ctx.fillStyle = '#0f141f';
+            ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+            let ringGrad = ctx.createRadialGradient(GAME_WIDTH / 2, GAME_HEIGHT / 2, 40, GAME_WIDTH / 2, GAME_HEIGHT / 2, 280);
+            ringGrad.addColorStop(0, 'rgba(43, 122, 240, 0.15)');
+            ringGrad.addColorStop(0.7, 'rgba(17, 23, 38, 0.9)');
+            ringGrad.addColorStop(1, '#0b0f19');
+            ctx.fillStyle = ringGrad;
+            ctx.beginPath();
+            ctx.arc(GAME_WIDTH / 2, GAME_HEIGHT / 2, 280, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#2b7af0';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(241, 196, 15, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([12, 10]);
+            ctx.beginPath();
+            ctx.arc(GAME_WIDTH / 2, GAME_HEIGHT / 2, 230, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 횃불 기둥 4개
+            const torches = [
+                { x: 90, y: 160 }, { x: GAME_WIDTH - 90, y: 160 },
+                { x: 90, y: GAME_HEIGHT - 120 }, { x: GAME_WIDTH - 90, y: GAME_HEIGHT - 120 }
+            ];
+            torches.forEach(t => {
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(t.x - 10, t.y, 20, 45);
+                ctx.fillStyle = '#f39c12';
+                ctx.beginPath();
+                ctx.arc(t.x, t.y - 6, 9 + Math.sin(Date.now() * 0.01 + t.x) * 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ff4757';
+                ctx.beginPath();
+                ctx.arc(t.x, t.y - 8, 5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // 2. 도전자 그리기
+            if (!pvpOpponent.defeated) {
+                ctx.save();
+                ctx.translate(pvpOpponent.x, pvpOpponent.y);
+                ctx.scale(pvpOpponent.facing, 1);
+                if (pvpOpponent.flinchTimer > 0) ctx.filter = 'brightness(1.8) hue-rotate(90deg)';
+
+                ctx.fillStyle = 'rgba(0,0,0,0.35)';
+                ctx.beginPath();
+                ctx.ellipse(0, 24, 22, 9, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                const dummyOpponent = {
+                    colors: { skin: '#dcdde1', shirt: '#2c3e50', hat: '#1e272e' },
+                    facing: 1
+                };
+                drawCharacter(ctx, dummyOpponent, 0, 0, false, 0, 'reaper');
+                ctx.restore();
+            }
+
+            // 3. 플레이어 그리기
+            ctx.save();
+            ctx.translate(player.x, player.y);
+            ctx.scale(player.facing, 1);
+
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            ctx.beginPath();
+            ctx.ellipse(0, 24, 22, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            drawCharacter(ctx, player, 0, 0, Math.hypot(player.vx, player.vy) > 0.5, player.walkTimer, equippedSkin);
+
+            const sw = adminSwords[currentPvpSwordIndex] || adminSwords[0];
+            const tiers = swordTiersData[sw.type] || swordTiersData.light;
+            const curTierData = tiers[sw.tier] || tiers[0];
+
+            ctx.save();
+            ctx.translate(16, 5);
+            let swingAngle = player.axeSwingTimer > 0 ? (player.axeSwingTimer / 16) * 1.5 - 0.75 : 0.3;
+            ctx.rotate(swingAngle);
+
+            ctx.fillStyle = curTierData.bladeColor;
+            if (sw.tier >= 3) {
+                ctx.shadowColor = curTierData.bladeColor;
+                ctx.shadowBlur = 12;
+            }
+            ctx.fillRect(0, -32, 6, 32);
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(-5, 0, 16, 4);
+            ctx.fillStyle = '#8d5524';
+            ctx.fillRect(1, 4, 4, 10);
+            ctx.restore();
+
+            ctx.restore();
+
+            // 4. 슬래시 이펙트
+            pvpSlashEffects.forEach(s => {
+                ctx.save();
+                ctx.translate(s.x, s.y);
+                ctx.scale(s.facing || 1, 1);
+                ctx.strokeStyle = s.color || '#fff';
+                ctx.lineWidth = 4;
+                ctx.shadowColor = s.color || '#fff';
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(0, 0, 35, -Math.PI / 3, Math.PI / 3);
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            // 5. 상단 HUD
+            ctx.fillStyle = 'rgba(17, 23, 38, 0.95)';
+            ctx.strokeStyle = '#233554';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(15, 15, GAME_WIDTH - 30, 95, 14);
+            else ctx.rect(15, 15, GAME_WIDTH - 30, 95);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#f1c40f';
+            ctx.font = 'bold 15px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`⚔️ PVP ARENA  [${curTierData.name} (+${sw.tier})] (데미지: ${curTierData.damage.toFixed(1)})`, 28, 38);
+
+            ctx.fillStyle = '#2ecc71';
+            ctx.font = 'bold 12px Arial';
+            ctx.fillText(`내 체력: ${playerPvpHp} / 3000`, 28, 62);
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillRect(28, 70, 200, 14);
+            ctx.fillStyle = '#2ecc71';
+            ctx.fillRect(28, 70, Math.max(0, (playerPvpHp / 3000) * 200), 14);
+            ctx.strokeStyle = '#27ae60';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(28, 70, 200, 14);
+
+            const oppHp = Math.max(0, pvpOpponent.hp);
+            ctx.fillStyle = '#ff7675';
+            ctx.textAlign = 'right';
+            ctx.fillText(`도전자: ${oppHp} / 3000`, GAME_WIDTH - 145, 62);
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillRect(GAME_WIDTH - 345, 70, 200, 14);
+            ctx.fillStyle = '#ff4757';
+            ctx.fillRect(GAME_WIDTH - 345, 70, (oppHp / 3000) * 200, 14);
+            ctx.strokeStyle = '#c0392b';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(GAME_WIDTH - 345, 70, 200, 14);
+
+            ctx.fillStyle = '#c0392b';
+            ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(GAME_WIDTH - 125, 25, 95, 34, 8);
+            else ctx.rect(GAME_WIDTH - 125, 25, 95, 34);
+            ctx.fill();
+            ctx.strokeStyle = '#e74c3c';
+            ctx.stroke();
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🚪 나가기', GAME_WIDTH - 77, 47);
+
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('💡 화면 클릭 / 터치 또는 [스페이스바]로 도전자 공격', GAME_WIDTH / 2, GAME_HEIGHT - 25);
+
+            // 플로팅 텍스트
+            floatTexts.forEach(t => {
+                ctx.save();
+                ctx.fillStyle = t.color;
+                ctx.globalAlpha = Math.min(1.0, t.life / 30);
+                let size = t.size || 18;
+                ctx.font = `bold ${size}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.shadowColor = 'black';
+                ctx.shadowBlur = 5;
+                ctx.fillText(t.text, t.x, t.y);
+                ctx.restore();
+            });
+
+            if (joystick.active) {
+                ctx.beginPath(); ctx.arc(joystick.originX, joystick.originY, 60, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'; ctx.lineWidth = 2; ctx.stroke();
+                ctx.beginPath(); ctx.arc(joystick.x, joystick.y, 25, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; ctx.fill();
+            }
+        }
+
+        function drawAdminSwordInGround(c, sw) {
+            const tiers = swordTiersData[sw.type] || swordTiersData.light;
+            const curTierData = tiers[sw.tier] || tiers[0];
+
+            c.save();
+            c.translate(sw.x, sw.y);
+
+            const isLight = (sw.type === 'light');
+            c.strokeStyle = isLight ? 'rgba(241, 196, 15, 0.45)' : 'rgba(155, 89, 182, 0.45)';
+            c.lineWidth = 2;
+            c.beginPath();
+            c.ellipse(0, 5, 26, 12, 0, 0, Math.PI * 2);
+            c.stroke();
+
+            c.fillStyle = '#485460';
+            c.beginPath();
+            c.ellipse(0, 4, 18, 9, 0, 0, Math.PI * 2);
+            c.fill();
+            c.fillStyle = '#2f3542';
+            c.beginPath();
+            c.ellipse(2, 6, 14, 6, 0, 0, Math.PI * 2);
+            c.fill();
+
+            c.rotate(isLight ? -0.16 : 0.16);
+
+            if (sw.tier >= 3) {
+                c.shadowColor = curTierData.bladeColor;
+                c.shadowBlur = 15;
+            }
+
+            c.fillStyle = curTierData.bladeColor;
+            c.beginPath();
+            c.moveTo(-4, -40);
+            c.lineTo(4, -40);
+            c.lineTo(3, 5);
+            c.lineTo(-3, 5);
+            c.closePath();
+            c.fill();
+
+            c.fillStyle = isLight ? ((sw.tier >= 4) ? '#f1c40f' : '#4b6584') : ((sw.tier >= 4) ? '#8e44ad' : '#2d3436');
+            c.fillRect(-12, -43, 24, 5);
+
+            c.fillStyle = isLight ? '#8d5524' : '#2f3542';
+            c.fillRect(-2.5, -57, 5, 14);
+
+            c.fillStyle = curTierData.bladeColor;
+            c.beginPath();
+            c.arc(0, -60, 4, 0, Math.PI * 2);
+            c.fill();
+
+            c.restore();
+
+            const distToPlayer = Math.hypot(player.x - sw.x, player.y - sw.y);
+            if (distToPlayer < 85) {
+                c.save();
+                c.translate(sw.x, sw.y - 75);
+                c.fillStyle = 'rgba(17, 23, 38, 0.92)';
+                c.strokeStyle = curTierData.bladeColor;
+                c.lineWidth = 1.5;
+                c.beginPath();
+                if (c.roundRect) {
+                    c.roundRect(-65, -18, 130, 24, 6);
+                } else {
+                    c.rect(-65, -18, 130, 24);
+                }
+                c.fill();
+                c.stroke();
+
+                c.fillStyle = curTierData.titleColor;
+                c.font = 'bold 11px Arial';
+                c.textAlign = 'center';
+                const label = isLight ? `⚔️ [1번 검] ${curTierData.name} [+${sw.tier}]` : `⚔️ [2번 검] ${curTierData.name} [+${sw.tier}]`;
+                c.fillText(label, 0, -2);
+                c.restore();
+            }
         }
 
         function resetGameToDefault() {
@@ -5287,7 +6050,8 @@
             // 다른 계정으로 로그인하거나 새 계정을 만들 때 이전 계정 데이터가 남지 않도록 게임 상태 완전 초기화
             resetGameToDefault();
             stopTradeIncomingListener();
-            closeActiveTradeModal();
+            if (inPvpArena) exitPvpArena();
+            closeAdminSwordModal();
             closeAdminPanelModal();
             
             updateUserBadgeUI();
@@ -5463,7 +6227,8 @@
                 bossKills: isBossEventStarted() ? (bossKills || 0) : 0,
                 lastBossFightTime: lastBossFightTime || 0,
                 lastRouletteSpinTime: lastRouletteSpinTime || 0,
-                alienQuestDone: isAlienEventStarted() ? (alienQuestDone || false) : false
+                alienQuestDone: isAlienEventStarted() ? (alienQuestDone || false) : false,
+                adminSwords: isAdmin() ? adminSwords.map(s => ({ id: s.id, tier: s.tier })) : undefined
             };
         }
 
@@ -5531,6 +6296,14 @@
             }
 
             if (isAdmin()) {
+                if (data.adminSwords && Array.isArray(data.adminSwords)) {
+                    data.adminSwords.forEach(savedSw => {
+                        const target = adminSwords.find(s => s.id === savedSw.id);
+                        if (target && savedSw.tier !== undefined) {
+                            target.tier = Math.max(0, Math.min(5, Number(savedSw.tier)));
+                        }
+                    });
+                }
                 level = 10000;
                 maxXp = 100000000;
                 xp = 0;
@@ -6249,6 +7022,10 @@
                 updateAlienLab();
                 return;
             }
+            if (inPvpArena) {
+                updatePvpArena();
+                return;
+            }
             if (blackoutState.active) return;
             if (document.getElementById('inventory-modal').style.display === 'block') return;
             if (document.getElementById('shop-modal').style.display === 'block') return;
@@ -6261,6 +7038,7 @@
             if (document.getElementById('alien-scientist-modal') && document.getElementById('alien-scientist-modal').style.display === 'block') return;
             if (document.getElementById('roulette-modal') && document.getElementById('roulette-modal').style.display === 'block') return;
             if (document.getElementById('admin-panel-modal') && document.getElementById('admin-panel-modal').style.display === 'block') return;
+            if (document.getElementById('sword-modal') && document.getElementById('sword-modal').style.display === 'block') return;
 
             let moveX = 0, moveY = 0;
             if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
@@ -7874,6 +8652,10 @@
                 drawAlienLab();
                 return;
             }
+            if (inPvpArena) {
+                drawPvpArena();
+                return;
+            }
             ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
             ctx.save();
             ctx.translate(0, -cameraY);
@@ -7962,6 +8744,10 @@
             renderList.push({ type: 'teleporterHalloween', obj: teleporterHalloween, y: teleporterHalloween.y });
             renderList.push({ type: 'rankingBoard', obj: rankingBoard, y: rankingBoard.y });
             renderList.push({ type: 'rouletteMachine', obj: rouletteMachine, y: rouletteMachine.y });
+            if (isAdmin() && typeof adminSwords !== 'undefined') {
+                renderList.push({ type: 'adminSword', obj: adminSwords[0], y: adminSwords[0].y });
+                renderList.push({ type: 'adminSword', obj: adminSwords[1], y: adminSwords[1].y });
+            }
             renderList.sort((a, b) => a.y - b.y);
 
             renderList.forEach(item => {
@@ -8416,6 +9202,8 @@
                     drawRankingBoard(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'rouletteMachine') {
                     drawRouletteMachine(ctx, item.obj.x, item.obj.y);
+                } else if (item.type === 'adminSword') {
+                    drawAdminSwordInGround(ctx, item.obj);
                 }
             });
 
