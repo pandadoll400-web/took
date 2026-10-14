@@ -392,8 +392,13 @@
             </div>
 
             <!-- 결과 안내 배너 -->
-            <div id="roulette-result-banner" style="background: rgba(0,0,0,0.38); border: 1px solid rgba(243, 156, 18, 0.3); border-radius: 10px; padding: 10px; margin-bottom: 12px; min-height: 22px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: #f1c40f;">
+            <div id="roulette-result-banner" style="background: rgba(0,0,0,0.38); border: 1px solid rgba(243, 156, 18, 0.3); border-radius: 10px; padding: 10px; margin-bottom: 8px; min-height: 22px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: #f1c40f;">
                 행운을 시험해보세요!
+            </div>
+
+            <!-- ⏱️ 룰렛 쿨타임 안내 (1시간 쿨타임) -->
+            <div id="roulette-cooldown-display" style="background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 7px 10px; margin-bottom: 12px; font-size: 13px; font-weight: bold; color: #2ecc71;">
+                ✅ 지금 바로 돌릴 수 있습니다! (1시간에 1회)
             </div>
 
             <!-- 돌리기 버튼 -->
@@ -730,6 +735,10 @@
         let rouletteAngle = 0;
         let isRouletteSpinning = false;
         let rouletteAnimId = null;
+
+        // ⏱️ 할로윈 룰렛 1시간 쿨타임 시스템 (60분 = 3,600,000ms)
+        const ROULETTE_COOLDOWN_MS = 60 * 60 * 1000;
+        let lastRouletteSpinTime = Number(localStorage.getItem('last_roulette_spin_time') || 0);
 
         // 보스전 & 쪽지 조각 시스템 상태
         let inBossRoom = false;
@@ -2119,6 +2128,14 @@
                     floatTexts.push({ x: rankingBoard.x, y: rankingBoard.y - 70, text: `🔄 랭킹판 10분 자동 리롤 완료!`, color: '#f1c40f', life: 80, size: 14 });
                 }
             }
+
+            // 🎰 할로윈 룰렛 모달이 열려 있다면 쿨타임 UI 실시간 갱신
+            if (typeof updateRouletteCooldownUI === 'function') {
+                const rModal = document.getElementById('roulette-modal');
+                if (rModal && rModal.style.display === 'block') {
+                    updateRouletteCooldownUI();
+                }
+            }
         }, 1000);
 
         // 🎰 할로윈 행운의 룰렛 머신 월드 그리기 (x: 85, y: 2140)
@@ -2228,25 +2245,44 @@
             ctx.fillText("🎰 할로윈 룰렛", x, signY);
             ctx.restore();
 
-            // 9. 플레이어가 가까이 오면 상단에 안내 말풍선 표시
+            // 9. 플레이어가 가까이 오면 상단에 안내 말풍선 표시 (쿨타임 실시간 표시)
             const distToPlayer = Math.hypot(player.x - x, player.y - y);
             if (distToPlayer < 120) {
                 ctx.save();
                 const bob = Math.sin(now * 0.006) * 3;
                 const tipY = signY - 26 + bob;
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
-                ctx.strokeStyle = '#f39c12';
+
+                const elapsed = now - (lastRouletteSpinTime || 0);
+                const isCooldown = elapsed < ROULETTE_COOLDOWN_MS;
+
+                let tipText = "👉 [스페이스바] 또는 클릭하여 룰렛!";
+                let tipColor = '#ffffff';
+                let tipStroke = '#f39c12';
+                let boxW = 180;
+
+                if (isCooldown) {
+                    const remainMs = ROULETTE_COOLDOWN_MS - elapsed;
+                    const remainM = Math.floor(remainMs / 60000);
+                    const remainS = Math.floor((remainMs % 60000) / 1000);
+                    tipText = `🔒 룰렛 쿨타임: ${remainM}분 ${remainS}초 남음`;
+                    tipColor = '#ff7675';
+                    tipStroke = '#e74c3c';
+                    boxW = 190;
+                }
+
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.88)';
+                ctx.strokeStyle = tipStroke;
                 ctx.lineWidth = 1.5;
                 ctx.beginPath();
-                ctx.roundRect(x - 90, tipY - 11, 180, 22, 6);
+                ctx.roundRect(x - (boxW / 2), tipY - 11, boxW, 22, 6);
                 ctx.fill();
                 ctx.stroke();
 
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = tipColor;
                 ctx.font = 'bold 10px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText("👉 [스페이스바] 또는 클릭하여 룰렛!", x, tipY);
+                ctx.fillText(tipText, x, tipY);
                 ctx.restore();
             }
 
@@ -2368,9 +2404,71 @@
             return 5;                // 💨 꽝 (1%)
         }
 
+        // ⏱️ 룰렛 쿨타임 UI 갱신 (1시간 쿨타임)
+        function updateRouletteCooldownUI() {
+            const modal = document.getElementById('roulette-modal');
+            const spinBtn = document.getElementById('roulette-spin-btn');
+            const cooldownEl = document.getElementById('roulette-cooldown-display');
+
+            if (isRouletteSpinning) return;
+
+            const now = Date.now();
+            const elapsed = now - (lastRouletteSpinTime || 0);
+            const isCooldown = elapsed < ROULETTE_COOLDOWN_MS;
+
+            if (isCooldown) {
+                const remainMs = ROULETTE_COOLDOWN_MS - elapsed;
+                const remainMin = Math.floor(remainMs / 60000);
+                const remainSec = Math.floor((remainMs % 60000) / 1000);
+                const timeStr = `${remainMin}분 ${String(remainSec).padStart(2, '0')}초`;
+
+                if (spinBtn) {
+                    spinBtn.disabled = true;
+                    spinBtn.style.background = 'linear-gradient(135deg, #7f8c8d, #4b5563)';
+                    spinBtn.style.boxShadow = 'none';
+                    spinBtn.style.cursor = 'not-allowed';
+                    spinBtn.style.opacity = '0.75';
+                    spinBtn.innerText = `🔒 ${timeStr} 후 이용 가능`;
+                }
+                if (cooldownEl) {
+                    cooldownEl.innerHTML = `⏱️ 쿨타임 대기 중: <span style="color:#ff7675;">${timeStr}</span> 남음 (1시간에 1회)`;
+                }
+            } else {
+                if (spinBtn) {
+                    spinBtn.disabled = false;
+                    spinBtn.style.background = 'linear-gradient(135deg, #e67e22, #d35400)';
+                    spinBtn.style.boxShadow = '0 4px 15px rgba(230, 126, 34, 0.5)';
+                    spinBtn.style.cursor = 'pointer';
+                    spinBtn.style.opacity = '1';
+                    spinBtn.innerText = '🎰 룰렛 돌리기!';
+                }
+                if (cooldownEl) {
+                    cooldownEl.innerHTML = `✅ <span style="color:#2ecc71;">지금 바로 돌릴 수 있습니다!</span> (1시간에 1회)`;
+                }
+            }
+        }
+
         // 🎰 룰렛 돌리기 버튼 클릭 시 회전 애니메이션 시작
         function startRouletteSpin() {
             if (isRouletteSpinning) return;
+
+            const now = Date.now();
+            const elapsed = now - (lastRouletteSpinTime || 0);
+            if (elapsed < ROULETTE_COOLDOWN_MS) {
+                const remainMs = ROULETTE_COOLDOWN_MS - elapsed;
+                const remainMin = Math.floor(remainMs / 60000);
+                const remainSec = Math.floor((remainMs % 60000) / 1000);
+                alert(`⏱️ 룰렛은 1시간에 1번씩만 돌릴 수 있습니다!\n남은 대기 시간: ${remainMin}분 ${remainSec}초`);
+                floatTexts.push({ x: player.x, y: player.y - 80, text: `🔒 룰렛 쿨타임! (${remainMin}분 ${remainSec}초 남음)`, color: '#e74c3c', life: 90, size: 16 });
+                updateRouletteCooldownUI();
+                return;
+            }
+
+            // 쿨타임 즉시 기록 및 영구 저장
+            lastRouletteSpinTime = now;
+            try { localStorage.setItem('last_roulette_spin_time', String(now)); } catch(e) {}
+            saveGame();
+
             isRouletteSpinning = true;
 
             const spinBtn = document.getElementById('roulette-spin-btn');
@@ -2412,8 +2510,8 @@
                 return 1 - Math.pow(1 - x, 4);
             }
 
-            function animate(now) {
-                const elapsed = now - startTime;
+            function animate(nowAnim) {
+                const elapsed = nowAnim - startTime;
                 const progress = Math.min(1, elapsed / duration);
                 const ease = easeOutQuart(progress);
 
@@ -2428,14 +2526,8 @@
                     isRouletteSpinning = false;
                     rouletteAnimId = null;
 
-                    if (spinBtn) {
-                        spinBtn.disabled = false;
-                        spinBtn.style.opacity = '1';
-                        spinBtn.style.cursor = 'pointer';
-                        spinBtn.innerText = '🎰 룰렛 돌리기!';
-                    }
-
                     applyRouletteReward(ROULETTE_ITEMS[winnerIdx]);
+                    updateRouletteCooldownUI();
                 }
             }
 
@@ -2493,6 +2585,7 @@
             if (typeof resetJoyMouse === 'function') resetJoyMouse();
             if (typeof player !== 'undefined') player.targetTree = null;
             drawRouletteWheel(rouletteAngle);
+            updateRouletteCooldownUI();
         }
 
         function closeRouletteModal() {
@@ -3821,7 +3914,8 @@
                 noteEmbedded: false,
                 noteTreeHits: 0,
                 bossKills: 0,
-                lastBossFightTime: 0
+                lastBossFightTime: 0,
+                lastRouletteSpinTime: 0
             };
         }
 
@@ -3969,7 +4063,8 @@
                 noteEmbedded: noteEmbedded,
                 noteTreeHits: noteTreeHits,
                 bossKills: isBossEventStarted() ? (bossKills || 0) : 0,
-                lastBossFightTime: lastBossFightTime || 0
+                lastBossFightTime: lastBossFightTime || 0,
+                lastRouletteSpinTime: lastRouletteSpinTime || 0
             };
         }
 
@@ -4013,6 +4108,7 @@
                 bossKills = Number(data.bossKills || 0);
             }
             lastBossFightTime = Number(data.lastBossFightTime || 0);
+            lastRouletteSpinTime = Number(data.lastRouletteSpinTime || localStorage.getItem('last_roulette_spin_time') || 0);
             if (data.treeUnlocked) {
                 trees.forEach((t, i) => {
                     t.unlocked = (data.treeUnlocked[i] !== undefined) ? data.treeUnlocked[i] : (i === 0);
@@ -4033,6 +4129,7 @@
             updateShopSkinUI();
             updateInvSkinUI();
             if (typeof updateFuseUI === 'function') updateFuseUI();
+            if (typeof updateRouletteCooldownUI === 'function') updateRouletteCooldownUI();
         }
 
         function saveGame() {
@@ -4047,6 +4144,7 @@
                     level: level,
                     bossKills: bossKills || 0,
                     lastBossFightTime: lastBossFightTime || 0,
+                    lastRouletteSpinTime: lastRouletteSpinTime || 0,
                     gameData: data,
                     lastSaved: Date.now()
                 }, { merge: true }).catch(err => console.warn('Cloud save fail:', err));
