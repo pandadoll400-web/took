@@ -761,8 +761,32 @@
         const ROULETTE_COOLDOWN_MS = 60 * 60 * 1000;
         let lastRouletteSpinTime = Number(localStorage.getItem('last_roulette_spin_time') || 0);
 
-        // 👽 우주 나무 외계 과학자 & 감염된 고릴라 실험실 퀘스트 상태
-        let alienQuestDone = (localStorage.getItem('alien_quest_done') === 'true');
+        // 👽 우주 나무 외계 과학자 & 감염된 고릴라 실험실 퀘스트 상태 (10월 17일 토요일 밤 10시 공개)
+        const ALIEN_EVENT_START_MS = new Date('2026-10-17T22:00:00+09:00').getTime();
+        function isAlienEventStarted() {
+            if (typeof window !== 'undefined' && (window.FORCE_ALIEN_EVENT || localStorage.getItem('force_alien_event') === 'true')) {
+                return true;
+            }
+            return Date.now() >= ALIEN_EVENT_START_MS;
+        }
+
+        // 🛠️ 콘솔 / 테스트용 강제 활성화 / 잠금 헬퍼
+        window.unlockAlienEvent = function() {
+            localStorage.setItem('force_alien_event', 'true');
+            alert('👽 [외계 과학자 이벤트 테스트 활성화]\n우주 나무에 외계 과학자가 즉시 나타납니다!');
+            location.reload();
+        };
+        window.lockAlienEvent = function() {
+            localStorage.removeItem('force_alien_event');
+            alert('🔒 [외계 과학자 이벤트 잠금]\n토요일 밤 10시에 정상 오픈되도록 잠갔습니다.');
+            location.reload();
+        };
+
+        // 오픈 전에는 이전 테스트 완료 기록을 초기화하여 오픈 시 항상 새롭게 등장하도록 처리
+        let alienQuestDone = isAlienEventStarted() ? (localStorage.getItem('alien_quest_done') === 'true') : false;
+        if (!isAlienEventStarted()) {
+            try { localStorage.removeItem('alien_quest_done'); } catch(e) {}
+        }
         let inAlienLab = false;
         let alienLabState = 'intro'; // 'intro', 'breakout', 'battle', 'berserk_strike', 'imprisoned', 'escape_teleport'
         let alienLabTimer = 0;
@@ -2656,7 +2680,7 @@
         // 👽 우주 나무 외계 과학자 & 감염된 고릴라 실험실 이벤트
         // ==========================================
         function openAlienScientistModal() {
-            if (alienQuestDone) return;
+            if (!isAlienEventStarted() || alienQuestDone) return;
             const modal = document.getElementById('alien-scientist-modal');
             if (!modal) return;
 
@@ -2788,7 +2812,7 @@
         }
 
         function drawAlienScientistAtTree(ctx, x, y) {
-            if (alienQuestDone) return;
+            if (!isAlienEventStarted() || alienQuestDone) return;
 
             ctx.save();
             const now = Date.now();
@@ -3746,8 +3770,8 @@
                 }
             }
 
-            // 👽 우주 나무 외계 과학자 클릭 감지 (우주 나무 x: 300, y: -7650, 외계 과학자 x: 410, y: -7550)
-            if (!alienQuestDone && typeof alienScientist !== 'undefined') {
+            // 👽 우주 나무 외계 과학자 클릭 감지 (토요일 밤 10시 공개)
+            if (isAlienEventStarted() && !alienQuestDone && typeof alienScientist !== 'undefined') {
                 let sciDist = Math.hypot(cx - alienScientist.x, cy - alienScientist.y);
                 let sciPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - alienScientist.x, player.y - alienScientist.y) : 999;
                 if (sciDist < 60 || (isSpacebar && sciPlayerDist < 85)) {
@@ -3760,6 +3784,11 @@
             let rocketClickDist = Math.hypot(cx - rocket.x, cy - rocket.y);
             let rocketPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - rocket.x, player.y - rocket.y) : 999;
             if (rocketClickDist < 55 || (isSpacebar && rocketPlayerDist < 75)) {
+                if (!isAlienEventStarted()) {
+                    floatTexts.push({ x: rocket.x, y: rocket.y - 65, text: `🔒 토요일 10시 공개!`, color: '#00e5ff', life: 75, size: 18 });
+                    alert("🚀 [우주 로켓 발사대]\n\n우주 탐사와 미지의 우주 영역 이벤트는\n10월 17일 토요일 밤 10시에 전격 공개됩니다!");
+                    return;
+                }
                 if (!rocket.launched) {
                     triggerRocketLaunch();
                 } else {
@@ -3772,7 +3801,7 @@
             }
 
             // 🌍 우주에서 지구 귀환 워프 패드 클릭 감지
-            if (rocket.launched && typeof spaceReturnPad !== 'undefined') {
+            if (typeof spaceReturnPad !== 'undefined') {
                 let retDist = Math.hypot(cx - spaceReturnPad.x, cy - spaceReturnPad.y);
                 let retPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - spaceReturnPad.x, player.y - spaceReturnPad.y) : 999;
                 if (retDist < 55 || (isSpacebar && retPlayerDist < 75)) {
@@ -3825,7 +3854,8 @@
 
             if (target) {
                 if (target.type === 'space') {
-                    floatTexts.push({ x: target.x, y: target.y - 120, text: `🌌 다음 업데이트때 공개!`, color: '#a29bfe', life: 70, size: 22 });
+                    const text = isAlienEventStarted() ? `🌌 다음 업데이트때 공개!` : `🔒 토요일 10시 공개!`;
+                    floatTexts.push({ x: target.x, y: target.y - 120, text: text, color: '#a29bfe', life: 70, size: 22 });
                     return;
                 }
                 if (player.targetTree === target) {
@@ -5180,7 +5210,7 @@
                 bossKills: isBossEventStarted() ? (bossKills || 0) : 0,
                 lastBossFightTime: lastBossFightTime || 0,
                 lastRouletteSpinTime: lastRouletteSpinTime || 0,
-                alienQuestDone: alienQuestDone || false
+                alienQuestDone: isAlienEventStarted() ? (alienQuestDone || false) : false
             };
         }
 
@@ -5225,7 +5255,20 @@
             }
             lastBossFightTime = Number(data.lastBossFightTime || 0);
             lastRouletteSpinTime = Number(data.lastRouletteSpinTime || localStorage.getItem('last_roulette_spin_time') || 0);
-            alienQuestDone = (data.alienQuestDone !== undefined) ? !!data.alienQuestDone : (localStorage.getItem('alien_quest_done') === 'true');
+            if (!isAlienEventStarted()) {
+                alienQuestDone = false;
+                try {
+                    localStorage.removeItem('alien_quest_done');
+                    const s = localStorage.getItem('treeGameSave');
+                    if (s) {
+                        let parsed = JSON.parse(s);
+                        parsed.alienQuestDone = false;
+                        localStorage.setItem('treeGameSave', JSON.stringify(parsed));
+                    }
+                } catch(e) {}
+            } else {
+                alienQuestDone = (data.alienQuestDone !== undefined) ? !!data.alienQuestDone : (localStorage.getItem('alien_quest_done') === 'true');
+            }
             if (data.treeUnlocked) {
                 trees.forEach((t, i) => {
                     t.unlocked = (data.treeUnlocked[i] !== undefined) ? data.treeUnlocked[i] : (i === 0);
@@ -5816,6 +5859,14 @@
                         db.collection('users').doc(currentUser.toLowerCase()).update({
                             bossKills: 0,
                             'gameData.bossKills': 0
+                        });
+                    } catch (e) {}
+                }
+                if (!isAlienEventStarted() && currentUser && db) {
+                    try {
+                        db.collection('users').doc(currentUser.toLowerCase()).update({
+                            alienQuestDone: false,
+                            'gameData.alienQuestDone': false
                         });
                     } catch (e) {}
                 }
@@ -7362,18 +7413,21 @@
 
                 // 상단 안내 라벨
                 let floatY = Math.sin(Date.now() * 0.005) * 4;
+                const isStarted = isAlienEventStarted();
+                const labelText = isStarted ? "🌌 우주 워프" : "🔒 토 10시 공개";
+                const badgeW = isStarted ? 84 : 94;
                 ctx.fillStyle = 'rgba(10, 15, 30, 0.9)';
-                ctx.strokeStyle = '#00cec9';
+                ctx.strokeStyle = isStarted ? '#00cec9' : '#ff7675';
                 ctx.lineWidth = 1.5;
                 ctx.beginPath();
-                ctx.roundRect(-42, -56 + floatY, 84, 22, 6);
+                ctx.roundRect(-badgeW / 2, -56 + floatY, badgeW, 22, 6);
                 ctx.fill();
                 ctx.stroke();
-                ctx.fillStyle = '#00f2fe';
+                ctx.fillStyle = isStarted ? '#00f2fe' : '#ff7675';
                 ctx.font = 'bold 11px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText("🌌 우주 워프", 0, -45 + floatY);
+                ctx.fillText(labelText, 0, -45 + floatY);
 
                 ctx.restore();
                 return;
@@ -7473,16 +7527,25 @@
             ctx.fillRect(-14, 16, 28, 4);
 
             // "👆 클릭!" 안내 텍스트
+            // "👆 클릭!" 안내 텍스트
             let floatY = Math.sin(Date.now() * 0.005) * 4;
-            ctx.fillStyle = 'white';
+            const isStarted = isAlienEventStarted();
+            const rocketText = isStarted ? "🚀 클릭!" : "🔒 토 10시 공개";
+            const rocketW = isStarted ? 60 : 92;
+            ctx.fillStyle = isStarted ? 'white' : '#1e272e';
             ctx.beginPath();
-            ctx.roundRect(-30, -68 + floatY, 60, 20, 5);
+            ctx.roundRect(-rocketW / 2, -68 + floatY, rocketW, 20, 5);
             ctx.fill();
-            ctx.fillStyle = '#2c3e50';
+            if (!isStarted) {
+                ctx.strokeStyle = '#00cec9';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+            ctx.fillStyle = isStarted ? '#2c3e50' : '#00cec9';
             ctx.font = 'bold 11px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText("🚀 클릭!", 0, -58 + floatY);
+            ctx.fillText(rocketText, 0, -58 + floatY);
 
             ctx.restore();
         }
@@ -7613,7 +7676,7 @@
             if (rocket.visible || rocket.launched) {
                 renderList.push({ type: 'rocket', obj: rocket, y: rocket.y });
             }
-            if (!alienQuestDone && typeof alienScientist !== 'undefined') {
+            if (isAlienEventStarted() && !alienQuestDone && typeof alienScientist !== 'undefined') {
                 renderList.push({ type: 'alienScientist', obj: alienScientist, y: alienScientist.y });
             }
             if (rocket.launched && typeof spaceReturnPad !== 'undefined') {
@@ -7990,7 +8053,7 @@
                         ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(t.x - 55, t.y - t.radius - 80, 110, 30, 5); ctx.fill();
                         ctx.fillStyle = 'black'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center';
                         let label = t.unlocked ? "👆 클릭!" : "👆 잠금 해제";
-                        if (t.type === 'space') label = "🔒 업데이트 예정";
+                        if (t.type === 'space') label = isAlienEventStarted() ? "🔒 업데이트 예정" : "🔒 토요일 10시 공개!";
                         ctx.fillText(label, t.x, t.y - t.radius - 60);
                     }
 
