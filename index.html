@@ -7146,27 +7146,56 @@
             if (typeof updateRouletteCooldownUI === 'function') updateRouletteCooldownUI();
         }
 
-        function saveGame() {
+        function saveGame(forceCloud = false) {
             const data = getSaveData();
-            localStorage.setItem('treeGameSave', JSON.stringify(data));
+            try {
+                localStorage.setItem('treeGameSave', JSON.stringify(data));
+                if (currentUser) {
+                    localStorage.setItem('treeGameSave_' + currentUser.toLowerCase(), JSON.stringify(data));
+                }
+            } catch(e) {}
 
-            // 로그인된 계정이 있고 Firebase가 연결되어 있다면 클라우드에 5초마다 자동 동기화
-            if (currentUser && db && Date.now() - lastCloudSaveTime > 5000) {
+            // 로그인된 계정이 있고 Firebase가 연결되어 있다면 클라우드 동기화 (forceCloud이거나 3초 경과 시)
+            if (currentUser && db && (forceCloud || Date.now() - lastCloudSaveTime > 3000)) {
                 lastCloudSaveTime = Date.now();
-                db.collection('users').doc(currentUser.toLowerCase()).set({
-                    username: currentUser,
-                    isAdmin: isAdmin(),
-                    level: level,
-                    bossKills: bossKills || 0,
-                    battleWins: battleWins || 0,
-                    lastBossFightTime: lastBossFightTime || 0,
-                    lastRouletteSpinTime: lastRouletteSpinTime || 0,
-                    alienQuestDone: alienQuestDone || false,
-                    gameData: data,
-                    lastSaved: Date.now()
-                }, { merge: true }).catch(err => console.warn('Cloud save fail:', err));
+                try {
+                    db.collection('users').doc(currentUser.toLowerCase()).set({
+                        username: currentUser,
+                        isAdmin: isAdmin(),
+                        level: level,
+                        bossKills: bossKills || 0,
+                        battleWins: battleWins || 0,
+                        lastBossFightTime: lastBossFightTime || 0,
+                        lastRouletteSpinTime: lastRouletteSpinTime || 0,
+                        alienQuestDone: alienQuestDone || false,
+                        gameData: data,
+                        lastSaved: Date.now()
+                    }, { merge: true }).catch(err => console.warn('Cloud save fail:', err));
+                } catch(e) {}
             }
         }
+
+        // 🚨 창 닫힘, 새로고침, 탭 전환, 앱 백그라운드 전환 시 100% 즉시 서버 강제 저장
+        window.addEventListener('beforeunload', () => {
+            saveGame(true);
+        });
+
+        window.addEventListener('pagehide', () => {
+            saveGame(true);
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                saveGame(true);
+            }
+        });
+
+        // ⏱️ 플레이 중 3초 주기 자동 클라우드 백업
+        setInterval(() => {
+            if (currentUser && db) {
+                saveGame(true);
+            }
+        }, 3000);
 
         // ==========================================
         // 🤝 실시간 유저 간 거래 시스템 (Player Trading)
