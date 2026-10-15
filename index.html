@@ -314,7 +314,14 @@
                     <span>🔨</span> <span id="sword-upgrade-btn-text">강화하기 (비용: 100원)</span>
                 </button>
 
-                <!-- 1:1 PVE 결투 상대 지정 (거래 방식) -->
+                <!-- 🏠 1:1 결투 20승 달성 보상 안내 배너 -->
+                <div style="background: rgba(241, 196, 15, 0.12); border: 1.5px solid rgba(241, 196, 15, 0.4); border-radius: 12px; padding: 10px 12px; font-size: 13px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span>🏠⚔️</span>
+                        <span style="color: #f1c40f; font-weight: bold;">20승 보상: 포지 하우스</span>
+                    </div>
+                    <span id="sword-modal-wins-badge" style="color: #fff; font-size: 11px; background: rgba(0,0,0,0.5); padding: 3px 8px; border-radius: 6px; font-weight: bold;">0 / 20승</span>
+                </div>
                 <div style="background: rgba(0,0,0,0.32); border: 1.5px solid #233554; border-radius: 12px; padding: 10px 12px; text-align: left;">
                     <div style="font-size: 12px; color: #ff7675; font-weight: bold; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
                         <span>⚔️ 1:1 PVE 배틀 신청 (거래 방식)</span>
@@ -4003,16 +4010,14 @@
                 }
             }
 
-            // ⚔️ 어드민 전용 전설의 검 2자루 클릭 감지 (일반 지형 x: 180, y: 810 및 x: 235, y: 810)
-            if (isAdmin() && typeof adminSwords !== 'undefined') {
-                for (let i = 0; i < adminSwords.length; i++) {
-                    const sw = adminSwords[i];
-                    let swDist = Math.hypot(cx - sw.x, cy - sw.y);
-                    let swPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - sw.x, player.y - sw.y) : 999;
-                    if (swDist < 55 || (isSpacebar && swPlayerDist < 75)) {
-                        openAdminSwordModal(i);
-                        return;
-                    }
+            // ⚔️ 전설의 검 클릭 감지 (나무 바로 밑 x: 300, y: 550)
+            if (typeof adminSwords !== 'undefined' && adminSwords[0]) {
+                const sw = adminSwords[0];
+                let swDist = Math.hypot(cx - sw.x, cy - sw.y);
+                let swPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - sw.x, player.y - sw.y) : 999;
+                if (swDist < 55 || (isSpacebar && swPlayerDist < 75)) {
+                    openAdminSwordModal(0);
+                    return;
                 }
             }
 
@@ -4958,7 +4963,7 @@
             { id: 'archaeologist', name: '고고학자', price: 0, icon: '🤠', isReward: true },
             { id: 'reaper', name: '사신', price: 0, icon: '💀', isReward: true },
             { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, adminOnly: true },
-            { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true, adminOnly: true }
+            { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true }
         ];
 
         function updateShopSkinUI() {
@@ -5521,11 +5526,10 @@
         }
 
         // ==========================================
-        // ⚔️ 어드민 전설의 검 UI & 강화 & PVP 핸들러
+        // ⚔️ 전설의 검 UI & 강화 & PVP 핸들러
         // ==========================================
-        function openAdminSwordModal(index) {
-            if (!isAdmin()) return;
-            activeSwordModalIndex = index;
+        function openAdminSwordModal(index = 0) {
+            activeSwordModalIndex = index || 0;
             const modal = document.getElementById('sword-modal');
             if (!modal) return;
             modal.style.display = 'block';
@@ -5668,20 +5672,45 @@
                 }
             }
 
+            const winsBadge = document.getElementById('sword-modal-wins-badge');
+            if (winsBadge) {
+                const currentWins = Number(battleWins || 0);
+                if (ownedSkins.includes('forge_house')) {
+                    winsBadge.innerText = `🎉 20승 달성 (보유중)`;
+                    winsBadge.style.background = '#27ae60';
+                    winsBadge.style.color = '#fff';
+                } else {
+                    winsBadge.innerText = `${currentWins} / 20승`;
+                    winsBadge.style.background = currentWins >= 20 ? '#27ae60' : 'rgba(0,0,0,0.5)';
+                    winsBadge.style.color = currentWins >= 20 ? '#fff' : '#f1c40f';
+                }
+            }
+
             drawSwordCanvas('sword-modal-canvas', sw.type, sw.tier);
         }
 
         function upgradeAdminSword() {
-            if (!isAdmin()) return;
-            const sw = adminSwords[0];
+            const sw = (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0] : null;
             if (!sw || sw.tier >= 5) return;
 
             const tiers = swordTiersData[sw.type] || swordTiersData.light;
             const nextTierData = tiers[sw.tier + 1];
 
+            // 일반 유저는 비용 확인 및 차감 (관리자는 무제한 골드)
+            if (!isAdmin()) {
+                if (money < nextTierData.cost) {
+                    alert(`돈이 부족합니다! (필요: ${nextTierData.cost.toLocaleString()}원, 보유: ${money.toLocaleString()}원)`);
+                    return;
+                }
+                money -= nextTierData.cost;
+                updateMoney();
+            }
+
             sw.tier++;
+            const userKey = isAdmin() ? 'admin_sword_tier' : ('sword_tier_' + (currentUser || 'guest'));
             try {
-                localStorage.setItem('admin_sword_tier', String(sw.tier));
+                localStorage.setItem(userKey, String(sw.tier));
+                if (isAdmin()) localStorage.setItem('admin_sword_tier', String(sw.tier));
             } catch(e) {}
             saveGame();
             updateAdminSwordModalUI();
@@ -5709,8 +5738,8 @@
         }
 
         async function sendAdminBattleRequest() {
-            if (!isAdmin()) {
-                alert('👑 최고 관리자만 1:1 배틀 신청을 보낼 수 있습니다.');
+            if (!currentUser) {
+                alert('배틀을 신청하려면 먼저 로그인해주세요!');
                 return;
             }
             const input = document.getElementById('battle-target-input');
@@ -6203,6 +6232,25 @@
             }
         }
 
+        function checkAndAwardForgeHouseSkin() {
+            if (battleWins >= 20) {
+                if (!ownedSkins.includes('forge_house')) {
+                    ownedSkins.push('forge_house');
+                    saveGame();
+                    if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                    if (typeof updateShopSkinUI === 'function') updateShopSkinUI();
+                    floatTexts.push({
+                        x: player.x,
+                        y: player.y - 120,
+                        text: `🎉 1:1 결투 20승 달성! [포지 하우스] 스킨 지급 완료! 🏠⚔️`,
+                        color: '#f1c40f',
+                        life: 220,
+                        size: 26
+                    });
+                }
+            }
+        }
+
         function handleBattleVictory(opponentName) {
             if (battleMatchOver) return;
             battleMatchOver = true;
@@ -6219,6 +6267,8 @@
                     }, { merge: true });
                 } catch(e) {}
             }
+
+            checkAndAwardForgeHouseSkin();
 
             sendBattleAction({
                 action: 'VICTORY',
@@ -6324,17 +6374,11 @@
         function playerAttackInPvpArena(targetX, targetY) {
             if (!inPvpArena || battleMatchOver) return;
 
-            let damage = 350;
-            let weaponColor = '#3498db';
-            if (isAdmin()) {
-                const sw = adminSwords[currentPvpSwordIndex] || adminSwords[0];
-                const tiers = swordTiersData[sw.type] || swordTiersData.light;
-                const curTierData = tiers[sw.tier] || tiers[0];
-                damage = curTierData.damage;
-                weaponColor = curTierData.bladeColor;
-            } else {
-                damage = 350 + (equippedAxe || axeLevel || 0) * 80;
-            }
+            const sw = (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0] : { tier: 0, type: 'light' };
+            const tiers = swordTiersData[sw.type] || swordTiersData.light;
+            const curTierData = tiers[sw.tier] || tiers[0];
+            let damage = curTierData.damage;
+            let weaponColor = curTierData.bladeColor;
 
             player.axeSwingTimer = 16;
             let dx = pvpOpponent.x - player.x;
@@ -6535,28 +6579,19 @@
             let mySwingAngle = player.axeSwingTimer > 0 ? (player.axeSwingTimer / 16) * 1.5 - 0.75 : 0.3;
             ctx.rotate(mySwingAngle);
 
-            if (isAdmin()) {
-                const sw = adminSwords[currentPvpSwordIndex] || adminSwords[0];
-                const tiers = swordTiersData[sw.type] || swordTiersData.light;
-                const curTierData = tiers[sw.tier] || tiers[0];
-                ctx.fillStyle = curTierData.bladeColor;
-                if (sw.tier >= 3) {
-                    ctx.shadowColor = curTierData.bladeColor;
-                    ctx.shadowBlur = 12;
-                }
-                ctx.fillRect(0, -32, 6, 32);
-                ctx.fillStyle = '#2c3e50';
-                ctx.fillRect(-5, 0, 16, 4);
-                ctx.fillStyle = '#8d5524';
-                ctx.fillRect(1, 4, 4, 10);
-            } else {
-                ctx.fillStyle = '#7f8c8d';
-                ctx.fillRect(0, -28, 5, 28);
-                ctx.fillStyle = '#bdc3c7';
-                ctx.beginPath();
-                ctx.arc(0, -26, 9, 0, Math.PI);
-                ctx.fill();
+            const sw = (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0] : { tier: 0, type: 'light' };
+            const tiers = swordTiersData[sw.type] || swordTiersData.light;
+            const curTierData = tiers[sw.tier] || tiers[0];
+            ctx.fillStyle = curTierData.bladeColor;
+            if (sw.tier >= 3) {
+                ctx.shadowColor = curTierData.bladeColor;
+                ctx.shadowBlur = 12;
             }
+            ctx.fillRect(0, -32, 6, 32);
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillRect(-5, 0, 16, 4);
+            ctx.fillStyle = '#8d5524';
+            ctx.fillRect(1, 4, 4, 10);
             ctx.restore();
             ctx.restore();
 
@@ -6990,8 +7025,9 @@
                 lastBossFightTime: lastBossFightTime || 0,
                 lastRouletteSpinTime: lastRouletteSpinTime || 0,
                 alienQuestDone: isAlienEventStarted() ? (alienQuestDone || false) : false,
-                adminSwords: isAdmin() ? [{ id: adminSwords[0].id, tier: adminSwords[0].tier }] : undefined,
-                adminSwordTier: isAdmin() ? adminSwords[0].tier : undefined
+                swordTier: (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0].tier : 0,
+                adminSwords: (typeof adminSwords !== 'undefined' && adminSwords[0]) ? [{ id: adminSwords[0].id, tier: adminSwords[0].tier }] : undefined,
+                adminSwordTier: (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0].tier : 0
             };
         }
 
@@ -7036,6 +7072,8 @@
             }
             battleWins = (data.battleWins !== undefined) ? Number(data.battleWins) : Number(localStorage.getItem('battle_wins_' + (currentUser || 'guest')) || 0);
             pvpWins = battleWins;
+            checkAndAwardForgeHouseSkin();
+
             lastBossFightTime = Number(data.lastBossFightTime || 0);
             lastRouletteSpinTime = Number(data.lastRouletteSpinTime || localStorage.getItem('last_roulette_spin_time') || 0);
             if (!isAlienEventStarted()) {
@@ -7060,20 +7098,31 @@
                 trees.forEach((t, i) => { t.unlocked = (i === 0); });
             }
 
-            if (isAdmin()) {
+            // ⚔️ 전설의 검 강화 단계 복원 (모든 유저 공통)
+            if (typeof adminSwords !== 'undefined' && adminSwords[0]) {
                 let savedTier = 0;
-                if (data.adminSwords && Array.isArray(data.adminSwords) && data.adminSwords[0] && data.adminSwords[0].tier !== undefined) {
-                    savedTier = Number(data.adminSwords[0].tier);
+                if (data.swordTier !== undefined) {
+                    savedTier = Number(data.swordTier);
                 } else if (data.adminSwordTier !== undefined) {
                     savedTier = Number(data.adminSwordTier);
+                } else if (data.adminSwords && Array.isArray(data.adminSwords) && data.adminSwords[0] && data.adminSwords[0].tier !== undefined) {
+                    savedTier = Number(data.adminSwords[0].tier);
                 } else {
-                    try { savedTier = Number(localStorage.getItem('admin_sword_tier') || 0); } catch(e) {}
+                    try {
+                        const userKey = isAdmin() ? 'admin_sword_tier' : ('sword_tier_' + (currentUser || 'guest'));
+                        savedTier = Number(localStorage.getItem(userKey) || localStorage.getItem('admin_sword_tier') || 0);
+                    } catch(e) {}
                 }
                 if (isNaN(savedTier)) savedTier = 0;
                 adminSwords[0].tier = Math.max(0, Math.min(5, savedTier));
                 try {
-                    localStorage.setItem('admin_sword_tier', String(adminSwords[0].tier));
+                    const userKey = isAdmin() ? 'admin_sword_tier' : ('sword_tier_' + (currentUser || 'guest'));
+                    localStorage.setItem(userKey, String(adminSwords[0].tier));
+                    if (isAdmin()) localStorage.setItem('admin_sword_tier', String(adminSwords[0].tier));
                 } catch(e) {}
+            }
+
+            if (isAdmin()) {
                 level = 10000;
                 maxXp = 100000000;
                 xp = 0;
@@ -8120,7 +8169,7 @@
             ctx.save(); ctx.translate(x, y);
             
             let skin = forceSkin ? forceSkin : ((char === player) ? equippedSkin : 'default');
-            if ((skin === 'forge_cake' || skin === 'forge_house') && !isAdmin() && !forceSkin) {
+            if (skin === 'forge_cake' && !isAdmin() && !forceSkin) {
                 skin = 'default';
             }
             let walkAngle = walkTimer ? Math.sin(walkTimer * 0.15) * 15 : 0;
@@ -10449,7 +10498,7 @@
             renderList.push({ type: 'teleporterHalloween', obj: teleporterHalloween, y: teleporterHalloween.y });
             renderList.push({ type: 'rankingBoard', obj: rankingBoard, y: rankingBoard.y });
             renderList.push({ type: 'rouletteMachine', obj: rouletteMachine, y: rouletteMachine.y });
-            if (isAdmin() && typeof adminSwords !== 'undefined' && adminSwords[0]) {
+            if (typeof adminSwords !== 'undefined' && adminSwords[0]) {
                 renderList.push({ type: 'adminSword', obj: adminSwords[0], y: adminSwords[0].y });
             }
             renderList.sort((a, b) => a.y - b.y);
