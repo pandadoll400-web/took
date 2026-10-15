@@ -274,6 +274,7 @@
                 <button onclick="closeAdminPanelModal()" style="background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; line-height: 1;">✕</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button onclick="adminEquipForgeCake()" style="padding: 10px; background: linear-gradient(135deg, #e84393, #fd79a8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(232, 67, 147, 0.45);">🎂🔨 [관리자 전용] 포지 케이크 스킨 장착</button>
                 <button onclick="adminWarpToSpace()" style="padding: 10px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🚀 우주 나무로 즉시 이동</button>
                 <button onclick="adminEnterDevilBoss()" style="padding: 10px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">😈 할로윈 악마 보스전 바로 입장</button>
                 <button onclick="adminEnterMonkeyBoss()" style="padding: 10px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🐵 원숭이 보스전 바로 입장</button>
@@ -4858,7 +4859,8 @@
             { id: 'snorkeling_fisher', name: '스노우쿨링 어부', price: 0, icon: '🤿', isReward: true },
             { id: 'mad_scientist', name: '매드 사이언티스트', price: 0, icon: '🥼', isReward: true },
             { id: 'archaeologist', name: '고고학자', price: 0, icon: '🤠', isReward: true },
-            { id: 'reaper', name: '사신', price: 0, icon: '💀', isReward: true }
+            { id: 'reaper', name: '사신', price: 0, icon: '💀', isReward: true },
+            { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, adminOnly: true }
         ];
 
         function updateShopSkinUI() {
@@ -4867,6 +4869,7 @@
             list.innerHTML = '';
             skinsData.forEach(skin => {
                 if (skin.id === 'default' || skin.isReward) return; // 기본 스킨과 보상 스킨 제외
+                if (skin.adminOnly && !isAdmin()) return; // 관리자 전용 스킨 비공개
                 const isOwned = ownedSkins.includes(skin.id);
                 
                 let btnHtml = '';
@@ -4889,6 +4892,7 @@
 
             // html 생성 후 캔버스에 그리기
             skinsData.forEach(skin => {
+                if (skin.adminOnly && !isAdmin()) return;
                 if (skin.id !== 'default') drawPreviewCanvas(`preview-shop-${skin.id}`, skin.id);
             });
         }
@@ -4896,6 +4900,7 @@
         function buySkin(skinId) {
             const skin = skinsData.find(s => s.id === skinId);
             if (!skin) return;
+            if (skin.adminOnly && !isAdmin()) return;
 
             if (ownedSkins.includes(skinId)) {
                 alert('이미 보유하고 있는 스킨입니다.'); return;
@@ -4917,6 +4922,7 @@
             if (!list) return;
             list.innerHTML = '';
             skinsData.forEach(skin => {
+                if (skin.adminOnly && !isAdmin()) return; // 관리자 전용 스킨 비공개
                 const isOwned = ownedSkins.includes(skin.id);
                 if (!isOwned) return;
 
@@ -4928,11 +4934,13 @@
                     btnHtml = `<button onclick="equipSkin('${skin.id}')" style="background: #3498db;">장착하기</button>`;
                 }
 
+                let badgeHtml = skin.adminOnly ? `<span style="font-size:10px; background:#e84393; color:#fff; padding:2px 6px; border-radius:10px; margin-left:5px; font-weight:bold;">ADMIN</span>` : '';
+
                 list.innerHTML += `
                     <div class="axe-item" style="display:flex; justify-content:space-between; align-items:center;">
                         <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
                             <canvas id="preview-inv-${skin.id}" width="60" height="80"></canvas>
-                            <h4 style="margin:5px 0 0 0; color:#fff;">${skin.name}</h4>
+                            <h4 style="margin:5px 0 0 0; color:#fff; display:flex; align-items:center; justify-content:center;">${skin.name}${badgeHtml}</h4>
                         </div>
                         <div>${btnHtml}</div>
                     </div>
@@ -4941,11 +4949,14 @@
 
             // html 생성 후 캔버스에 그리기
             skinsData.forEach(skin => {
+                if (skin.adminOnly && !isAdmin()) return;
                 if (ownedSkins.includes(skin.id)) drawPreviewCanvas(`preview-inv-${skin.id}`, skin.id);
             });
         }
 
         function equipSkin(skinId) {
+            const skin = skinsData.find(s => s.id === skinId);
+            if (skin && skin.adminOnly && !isAdmin()) return;
             if (ownedSkins.includes(skinId)) {
                 equippedSkin = skinId;
                 updateInvSkinUI();
@@ -4960,8 +4971,12 @@
             pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
             const dummyChar = { colors: { skin: '#ffeaa7', shirt: '#e67e22', hat: '#8B4513' }, facing: 1 };
             
-            const scale = (pCanvas.width < 60) ? 0.70 : 0.8;
-            const yOffset = (pCanvas.width < 60) ? 12 : 15;
+            let scale = (pCanvas.width < 60) ? 0.70 : 0.8;
+            let yOffset = (pCanvas.width < 60) ? 12 : 15;
+            if (skinId === 'forge_cake') {
+                scale = (pCanvas.width < 60) ? 0.58 : 0.65;
+                yOffset = 20;
+            }
             pCtx.save();
             pCtx.translate(pCanvas.width / 2, pCanvas.height / 2 + yOffset);
             pCtx.scale(scale, scale);
@@ -5352,7 +5367,19 @@
             saveGame();
             closeAdminPanelModal();
             floatTexts.push({ x: player.x, y: player.y - 80, text: '🎒 풀세팅 & 아이템 999개 충전 완료!', color: '#f1c40f', life: 100, size: 20 });
-            alert('👑 [adminaccount] 모든 과일, 암석, 물고기, 호박이 999개로 충전되었습니다!\n모든 도끼(고대 도끼), 13종 스킨, LV. 10000, 무한 골드가 완벽 적용되었습니다.');
+            alert('👑 [adminaccount] 모든 과일, 암석, 물고기, 호박이 999개로 충전되었습니다!\n모든 도끼(고대 도끼), 14종 스킨(포지 케이크 포함), LV. 10000, 무한 골드가 완벽 적용되었습니다.');
+        }
+
+        function adminEquipForgeCake() {
+            if (!isAdmin()) return;
+            if (!ownedSkins.includes('forge_cake')) {
+                ownedSkins.push('forge_cake');
+            }
+            equippedSkin = 'forge_cake';
+            updateInvSkinUI();
+            saveGame();
+            closeAdminPanelModal();
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🎂🔨 [관리자] 포지 케이크 스킨 장착 완료!', color: '#fd79a8', life: 100, size: 20 });
         }
 
         function adminWarpToEarth() {
@@ -7348,6 +7375,9 @@
             ctx.save(); ctx.translate(x, y);
             
             let skin = forceSkin ? forceSkin : ((char === player) ? equippedSkin : 'default');
+            if (skin === 'forge_cake' && !isAdmin() && !forceSkin) {
+                skin = 'default';
+            }
             let walkAngle = walkTimer ? Math.sin(walkTimer * 0.15) * 15 : 0;
             let bobbing = walkTimer ? Math.abs(Math.sin(walkTimer * 0.15)) * 3 : 0;
             if(isShaking) { bobbing = Math.random() * 2; walkAngle = 0; }
@@ -7985,6 +8015,485 @@
                 ctx.lineTo(0 + (facing*2), -12);
                 ctx.lineTo(4 + (facing*2), -14);
                 ctx.stroke();
+
+            } else if (useSkin === 'forge_cake') {
+                // 🎂🔨 최고 관리자 전용 스킨: 포지 케이크 (대장장이 케이크 골렘)
+                // 유저 스케치 100% 충실 재현: 3단 케이크 몸체, 반짝이는 만화 눈동자 & 미소,
+                // 좌측 배면 용광로 굴뚝 & 3개 화로 슬릿 & 피어오르는 연기, 우측 'Forge' 팻말,
+                // 촛불 5개와 일렁이는 불꽃 효과, 왼손 대형 대장간 해머, 오른손 거대 판금 대검, 부츠 다리 걷기 모션
+
+                // 1. 바닥 그림자
+                ctx.fillStyle = 'rgba(0,0,0,0.35)';
+                ctx.beginPath();
+                ctx.ellipse(0, 25, 26, 9, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.translate(0, -bobbing);
+
+                let armS = isShaking ? Math.sin(Date.now() * 0.02) * 12 : 0;
+                let t = Date.now();
+
+                // 2. 다리 & 부츠 (하단 2개의 다리, 걷기 애니메이션 지원)
+                // 좌측 다리 (L자형 발)
+                ctx.save();
+                ctx.translate(-9, 12);
+                ctx.rotate((walkAngle * Math.PI) / 180);
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(-3.5, 0, 7, 9);
+                ctx.fillStyle = '#1e272e';
+                ctx.beginPath();
+                ctx.roundRect(-7, 7, 10.5, 6, 2);
+                ctx.fill();
+                ctx.fillStyle = '#f1c40f';
+                ctx.fillRect(-2, 7.5, 3, 2);
+                ctx.restore();
+
+                // 우측 다리 (L자형 발)
+                ctx.save();
+                ctx.translate(9, 12);
+                ctx.rotate((-walkAngle * Math.PI) / 180);
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(-3.5, 0, 7, 9);
+                ctx.fillStyle = '#1e272e';
+                ctx.beginPath();
+                ctx.roundRect(-3.5, 7, 10.5, 6, 2);
+                ctx.fill();
+                ctx.fillStyle = '#f1c40f';
+                ctx.fillRect(-1, 7.5, 3, 2);
+                ctx.restore();
+
+                // 3. 좌측 배면: 용광로/대장간 굴뚝 (Chimney) & 피어오르는 연기 구름
+                ctx.save();
+                // 굴뚝 연결 브래킷
+                ctx.fillStyle = '#2f3542';
+                ctx.fillRect(-22, -6, 10, 4);
+
+                // 굴뚝 본체 (원통형 메탈 굴뚝)
+                let chimGrad = ctx.createLinearGradient(-32, 0, -18, 0);
+                chimGrad.addColorStop(0, '#2f3542');
+                chimGrad.addColorStop(0.4, '#57606f');
+                chimGrad.addColorStop(1, '#1e272e');
+                ctx.fillStyle = chimGrad;
+                ctx.beginPath();
+                ctx.roundRect(-30, -38, 11, 38, [3, 3, 1, 1]);
+                ctx.fill();
+                ctx.strokeStyle = '#1e272e';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // 굴뚝 상단 림
+                ctx.fillStyle = '#747d8c';
+                ctx.beginPath();
+                ctx.roundRect(-32, -41, 15, 4, 1.5);
+                ctx.fill();
+
+                // 굴뚝 3개의 세로 화로 슬릿/통기창 (그림의 3개 아치형 통풍구)
+                let ventGlow = Math.sin(t * 0.005) * 0.2 + 0.8;
+                for (let vi = 0; vi < 3; vi++) {
+                    let vx = -28.5 + vi * 3.8;
+                    ctx.fillStyle = `rgba(235, 77, 75, ${0.85 * ventGlow})`;
+                    ctx.beginPath();
+                    ctx.roundRect(vx, -32, 2.2, 10, 1);
+                    ctx.fill();
+                    ctx.fillStyle = `rgba(249, 202, 36, ${0.9 * ventGlow})`;
+                    ctx.fillRect(vx + 0.5, -30, 1.2, 6);
+                }
+
+                // 피어오르는 굴뚝 연기 (Animated Soft Smoke Puffs)
+                for (let si = 0; si < 4; si++) {
+                    let sProgress = ((t * 0.025 + si * 25) % 100) / 100;
+                    let sy = -42 - (sProgress * 28);
+                    let sx = -25 - (sProgress * 10) + Math.sin(t * 0.003 + si) * 4;
+                    let sRadius = 3 + (sProgress * 7);
+                    let sAlpha = (1 - sProgress) * 0.55;
+                    ctx.fillStyle = `rgba(223, 230, 233, ${sAlpha})`;
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, sRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+
+                // 4. 우측 등/옆구리: "Forge" 팻말 (Picket Sign stuck in cake)
+                ctx.save();
+                ctx.translate(16, -10);
+                ctx.rotate(0.22);
+                ctx.fillStyle = '#8b572a';
+                ctx.fillRect(0, -12, 3, 22);
+                ctx.fillStyle = '#f5cd79';
+                ctx.strokeStyle = '#5d4037';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.roundRect(-4, -28, 28, 16, 2);
+                ctx.fill();
+                ctx.stroke();
+                ctx.strokeStyle = '#eccc68';
+                ctx.strokeRect(-2, -26, 24, 12);
+                ctx.font = 'bold 9px "Arial Black", Arial, sans-serif';
+                ctx.fillStyle = '#2d3436';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Forge', 10, -20);
+                ctx.restore();
+
+                // 5. 3단 케이크 몸체 (1단 하단, 2단 중단, 3단 상단)
+                // --- [1단] 하단 케이크 (폭 48px, 높이 20px, y: -6 ~ 14) ---
+                ctx.save();
+                let bCakeGrad = ctx.createLinearGradient(0, -6, 0, 14);
+                bCakeGrad.addColorStop(0, '#fffcf7');
+                bCakeGrad.addColorStop(0.3, '#fff5eb');
+                bCakeGrad.addColorStop(0.8, '#ffeaa7');
+                bCakeGrad.addColorStop(1, '#fdcb6e');
+                ctx.fillStyle = bCakeGrad;
+                ctx.strokeStyle = '#d6a858';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.roundRect(-24, -6, 48, 20, 5);
+                ctx.fill();
+                ctx.stroke();
+
+                // 1단 딸기 크림 잼 레이어
+                ctx.fillStyle = '#ff7675';
+                ctx.beginPath();
+                ctx.roundRect(-23, 2, 46, 2.5, 1);
+                ctx.fill();
+
+                // 1단 상단 생크림 드립핑 물결 (Scalloped cream rim at y = -6)
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(-24, -6);
+                for (let ci = -24; ci <= 24; ci += 8) {
+                    ctx.quadraticCurveTo(ci + 4, -2, ci + 8, -6);
+                }
+                ctx.lineTo(24, -6);
+                ctx.closePath();
+                ctx.fill();
+
+                // 1단 정면: 귀여운 얼굴 (초롱초롱한 눈망울 & 미소)
+                let eyeOffsetX = facing * 1.5;
+                let eyeY = 4;
+                // 검은 눈동자
+                ctx.fillStyle = '#2d3436';
+                ctx.beginPath();
+                ctx.ellipse(-9 + eyeOffsetX, eyeY, 3.2, 4.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(9 + eyeOffsetX, eyeY, 3.2, 4.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 눈망울 하이라이트 (만화 반사광 2개씩)
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(-10 + eyeOffsetX, eyeY - 1.5, 1.4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(-8 + eyeOffsetX, eyeY + 1.8, 0.8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(8 + eyeOffsetX, eyeY - 1.5, 1.4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(10 + eyeOffsetX, eyeY + 1.8, 0.8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 발그레한 볼터치
+                ctx.fillStyle = 'rgba(255, 107, 129, 0.45)';
+                ctx.beginPath();
+                ctx.ellipse(-15 + eyeOffsetX, eyeY + 2.5, 3.5, 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(15 + eyeOffsetX, eyeY + 2.5, 3.5, 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 부드러운 미소 입
+                ctx.strokeStyle = '#2d3436';
+                ctx.lineWidth = 1.3;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.arc(0 + eyeOffsetX, eyeY + 2, 3.5, 0.15 * Math.PI, 0.85 * Math.PI);
+                ctx.stroke();
+                ctx.restore();
+
+                // --- [2단] 중단 케이크 (폭 36px, 높이 15px, y: -21 ~ -6) ---
+                ctx.save();
+                let mCakeGrad = ctx.createLinearGradient(0, -21, 0, -6);
+                mCakeGrad.addColorStop(0, '#fffdfa');
+                mCakeGrad.addColorStop(0.3, '#fff6ed');
+                mCakeGrad.addColorStop(0.8, '#ffeaa7');
+                mCakeGrad.addColorStop(1, '#fdcb6e');
+                ctx.fillStyle = mCakeGrad;
+                ctx.strokeStyle = '#d6a858';
+                ctx.lineWidth = 1.4;
+                ctx.beginPath();
+                ctx.roundRect(-18, -21, 36, 15, 4);
+                ctx.fill();
+                ctx.stroke();
+
+                // 2단 잼 레이어
+                ctx.fillStyle = '#6c5ce7';
+                ctx.beginPath();
+                ctx.roundRect(-17, -14, 34, 2, 1);
+                ctx.fill();
+
+                // 2단 상단 크림 드립핑
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(-18, -21);
+                for (let ci = -18; ci <= 18; ci += 6) {
+                    ctx.quadraticCurveTo(ci + 3, -18, ci + 6, -21);
+                }
+                ctx.lineTo(18, -21);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+
+                // --- [3단] 상단 케이크 (폭 24px, 높이 13px, y: -34 ~ -21) ---
+                ctx.save();
+                let tCakeGrad = ctx.createLinearGradient(0, -34, 0, -21);
+                tCakeGrad.addColorStop(0, '#ffffff');
+                tCakeGrad.addColorStop(0.4, '#fff8f0');
+                tCakeGrad.addColorStop(0.8, '#ffeaa7');
+                tCakeGrad.addColorStop(1, '#fdcb6e');
+                ctx.fillStyle = tCakeGrad;
+                ctx.strokeStyle = '#d6a858';
+                ctx.lineWidth = 1.3;
+                ctx.beginPath();
+                ctx.roundRect(-12, -34, 24, 13, 3);
+                ctx.fill();
+                ctx.stroke();
+
+                // 3단 꼭대기 돔 생크림 토핑
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.ellipse(0, -34, 12, 3.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                // 6. 촛불 5개 & 타오르는 불꽃 애니메이션 (상단 3개 + 중단 어깨 2개)
+                const cakeCandles = [
+                    { x: -6, y: -34, h: 9, color: '#e74c3c' },
+                    { x: 0, y: -34, h: 11, color: '#3498db' },
+                    { x: 6, y: -34, h: 9, color: '#f1c40f' },
+                    { x: -14, y: -21, h: 10, color: '#2ecc71' },
+                    { x: 14, y: -21, h: 10, color: '#9b59b6' }
+                ];
+
+                cakeCandles.forEach((c, idx) => {
+                    ctx.save();
+                    // 촛대
+                    ctx.fillStyle = c.color;
+                    ctx.beginPath();
+                    ctx.roundRect(c.x - 1.3, c.y - c.h, 2.6, c.h, 1);
+                    ctx.fill();
+                    // 촛대 사선 줄무늬
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 0.8;
+                    ctx.beginPath();
+                    ctx.moveTo(c.x - 1.3, c.y - c.h + 2.5);
+                    ctx.lineTo(c.x + 1.3, c.y - c.h + 4.5);
+                    ctx.moveTo(c.x - 1.3, c.y - c.h + 6);
+                    ctx.lineTo(c.x + 1.3, c.y - c.h + 8);
+                    ctx.stroke();
+
+                    // 촛불 심지
+                    ctx.strokeStyle = '#2d3436';
+                    ctx.lineWidth = 0.9;
+                    ctx.beginPath();
+                    ctx.moveTo(c.x, c.y - c.h);
+                    ctx.lineTo(c.x, c.y - c.h - 2.5);
+                    ctx.stroke();
+
+                    // 흔들리는 촛불 불꽃 (Animated Flame)
+                    let fWiggle = Math.sin(t * 0.015 + idx * 1.3) * 1.2;
+                    let fScale = 0.85 + Math.sin(t * 0.02 + idx * 2.1) * 0.2;
+                    let flameTipY = c.y - c.h - 3 - (7 * fScale);
+
+                    ctx.shadowColor = '#f39c12';
+                    ctx.shadowBlur = 8;
+
+                    // 외곽 불꽃
+                    ctx.fillStyle = '#e67e22';
+                    ctx.beginPath();
+                    ctx.moveTo(c.x, c.y - c.h - 2.5);
+                    ctx.quadraticCurveTo(c.x - 2.5, c.y - c.h - 5, c.x + fWiggle, flameTipY);
+                    ctx.quadraticCurveTo(c.x + 2.5, c.y - c.h - 5, c.x, c.y - c.h - 2.5);
+                    ctx.fill();
+
+                    // 내부 코어
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = '#f1c40f';
+                    ctx.beginPath();
+                    ctx.moveTo(c.x, c.y - c.h - 2.5);
+                    ctx.quadraticCurveTo(c.x - 1.4, c.y - c.h - 4, c.x + (fWiggle * 0.6), flameTipY + 2);
+                    ctx.quadraticCurveTo(c.x + 1.4, c.y - c.h - 4, c.x, c.y - c.h - 2.5);
+                    ctx.fill();
+
+                    // 중심 백색 점
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(c.x + (fWiggle * 0.3), c.y - c.h - 3.5, 0.8, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.restore();
+                });
+
+                // 7. 양손 무기 (왼손: 대장간 해머, 오른손: 거대 대검)
+                // --- [왼팔 & 대장간 거대 해머 (Blacksmith Hammer)] ---
+                ctx.save();
+                let lArmAngle = -0.3 + (armS * 0.04);
+                ctx.translate(-20, 2);
+                ctx.rotate(lArmAngle);
+
+                // 팔 (소매)
+                ctx.fillStyle = '#fff5eb';
+                ctx.strokeStyle = '#d6a858';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.roundRect(-3.5, 0, 7, 14, 3);
+                ctx.fill();
+                ctx.stroke();
+
+                // 손
+                ctx.fillStyle = '#ffeaa7';
+                ctx.beginPath();
+                ctx.arc(0, 14, 3.8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 해머 자루
+                ctx.translate(0, 14);
+                ctx.rotate(-0.35);
+                ctx.fillStyle = '#8b572a';
+                ctx.fillRect(-2, -10, 4, 28);
+                ctx.strokeStyle = '#d35400';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(-2, -4); ctx.lineTo(2, -2);
+                ctx.moveTo(-2, 2); ctx.lineTo(2, 4);
+                ctx.stroke();
+
+                // 해머 헤드 (묵직한 3D 강철 사각 헤드)
+                ctx.translate(0, 18);
+                ctx.save();
+                let hamGrad = ctx.createLinearGradient(-14, 0, 14, 0);
+                hamGrad.addColorStop(0, '#1e272e');
+                hamGrad.addColorStop(0.3, '#485460');
+                hamGrad.addColorStop(0.7, '#808e9b');
+                hamGrad.addColorStop(1, '#2f3542');
+                ctx.fillStyle = hamGrad;
+                ctx.strokeStyle = '#1e272e';
+                ctx.lineWidth = 1.4;
+                ctx.beginPath();
+                ctx.roundRect(-14, -8, 28, 16, 2.5);
+                ctx.fill();
+                ctx.stroke();
+
+                // 해머 광택 & 림
+                ctx.fillStyle = '#d2dae2';
+                ctx.fillRect(-12, -7, 24, 2);
+                ctx.fillStyle = '#2f3542';
+                ctx.fillRect(-14, -8, 3, 16);
+                ctx.fillRect(11, -8, 3, 16);
+                ctx.fillStyle = '#f1c40f';
+                ctx.beginPath();
+                ctx.arc(0, 0, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+                ctx.restore();
+
+                // --- [오른팔 & 거대 판금 대검 (Giant Broadsword / Buster Greatsword)] ---
+                ctx.save();
+                let rArmAngle = 0.25 - (armS * 0.04);
+                ctx.translate(20, 2);
+                ctx.rotate(rArmAngle);
+
+                // 팔
+                ctx.fillStyle = '#fff5eb';
+                ctx.strokeStyle = '#d6a858';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.roundRect(-3.5, 0, 7, 14, 3);
+                ctx.fill();
+                ctx.stroke();
+
+                // 손
+                ctx.fillStyle = '#ffeaa7';
+                ctx.beginPath();
+                ctx.arc(0, 14, 3.8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 대검 각도
+                ctx.translate(0, 14);
+                ctx.rotate(0.55);
+
+                // 폼멜
+                ctx.fillStyle = '#f1c40f';
+                ctx.beginPath();
+                ctx.arc(0, -11, 2.8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#2f3542';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // 손잡이
+                ctx.fillStyle = '#2f3542';
+                ctx.fillRect(-2, -9, 4, 10);
+                ctx.strokeStyle = '#c0392b';
+                ctx.lineWidth = 0.8;
+                ctx.beginPath();
+                ctx.moveTo(-2, -6); ctx.lineTo(2, -4);
+                ctx.moveTo(-2, -2); ctx.lineTo(2, 0);
+                ctx.stroke();
+
+                // 코등이
+                ctx.fillStyle = '#e67e22';
+                ctx.strokeStyle = '#2f3542';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.roundRect(-7, 1, 14, 3.5, 1);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.arc(0, 2.7, 1.4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 판금 대검 칼날 (폭 10px, 길이 34px, 치즐 팁)
+                ctx.save();
+                let bladeGrad = ctx.createLinearGradient(-5, 4, 5, 4);
+                bladeGrad.addColorStop(0, '#747d8c');
+                bladeGrad.addColorStop(0.3, '#dcdde1');
+                bladeGrad.addColorStop(0.7, '#f5f6fa');
+                bladeGrad.addColorStop(1, '#a4b0be');
+                ctx.fillStyle = bladeGrad;
+                ctx.strokeStyle = '#2f3542';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(-5, 4);
+                ctx.lineTo(-5, 32);
+                ctx.lineTo(2, 38);
+                ctx.lineTo(5, 34);
+                ctx.lineTo(5, 4);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // 칼날 혈조 & 실버 하이라이트
+                ctx.fillStyle = '#2f3542';
+                ctx.fillRect(-0.8, 6, 1.6, 22);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(-3.5, 5);
+                ctx.lineTo(-3.5, 31);
+                ctx.stroke();
+
+                // 대장간 스파크
+                let spk = Math.sin(t * 0.01) * 0.5 + 0.5;
+                ctx.fillStyle = `rgba(241, 196, 15, ${spk})`;
+                ctx.beginPath();
+                ctx.arc(2, 18, 1.3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+                ctx.restore();
 
             } else {
                 ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
