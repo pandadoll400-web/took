@@ -274,6 +274,7 @@
                 <button onclick="closeAdminPanelModal()" style="background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; line-height: 1;">✕</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button onclick="adminEquipForgeHouse()" style="padding: 10px; background: linear-gradient(135deg, #e67e22, #d35400); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(230, 126, 34, 0.45);">🏠⚔️ [관리자 전용] 포지 하우스 스킨 장착</button>
                 <button onclick="adminEquipForgeCake()" style="padding: 10px; background: linear-gradient(135deg, #e84393, #fd79a8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(232, 67, 147, 0.45);">🎂🔨 [관리자 전용] 포지 케이크 스킨 장착</button>
                 <button onclick="adminWarpToSpace()" style="padding: 10px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🚀 우주 나무로 즉시 이동</button>
                 <button onclick="adminEnterDevilBoss()" style="padding: 10px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">😈 할로윈 악마 보스전 바로 입장</button>
@@ -4935,7 +4936,8 @@
             { id: 'mad_scientist', name: '매드 사이언티스트', price: 0, icon: '🥼', isReward: true },
             { id: 'archaeologist', name: '고고학자', price: 0, icon: '🤠', isReward: true },
             { id: 'reaper', name: '사신', price: 0, icon: '💀', isReward: true },
-            { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, adminOnly: true }
+            { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, adminOnly: true },
+            { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true, adminOnly: true }
         ];
 
         function updateShopSkinUI() {
@@ -5048,9 +5050,9 @@
             
             let scale = (pCanvas.width < 60) ? 0.70 : 0.8;
             let yOffset = (pCanvas.width < 60) ? 12 : 15;
-            if (skinId === 'forge_cake') {
-                scale = (pCanvas.width < 60) ? 0.58 : 0.65;
-                yOffset = 20;
+            if (skinId === 'forge_cake' || skinId === 'forge_house') {
+                scale = (pCanvas.width < 60) ? 0.52 : 0.60;
+                yOffset = 22;
             }
             pCtx.save();
             pCtx.translate(pCanvas.width / 2, pCanvas.height / 2 + yOffset);
@@ -5444,7 +5446,19 @@
             saveGame();
             closeAdminPanelModal();
             floatTexts.push({ x: player.x, y: player.y - 80, text: '🎒 풀세팅 & 아이템 999개 충전 완료!', color: '#f1c40f', life: 100, size: 20 });
-            alert('👑 [adminaccount] 모든 과일, 암석, 물고기, 호박이 999개로 충전되었습니다!\n모든 도끼(고대 도끼), 14종 스킨(포지 케이크 포함), LV. 10000, 무한 골드가 완벽 적용되었습니다.');
+            alert('👑 [adminaccount] 모든 과일, 암석, 물고기, 호박이 999개로 충전되었습니다!\n모든 도끼(고대 도끼), 15종 스킨(포지 하우스, 포지 케이크 포함), LV. 10000, 무한 골드가 완벽 적용되었습니다.');
+        }
+
+        function adminEquipForgeHouse() {
+            if (!isAdmin()) return;
+            if (!ownedSkins.includes('forge_house')) {
+                ownedSkins.push('forge_house');
+            }
+            equippedSkin = 'forge_house';
+            updateInvSkinUI();
+            saveGame();
+            closeAdminPanelModal();
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🏠⚔️ [관리자] 포지 하우스 스킨 장착 완료!', color: '#e67e22', life: 100, size: 20 });
         }
 
         function adminEquipForgeCake() {
@@ -7715,7 +7729,7 @@
             ctx.save(); ctx.translate(x, y);
             
             let skin = forceSkin ? forceSkin : ((char === player) ? equippedSkin : 'default');
-            if (skin === 'forge_cake' && !isAdmin() && !forceSkin) {
+            if ((skin === 'forge_cake' || skin === 'forge_house') && !isAdmin() && !forceSkin) {
                 skin = 'default';
             }
             let walkAngle = walkTimer ? Math.sin(walkTimer * 0.15) * 15 : 0;
@@ -8831,6 +8845,457 @@
                 ctx.fillStyle = `rgba(241, 196, 15, ${spk})`;
                 ctx.beginPath();
                 ctx.arc(2, 18, 1.3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+                ctx.restore();
+
+            } else if (useSkin === 'forge_house') {
+                // 🏠⚔️ 최고 관리자 전용 스킨: 포지 하우스 (대장간 하우스 골렘)
+                // 유저 스케치 100% 충실 재현:
+                // - 대장간 집 모양 몸체 (삼각형 박공 지붕 + 직사각형 벽체)
+                // - 좌측 지붕 슬로프: 대장간 원통형 굴뚝 & 3개 화로 슬릿 [0 0 0] & 피어오르는 연기
+                // - 우측 지붕 슬로프: 'Forge' 팻말
+                // - 정면 벽체: 똘망똘망 귀여운 만화 눈동자 & 볼터치 & 미소
+                // - 하단: 2개의 다리와 L자형 블랙스미스 부츠 (걷기 애니메이션)
+                // - ★ 유저 특별 요청 반영: "무기를 아래말고 위로 들고있게 해"
+                //   - 왼손: 대장간 거대 해머를 하늘 높이 치켜들고 있음! 해머 헤드에 스케치와 똑같은 스마일 페이스 & 단조 불꽃
+                //   - 오른손: 거대 판금 대검을 하늘 높이 치켜들고 있음! 칼날에 스케치와 똑같은 스마일 페이스 & 검끝 글린트
+
+                // 1. 바닥 그림자
+                ctx.fillStyle = 'rgba(0,0,0,0.35)';
+                ctx.beginPath();
+                ctx.ellipse(0, 25, 26, 9, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.translate(0, -bobbing);
+
+                let armS = isShaking ? Math.sin(Date.now() * 0.02) * 12 : 0;
+                let t = Date.now();
+
+                // 2. 다리 & 부츠 (하단 2개의 다리, 걷기 애니메이션)
+                // 좌측 다리 (L자형 발)
+                ctx.save();
+                ctx.translate(-9, 11);
+                ctx.rotate((walkAngle * Math.PI) / 180);
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(-3.5, 0, 7, 9);
+                ctx.fillStyle = '#1e272e';
+                ctx.beginPath();
+                ctx.roundRect(-7, 7, 10.5, 6, 2);
+                ctx.fill();
+                ctx.fillStyle = '#f1c40f';
+                ctx.fillRect(-2, 7.5, 3, 2);
+                ctx.restore();
+
+                // 우측 다리 (L자형 발)
+                ctx.save();
+                ctx.translate(9, 11);
+                ctx.rotate((-walkAngle * Math.PI) / 180);
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(-3.5, 0, 7, 9);
+                ctx.fillStyle = '#1e272e';
+                ctx.beginPath();
+                ctx.roundRect(-3.5, 7, 10.5, 6, 2);
+                ctx.fill();
+                ctx.fillStyle = '#f1c40f';
+                ctx.fillRect(-1, 7.5, 3, 2);
+                ctx.restore();
+
+                // 3. 좌측 지붕 슬로프: 대장간 굴뚝 & 3개 화로 슬릿(0 0 0) & 피어오르는 연기
+                ctx.save();
+                // 굴뚝 베이스
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(-22, -18, 10, 4);
+
+                // 굴뚝 원통 본체 (다크 메탈 그라데이션)
+                let chimGrad = ctx.createLinearGradient(-30, 0, -18, 0);
+                chimGrad.addColorStop(0, '#2c3e50');
+                chimGrad.addColorStop(0.4, '#4b6584');
+                chimGrad.addColorStop(1, '#1e272e');
+                ctx.fillStyle = chimGrad;
+                ctx.beginPath();
+                ctx.roundRect(-28, -44, 11, 28, [2, 2, 0, 0]);
+                ctx.fill();
+                ctx.strokeStyle = '#1e272e';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // 굴뚝 상단 림
+                ctx.fillStyle = '#778ca3';
+                ctx.beginPath();
+                ctx.roundRect(-30, -47, 15, 4, 1.5);
+                ctx.fill();
+
+                // 굴뚝 3개 화로 슬릿 [ 0 0 0 ] (스케치 디테일)
+                let ventGlow = Math.sin(t * 0.005) * 0.2 + 0.8;
+                for (let vi = 0; vi < 3; vi++) {
+                    let vx = -26.5 + vi * 3.6;
+                    ctx.fillStyle = `rgba(235, 77, 75, ${0.85 * ventGlow})`;
+                    ctx.beginPath();
+                    ctx.roundRect(vx, -38, 2.2, 9, 1);
+                    ctx.fill();
+                    ctx.fillStyle = `rgba(249, 202, 36, ${0.9 * ventGlow})`;
+                    ctx.fillRect(vx + 0.5, -36, 1.2, 5);
+                }
+
+                // 피어오르는 굴뚝 연기 (Animated Soft Smoke Puffs)
+                for (let si = 0; si < 4; si++) {
+                    let sProgress = ((t * 0.025 + si * 25) % 100) / 100;
+                    let sy = -48 - (sProgress * 26);
+                    let sx = -23 - (sProgress * 8) + Math.sin(t * 0.003 + si) * 3.5;
+                    let sRadius = 3 + (sProgress * 6.5);
+                    let sAlpha = (1 - sProgress) * 0.55;
+                    ctx.fillStyle = `rgba(223, 230, 233, ${sAlpha})`;
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, sRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+
+                // 4. 우측 지붕 슬로프: 'Forge' 팻말
+                ctx.save();
+                ctx.translate(14, -18);
+                ctx.rotate(0.18);
+                // 팻말 폴대
+                ctx.fillStyle = '#5d4037';
+                ctx.fillRect(-1.5, -16, 3, 18);
+
+                // 원목 팻말 보드
+                ctx.fillStyle = '#f5cd79';
+                ctx.strokeStyle = '#5d4037';
+                ctx.lineWidth = 1.3;
+                ctx.beginPath();
+                ctx.roundRect(-4, -30, 28, 15, 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // 내측 프레임
+                ctx.strokeStyle = '#eccc68';
+                ctx.lineWidth = 0.8;
+                ctx.strokeRect(-2, -28, 24, 11);
+
+                // 'Forge' 텍스트
+                ctx.font = 'bold 9px "Arial Black", Arial, sans-serif';
+                ctx.fillStyle = '#2d3436';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Forge', 10, -22.5);
+                ctx.restore();
+
+                // 5. 대장간 집 몸체 (직사각형 벽체 & 목재 프레임)
+                ctx.save();
+                let wallGrad = ctx.createLinearGradient(0, -10, 0, 12);
+                wallGrad.addColorStop(0, '#fffcf7');
+                wallGrad.addColorStop(0.5, '#f5ebe0');
+                wallGrad.addColorStop(1, '#e3d5ca');
+                ctx.fillStyle = wallGrad;
+                ctx.strokeStyle = '#3e2723';
+                ctx.lineWidth = 1.6;
+                ctx.beginPath();
+                ctx.roundRect(-23, -10, 46, 22, [0, 0, 3, 3]);
+                ctx.fill();
+                ctx.stroke();
+
+                // 벽체 하단 굽도리
+                ctx.fillStyle = '#795548';
+                ctx.fillRect(-22.5, 9, 45, 2.5);
+
+                // 좌우 코너 목재 기둥
+                ctx.fillStyle = '#8d6e63';
+                ctx.fillRect(-23, -10, 3.5, 21.5);
+                ctx.fillRect(19.5, -10, 3.5, 21.5);
+
+                // 6. 삼각형 박공 지붕 (Gable Roof)
+                // 박공 전면 벽 (Triangular Gable Wall)
+                ctx.beginPath();
+                ctx.moveTo(-23, -10);
+                ctx.lineTo(0, -32);
+                ctx.lineTo(23, -10);
+                ctx.closePath();
+                ctx.fillStyle = '#eddcd2';
+                ctx.fill();
+                ctx.strokeStyle = '#5d4037';
+                ctx.lineWidth = 1.2;
+                ctx.stroke();
+
+                // 박공 수직 트러스 목재 빔
+                ctx.fillStyle = '#8d6e63';
+                ctx.fillRect(-1.5, -31, 3, 21);
+
+                // 붉은 테라코타 기와 지붕 경사면 (Left & Right Eaves)
+                let roofGrad = ctx.createLinearGradient(-26, -36, 26, -10);
+                roofGrad.addColorStop(0, '#c0392b');
+                roofGrad.addColorStop(0.5, '#d35400');
+                roofGrad.addColorStop(1, '#b33939');
+
+                // 좌측 지붕면
+                ctx.fillStyle = roofGrad;
+                ctx.strokeStyle = '#2c1e1a';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(0, -36);
+                ctx.lineTo(-27, -8);
+                ctx.lineTo(-24, -6);
+                ctx.lineTo(0, -33);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // 우측 지붕면
+                ctx.beginPath();
+                ctx.moveTo(0, -36);
+                ctx.lineTo(27, -8);
+                ctx.lineTo(24, -6);
+                ctx.lineTo(0, -33);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // 지붕 꼭대기 용마루 마감 캡
+                ctx.fillStyle = '#e67e22';
+                ctx.beginPath();
+                ctx.arc(0, -35.5, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // 7. 정면 얼굴 (초롱초롱 만화 눈동자 & 미소)
+                let eyeOffsetX = facing * 1.5;
+                let eyeY = 0.5;
+
+                // 검은 큰 눈동자
+                ctx.fillStyle = '#2d3436';
+                ctx.beginPath();
+                ctx.ellipse(-8 + eyeOffsetX, eyeY, 3.2, 5.2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(8 + eyeOffsetX, eyeY, 3.2, 5.2, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 눈망울 하이라이트 (반사광)
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(-9 + eyeOffsetX, eyeY - 2, 1.4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(-7 + eyeOffsetX, eyeY + 2.2, 0.8, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(7 + eyeOffsetX, eyeY - 2, 1.4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(9 + eyeOffsetX, eyeY + 2.2, 0.8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 발그레한 볼터치
+                ctx.fillStyle = 'rgba(255, 107, 129, 0.45)';
+                ctx.beginPath();
+                ctx.ellipse(-14 + eyeOffsetX, eyeY + 3.5, 3.2, 1.8, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(14 + eyeOffsetX, eyeY + 3.5, 3.2, 1.8, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 부드러운 미소 입
+                ctx.strokeStyle = '#2d3436';
+                ctx.lineWidth = 1.4;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.arc(0 + eyeOffsetX, eyeY + 3.5, 3.8, 0.15 * Math.PI, 0.85 * Math.PI);
+                ctx.stroke();
+                ctx.restore();
+
+                // 8. ★ 유저 요청: 무기를 아래말고 "위로 들고있게 해" ★
+                // --- [왼팔 & 대장간 거대 해머 (위로 번쩍 치켜든 포즈)] ---
+                ctx.save();
+                ctx.translate(-21, 2);
+                let lArmWave = (armS * 0.04);
+                ctx.rotate(-0.85 + lArmWave); // 팔을 위쪽으로 뻗는 각도
+
+                // 팔 (소매)
+                ctx.fillStyle = '#fff5eb';
+                ctx.strokeStyle = '#795548';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.roundRect(-3.5, -14, 7, 14, 3);
+                ctx.fill();
+                ctx.stroke();
+
+                // 손 (팔 끝)
+                ctx.fillStyle = '#ffeaa7';
+                ctx.beginPath();
+                ctx.arc(0, -14, 3.8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#795548';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // 해머 자루 & 헤드 (위쪽으로 솟구침)
+                ctx.translate(0, -14);
+                ctx.rotate(-0.35);
+
+                // 목재 해머 자루
+                ctx.fillStyle = '#8b572a';
+                ctx.fillRect(-2, -22, 4, 26);
+                ctx.strokeStyle = '#d35400';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(-2, -6); ctx.lineTo(2, -4);
+                ctx.moveTo(-2, -14); ctx.lineTo(2, -12);
+                ctx.stroke();
+
+                // 3D 대장간 해머 헤드
+                ctx.translate(0, -22);
+                ctx.save();
+                let hamGrad = ctx.createLinearGradient(-13, 0, 13, 0);
+                hamGrad.addColorStop(0, '#1e272e');
+                hamGrad.addColorStop(0.3, '#485460');
+                hamGrad.addColorStop(0.7, '#808e9b');
+                hamGrad.addColorStop(1, '#2f3542');
+                ctx.fillStyle = hamGrad;
+                ctx.strokeStyle = '#1e272e';
+                ctx.lineWidth = 1.3;
+                ctx.beginPath();
+                ctx.roundRect(-13, -7, 26, 14, 2.5);
+                ctx.fill();
+                ctx.stroke();
+
+                // 해머 림 & 상단 광택
+                ctx.fillStyle = '#d2dae2';
+                ctx.fillRect(-11, -6.5, 22, 1.8);
+                ctx.fillStyle = '#2f3542';
+                ctx.fillRect(-13, -7, 3, 14);
+                ctx.fillRect(10, -7, 3, 14);
+
+                // ★ 스케치 디테일: 해머에 새겨진 귀여운 스마일 페이스!
+                ctx.fillStyle = '#1e272e';
+                ctx.beginPath();
+                ctx.arc(-3.5, -1, 1.2, 0, Math.PI * 2);
+                ctx.arc(3.5, -1, 1.2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#1e272e';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(0, 1.2, 2.2, 0.15 * Math.PI, 0.85 * Math.PI);
+                ctx.stroke();
+
+                // 대장간 스파크 파티클
+                let hamSpk = Math.sin(t * 0.012) * 0.5 + 0.5;
+                ctx.fillStyle = `rgba(241, 196, 15, ${hamSpk})`;
+                ctx.beginPath();
+                ctx.arc(-8, -9, 1.5, 0, Math.PI * 2);
+                ctx.arc(10, -8, 1.2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+                ctx.restore();
+
+                // --- [오른팔 & 거대 판금 대검 (위로 높이 치켜든 포즈)] ---
+                ctx.save();
+                ctx.translate(21, 2);
+                let rArmWave = (armS * 0.04);
+                ctx.rotate(0.85 - rArmWave); // 팔을 위쪽으로 뻗는 각도
+
+                // 팔 (소매)
+                ctx.fillStyle = '#fff5eb';
+                ctx.strokeStyle = '#795548';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.roundRect(-3.5, -14, 7, 14, 3);
+                ctx.fill();
+                ctx.stroke();
+
+                // 손 (팔 끝)
+                ctx.fillStyle = '#ffeaa7';
+                ctx.beginPath();
+                ctx.arc(0, -14, 3.8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#795548';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // 대검 각도 (위쪽 하늘을 향해 당당하게 겨눔)
+                ctx.translate(0, -14);
+                ctx.rotate(0.35);
+
+                // 폼멜 (손 아래쪽)
+                ctx.fillStyle = '#f1c40f';
+                ctx.beginPath();
+                ctx.arc(0, 8, 2.8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#2f3542';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // 손잡이 그립
+                ctx.fillStyle = '#2f3542';
+                ctx.fillRect(-2, -2, 4, 10);
+                ctx.strokeStyle = '#c0392b';
+                ctx.lineWidth = 0.8;
+                ctx.beginPath();
+                ctx.moveTo(-2, 1); ctx.lineTo(2, 3);
+                ctx.moveTo(-2, 5); ctx.lineTo(2, 7);
+                ctx.stroke();
+
+                // 코등이 (가드)
+                ctx.fillStyle = '#e67e22';
+                ctx.strokeStyle = '#2f3542';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.roundRect(-7, -5, 14, 3.5, 1);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.arc(0, -3.3, 1.4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 판금 대검 칼날 (폭 10px, 길이 34px, 위쪽으로 솟구치는 치즐 팁)
+                ctx.save();
+                let bladeGrad = ctx.createLinearGradient(-5, -6, 5, -6);
+                bladeGrad.addColorStop(0, '#747d8c');
+                bladeGrad.addColorStop(0.3, '#dcdde1');
+                bladeGrad.addColorStop(0.7, '#f5f6fa');
+                bladeGrad.addColorStop(1, '#a4b0be');
+                ctx.fillStyle = bladeGrad;
+                ctx.strokeStyle = '#2f3542';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(-5, -5);
+                ctx.lineTo(-5, -33);
+                ctx.lineTo(2, -39); // 치즐 팁 뾰족한 끝
+                ctx.lineTo(5, -35);
+                ctx.lineTo(5, -5);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // 칼날 혈조 & 실버 하이라이트
+                ctx.fillStyle = '#2f3542';
+                ctx.fillRect(-0.8, -28, 1.6, 22);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(-3.5, -6);
+                ctx.lineTo(-3.5, -32);
+                ctx.stroke();
+
+                // ★ 스케치 디테일: 칼날에 새겨진 귀여운 스마일 페이스!
+                ctx.fillStyle = '#1e272e';
+                ctx.beginPath();
+                ctx.arc(-2, -18, 1, 0, Math.PI * 2);
+                ctx.arc(2, -18, 1, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#1e272e';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(0, -15.5, 2, 0.15 * Math.PI, 0.85 * Math.PI);
+                ctx.stroke();
+
+                // 검끝 샤이닝 글린트
+                let swdGlint = Math.sin(t * 0.015) * 0.5 + 0.5;
+                ctx.fillStyle = `rgba(255, 255, 255, ${swdGlint})`;
+                ctx.beginPath();
+                ctx.arc(2, -39, 1.8, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.restore();
                 ctx.restore();
