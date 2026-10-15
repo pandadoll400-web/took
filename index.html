@@ -307,13 +307,33 @@
                 <canvas id="sword-modal-canvas" width="100" height="150" style="display: block; margin: 0 auto; filter: drop-shadow(0 0 12px rgba(255,255,255,0.15));"></canvas>
             </div>
 
-            <!-- 버튼 영역: 검이름 / 강화하기 / pvp입성하기만 있게 구성 -->
+            <!-- 버튼 영역: 검이름 / 강화하기 / 1:1 PVE 배틀 신청 / 최다 승리 랭킹 -->
             <div style="display: flex; flex-direction: column; gap: 9px;">
-                <button id="sword-upgrade-btn" onclick="upgradeAdminSword()" style="width: 100%; padding: 14px; background: #2b7af0; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(43, 122, 240, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <button id="sword-upgrade-btn" onclick="upgradeAdminSword()" style="width: 100%; padding: 13px; background: #2b7af0; color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(43, 122, 240, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <span>🔨</span> <span id="sword-upgrade-btn-text">강화하기 (비용: 100원)</span>
                 </button>
-                <button id="sword-pvp-btn" onclick="startPvpWithActiveSword()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>⚔️</span> <span>PVP 입성하기</span>
+
+                <!-- 1:1 PVE 결투 상대 지정 (거래 방식) -->
+                <div style="background: rgba(0,0,0,0.32); border: 1.5px solid #233554; border-radius: 12px; padding: 10px 12px; text-align: left;">
+                    <div style="font-size: 12px; color: #ff7675; font-weight: bold; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>⚔️ 1:1 PVE 배틀 신청 (거래 방식)</span>
+                        <span style="font-size: 11px; color: #a0aec0;">체력: 3000 HP</span>
+                    </div>
+                    <input id="battle-target-input" type="text" placeholder="결투할 유저 닉네임 입력 (거래 방식)" maxlength="20" style="width: 100%; box-sizing: border-box; background: #0c101a; border: 1.5px solid #2e384d; border-radius: 8px; color: white; padding: 9px 12px; font-size: 13px; outline: none; margin-bottom: 6px;" onkeydown="if(event.key==='Enter') sendAdminBattleRequest()">
+                    <div id="battle-req-status" style="display: none; color: #f1c40f; font-size: 12px; margin-bottom: 6px; font-weight: bold; text-align: center;">상대방의 수락을 기다리는 중...</div>
+                    <div style="display: flex; gap: 6px;">
+                        <button id="battle-req-send-btn" onclick="sendAdminBattleRequest()" style="flex: 1.4; padding: 10px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(231, 76, 60, 0.4);">
+                            ⚔️ 1:1 배틀 요청
+                        </button>
+                        <button onclick="startInstantPveBattle()" style="flex: 1; padding: 10px; background: rgba(255,255,255,0.08); color: #74b9ff; border: 1px solid #233554; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer;" title="상대 오프라인 시 봇과 즉시 배틀">
+                            🤖 즉시 PVE
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 🏆 1:1 배틀 최다 승리 랭킹 보기 버튼 -->
+                <button onclick="openRankingModal('battle')" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(243, 156, 18, 0.35); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>🏆</span> <span>1:1 배틀 최다 승리 랭킹 (TOP 10)</span>
                 </button>
             </div>
         </div>
@@ -344,7 +364,21 @@
             </div>
         </div>
 
-        <!-- 🏆 레벨 & 보스 최다 처치 랭킹 모달 -->
+        <!-- 3. 1:1 PVE 결투 배틀 요청 수신 팝업 (거래 수신 팝업과 동일 스타일) -->
+        <div id="battle-incoming-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 20, 32, 0.98); color: white; padding: 26px 22px; border-radius: 18px; width: 88%; max-width: 360px; display: none; border: 2.5px solid #e74c3c; z-index: 80; box-shadow: 0 0 40px rgba(231, 76, 60, 0.5); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="font-size: 36px; margin-bottom: 8px;">⚔️</div>
+            <h3 style="margin: 0 0 10px 0; color: #ff7675; font-size: 21px; font-weight: bold;">1:1 PVE 결투 신청 도착!</h3>
+            <p style="color: #ecf0f1; font-size: 15px; margin: 0 0 20px 0; line-height: 1.5;">
+                <strong id="battle-incoming-sender-name" style="color: #f1c40f; font-size: 18px;">adminaccount</strong> 님이<br>
+                1:1 PVE 배틀 (3000 HP 결투)을 신청했습니다!
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button onclick="acceptIncomingBattle()" style="flex: 1; padding: 13px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 3px 10px rgba(46, 204, 113, 0.4);">⚔️ 수락 (입장)</button>
+                <button onclick="declineIncomingBattle()" style="flex: 1; padding: 13px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 3px 10px rgba(231, 76, 60, 0.4);">거절</button>
+            </div>
+        </div>
+
+        <!-- 🏆 레벨 & 보스 최다 처치 & 배틀 최다 승리 랭킹 모달 -->
         <div id="ranking-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 16, 32, 0.98); color: white; padding: 22px 20px; border-radius: 18px; width: 88%; max-width: 380px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #f1c40f; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.85), 0 0 25px rgba(241, 196, 15, 0.35); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(241, 196, 15, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
                 <h3 id="ranking-modal-title" style="margin: 0; color: #f1c40f; font-size: 18px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);">
@@ -353,10 +387,11 @@
                 <button onclick="closeRankingModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
             </div>
 
-            <!-- 랭킹 탭 선택: 레벨 TOP 10 vs 보스 처치 TOP 10 -->
-            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                <button id="rank-tab-level-btn" onclick="switchLeaderboardTab('level')" style="flex: 1; padding: 9px; background: #f1c40f; color: #111; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.2s;">⭐ 레벨 TOP 10</button>
-                <button id="rank-tab-boss-btn" onclick="switchLeaderboardTab('boss')" style="flex: 1; padding: 9px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.2s;">😈 보스 처치 TOP 10</button>
+            <!-- 랭킹 탭 선택: 레벨 TOP 10 vs 보스 처치 TOP 10 vs 배틀 승리 TOP 10 -->
+            <div style="display: flex; gap: 6px; margin-bottom: 12px;">
+                <button id="rank-tab-level-btn" onclick="switchLeaderboardTab('level')" style="flex: 1; padding: 8px 4px; background: #f1c40f; color: #111; border: none; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">⭐ 레벨</button>
+                <button id="rank-tab-boss-btn" onclick="switchLeaderboardTab('boss')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">😈 보스 처치</button>
+                <button id="rank-tab-battle-btn" onclick="switchLeaderboardTab('battle')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">⚔️ 배틀 승리</button>
             </div>
 
             <!-- ⏱️ 10분 주기 자동 리롤 타이머 표시 -->
@@ -905,11 +940,11 @@
         const PLAYER_MAX_BOSS_HP = 100;
 
         // ==========================================
-        // ⚔️ 어드민 전용 전설의 검 2자루 & PVP 결투장 시스템
+        // ⚔️ 어드민 전용 전설의 검 2자루 & 1:1 PVE 결투 배틀 시스템
         // ==========================================
         let adminSwords = [
-            { id: 'sword_light', namePrefix: '빛의 검', x: 180, y: 810, tier: 0, type: 'light' },
-            { id: 'sword_dark', namePrefix: '어둠의 검', x: 235, y: 810, tier: 0, type: 'dark' }
+            { id: 'sword_light', namePrefix: '빛의 검', x: 260, y: 550, tier: 0, type: 'light' },
+            { id: 'sword_dark', namePrefix: '어둠의 검', x: 340, y: 550, tier: 0, type: 'dark' }
         ];
 
         const swordTiersData = {
@@ -937,6 +972,19 @@
         let playerPvpHp = 3000;
         const PLAYER_MAX_PVP_HP = 3000;
         let pvpWins = 0;
+        let battleWins = 0;
+        let activeBattleId = null;
+        let activeBattleDoc = null;
+        let unsubscribeActiveBattle = null;
+        let unsubscribeIncomingBattles = null;
+        let incomingBattleId = null;
+        let currentBattleOpponentName = '';
+        let battleChannel = null;
+        try {
+            battleChannel = new BroadcastChannel('took_battle_channel');
+        } catch(e) {
+            battleChannel = null;
+        }
 
         let pvpOpponent = {
             x: 300,
@@ -2134,30 +2182,36 @@
             currentLeaderboardTab = tab;
             const tabLevel = document.getElementById('rank-tab-level-btn');
             const tabBoss = document.getElementById('rank-tab-boss-btn');
+            const tabBattle = document.getElementById('rank-tab-battle-btn');
             const modalTitle = document.getElementById('ranking-modal-title');
 
-            if (tab === 'boss') {
-                if (tabLevel) {
-                    tabLevel.style.background = 'rgba(255,255,255,0.08)';
-                    tabLevel.style.color = '#ecf0f1';
-                    tabLevel.style.border = '1px solid rgba(255,255,255,0.18)';
+            [tabLevel, tabBoss, tabBattle].forEach(b => {
+                if (b) {
+                    b.style.background = 'rgba(255,255,255,0.08)';
+                    b.style.color = '#ecf0f1';
+                    b.style.border = '1px solid rgba(255,255,255,0.18)';
                 }
+            });
+
+            if (tab === 'boss') {
                 if (tabBoss) {
                     tabBoss.style.background = '#e74c3c';
                     tabBoss.style.color = '#ffffff';
                     tabBoss.style.border = 'none';
                 }
                 if (modalTitle) modalTitle.innerHTML = '<span>😈</span> 악마 보스 최다 처치 TOP 10';
+            } else if (tab === 'battle') {
+                if (tabBattle) {
+                    tabBattle.style.background = '#f39c12';
+                    tabBattle.style.color = '#111';
+                    tabBattle.style.border = 'none';
+                }
+                if (modalTitle) modalTitle.innerHTML = '<span>⚔️</span> 1:1 배틀 최다 승리 TOP 10';
             } else {
                 if (tabLevel) {
                     tabLevel.style.background = '#f1c40f';
                     tabLevel.style.color = '#111';
                     tabLevel.style.border = 'none';
-                }
-                if (tabBoss) {
-                    tabBoss.style.background = 'rgba(255,255,255,0.08)';
-                    tabBoss.style.color = '#ecf0f1';
-                    tabBoss.style.border = '1px solid rgba(255,255,255,0.18)';
                 }
                 if (modalTitle) modalTitle.innerHTML = '<span>🏆</span> 명예의 전당 (레벨 TOP 10)';
             }
@@ -2190,20 +2244,30 @@
             listEl.style.display = 'none';
 
             let rankersMap = new Map();
+            const isBattleTab = (currentLeaderboardTab === 'battle');
+            const isBossTab = (currentLeaderboardTab === 'boss');
 
-            // 1. Firestore에서 실제 회원가입된 실제 유저들만 100% 불러오기
+            // 1. Firestore에서 실제 회원가입된 실제 유저들 불러오기
             if (typeof db !== 'undefined' && db) {
                 try {
                     const snap = await db.collection('users').get();
                     snap.forEach(doc => {
                         const d = doc.data();
                         const uname = d.username || doc.id;
-                        if (uname.toLowerCase() === 'adminaccount' || d.isAdmin) return; // 👑 관리자 계정 랭킹 완전 제외
+                        // 일반 레벨/보스 랭킹에서는 관리자 계정 제외, 배틀 랭킹에서는 관리자 계정도 랭킹에 정상 포함
+                        if ((uname.toLowerCase() === 'adminaccount' || d.isAdmin) && !isBattleTab) return;
                         const uLevel = Number(d.level || (d.gameData && d.gameData.level) || 1);
                         const uXp = Number((d.gameData && d.gameData.xp) || 0);
                         const uBossKills = isBossEventStarted() ? Number(d.bossKills || (d.gameData && d.gameData.bossKills) || 0) : 0;
+                        const uBattleWins = Number(d.battleWins || (d.gameData && d.gameData.battleWins) || 0);
                         if (uname && !isNaN(uLevel)) {
-                            rankersMap.set(uname.toLowerCase(), { username: uname, level: uLevel, xp: uXp, bossKills: uBossKills });
+                            rankersMap.set(uname.toLowerCase(), {
+                                username: uname,
+                                level: uLevel,
+                                xp: uXp,
+                                bossKills: uBossKills,
+                                battleWins: uBattleWins
+                            });
                         }
                     });
                 } catch (err) {
@@ -2211,32 +2275,36 @@
                 }
             }
 
-            // 2. 현재 로그인된 유저가 있다면 최신 데이터 반영 (어드민 제외)
+            // 2. 현재 로그인된 유저 최신 데이터 반영
             const effectiveBossKills = isBossEventStarted() ? (bossKills || 0) : 0;
-            if (currentUser && currentUser.toLowerCase() !== 'adminaccount') {
+            const effectiveBattleWins = battleWins || 0;
+            if (currentUser && (currentUser.toLowerCase() !== 'adminaccount' || isBattleTab)) {
                 rankersMap.set(currentUser.toLowerCase(), {
                     username: currentUser,
                     level: level,
                     xp: xp,
                     bossKills: effectiveBossKills,
+                    battleWins: effectiveBattleWins,
                     isMe: true
                 });
             } else if (!currentUser && rankersMap.size === 0) {
-                // 비로그인 상태이고 DB 유저도 없을 때 현재 플레이어(게스트) 표시
                 rankersMap.set('게스트(나)', {
                     username: '게스트(나)',
                     level: level,
                     xp: xp,
                     bossKills: effectiveBossKills,
+                    battleWins: effectiveBattleWins,
                     isMe: true
                 });
             }
 
             let sortedRankers = Array.from(rankersMap.values());
-            const isBossTab = (currentLeaderboardTab === 'boss');
 
             // 3. 탭 모드에 따른 정렬
-            if (isBossTab) {
+            if (isBattleTab) {
+                // 배틀 최다 승리 순 내림차순, 같으면 레벨 순
+                sortedRankers.sort((a, b) => (b.battleWins - a.battleWins) || (b.level - a.level));
+            } else if (isBossTab) {
                 // 보스 처치 수 내림차순, 같으면 레벨 순
                 sortedRankers.sort((a, b) => (b.bossKills - a.bossKills) || (b.level - a.level));
             } else {
@@ -2248,7 +2316,9 @@
             const activeUser = currentUser || '게스트(나)';
             const myIdx = sortedRankers.findIndex(r => r.username.toLowerCase() === activeUser.toLowerCase());
             if (myRankVal) {
-                if (isAdmin()) {
+                if (isBattleTab) {
+                    myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🏆 ${effectiveBattleWins}승)` : `배틀 ${effectiveBattleWins}승`;
+                } else if (isAdmin()) {
                     myRankVal.innerHTML = `<span style="color:#f1c40f; font-weight:bold;">👑 관리자 계정 (랭킹 집계 제외됨)</span>`;
                 } else if (isBossTab) {
                     myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🗡️ ${effectiveBossKills}회 처치)` : `처치 ${effectiveBossKills}회`;
@@ -2257,7 +2327,7 @@
                 }
             }
 
-            // TOP 10 추출 (실제 등록된 유저만)
+            // TOP 10 추출
             const top10 = sortedRankers.slice(0, 10);
 
             if (top10.length === 0) {
@@ -2283,9 +2353,14 @@
                 const bg = idx < 3 ? badgeColors[idx] : 'rgba(255, 255, 255, 0.04)';
                 const border = idx < 3 ? borderColors[idx] : 'rgba(255, 255, 255, 0.12)';
                 
-                const valueText = isBossTab 
-                    ? `<span style="font-size: 14px; font-weight: 800; color: #ff7675; letter-spacing: -0.5px;">🗡️ ${r.bossKills}회 처치</span>`
-                    : `<span style="font-size: 14px; font-weight: 800; color: #38bdf8; letter-spacing: -0.5px;">LV. ${r.level}</span>`;
+                let valueText = '';
+                if (isBattleTab) {
+                    valueText = `<span style="font-size: 14px; font-weight: 800; color: #f1c40f; letter-spacing: -0.5px;">🏆 ${r.battleWins || 0}승</span>`;
+                } else if (isBossTab) {
+                    valueText = `<span style="font-size: 14px; font-weight: 800; color: #ff7675; letter-spacing: -0.5px;">🗡️ ${r.bossKills}회 처치</span>`;
+                } else {
+                    valueText = `<span style="font-size: 14px; font-weight: 800; color: #38bdf8; letter-spacing: -0.5px;">LV. ${r.level}</span>`;
+                }
 
                 html += `
                 <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; background: ${bg}; border: 1.5px solid ${border}; border-radius: 12px; ${isCurrentMe ? 'box-shadow: 0 0 12px rgba(46, 204, 113, 0.4); border-color: #2ecc71;' : ''}">
@@ -5230,6 +5305,7 @@
                 noteEmbedded: false,
                 noteTreeHits: 0,
                 bossKills: 0,
+                battleWins: 0,
                 lastBossFightTime: 0,
                 lastRouletteSpinTime: 0,
                 alienQuestDone: false
@@ -5286,6 +5362,7 @@
                 noteEmbedded: true,
                 noteTreeHits: 0,
                 bossKills: 999,
+                battleWins: Number(localStorage.getItem('battle_wins_adminaccount') || 0),
                 lastBossFightTime: 0,
                 lastRouletteSpinTime: 0,
                 alienQuestDone: false
@@ -5399,11 +5476,11 @@
             closeAdminPanelModal();
             if (inBossRoom) exitBossDimension();
             if (inPvpArena) exitPvpArena();
-            player.x = 210;
-            player.y = 850;
+            player.x = 300;
+            player.y = 590;
             cameraY = 0;
             player.targetTree = null;
-            floatTexts.push({ x: player.x, y: player.y - 80, text: '⚔️ 전설의 검 2자루 앞으로 이동!', color: '#f1c40f', life: 90, size: 20 });
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '⚔️ 일반 나무 밑 전설의 검 앞으로 이동!', color: '#f1c40f', life: 90, size: 20 });
         }
 
         // ==========================================
@@ -5580,17 +5657,249 @@
         }
 
         function startPvpWithActiveSword() {
-            if (!isAdmin()) return;
-            closeAdminSwordModal();
-            enterPvpArena(activeSwordModalIndex);
+            startInstantPveBattle();
         }
 
-        function enterPvpArena(swordIndex = 0) {
+        function startInstantPveBattle() {
             if (!isAdmin()) return;
-            currentPvpSwordIndex = swordIndex;
+            const input = document.getElementById('battle-target-input');
+            const targetUsername = (input && input.value.trim()) ? input.value.trim() : '도전자 섀도우 검사';
+            closeAdminSwordModal();
+            enterPveBattleArena(targetUsername, true);
+        }
+
+        async function sendAdminBattleRequest() {
+            if (!isAdmin()) {
+                alert('👑 최고 관리자만 1:1 배틀 신청을 보낼 수 있습니다.');
+                return;
+            }
+            const input = document.getElementById('battle-target-input');
+            const targetUsername = input ? input.value.trim() : '';
+            if (!targetUsername) {
+                alert('배틀할 상대 유저의 닉네임을 입력해주세요.');
+                return;
+            }
+            if (targetUsername.toLowerCase() === currentUser.toLowerCase()) {
+                alert('자기 자신에게는 배틀을 신청할 수 없습니다! (오른쪽 "즉시 PVE" 버튼을 누르면 봇과 바로 결투할 수 있습니다)');
+                return;
+            }
+
+            const statusEl = document.getElementById('battle-req-status');
+            const sendBtn = document.getElementById('battle-req-send-btn');
+            if (statusEl) {
+                statusEl.innerText = `'${targetUsername}' 님에게 1:1 결투 신청 보내는 중...`;
+                statusEl.style.display = 'block';
+            }
+            if (sendBtn) sendBtn.disabled = true;
+
+            const sw = adminSwords[activeSwordModalIndex] || adminSwords[0];
+            const battlePayload = {
+                sender: currentUser,
+                senderLower: currentUser.toLowerCase(),
+                receiver: targetUsername,
+                receiverLower: targetUsername.toLowerCase(),
+                status: 'pending',
+                swordType: sw.type,
+                swordTier: sw.tier,
+                createdAt: Date.now()
+            };
+
+            // 1. BroadcastChannel 및 LocalStorage로 즉시 통지 (동일 브라우저 탭/창 테스트 지원)
+            try {
+                if (battleChannel) {
+                    battleChannel.postMessage({ type: 'BATTLE_REQUEST', ...battlePayload });
+                }
+                localStorage.setItem('took_incoming_battle_' + targetUsername.toLowerCase(), JSON.stringify(battlePayload));
+            } catch(e) {}
+
+            // 2. Firestore 등록
+            if (typeof db !== 'undefined' && db) {
+                try {
+                    const docRef = await db.collection('battles').add(battlePayload);
+                    activeBattleId = docRef.id;
+                    subscribeToActiveBattle(activeBattleId, targetUsername);
+                    return;
+                } catch(err) {
+                    console.warn('Firestore battle add warning:', err);
+                }
+            }
+
+            if (statusEl) {
+                statusEl.innerText = `'${targetUsername}' 님의 수락 대기 중...`;
+            }
+        }
+
+        function subscribeToActiveBattle(bId, targetName) {
+            if (unsubscribeActiveBattle) {
+                unsubscribeActiveBattle();
+                unsubscribeActiveBattle = null;
+            }
+            const statusEl = document.getElementById('battle-req-status');
+            if (statusEl) {
+                statusEl.innerText = `'${targetName}' 님의 수락을 기다리는 중...`;
+                statusEl.style.display = 'block';
+            }
+
+            if (typeof db !== 'undefined' && db) {
+                unsubscribeActiveBattle = db.collection('battles').doc(bId).onSnapshot(doc => {
+                    if (!doc.exists) return;
+                    const data = doc.data();
+                    if (data.status === 'active') {
+                        if (unsubscribeActiveBattle) { unsubscribeActiveBattle(); unsubscribeActiveBattle = null; }
+                        closeAdminSwordModal();
+                        enterPveBattleArena(targetName, true);
+                    } else if (data.status === 'declined') {
+                        if (unsubscribeActiveBattle) { unsubscribeActiveBattle(); unsubscribeActiveBattle = null; }
+                        if (statusEl) statusEl.style.display = 'none';
+                        const sendBtn = document.getElementById('battle-req-send-btn');
+                        if (sendBtn) sendBtn.disabled = false;
+                        alert(`'${targetName}' 님이 1:1 배틀 요청을 거절했습니다.`);
+                    }
+                });
+            }
+        }
+
+        function startBattleIncomingListener() {
+            if (unsubscribeIncomingBattles) {
+                unsubscribeIncomingBattles();
+                unsubscribeIncomingBattles = null;
+            }
+            if (!currentUser) return;
+
+            // 1. Firestore 리스너 (모든 로그인 유저 대상)
+            if (typeof db !== 'undefined' && db) {
+                try {
+                    unsubscribeIncomingBattles = db.collection('battles')
+                        .where('receiverLower', '==', currentUser.toLowerCase())
+                        .where('status', '==', 'pending')
+                        .onSnapshot(snap => {
+                            if (snap.empty) {
+                                const modal = document.getElementById('battle-incoming-modal');
+                                if (modal && !modal.dataset.localPending) modal.style.display = 'none';
+                                incomingBattleId = null;
+                                return;
+                            }
+                            snap.forEach(doc => {
+                                const d = doc.data();
+                                if (Date.now() - (d.createdAt || 0) > 300000) return;
+                                incomingBattleId = doc.id;
+                                currentBattleOpponentName = d.sender || 'adminaccount';
+                                const nameEl = document.getElementById('battle-incoming-sender-name');
+                                if (nameEl) nameEl.innerText = d.sender;
+                                const modal = document.getElementById('battle-incoming-modal');
+                                if (modal) modal.style.display = 'block';
+                            });
+                        }, err => console.warn('Battle incoming error:', err));
+                } catch(e) {
+                    console.warn('Battle incoming setup error:', e);
+                }
+            }
+
+            // 2. BroadcastChannel 리스너
+            if (battleChannel) {
+                battleChannel.onmessage = (e) => {
+                    if (!e.data) return;
+                    if (e.data.type === 'BATTLE_REQUEST' && e.data.receiverLower === currentUser.toLowerCase()) {
+                        incomingBattleId = e.data.battleId || 'local_battle';
+                        currentBattleOpponentName = e.data.sender || 'adminaccount';
+                        const nameEl = document.getElementById('battle-incoming-sender-name');
+                        if (nameEl) nameEl.innerText = e.data.sender;
+                        const modal = document.getElementById('battle-incoming-modal');
+                        if (modal) {
+                            modal.dataset.localPending = 'true';
+                            modal.style.display = 'block';
+                        }
+                    } else if (e.data.type === 'BATTLE_ACCEPTED' && e.data.senderLower === currentUser.toLowerCase()) {
+                        closeAdminSwordModal();
+                        enterPveBattleArena(e.data.receiver, true);
+                    } else if (e.data.type === 'BATTLE_DECLINED' && e.data.senderLower === currentUser.toLowerCase()) {
+                        const statusEl = document.getElementById('battle-req-status');
+                        if (statusEl) statusEl.style.display = 'none';
+                        const sendBtn = document.getElementById('battle-req-send-btn');
+                        if (sendBtn) sendBtn.disabled = false;
+                        alert(`'${e.data.receiver}' 님이 1:1 배틀 요청을 거절했습니다.`);
+                    }
+                };
+            }
+        }
+
+        function stopBattleIncomingListener() {
+            if (unsubscribeIncomingBattles) {
+                unsubscribeIncomingBattles();
+                unsubscribeIncomingBattles = null;
+            }
+            const modal = document.getElementById('battle-incoming-modal');
+            if (modal) modal.style.display = 'none';
+            incomingBattleId = null;
+        }
+
+        async function acceptIncomingBattle() {
+            const modal = document.getElementById('battle-incoming-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.dataset.localPending = '';
+            }
+            const oppName = currentBattleOpponentName || 'adminaccount';
+
+            try {
+                if (battleChannel) {
+                    battleChannel.postMessage({
+                        type: 'BATTLE_ACCEPTED',
+                        sender: oppName,
+                        senderLower: oppName.toLowerCase(),
+                        receiver: currentUser,
+                        receiverLower: currentUser.toLowerCase()
+                    });
+                }
+            } catch(e) {}
+
+            if (incomingBattleId && db && incomingBattleId !== 'local_battle') {
+                try {
+                    await db.collection('battles').doc(incomingBattleId).update({
+                        status: 'active',
+                        updatedAt: Date.now()
+                    });
+                } catch(e) {}
+            }
+
+            enterPveBattleArena(oppName, false);
+        }
+
+        async function declineIncomingBattle() {
+            const modal = document.getElementById('battle-incoming-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.dataset.localPending = '';
+            }
+            const oppName = currentBattleOpponentName || 'adminaccount';
+
+            try {
+                if (battleChannel) {
+                    battleChannel.postMessage({
+                        type: 'BATTLE_DECLINED',
+                        sender: oppName,
+                        senderLower: oppName.toLowerCase(),
+                        receiver: currentUser,
+                        receiverLower: currentUser.toLowerCase()
+                    });
+                }
+            } catch(e) {}
+
+            if (incomingBattleId && db && incomingBattleId !== 'local_battle') {
+                try {
+                    await db.collection('battles').doc(incomingBattleId).update({
+                        status: 'declined',
+                        updatedAt: Date.now()
+                    });
+                } catch(e) {}
+            }
+        }
+
+        function enterPveBattleArena(opponentName = '도전자 섀도우 검사', isHost = true) {
+            inPvpArena = true;
+            currentPvpSwordIndex = activeSwordModalIndex || 0;
             savedWorldPos = { x: player.x, y: player.y, cameraY: cameraY };
 
-            inPvpArena = true;
             playerPvpHp = PLAYER_MAX_PVP_HP;
 
             player.x = 300;
@@ -5605,6 +5914,7 @@
             pvpOpponent.y = 280;
             pvpOpponent.hp = 3000;
             pvpOpponent.maxHp = 3000;
+            pvpOpponent.name = opponentName;
             pvpOpponent.flinchTimer = 0;
             pvpOpponent.attackCooldown = 60;
             pvpOpponent.defeated = false;
@@ -5613,14 +5923,14 @@
             pvpSlashEffects = [];
             setBossRoomHUDVisible(false);
 
-            const sw = adminSwords[swordIndex] || adminSwords[0];
+            const sw = adminSwords[currentPvpSwordIndex] || adminSwords[0];
             const tiers = swordTiersData[sw.type] || swordTiersData.light;
             const curTierData = tiers[sw.tier] || tiers[0];
 
             floatTexts.push({
                 x: 300,
                 y: 350,
-                text: `⚔️ PVP 결투장 입장! [${curTierData.name} (+${sw.tier})] 장착`,
+                text: `⚔️ 1:1 PVE 결투 배틀 시작! vs [${opponentName}]`,
                 color: '#f1c40f',
                 life: 110,
                 size: 22
@@ -5766,13 +6076,24 @@
 
                 if (pvpOpponent.hp <= 0 && !pvpOpponent.defeated) {
                     pvpOpponent.defeated = true;
-                    pvpWins++;
+                    battleWins++;
+                    pvpWins = battleWins;
+                    try {
+                        localStorage.setItem('battle_wins_' + currentUser, battleWins);
+                    } catch(e) {}
+                    if (typeof db !== 'undefined' && db && currentUser) {
+                        try {
+                            db.collection('users').doc(currentUser.toLowerCase()).set({
+                                battleWins: battleWins
+                            }, { merge: true });
+                        } catch(e) {}
+                    }
                     floatTexts.push({
                         x: 300,
                         y: 350,
-                        text: `🏆 도전자 격퇴 완료! (총 ${pvpWins}승)`,
+                        text: `🏆 [${pvpOpponent.name}] 격퇴 승리! (총 ${battleWins}승)`,
                         color: '#f1c40f',
-                        life: 100,
+                        life: 120,
                         size: 26
                     });
                 }
@@ -5827,6 +6148,16 @@
 
             // 2. 도전자 그리기
             if (!pvpOpponent.defeated) {
+                // 도전자 머리 위 닉네임 명찰
+                ctx.save();
+                ctx.fillStyle = '#f1c40f';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = 'black';
+                ctx.shadowBlur = 4;
+                ctx.fillText(`⚔️ ${pvpOpponent.name || '도전자'}`, pvpOpponent.x, pvpOpponent.y - 36);
+                ctx.restore();
+
                 ctx.save();
                 ctx.translate(pvpOpponent.x, pvpOpponent.y);
                 ctx.scale(pvpOpponent.facing, 1);
@@ -5908,7 +6239,7 @@
             ctx.fillStyle = '#f1c40f';
             ctx.font = 'bold 15px Arial';
             ctx.textAlign = 'left';
-            ctx.fillText(`⚔️ PVP ARENA  [${curTierData.name} (+${sw.tier})] (데미지: ${curTierData.damage.toFixed(1)})`, 28, 38);
+            ctx.fillText(`⚔️ 1:1 PVE BATTLE  [${curTierData.name} (+${sw.tier})] (데미지: ${curTierData.damage.toFixed(1)})`, 28, 38);
 
             ctx.fillStyle = '#2ecc71';
             ctx.font = 'bold 12px Arial';
@@ -5924,7 +6255,7 @@
             const oppHp = Math.max(0, pvpOpponent.hp);
             ctx.fillStyle = '#ff7675';
             ctx.textAlign = 'right';
-            ctx.fillText(`도전자: ${oppHp} / 3000`, GAME_WIDTH - 145, 62);
+            ctx.fillText(`${pvpOpponent.name || '도전자'}: ${oppHp} / 3000`, GAME_WIDTH - 145, 62);
             ctx.fillStyle = 'rgba(0,0,0,0.5)';
             ctx.fillRect(GAME_WIDTH - 345, 70, 200, 14);
             ctx.fillStyle = '#ff4757';
@@ -6077,6 +6408,7 @@
             // 다른 계정으로 로그인하거나 새 계정을 만들 때 이전 계정 데이터가 남지 않도록 게임 상태 완전 초기화
             resetGameToDefault();
             stopTradeIncomingListener();
+            stopBattleIncomingListener();
             if (inPvpArena) exitPvpArena();
             closeAdminSwordModal();
             closeAdminPanelModal();
@@ -6169,6 +6501,7 @@
                 closeLoginModal();
                 updateUserBadgeUI();
                 startTradeIncomingListener();
+                startBattleIncomingListener();
                 saveGame();
                 floatTexts.push({ x: player.x, y: player.y - 100, text: `👑 최고 관리자 로그인 완료!`, color: '#f1c40f', life: 120, size: 22 });
                 alert('👑 [최고 관리자 계정: adminaccount] 로그인 성공!\n\n✔ 레벨: LV. 10000\n✔ 골드: 무한 (999,999,999,999 💰)\n✔ 모든 도끼 (고대 도끼 포함) 보유 및 장착\n✔ 모든 스킨 (13종) 전체 해금\n✔ 모든 과일/변종/어류/암석/호박 각 999개 완비\n✔ 랭킹 순위표 완전 제외 적용\n✔ 토요일 이벤트 사전 테스트 및 ADMIN 전용 패널 이용 가능');
@@ -6202,6 +6535,7 @@
                         closeLoginModal();
                         updateUserBadgeUI();
                         startTradeIncomingListener();
+                        startBattleIncomingListener();
                         saveGame();
                         floatTexts.push({ x: player.x, y: player.y - 100, text: `✨ [${username}] 로그인 성공!`, color: '#2ecc71', life: 100, size: 20 });
                     } else {
@@ -6223,6 +6557,7 @@
                     closeLoginModal();
                     updateUserBadgeUI();
                     startTradeIncomingListener();
+                    startBattleIncomingListener();
                     saveGame();
                     floatTexts.push({ x: player.x, y: player.y - 100, text: `🎉 [${username}] 신규 계정 생성 완료! (LV. 1)`, color: '#38bdf8', life: 100, size: 20 });
                 }
@@ -6252,6 +6587,7 @@
                 noteEmbedded: noteEmbedded,
                 noteTreeHits: noteTreeHits,
                 bossKills: isBossEventStarted() ? (bossKills || 0) : 0,
+                battleWins: battleWins || 0,
                 lastBossFightTime: lastBossFightTime || 0,
                 lastRouletteSpinTime: lastRouletteSpinTime || 0,
                 alienQuestDone: isAlienEventStarted() ? (alienQuestDone || false) : false,
@@ -6298,6 +6634,8 @@
             } else {
                 bossKills = Number(data.bossKills || 0);
             }
+            battleWins = (data.battleWins !== undefined) ? Number(data.battleWins) : Number(localStorage.getItem('battle_wins_' + (currentUser || 'guest')) || 0);
+            pvpWins = battleWins;
             lastBossFightTime = Number(data.lastBossFightTime || 0);
             lastRouletteSpinTime = Number(data.lastRouletteSpinTime || localStorage.getItem('last_roulette_spin_time') || 0);
             if (!isAlienEventStarted()) {
@@ -6366,6 +6704,7 @@
                     isAdmin: isAdmin(),
                     level: level,
                     bossKills: bossKills || 0,
+                    battleWins: battleWins || 0,
                     lastBossFightTime: lastBossFightTime || 0,
                     lastRouletteSpinTime: lastRouletteSpinTime || 0,
                     alienQuestDone: alienQuestDone || false,
@@ -6920,6 +7259,7 @@
                         }
                     }
                     startTradeIncomingListener();
+                    startBattleIncomingListener();
                 } catch (err) {
                     console.warn('Cloud load fail:', err);
                 }
