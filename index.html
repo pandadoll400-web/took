@@ -322,14 +322,9 @@
                     </div>
                     <input id="battle-target-input" type="text" placeholder="결투할 유저 닉네임 입력 (거래 방식)" maxlength="20" style="width: 100%; box-sizing: border-box; background: #0c101a; border: 1.5px solid #2e384d; border-radius: 8px; color: white; padding: 9px 12px; font-size: 13px; outline: none; margin-bottom: 6px;" onkeydown="if(event.key==='Enter') sendAdminBattleRequest()">
                     <div id="battle-req-status" style="display: none; color: #f1c40f; font-size: 12px; margin-bottom: 6px; font-weight: bold; text-align: center;">상대방의 수락을 기다리는 중...</div>
-                    <div style="display: flex; gap: 6px;">
-                        <button id="battle-req-send-btn" onclick="sendAdminBattleRequest()" style="flex: 1.4; padding: 10px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(231, 76, 60, 0.4);">
-                            ⚔️ 1:1 배틀 요청
-                        </button>
-                        <button onclick="startInstantPveBattle()" style="flex: 1; padding: 10px; background: rgba(255,255,255,0.08); color: #74b9ff; border: 1px solid #233554; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer;" title="상대 오프라인 시 봇과 즉시 배틀">
-                            🤖 즉시 PVE
-                        </button>
-                    </div>
+                    <button id="battle-req-send-btn" onclick="sendAdminBattleRequest()" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(231, 76, 60, 0.4);">
+                        ⚔️ 1:1 배틀 요청
+                    </button>
                 </div>
 
                 <!-- 🏆 1:1 배틀 최다 승리 랭킹 보기 버튼 -->
@@ -5701,7 +5696,7 @@
                 return;
             }
             if (targetUsername.toLowerCase() === currentUser.toLowerCase()) {
-                alert('자기 자신에게는 배틀을 신청할 수 없습니다! (오른쪽 "즉시 PVE" 버튼을 누르면 봇과 바로 결투할 수 있습니다)');
+                alert('자기 자신에게는 배틀을 신청할 수 없습니다!');
                 return;
             }
 
