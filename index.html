@@ -936,11 +936,18 @@
         const PLAYER_MAX_BOSS_HP = 100;
 
         // ==========================================
-        // ⚔️ 어드민 전용 전설의 검 2자루 & 1:1 PVE 결투 배틀 시스템
+        // ⚔️ 어드민 전용 전설의 검 1자루 & 1:1 PVE 결투 배틀 시스템
         // ==========================================
+        let savedAdminSwordTier = 0;
+        try {
+            savedAdminSwordTier = Number(localStorage.getItem('admin_sword_tier') || 0);
+            if (isNaN(savedAdminSwordTier)) savedAdminSwordTier = 0;
+        } catch(e) {
+            savedAdminSwordTier = 0;
+        }
+
         let adminSwords = [
-            { id: 'sword_light', namePrefix: '빛의 검', x: 260, y: 550, tier: 0, type: 'light' },
-            { id: 'sword_dark', namePrefix: '어둠의 검', x: 340, y: 550, tier: 0, type: 'dark' }
+            { id: 'admin_sword', namePrefix: '전설의 검', x: 300, y: 550, tier: Math.max(0, Math.min(5, savedAdminSwordTier)), type: 'light' }
         ];
 
         const swordTiersData = {
@@ -1000,6 +1007,7 @@
         let unsubscribeBattleDoc = null;
         let battleMatchOver = false;
         let lastBattleSyncTime = 0;
+        let lastFirestoreSyncTime = 0;
 
         let pvpSlashEffects = [];
 
@@ -5380,7 +5388,9 @@
                 battleWins: Number(localStorage.getItem('battle_wins_adminaccount') || 0),
                 lastBossFightTime: 0,
                 lastRouletteSpinTime: 0,
-                alienQuestDone: false
+                alienQuestDone: false,
+                adminSwords: [{ id: 'admin_sword', tier: Number(localStorage.getItem('admin_sword_tier') || (typeof adminSwords !== 'undefined' && adminSwords[0] ? adminSwords[0].tier : 0)) }],
+                adminSwordTier: Number(localStorage.getItem('admin_sword_tier') || (typeof adminSwords !== 'undefined' && adminSwords[0] ? adminSwords[0].tier : 0))
             };
         }
 
@@ -5663,13 +5673,16 @@
 
         function upgradeAdminSword() {
             if (!isAdmin()) return;
-            const sw = adminSwords[activeSwordModalIndex];
+            const sw = adminSwords[0];
             if (!sw || sw.tier >= 5) return;
 
             const tiers = swordTiersData[sw.type] || swordTiersData.light;
             const nextTierData = tiers[sw.tier + 1];
 
             sw.tier++;
+            try {
+                localStorage.setItem('admin_sword_tier', String(sw.tier));
+            } catch(e) {}
             saveGame();
             updateAdminSwordModalUI();
 
@@ -5719,8 +5732,13 @@
             }
             if (sendBtn) sendBtn.disabled = true;
 
-            const sw = adminSwords[activeSwordModalIndex] || adminSwords[0];
+            const bId = 'battle_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            activeBattleId = bId;
+            currentBattleMatchId = bId;
+
+            const sw = (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0] : { type: 'light', tier: 0 };
             const battlePayload = {
+                battleId: bId,
                 sender: currentUser,
                 senderLower: currentUser.toLowerCase(),
                 receiver: targetUsername,
@@ -5739,12 +5757,11 @@
                 localStorage.setItem('took_incoming_battle_' + targetUsername.toLowerCase(), JSON.stringify(battlePayload));
             } catch(e) {}
 
-            // 2. Firestore 등록
+            // 2. Firestore 등록 및 실시간 수락 구독
             if (typeof db !== 'undefined' && db) {
                 try {
-                    const docRef = await db.collection('battles').add(battlePayload);
-                    activeBattleId = docRef.id;
-                    subscribeToActiveBattle(activeBattleId, targetUsername);
+                    await db.collection('battles').doc(bId).set(battlePayload);
+                    subscribeToActiveBattle(bId, targetUsername);
                     return;
                 } catch(err) {
                     console.warn('Firestore battle add warning:', err);
@@ -5774,6 +5791,7 @@
                     if (data.status === 'active') {
                         if (unsubscribeActiveBattle) { unsubscribeActiveBattle(); unsubscribeActiveBattle = null; }
                         closeAdminSwordModal();
+                        currentBattleMatchId = bId;
                         enterPveBattleArena(targetName, true);
                     } else if (data.status === 'declined') {
                         if (unsubscribeActiveBattle) { unsubscribeActiveBattle(); unsubscribeActiveBattle = null; }
@@ -5809,7 +5827,7 @@
                             snap.forEach(doc => {
                                 const d = doc.data();
                                 if (Date.now() - (d.createdAt || 0) > 300000) return;
-                                incomingBattleId = doc.id;
+                                incomingBattleId = d.battleId || doc.id;
                                 currentBattleOpponentName = d.sender || 'adminaccount';
                                 const nameEl = document.getElementById('battle-incoming-sender-name');
                                 if (nameEl) nameEl.innerText = d.sender;
@@ -5846,11 +5864,11 @@
                         const sendBtn = document.getElementById('battle-req-send-btn');
                         if (sendBtn) sendBtn.disabled = false;
                         alert(`'${e.data.receiver}' 님이 1:1 배틀 요청을 거절했습니다.`);
-                    } else if (e.data.type === 'BATTLE_MOVE' && inPvpArena && currentBattleMatchId && e.data.battleId === currentBattleMatchId) {
+                    } else if (e.data.type === 'BATTLE_MOVE' && inPvpArena) {
                         if (e.data.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
                             applyOpponentState(e.data);
                         }
-                    } else if (e.data.type === 'BATTLE_ACTION' && inPvpArena && currentBattleMatchId && e.data.battleId === currentBattleMatchId) {
+                    } else if (e.data.type === 'BATTLE_ACTION' && inPvpArena) {
                         if (e.data.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
                             handleBattleIncomingEvent(e.data);
                         }
@@ -5862,18 +5880,18 @@
             if (!window.hasBattleStorageListener) {
                 window.hasBattleStorageListener = true;
                 window.addEventListener('storage', (e) => {
-                    if (!inPvpArena || !currentBattleMatchId || !e.newValue) return;
-                    if (e.key.startsWith('took_battle_sync_' + currentBattleMatchId + '_')) {
+                    if (!inPvpArena || !e.newValue) return;
+                    if (e.key.startsWith('took_battle_sync_')) {
                         try {
                             const data = JSON.parse(e.newValue);
-                            if (data.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
+                            if (data && data.senderLower && data.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
                                 applyOpponentState(data);
                             }
                         } catch(err) {}
-                    } else if (e.key === 'took_battle_action_' + currentBattleMatchId) {
+                    } else if (e.key.startsWith('took_battle_action_')) {
                         try {
                             const evt = JSON.parse(e.newValue);
-                            if (evt.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
+                            if (evt && evt.senderLower && evt.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
                                 handleBattleIncomingEvent(evt);
                             }
                         } catch(err) {}
@@ -5900,6 +5918,7 @@
             }
             const oppName = currentBattleOpponentName || 'adminaccount';
             const bId = incomingBattleId || 'local_battle';
+            currentBattleMatchId = bId;
 
             try {
                 if (battleChannel) {
@@ -5916,14 +5935,13 @@
 
             if (incomingBattleId && db && incomingBattleId !== 'local_battle') {
                 try {
-                    await db.collection('battles').doc(incomingBattleId).update({
+                    await db.collection('battles').doc(incomingBattleId).set({
                         status: 'active',
                         updatedAt: Date.now()
-                    });
+                    }, { merge: true });
                 } catch(e) {}
             }
 
-            currentBattleMatchId = bId;
             enterPveBattleArena(oppName, false);
         }
 
@@ -5949,10 +5967,10 @@
 
             if (incomingBattleId && db && incomingBattleId !== 'local_battle') {
                 try {
-                    await db.collection('battles').doc(incomingBattleId).update({
+                    await db.collection('battles').doc(incomingBattleId).set({
                         status: 'declined',
                         updatedAt: Date.now()
-                    });
+                    }, { merge: true });
                 } catch(e) {}
             }
         }
@@ -5961,8 +5979,10 @@
             inPvpArena = true;
             battleMatchOver = false;
             isBattleHost = isHost;
-            currentBattleMatchId = activeBattleId || incomingBattleId || ('battle_' + (isHost ? currentUser : opponentName) + '_' + (isHost ? opponentName : currentUser));
-            currentPvpSwordIndex = activeSwordModalIndex || 0;
+            if (!currentBattleMatchId) {
+                currentBattleMatchId = activeBattleId || incomingBattleId || ('battle_' + (isHost ? currentUser : opponentName) + '_' + (isHost ? opponentName : currentUser));
+            }
+            currentPvpSwordIndex = 0;
             savedWorldPos = { x: player.x, y: player.y, cameraY: cameraY };
 
             playerPvpHp = PLAYER_MAX_PVP_HP; // 3000 HP
@@ -6030,9 +6050,10 @@
                     unsubscribeBattleDoc = db.collection('battles').doc(currentBattleMatchId).onSnapshot(doc => {
                         if (!doc.exists) return;
                         const d = doc.data();
-                        const oppField = isBattleHost ? 'guestState' : 'hostState';
-                        if (d[oppField] && d[oppField].senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
-                            applyOpponentState(d[oppField]);
+                        if (d.hostState && d.hostState.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
+                            applyOpponentState(d.hostState);
+                        } else if (d.guestState && d.guestState.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
+                            applyOpponentState(d.guestState);
                         }
                         if (d.battleEvent && d.battleEvent.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
                             handleBattleIncomingEvent(d.battleEvent);
@@ -6045,7 +6066,7 @@
         function broadcastBattleState(immediate = false) {
             if (!inPvpArena || !currentBattleMatchId || !currentUser) return;
             const now = Date.now();
-            if (!immediate && now - lastBattleSyncTime < 45) return;
+            if (!immediate && now - lastBattleSyncTime < 35) return;
             lastBattleSyncTime = now;
 
             const statePayload = {
@@ -6075,14 +6096,15 @@
                 localStorage.setItem('took_battle_sync_' + currentBattleMatchId + '_' + currentUser.toLowerCase(), JSON.stringify(statePayload));
             } catch(e) {}
 
-            if (typeof db !== 'undefined' && db && currentBattleMatchId !== 'local_battle' && (immediate || (now % 250 < 60))) {
-                const updateField = isBattleHost ? 'hostState' : 'guestState';
-                try {
-                    db.collection('battles').doc(currentBattleMatchId).update({
+            if (typeof db !== 'undefined' && db && currentBattleMatchId !== 'local_battle') {
+                if (immediate || (now - lastFirestoreSyncTime >= 90)) {
+                    lastFirestoreSyncTime = now;
+                    const updateField = isBattleHost ? 'hostState' : 'guestState';
+                    db.collection('battles').doc(currentBattleMatchId).set({
                         [updateField]: statePayload,
                         updatedAt: now
-                    }).catch(() => {});
-                } catch(e) {}
+                    }, { merge: true }).catch(() => {});
+                }
             }
         }
 
@@ -6124,10 +6146,10 @@
 
             if (typeof db !== 'undefined' && db && currentBattleMatchId !== 'local_battle') {
                 try {
-                    db.collection('battles').doc(currentBattleMatchId).update({
+                    db.collection('battles').doc(currentBattleMatchId).set({
                         battleEvent: actionData,
                         updatedAt: Date.now()
-                    }).catch(() => {});
+                    }, { merge: true }).catch(() => {});
                 } catch(e) {}
             }
         }
@@ -6283,12 +6305,16 @@
 
             // 실시간 내 위치/동작 브로드캐스트
             if (hasMoved || player.axeSwingTimer > 0) {
+                if (hasMoved) player.walkTimer = (player.walkTimer || 0) + 1;
                 broadcastBattleState();
             }
 
             // 상대방 피격 플린치 및 스윙 쿨타임 갱신 (★ AI 봇 이동/공격 로직 완전 배제!)
             if (pvpOpponent.flinchTimer > 0) pvpOpponent.flinchTimer--;
             if (pvpOpponent.axeSwingTimer > 0) pvpOpponent.axeSwingTimer--;
+            if (Math.hypot(pvpOpponent.vx || 0, pvpOpponent.vy || 0) > 0.15) {
+                pvpOpponent.walkTimer = (pvpOpponent.walkTimer || 0) + 1;
+            }
 
             // 슬래시 이펙트 수명 갱신
             pvpSlashEffects.forEach(s => s.life--);
@@ -6683,8 +6709,7 @@
             c.save();
             c.translate(sw.x, sw.y);
 
-            const isLight = (sw.type === 'light');
-            c.strokeStyle = isLight ? 'rgba(241, 196, 15, 0.45)' : 'rgba(155, 89, 182, 0.45)';
+            c.strokeStyle = 'rgba(241, 196, 15, 0.45)';
             c.lineWidth = 2;
             c.beginPath();
             c.ellipse(0, 5, 26, 12, 0, 0, Math.PI * 2);
@@ -6699,7 +6724,7 @@
             c.ellipse(2, 6, 14, 6, 0, 0, Math.PI * 2);
             c.fill();
 
-            c.rotate(isLight ? -0.16 : 0.16);
+            c.rotate(0);
 
             if (sw.tier >= 3) {
                 c.shadowColor = curTierData.bladeColor;
@@ -6715,10 +6740,10 @@
             c.closePath();
             c.fill();
 
-            c.fillStyle = isLight ? ((sw.tier >= 4) ? '#f1c40f' : '#4b6584') : ((sw.tier >= 4) ? '#8e44ad' : '#2d3436');
+            c.fillStyle = (sw.tier >= 4) ? '#f1c40f' : '#4b6584';
             c.fillRect(-12, -43, 24, 5);
 
-            c.fillStyle = isLight ? '#8d5524' : '#2f3542';
+            c.fillStyle = '#8d5524';
             c.fillRect(-2.5, -57, 5, 14);
 
             c.fillStyle = curTierData.bladeColor;
@@ -6747,7 +6772,7 @@
                 c.fillStyle = curTierData.titleColor;
                 c.font = 'bold 11px Arial';
                 c.textAlign = 'center';
-                const label = isLight ? `⚔️ [1번 검] ${curTierData.name} [+${sw.tier}]` : `⚔️ [2번 검] ${curTierData.name} [+${sw.tier}]`;
+                const label = `⚔️ ${curTierData.name} [+${sw.tier}]`;
                 c.fillText(label, 0, -2);
                 c.restore();
             }
@@ -6965,7 +6990,8 @@
                 lastBossFightTime: lastBossFightTime || 0,
                 lastRouletteSpinTime: lastRouletteSpinTime || 0,
                 alienQuestDone: isAlienEventStarted() ? (alienQuestDone || false) : false,
-                adminSwords: isAdmin() ? adminSwords.map(s => ({ id: s.id, tier: s.tier })) : undefined
+                adminSwords: isAdmin() ? [{ id: adminSwords[0].id, tier: adminSwords[0].tier }] : undefined,
+                adminSwordTier: isAdmin() ? adminSwords[0].tier : undefined
             };
         }
 
@@ -7035,14 +7061,19 @@
             }
 
             if (isAdmin()) {
-                if (data.adminSwords && Array.isArray(data.adminSwords)) {
-                    data.adminSwords.forEach(savedSw => {
-                        const target = adminSwords.find(s => s.id === savedSw.id);
-                        if (target && savedSw.tier !== undefined) {
-                            target.tier = Math.max(0, Math.min(5, Number(savedSw.tier)));
-                        }
-                    });
+                let savedTier = 0;
+                if (data.adminSwords && Array.isArray(data.adminSwords) && data.adminSwords[0] && data.adminSwords[0].tier !== undefined) {
+                    savedTier = Number(data.adminSwords[0].tier);
+                } else if (data.adminSwordTier !== undefined) {
+                    savedTier = Number(data.adminSwordTier);
+                } else {
+                    try { savedTier = Number(localStorage.getItem('admin_sword_tier') || 0); } catch(e) {}
                 }
+                if (isNaN(savedTier)) savedTier = 0;
+                adminSwords[0].tier = Math.max(0, Math.min(5, savedTier));
+                try {
+                    localStorage.setItem('admin_sword_tier', String(adminSwords[0].tier));
+                } catch(e) {}
                 level = 10000;
                 maxXp = 100000000;
                 xp = 0;
@@ -10418,9 +10449,8 @@
             renderList.push({ type: 'teleporterHalloween', obj: teleporterHalloween, y: teleporterHalloween.y });
             renderList.push({ type: 'rankingBoard', obj: rankingBoard, y: rankingBoard.y });
             renderList.push({ type: 'rouletteMachine', obj: rouletteMachine, y: rouletteMachine.y });
-            if (isAdmin() && typeof adminSwords !== 'undefined') {
+            if (isAdmin() && typeof adminSwords !== 'undefined' && adminSwords[0]) {
                 renderList.push({ type: 'adminSword', obj: adminSwords[0], y: adminSwords[0].y });
-                renderList.push({ type: 'adminSword', obj: adminSwords[1], y: adminSwords[1].y });
             }
             renderList.sort((a, b) => a.y - b.y);
 
