@@ -2255,8 +2255,14 @@
                     snap.forEach(doc => {
                         const d = doc.data();
                         const uname = d.username || doc.id;
-                        // 일반 레벨/보스 랭킹에서는 관리자 계정 제외, 배틀 랭킹에서는 관리자 계정도 랭킹에 정상 포함
-                        if ((uname.toLowerCase() === 'adminaccount' || d.isAdmin) && !isBattleTab) return;
+                        // 관리자 계정(adminaccount 또는 isAdmin)은 모든 랭킹(레벨, 보스, 배틀 승리 등 일체)에서 완전 제외!
+                        const isDocAdmin = (
+                            uname.toLowerCase() === 'adminaccount' ||
+                            doc.id.toLowerCase() === 'adminaccount' ||
+                            !!d.isAdmin ||
+                            (d.username && d.username.toLowerCase() === 'adminaccount')
+                        );
+                        if (isDocAdmin) return;
                         const uLevel = Number(d.level || (d.gameData && d.gameData.level) || 1);
                         const uXp = Number((d.gameData && d.gameData.xp) || 0);
                         const uBossKills = isBossEventStarted() ? Number(d.bossKills || (d.gameData && d.gameData.bossKills) || 0) : 0;
@@ -2276,10 +2282,11 @@
                 }
             }
 
-            // 2. 현재 로그인된 유저 최신 데이터 반영
+            // 2. 현재 로그인된 유저 최신 데이터 반영 (관리자 계정은 랭킹 집계 완전 제외)
             const effectiveBossKills = isBossEventStarted() ? (bossKills || 0) : 0;
             const effectiveBattleWins = battleWins || 0;
-            if (currentUser && (currentUser.toLowerCase() !== 'adminaccount' || isBattleTab)) {
+            const isCurrentAdmin = isAdmin() || (currentUser && currentUser.toLowerCase() === 'adminaccount');
+            if (currentUser && !isCurrentAdmin) {
                 rankersMap.set(currentUser.toLowerCase(), {
                     username: currentUser,
                     level: level,
@@ -2317,10 +2324,10 @@
             const activeUser = currentUser || '게스트(나)';
             const myIdx = sortedRankers.findIndex(r => r.username.toLowerCase() === activeUser.toLowerCase());
             if (myRankVal) {
-                if (isBattleTab) {
+                if (isCurrentAdmin) {
+                    myRankVal.innerHTML = `<span style="color:#f1c40f; font-weight:bold;">👑 관리자 계정 (모든 랭킹 집계 제외됨)</span>`;
+                } else if (isBattleTab) {
                     myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🏆 ${effectiveBattleWins}승)` : `배틀 ${effectiveBattleWins}승`;
-                } else if (isAdmin()) {
-                    myRankVal.innerHTML = `<span style="color:#f1c40f; font-weight:bold;">👑 관리자 계정 (랭킹 집계 제외됨)</span>`;
                 } else if (isBossTab) {
                     myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🗡️ ${effectiveBossKills}회 처치)` : `처치 ${effectiveBossKills}회`;
                 } else {
