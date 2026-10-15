@@ -989,13 +989,17 @@
             maxHp: 3000,
             facing: 1,
             flinchTimer: 0,
-            attackCooldown: 60,
-            speed: 2.5,
-            state: 'chase',
+            axeSwingTimer: 0,
+            walkTimer: 0,
+            skin: 'default',
             defeated: false,
-            respawnTimer: 0,
-            name: '도전자 섀도우 검사'
+            name: '상대 플레이어'
         };
+        let currentBattleMatchId = null;
+        let isBattleHost = true;
+        let unsubscribeBattleDoc = null;
+        let battleMatchOver = false;
+        let lastBattleSyncTime = 0;
 
         let pvpSlashEffects = [];
 
@@ -3929,6 +3933,13 @@
                     exitPvpArena();
                     return;
                 }
+                if (battleMatchOver) {
+                    if (!isSpacebar && cx >= GAME_WIDTH / 2 - 95 && cx <= GAME_WIDTH / 2 + 95 && cy >= GAME_HEIGHT / 2 + 60 && cy <= GAME_HEIGHT / 2 + 115) {
+                        exitPvpArena();
+                        return;
+                    }
+                    return;
+                }
                 playerAttackInPvpArena(cx, cy);
                 return;
             }
@@ -5815,7 +5826,7 @@
             if (battleChannel) {
                 battleChannel.onmessage = (e) => {
                     if (!e.data) return;
-                    if (e.data.type === 'BATTLE_REQUEST' && e.data.receiverLower === currentUser.toLowerCase()) {
+                    if (e.data.type === 'BATTLE_REQUEST' && e.data.receiverLower === (currentUser ? currentUser.toLowerCase() : '')) {
                         incomingBattleId = e.data.battleId || 'local_battle';
                         currentBattleOpponentName = e.data.sender || 'adminaccount';
                         const nameEl = document.getElementById('battle-incoming-sender-name');
@@ -5825,17 +5836,49 @@
                             modal.dataset.localPending = 'true';
                             modal.style.display = 'block';
                         }
-                    } else if (e.data.type === 'BATTLE_ACCEPTED' && e.data.senderLower === currentUser.toLowerCase()) {
+                    } else if (e.data.type === 'BATTLE_ACCEPTED' && e.data.senderLower === (currentUser ? currentUser.toLowerCase() : '')) {
                         closeAdminSwordModal();
+                        currentBattleMatchId = e.data.battleId || activeBattleId || 'local_battle';
                         enterPveBattleArena(e.data.receiver, true);
-                    } else if (e.data.type === 'BATTLE_DECLINED' && e.data.senderLower === currentUser.toLowerCase()) {
+                    } else if (e.data.type === 'BATTLE_DECLINED' && e.data.senderLower === (currentUser ? currentUser.toLowerCase() : '')) {
                         const statusEl = document.getElementById('battle-req-status');
                         if (statusEl) statusEl.style.display = 'none';
                         const sendBtn = document.getElementById('battle-req-send-btn');
                         if (sendBtn) sendBtn.disabled = false;
                         alert(`'${e.data.receiver}' 님이 1:1 배틀 요청을 거절했습니다.`);
+                    } else if (e.data.type === 'BATTLE_MOVE' && inPvpArena && currentBattleMatchId && e.data.battleId === currentBattleMatchId) {
+                        if (e.data.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
+                            applyOpponentState(e.data);
+                        }
+                    } else if (e.data.type === 'BATTLE_ACTION' && inPvpArena && currentBattleMatchId && e.data.battleId === currentBattleMatchId) {
+                        if (e.data.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
+                            handleBattleIncomingEvent(e.data);
+                        }
                     }
                 };
+            }
+
+            // 3. 크로스 탭 localStorage 실시간 이벤트 리스너
+            if (!window.hasBattleStorageListener) {
+                window.hasBattleStorageListener = true;
+                window.addEventListener('storage', (e) => {
+                    if (!inPvpArena || !currentBattleMatchId || !e.newValue) return;
+                    if (e.key.startsWith('took_battle_sync_' + currentBattleMatchId + '_')) {
+                        try {
+                            const data = JSON.parse(e.newValue);
+                            if (data.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
+                                applyOpponentState(data);
+                            }
+                        } catch(err) {}
+                    } else if (e.key === 'took_battle_action_' + currentBattleMatchId) {
+                        try {
+                            const evt = JSON.parse(e.newValue);
+                            if (evt.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
+                                handleBattleIncomingEvent(evt);
+                            }
+                        } catch(err) {}
+                    }
+                });
             }
         }
 
@@ -5856,11 +5899,13 @@
                 modal.dataset.localPending = '';
             }
             const oppName = currentBattleOpponentName || 'adminaccount';
+            const bId = incomingBattleId || 'local_battle';
 
             try {
                 if (battleChannel) {
                     battleChannel.postMessage({
                         type: 'BATTLE_ACCEPTED',
+                        battleId: bId,
                         sender: oppName,
                         senderLower: oppName.toLowerCase(),
                         receiver: currentUser,
@@ -5878,6 +5923,7 @@
                 } catch(e) {}
             }
 
+            currentBattleMatchId = bId;
             enterPveBattleArena(oppName, false);
         }
 
@@ -5911,50 +5957,288 @@
             }
         }
 
-        function enterPveBattleArena(opponentName = '도전자 섀도우 검사', isHost = true) {
+        function enterPveBattleArena(opponentName = '상대 플레이어', isHost = true) {
             inPvpArena = true;
+            battleMatchOver = false;
+            isBattleHost = isHost;
+            currentBattleMatchId = activeBattleId || incomingBattleId || ('battle_' + (isHost ? currentUser : opponentName) + '_' + (isHost ? opponentName : currentUser));
             currentPvpSwordIndex = activeSwordModalIndex || 0;
             savedWorldPos = { x: player.x, y: player.y, cameraY: cameraY };
 
-            playerPvpHp = PLAYER_MAX_PVP_HP;
+            playerPvpHp = PLAYER_MAX_PVP_HP; // 3000 HP
 
-            player.x = 300;
-            player.y = 660;
+            if (isHost) {
+                // 신청자 (호스트): 하단 시작
+                player.x = 300;
+                player.y = 660;
+                player.facing = 1;
+                pvpOpponent.x = 300;
+                pvpOpponent.y = 280;
+                pvpOpponent.facing = -1;
+            } else {
+                // 수락자 (게스트): 상단 시작
+                player.x = 300;
+                player.y = 280;
+                player.facing = -1;
+                pvpOpponent.x = 300;
+                pvpOpponent.y = 660;
+                pvpOpponent.facing = 1;
+            }
+
             player.vx = 0;
             player.vy = 0;
             player.targetTree = null;
             player.axeSwingTimer = 0;
             cameraY = 0;
 
-            pvpOpponent.x = 300;
-            pvpOpponent.y = 280;
             pvpOpponent.hp = 3000;
             pvpOpponent.maxHp = 3000;
             pvpOpponent.name = opponentName;
             pvpOpponent.flinchTimer = 0;
-            pvpOpponent.attackCooldown = 60;
+            pvpOpponent.axeSwingTimer = 0;
+            pvpOpponent.walkTimer = 0;
+            pvpOpponent.skin = 'default';
             pvpOpponent.defeated = false;
-            pvpOpponent.respawnTimer = 0;
 
             pvpSlashEffects = [];
             setBossRoomHUDVisible(false);
 
-            const sw = adminSwords[currentPvpSwordIndex] || adminSwords[0];
-            const tiers = swordTiersData[sw.type] || swordTiersData.light;
-            const curTierData = tiers[sw.tier] || tiers[0];
+            // 실시간 원격 리스너 시작
+            startBattleSyncListener();
+
+            // 초기 위치 브로드캐스트
+            broadcastBattleState(true);
 
             floatTexts.push({
                 x: 300,
                 y: 350,
-                text: `⚔️ 1:1 PVE 결투 배틀 시작! vs [${opponentName}]`,
+                text: `⚔️ 1:1 유저 실시간 대결 시작! vs [${opponentName}]`,
                 color: '#f1c40f',
-                life: 110,
-                size: 22
+                life: 120,
+                size: 24
+            });
+        }
+
+        function startBattleSyncListener() {
+            if (unsubscribeBattleDoc) {
+                unsubscribeBattleDoc();
+                unsubscribeBattleDoc = null;
+            }
+
+            if (typeof db !== 'undefined' && db && currentBattleMatchId && currentBattleMatchId !== 'local_battle') {
+                try {
+                    unsubscribeBattleDoc = db.collection('battles').doc(currentBattleMatchId).onSnapshot(doc => {
+                        if (!doc.exists) return;
+                        const d = doc.data();
+                        const oppField = isBattleHost ? 'guestState' : 'hostState';
+                        if (d[oppField] && d[oppField].senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
+                            applyOpponentState(d[oppField]);
+                        }
+                        if (d.battleEvent && d.battleEvent.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
+                            handleBattleIncomingEvent(d.battleEvent);
+                        }
+                    });
+                } catch(e) {}
+            }
+        }
+
+        function broadcastBattleState(immediate = false) {
+            if (!inPvpArena || !currentBattleMatchId || !currentUser) return;
+            const now = Date.now();
+            if (!immediate && now - lastBattleSyncTime < 45) return;
+            lastBattleSyncTime = now;
+
+            const statePayload = {
+                type: 'BATTLE_MOVE',
+                battleId: currentBattleMatchId,
+                sender: currentUser,
+                senderLower: currentUser.toLowerCase(),
+                x: Math.round(player.x),
+                y: Math.round(player.y),
+                vx: Number(player.vx.toFixed(2)),
+                vy: Number(player.vy.toFixed(2)),
+                facing: player.facing,
+                walkTimer: Math.round(player.walkTimer || 0),
+                axeSwingTimer: player.axeSwingTimer || 0,
+                skin: equippedSkin,
+                hp: playerPvpHp,
+                timestamp: now
+            };
+
+            try {
+                if (battleChannel) {
+                    battleChannel.postMessage(statePayload);
+                }
+            } catch(e) {}
+
+            try {
+                localStorage.setItem('took_battle_sync_' + currentBattleMatchId + '_' + currentUser.toLowerCase(), JSON.stringify(statePayload));
+            } catch(e) {}
+
+            if (typeof db !== 'undefined' && db && currentBattleMatchId !== 'local_battle' && (immediate || (now % 250 < 60))) {
+                const updateField = isBattleHost ? 'hostState' : 'guestState';
+                try {
+                    db.collection('battles').doc(currentBattleMatchId).update({
+                        [updateField]: statePayload,
+                        updatedAt: now
+                    }).catch(() => {});
+                } catch(e) {}
+            }
+        }
+
+        function applyOpponentState(data) {
+            if (!inPvpArena || !data) return;
+            pvpOpponent.x = data.x;
+            pvpOpponent.y = data.y;
+            pvpOpponent.vx = data.vx || 0;
+            pvpOpponent.vy = data.vy || 0;
+            pvpOpponent.facing = data.facing || 1;
+            pvpOpponent.walkTimer = data.walkTimer || 0;
+            pvpOpponent.axeSwingTimer = data.axeSwingTimer || 0;
+            if (data.skin) pvpOpponent.skin = data.skin;
+            if (typeof data.hp === 'number') {
+                pvpOpponent.hp = data.hp;
+            }
+        }
+
+        function sendBattleAction(payload) {
+            if (!currentBattleMatchId || !currentUser) return;
+            const actionData = {
+                type: 'BATTLE_ACTION',
+                battleId: currentBattleMatchId,
+                sender: currentUser,
+                senderLower: currentUser.toLowerCase(),
+                ...payload,
+                timestamp: Date.now()
+            };
+
+            try {
+                if (battleChannel) {
+                    battleChannel.postMessage(actionData);
+                }
+            } catch(e) {}
+
+            try {
+                localStorage.setItem('took_battle_action_' + currentBattleMatchId, JSON.stringify(actionData));
+            } catch(e) {}
+
+            if (typeof db !== 'undefined' && db && currentBattleMatchId !== 'local_battle') {
+                try {
+                    db.collection('battles').doc(currentBattleMatchId).update({
+                        battleEvent: actionData,
+                        updatedAt: Date.now()
+                    }).catch(() => {});
+                } catch(e) {}
+            }
+        }
+
+        function handleBattleIncomingEvent(evt) {
+            if (!inPvpArena || !evt) return;
+
+            if (evt.action === 'SWING') {
+                pvpOpponent.axeSwingTimer = 16;
+                if (evt.facing) pvpOpponent.facing = evt.facing;
+            } else if (evt.action === 'HIT') {
+                const damage = Number(evt.damage) || 350;
+                playerPvpHp = Math.max(0, playerPvpHp - damage);
+
+                pvpSlashEffects.push({
+                    x: player.x,
+                    y: player.y - 10,
+                    life: 14,
+                    color: '#ff4757',
+                    facing: evt.facing || 1
+                });
+
+                floatTexts.push({
+                    x: player.x,
+                    y: player.y - 70,
+                    text: `-${damage.toFixed(0)}! 💥`,
+                    color: '#ff4757',
+                    life: 55,
+                    size: 22
+                });
+
+                if (playerPvpHp <= 0 && !battleMatchOver) {
+                    handleBattleDefeat(pvpOpponent.name);
+                }
+            } else if (evt.action === 'VICTORY') {
+                if (!battleMatchOver) {
+                    handleBattleDefeat(evt.winner || pvpOpponent.name);
+                }
+            } else if (evt.action === 'EXIT') {
+                floatTexts.push({
+                    x: 300,
+                    y: 350,
+                    text: `상대방 [${pvpOpponent.name}] 님이 결투장을 나갔습니다.`,
+                    color: '#e74c3c',
+                    life: 110,
+                    size: 20
+                });
+                setTimeout(() => {
+                    if (inPvpArena) exitPvpArena();
+                }, 1200);
+            }
+        }
+
+        function handleBattleVictory(opponentName) {
+            if (battleMatchOver) return;
+            battleMatchOver = true;
+
+            battleWins++;
+            pvpWins = battleWins;
+            try {
+                localStorage.setItem('battle_wins_' + currentUser, battleWins);
+            } catch(e) {}
+            if (typeof db !== 'undefined' && db && currentUser) {
+                try {
+                    db.collection('users').doc(currentUser.toLowerCase()).set({
+                        battleWins: battleWins
+                    }, { merge: true });
+                } catch(e) {}
+            }
+
+            sendBattleAction({
+                action: 'VICTORY',
+                winner: currentUser
+            });
+
+            floatTexts.push({
+                x: 300,
+                y: 350,
+                text: `🏆 [${opponentName}] 에게 승리하였습니다! (+1승, 총 ${battleWins}승)`,
+                color: '#f1c40f',
+                life: 180,
+                size: 26
+            });
+        }
+
+        function handleBattleDefeat(winnerName) {
+            if (battleMatchOver) return;
+            battleMatchOver = true;
+
+            floatTexts.push({
+                x: 300,
+                y: 350,
+                text: `💀 [${winnerName}] 님에게 패배하였습니다...`,
+                color: '#e74c3c',
+                life: 180,
+                size: 26
             });
         }
 
         function exitPvpArena() {
+            if (inPvpArena && currentBattleMatchId) {
+                sendBattleAction({
+                    action: 'EXIT'
+                });
+            }
             inPvpArena = false;
+            battleMatchOver = false;
+            if (unsubscribeBattleDoc) {
+                unsubscribeBattleDoc();
+                unsubscribeBattleDoc = null;
+            }
             player.x = savedWorldPos.x || (GAME_WIDTH / 2);
             player.y = savedWorldPos.y || 800;
             cameraY = savedWorldPos.cameraY || 0;
@@ -5976,13 +6260,16 @@
             if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
             if (keys.a) moveX -= 1; if (keys.d) moveX += 1;
 
+            let hasMoved = false;
             if (moveX !== 0 || moveY !== 0) {
                 let mag = Math.hypot(moveX, moveY);
                 player.vx = (moveX / mag) * player.speed;
                 player.vy = (moveY / mag) * player.speed;
+                hasMoved = true;
             } else if (joystick.active) {
                 player.vx = joystick.dx * player.speed;
                 player.vy = joystick.dy * player.speed;
+                hasMoved = true;
             } else {
                 player.vx *= 0.8;
                 player.vy *= 0.8;
@@ -5994,126 +6281,86 @@
             if (Math.abs(player.vx) > 0.1) player.facing = player.vx > 0 ? 1 : -1;
             if (player.axeSwingTimer > 0) player.axeSwingTimer--;
 
-            if (!pvpOpponent.defeated) {
-                if (pvpOpponent.flinchTimer > 0) {
-                    pvpOpponent.flinchTimer--;
-                } else {
-                    let dx = player.x - pvpOpponent.x;
-                    let dy = player.y - pvpOpponent.y;
-                    let dist = Math.hypot(dx, dy);
-
-                    if (dist > 75) {
-                        pvpOpponent.x += (dx / dist) * pvpOpponent.speed;
-                        pvpOpponent.y += (dy / dist) * pvpOpponent.speed;
-                        pvpOpponent.facing = dx >= 0 ? 1 : -1;
-                    }
-
-                    if (pvpOpponent.attackCooldown > 0) {
-                        pvpOpponent.attackCooldown--;
-                    } else if (dist <= 90) {
-                        pvpOpponent.attackCooldown = 70;
-                        let damage = 350;
-                        playerPvpHp = Math.max(0, playerPvpHp - damage);
-
-                        pvpSlashEffects.push({
-                            x: (player.x + pvpOpponent.x) / 2,
-                            y: (player.y + pvpOpponent.y) / 2 - 10,
-                            life: 14,
-                            color: '#ff4757',
-                            facing: pvpOpponent.facing
-                        });
-
-                        floatTexts.push({
-                            x: player.x,
-                            y: player.y - 70,
-                            text: `-${damage}`,
-                            color: '#ff4757',
-                            life: 50,
-                            size: 20
-                        });
-
-                        if (playerPvpHp <= 0) {
-                            floatTexts.push({ x: player.x, y: player.y - 100, text: `💀 패배... (체력 3000 회복됨)`, color: '#e74c3c', life: 90, size: 24 });
-                            setTimeout(() => {
-                                playerPvpHp = PLAYER_MAX_PVP_HP;
-                            }, 1200);
-                        }
-                    }
-                }
-            } else {
-                pvpOpponent.respawnTimer++;
-                if (pvpOpponent.respawnTimer > 90) {
-                    pvpOpponent.defeated = false;
-                    pvpOpponent.respawnTimer = 0;
-                    pvpOpponent.hp = 3000;
-                    pvpOpponent.x = 300;
-                    pvpOpponent.y = 280;
-                    floatTexts.push({ x: 300, y: 280, text: `⚔️ 새로운 도전자 등장!`, color: '#f1c40f', life: 90, size: 22 });
-                }
+            // 실시간 내 위치/동작 브로드캐스트
+            if (hasMoved || player.axeSwingTimer > 0) {
+                broadcastBattleState();
             }
 
+            // 상대방 피격 플린치 및 스윙 쿨타임 갱신 (★ AI 봇 이동/공격 로직 완전 배제!)
+            if (pvpOpponent.flinchTimer > 0) pvpOpponent.flinchTimer--;
+            if (pvpOpponent.axeSwingTimer > 0) pvpOpponent.axeSwingTimer--;
+
+            // 슬래시 이펙트 수명 갱신
             pvpSlashEffects.forEach(s => s.life--);
             pvpSlashEffects = pvpSlashEffects.filter(s => s.life > 0);
         }
 
         function playerAttackInPvpArena(targetX, targetY) {
-            if (!inPvpArena || pvpOpponent.defeated) return;
+            if (!inPvpArena || battleMatchOver) return;
 
-            const sw = adminSwords[currentPvpSwordIndex] || adminSwords[0];
-            const tiers = swordTiersData[sw.type] || swordTiersData.light;
-            const curTierData = tiers[sw.tier] || tiers[0];
-            const damage = curTierData.damage;
+            let damage = 350;
+            let weaponColor = '#3498db';
+            if (isAdmin()) {
+                const sw = adminSwords[currentPvpSwordIndex] || adminSwords[0];
+                const tiers = swordTiersData[sw.type] || swordTiersData.light;
+                const curTierData = tiers[sw.tier] || tiers[0];
+                damage = curTierData.damage;
+                weaponColor = curTierData.bladeColor;
+            } else {
+                damage = 350 + (equippedAxe || axeLevel || 0) * 80;
+            }
 
             player.axeSwingTimer = 16;
             let dx = pvpOpponent.x - player.x;
             player.facing = dx >= 0 ? 1 : -1;
 
             let dist = Math.hypot(player.x - pvpOpponent.x, player.y - pvpOpponent.y);
-            if (dist < 135) {
+            const hitSuccess = (dist < 135);
+
+            if (hitSuccess) {
                 pvpOpponent.hp = Math.max(0, pvpOpponent.hp - damage);
                 pvpOpponent.flinchTimer = 16;
 
+                const slashX = (player.x + pvpOpponent.x) / 2;
+                const slashY = (player.y + pvpOpponent.y) / 2 - 10;
+
                 pvpSlashEffects.push({
-                    x: (player.x + pvpOpponent.x) / 2,
-                    y: (player.y + pvpOpponent.y) / 2 - 10,
+                    x: slashX,
+                    y: slashY,
                     life: 14,
-                    color: curTierData.bladeColor,
+                    color: weaponColor,
                     facing: player.facing
                 });
 
                 floatTexts.push({
                     x: pvpOpponent.x,
                     y: pvpOpponent.y - 70,
-                    text: `-${damage.toFixed(1)}! 💥`,
-                    color: curTierData.titleColor,
+                    text: `-${damage.toFixed(0)}! 💥`,
+                    color: weaponColor,
                     life: 55,
                     size: 22
                 });
 
-                if (pvpOpponent.hp <= 0 && !pvpOpponent.defeated) {
-                    pvpOpponent.defeated = true;
-                    battleWins++;
-                    pvpWins = battleWins;
-                    try {
-                        localStorage.setItem('battle_wins_' + currentUser, battleWins);
-                    } catch(e) {}
-                    if (typeof db !== 'undefined' && db && currentUser) {
-                        try {
-                            db.collection('users').doc(currentUser.toLowerCase()).set({
-                                battleWins: battleWins
-                            }, { merge: true });
-                        } catch(e) {}
-                    }
-                    floatTexts.push({
-                        x: 300,
-                        y: 350,
-                        text: `🏆 [${pvpOpponent.name}] 격퇴 승리! (총 ${battleWins}승)`,
-                        color: '#f1c40f',
-                        life: 120,
-                        size: 26
-                    });
+                sendBattleAction({
+                    action: 'HIT',
+                    damage: damage,
+                    slashX: slashX,
+                    slashY: slashY,
+                    facing: player.facing,
+                    newOpponentHp: pvpOpponent.hp
+                });
+
+                if (pvpOpponent.hp <= 0 && !battleMatchOver) {
+                    handleBattleVictory(pvpOpponent.name);
                 }
+            } else {
+                sendBattleAction({
+                    action: 'SWING',
+                    facing: player.facing
+                });
             }
+
+            broadcastBattleState(true);
         }
 
         function drawPvpArena() {
@@ -6162,37 +6409,89 @@
                 ctx.fill();
             });
 
-            // 2. 도전자 그리기
-            if (!pvpOpponent.defeated) {
-                // 도전자 머리 위 닉네임 명찰
-                ctx.save();
-                ctx.fillStyle = '#f1c40f';
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'center';
-                ctx.shadowColor = 'black';
-                ctx.shadowBlur = 4;
-                ctx.fillText(`⚔️ ${pvpOpponent.name || '도전자'}`, pvpOpponent.x, pvpOpponent.y - 36);
-                ctx.restore();
+            // 2. 실제 상대 플레이어 캐릭터 그리기
+            ctx.save();
+            // 머리 위 닉네임 명찰
+            ctx.fillStyle = '#ff7675';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'black';
+            ctx.shadowBlur = 4;
+            ctx.fillText(`⚔️ ${pvpOpponent.name || '상대 플레이어'}`, pvpOpponent.x, pvpOpponent.y - 38);
 
-                ctx.save();
-                ctx.translate(pvpOpponent.x, pvpOpponent.y);
-                ctx.scale(pvpOpponent.facing, 1);
-                if (pvpOpponent.flinchTimer > 0) ctx.filter = 'brightness(1.8) hue-rotate(90deg)';
+            // 상대 머리 위 미니 HP바
+            const oppHp = Math.max(0, pvpOpponent.hp);
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillRect(pvpOpponent.x - 25, pvpOpponent.y - 34, 50, 6);
+            ctx.fillStyle = '#ff4757';
+            ctx.fillRect(pvpOpponent.x - 25, pvpOpponent.y - 34, (oppHp / 3000) * 50, 6);
+            ctx.strokeStyle = '#c0392b';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(pvpOpponent.x - 25, pvpOpponent.y - 34, 50, 6);
+            ctx.restore();
 
-                ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            ctx.save();
+            ctx.translate(pvpOpponent.x, pvpOpponent.y);
+            ctx.scale(pvpOpponent.facing, 1);
+            if (pvpOpponent.flinchTimer > 0) ctx.filter = 'brightness(1.8) hue-rotate(90deg)';
+
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            ctx.beginPath();
+            ctx.ellipse(0, 24, 22, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            const oppCharObj = {
+                colors: { skin: '#ffeaa7', shirt: '#3498db', hat: '#2c3e50' },
+                facing: 1
+            };
+            drawCharacter(ctx, oppCharObj, 0, 0, pvpOpponent.flinchTimer > 0, pvpOpponent.walkTimer || 0, pvpOpponent.skin || 'default', true);
+
+            // 상대 플레이어 무기 그리기
+            ctx.save();
+            ctx.translate(16, 5);
+            let oppSwingAngle = pvpOpponent.axeSwingTimer > 0 ? (pvpOpponent.axeSwingTimer / 16) * 1.5 - 0.75 : 0.3;
+            ctx.rotate(oppSwingAngle);
+            if (pvpOpponent.name && pvpOpponent.name.toLowerCase() === 'adminaccount') {
+                ctx.fillStyle = '#2b7af0';
+                ctx.shadowColor = '#2b7af0';
+                ctx.shadowBlur = 10;
+                ctx.fillRect(0, -32, 6, 32);
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(-5, 0, 16, 4);
+                ctx.fillStyle = '#8d5524';
+                ctx.fillRect(1, 4, 4, 10);
+            } else {
+                ctx.fillStyle = '#7f8c8d';
+                ctx.fillRect(0, -28, 5, 28);
+                ctx.fillStyle = '#bdc3c7';
                 ctx.beginPath();
-                ctx.ellipse(0, 24, 22, 9, 0, 0, Math.PI * 2);
+                ctx.arc(0, -26, 9, 0, Math.PI);
                 ctx.fill();
-
-                const dummyOpponent = {
-                    colors: { skin: '#dcdde1', shirt: '#2c3e50', hat: '#1e272e' },
-                    facing: 1
-                };
-                drawCharacter(ctx, dummyOpponent, 0, 0, false, 0, 'reaper');
-                ctx.restore();
             }
+            ctx.restore();
+            ctx.restore();
 
-            // 3. 플레이어 그리기
+            // 3. 내 플레이어 그리기
+            ctx.save();
+            // 내 머리 위 닉네임 명찰
+            ctx.fillStyle = '#2ecc71';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'black';
+            ctx.shadowBlur = 4;
+            ctx.fillText(`👑 ${currentUser || '나'} (나)`, player.x, player.y - 38);
+
+            // 내 머리 위 미니 HP바
+            const myHp = Math.max(0, playerPvpHp);
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillRect(player.x - 25, player.y - 34, 50, 6);
+            ctx.fillStyle = '#2ecc71';
+            ctx.fillRect(player.x - 25, player.y - 34, (myHp / 3000) * 50, 6);
+            ctx.strokeStyle = '#27ae60';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(player.x - 25, player.y - 34, 50, 6);
+            ctx.restore();
+
             ctx.save();
             ctx.translate(player.x, player.y);
             ctx.scale(player.facing, 1);
@@ -6204,27 +6503,35 @@
 
             drawCharacter(ctx, player, 0, 0, Math.hypot(player.vx, player.vy) > 0.5, player.walkTimer, equippedSkin);
 
-            const sw = adminSwords[currentPvpSwordIndex] || adminSwords[0];
-            const tiers = swordTiersData[sw.type] || swordTiersData.light;
-            const curTierData = tiers[sw.tier] || tiers[0];
-
+            // 내 무기 그리기
             ctx.save();
             ctx.translate(16, 5);
-            let swingAngle = player.axeSwingTimer > 0 ? (player.axeSwingTimer / 16) * 1.5 - 0.75 : 0.3;
-            ctx.rotate(swingAngle);
+            let mySwingAngle = player.axeSwingTimer > 0 ? (player.axeSwingTimer / 16) * 1.5 - 0.75 : 0.3;
+            ctx.rotate(mySwingAngle);
 
-            ctx.fillStyle = curTierData.bladeColor;
-            if (sw.tier >= 3) {
-                ctx.shadowColor = curTierData.bladeColor;
-                ctx.shadowBlur = 12;
+            if (isAdmin()) {
+                const sw = adminSwords[currentPvpSwordIndex] || adminSwords[0];
+                const tiers = swordTiersData[sw.type] || swordTiersData.light;
+                const curTierData = tiers[sw.tier] || tiers[0];
+                ctx.fillStyle = curTierData.bladeColor;
+                if (sw.tier >= 3) {
+                    ctx.shadowColor = curTierData.bladeColor;
+                    ctx.shadowBlur = 12;
+                }
+                ctx.fillRect(0, -32, 6, 32);
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(-5, 0, 16, 4);
+                ctx.fillStyle = '#8d5524';
+                ctx.fillRect(1, 4, 4, 10);
+            } else {
+                ctx.fillStyle = '#7f8c8d';
+                ctx.fillRect(0, -28, 5, 28);
+                ctx.fillStyle = '#bdc3c7';
+                ctx.beginPath();
+                ctx.arc(0, -26, 9, 0, Math.PI);
+                ctx.fill();
             }
-            ctx.fillRect(0, -32, 6, 32);
-            ctx.fillStyle = '#2c3e50';
-            ctx.fillRect(-5, 0, 16, 4);
-            ctx.fillStyle = '#8d5524';
-            ctx.fillRect(1, 4, 4, 10);
             ctx.restore();
-
             ctx.restore();
 
             // 4. 슬래시 이펙트
@@ -6255,11 +6562,11 @@
             ctx.fillStyle = '#f1c40f';
             ctx.font = 'bold 15px Arial';
             ctx.textAlign = 'left';
-            ctx.fillText(`⚔️ 1:1 PVE BATTLE  [${curTierData.name} (+${sw.tier})] (데미지: ${curTierData.damage.toFixed(1)})`, 28, 38);
+            ctx.fillText(`⚔️ 1:1 유저 실시간 대결 (REAL-TIME BATTLE)`, 28, 38);
 
             ctx.fillStyle = '#2ecc71';
             ctx.font = 'bold 12px Arial';
-            ctx.fillText(`내 체력: ${playerPvpHp} / 3000`, 28, 62);
+            ctx.fillText(`나 (${currentUser || '나'}): ${playerPvpHp} / 3000`, 28, 62);
             ctx.fillStyle = 'rgba(0,0,0,0.5)';
             ctx.fillRect(28, 70, 200, 14);
             ctx.fillStyle = '#2ecc71';
@@ -6268,10 +6575,9 @@
             ctx.lineWidth = 1.5;
             ctx.strokeRect(28, 70, 200, 14);
 
-            const oppHp = Math.max(0, pvpOpponent.hp);
             ctx.fillStyle = '#ff7675';
             ctx.textAlign = 'right';
-            ctx.fillText(`${pvpOpponent.name || '도전자'}: ${oppHp} / 3000`, GAME_WIDTH - 145, 62);
+            ctx.fillText(`상대 (${pvpOpponent.name}): ${oppHp} / 3000`, GAME_WIDTH - 145, 62);
             ctx.fillStyle = 'rgba(0,0,0,0.5)';
             ctx.fillRect(GAME_WIDTH - 345, 70, 200, 14);
             ctx.fillStyle = '#ff4757';
@@ -6295,7 +6601,59 @@
             ctx.fillStyle = 'rgba(255,255,255,0.7)';
             ctx.font = '12px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('💡 화면 클릭 / 터치 또는 [스페이스바]로 도전자 공격', GAME_WIDTH / 2, GAME_HEIGHT - 25);
+            ctx.fillText('💡 화면 클릭 / 터치 또는 [스페이스바]로 상대 공격', GAME_WIDTH / 2, GAME_HEIGHT - 25);
+
+            // 6. 경기 종료 승패 오버레이 결과창
+            if (battleMatchOver) {
+                ctx.save();
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.78)';
+                ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+                const isWinner = (playerPvpHp > 0);
+                ctx.textAlign = 'center';
+                if (isWinner) {
+                    ctx.fillStyle = '#f1c40f';
+                    ctx.font = 'bold 38px Arial';
+                    ctx.shadowColor = '#f39c12';
+                    ctx.shadowBlur = 22;
+                    ctx.fillText('🏆 VICTORY!', GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40);
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 16px Arial';
+                    ctx.fillText(`[${pvpOpponent.name}] 님과의 대결에서 승리했습니다!`, GAME_WIDTH / 2, GAME_HEIGHT / 2);
+                    ctx.fillStyle = '#2ecc71';
+                    ctx.font = 'bold 15px Arial';
+                    ctx.fillText(`🏆 내 1:1 배틀 승리 횟수: ${battleWins}승`, GAME_WIDTH / 2, GAME_HEIGHT / 2 + 30);
+                } else {
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.font = 'bold 38px Arial';
+                    ctx.shadowColor = '#c0392b';
+                    ctx.shadowBlur = 22;
+                    ctx.fillText('💀 DEFEAT...', GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40);
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 16px Arial';
+                    ctx.fillText(`[${pvpOpponent.name}] 님과의 대결에서 패배하였습니다.`, GAME_WIDTH / 2, GAME_HEIGHT / 2);
+                    ctx.fillStyle = '#a4b0be';
+                    ctx.font = 'bold 13px Arial';
+                    ctx.fillText('다음 기회에 다시 도전해보세요!', GAME_WIDTH / 2, GAME_HEIGHT / 2 + 30);
+                }
+
+                // [🌍 로비로 복귀] 버튼
+                ctx.fillStyle = isWinner ? '#27ae60' : '#2c3e50';
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(GAME_WIDTH / 2 - 90, GAME_HEIGHT / 2 + 65, 180, 44, 12);
+                else ctx.rect(GAME_WIDTH / 2 - 90, GAME_HEIGHT / 2 + 65, 180, 44);
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 15px Arial';
+                ctx.fillText('🌍 로비로 복귀', GAME_WIDTH / 2, GAME_HEIGHT / 2 + 92);
+                ctx.restore();
+            }
 
             // 플로팅 텍스트
             floatTexts.forEach(t => {
