@@ -314,29 +314,35 @@
                     <span>🔨</span> <span id="sword-upgrade-btn-text">강화하기 (비용: 100원)</span>
                 </button>
 
-                <!-- 🏠 1:1 결투 20승 달성 보상 안내 배너 -->
+                <!-- 🏠 크라켄 30회 처치 보상 안내 배너 -->
                 <div style="background: rgba(241, 196, 15, 0.12); border: 1.5px solid rgba(241, 196, 15, 0.4); border-radius: 12px; padding: 10px 12px; font-size: 13px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 6px;">
-                        <span>🏠⚔️</span>
-                        <span style="color: #f1c40f; font-weight: bold;">20승 보상: 포지 하우스</span>
+                        <span>🏠🦑</span>
+                        <span style="color: #f1c40f; font-weight: bold;">30회 처치 보상: 포지 하우스</span>
                     </div>
-                    <span id="sword-modal-wins-badge" style="color: #fff; font-size: 11px; background: rgba(0,0,0,0.5); padding: 3px 8px; border-radius: 6px; font-weight: bold;">0 / 20승</span>
+                    <span id="sword-modal-wins-badge" style="color: #fff; font-size: 11px; background: rgba(0,0,0,0.5); padding: 3px 8px; border-radius: 6px; font-weight: bold;">0 / 30회</span>
                 </div>
-                <div style="background: rgba(0,0,0,0.32); border: 1.5px solid #233554; border-radius: 12px; padding: 10px 12px; text-align: left;">
-                    <div style="font-size: 12px; color: #ff7675; font-weight: bold; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
-                        <span>⚔️ 1:1 PVE 배틀 신청 (거래 방식)</span>
-                        <span style="font-size: 11px; color: #a0aec0;">체력: 3000 HP</span>
+
+                <!-- 🦑 PVE 크라켄 보스전 카드 -->
+                <div style="background: linear-gradient(135deg, rgba(13, 37, 63, 0.9), rgba(7, 24, 45, 0.95)); border: 1.5px solid #00cec9; border-radius: 14px; padding: 12px; text-align: left; box-shadow: 0 4px 15px rgba(0, 206, 201, 0.25);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-size: 14px; color: #00cec9; font-weight: 900; display: flex; align-items: center; gap: 5px;">
+                            <span>🦑</span> 심연의 크라켄 보스전 (PVE)
+                        </span>
+                        <span style="font-size: 11px; color: #74b9ff; background: rgba(0,206,201,0.18); padding: 2px 7px; border-radius: 5px; font-weight: bold;">물공격 보스</span>
                     </div>
-                    <input id="battle-target-input" type="text" placeholder="결투할 유저 닉네임 입력 (거래 방식)" maxlength="20" style="width: 100%; box-sizing: border-box; background: #0c101a; border: 1.5px solid #2e384d; border-radius: 8px; color: white; padding: 9px 12px; font-size: 13px; outline: none; margin-bottom: 6px;" onkeydown="if(event.key==='Enter') sendAdminBattleRequest()">
-                    <div id="battle-req-status" style="display: none; color: #f1c40f; font-size: 12px; margin-bottom: 6px; font-weight: bold; text-align: center;">상대방의 수락을 기다리는 중...</div>
-                    <button id="battle-req-send-btn" onclick="sendAdminBattleRequest()" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(231, 76, 60, 0.4);">
-                        ⚔️ 1:1 배틀 요청
+                    <div style="font-size: 12px; color: #dfe6e9; margin-bottom: 10px; line-height: 1.6; background: rgba(0,0,0,0.35); padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(0,206,201,0.2);">
+                        <div>💧 <b>내 체력</b>: <span style="color: #2ecc71; font-weight: bold;">1000 HP</span></div>
+                        <div>💥 <b>보스 공격력</b>: <span style="color: #ff7675; font-weight: bold;">100 DMG</span> (물대포 / 물기둥 / 물보라)</div>
+                    </div>
+                    <button id="kraken-boss-start-btn" onclick="startKrakenBossBattle()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #0984e3, #00cec9); color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(9, 132, 227, 0.5); display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <span>🌊</span> <span>심연의 크라켄 보스전 입장</span>
                     </button>
                 </div>
 
-                <!-- 🏆 1:1 배틀 최다 승리 랭킹 보기 버튼 -->
+                <!-- 🏆 크라켄 처치 랭킹 보기 버튼 -->
                 <button onclick="openRankingModal('battle')" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(243, 156, 18, 0.35); display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>🏆</span> <span>1:1 배틀 최다 승리 랭킹 (TOP 10)</span>
+                    <span>🏆</span> <span>크라켄 처치 랭킹 (TOP 10)</span>
                 </button>
             </div>
         </div>
@@ -390,11 +396,11 @@
                 <button onclick="closeRankingModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
             </div>
 
-            <!-- 랭킹 탭 선택: 레벨 TOP 10 vs 보스 처치 TOP 10 vs 배틀 승리 TOP 10 -->
+            <!-- 랭킹 탭 선택: 레벨 TOP 10 vs 보스 처치 TOP 10 vs 크라켄 처치 TOP 10 -->
             <div style="display: flex; gap: 6px; margin-bottom: 12px;">
                 <button id="rank-tab-level-btn" onclick="switchLeaderboardTab('level')" style="flex: 1; padding: 8px 4px; background: #f1c40f; color: #111; border: none; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">⭐ 레벨</button>
                 <button id="rank-tab-boss-btn" onclick="switchLeaderboardTab('boss')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">😈 보스 처치</button>
-                <button id="rank-tab-battle-btn" onclick="switchLeaderboardTab('battle')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">⚔️ 배틀 승리</button>
+                <button id="rank-tab-battle-btn" onclick="switchLeaderboardTab('battle')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">🦑 크라켄 처치</button>
             </div>
 
             <!-- ⏱️ 10분 주기 자동 리롤 타이머 표시 -->
@@ -979,8 +985,9 @@
         let inPvpArena = false;
         let currentPvpSwordIndex = 0;
         let activeSwordModalIndex = 0;
-        let playerPvpHp = 3000;
-        const PLAYER_MAX_PVP_HP = 3000;
+        let playerPvpHp = 1000;
+        const PLAYER_MAX_PVP_HP = 1000;
+        const KRAKEN_DAMAGE = 100;
         let pvpWins = 0;
         let battleWins = 0;
         let activeBattleId = null;
@@ -988,7 +995,7 @@
         let unsubscribeActiveBattle = null;
         let unsubscribeIncomingBattles = null;
         let incomingBattleId = null;
-        let currentBattleOpponentName = '';
+        let currentBattleOpponentName = '크라켄';
         let battleChannel = null;
         try {
             battleChannel = new BroadcastChannel('took_battle_channel');
@@ -996,19 +1003,29 @@
             battleChannel = null;
         }
 
-        let pvpOpponent = {
+        let krakenBoss = {
             x: 300,
-            y: 280,
-            hp: 3000,
-            maxHp: 3000,
+            y: 220,
+            baseY: 220,
+            radius: 70,
+            hp: 4000,
+            maxHp: 4000,
             facing: 1,
             flinchTimer: 0,
-            axeSwingTimer: 0,
-            walkTimer: 0,
-            skin: 'default',
+            attackTimer: 45,
+            geyserTimer: 90,
+            waveTimer: 180,
+            animTimer: 0,
             defeated: false,
-            name: '상대 플레이어'
+            name: '심연의 크라켄'
         };
+        let krakenWaterProjectiles = [];
+        let krakenGeysers = [];
+        let krakenWaves = [];
+        let krakenWaterParticles = [];
+        let abyssAmbientBubbles = [];
+
+        let pvpOpponent = krakenBoss; // backward compatibility
         let currentBattleMatchId = null;
         let isBattleHost = true;
         let unsubscribeBattleDoc = null;
@@ -2221,7 +2238,7 @@
                     tabBattle.style.color = '#111';
                     tabBattle.style.border = 'none';
                 }
-                if (modalTitle) modalTitle.innerHTML = '<span>⚔️</span> 1:1 배틀 최다 승리 TOP 10';
+                if (modalTitle) modalTitle.innerHTML = '<span>🦑</span> 심연의 크라켄 처치 TOP 10';
             } else {
                 if (tabLevel) {
                     tabLevel.style.background = '#f1c40f';
@@ -2341,7 +2358,7 @@
                 if (isCurrentAdmin) {
                     myRankVal.innerHTML = `<span style="color:#f1c40f; font-weight:bold;">👑 관리자 계정 (모든 랭킹 집계 제외됨)</span>`;
                 } else if (isBattleTab) {
-                    myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🏆 ${effectiveBattleWins}승)` : `배틀 ${effectiveBattleWins}승`;
+                    myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🦑 ${effectiveBattleWins}회 처치)` : `크라켄 ${effectiveBattleWins}회 처치`;
                 } else if (isBossTab) {
                     myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🗡️ ${effectiveBossKills}회 처치)` : `처치 ${effectiveBossKills}회`;
                 } else {
@@ -2377,7 +2394,7 @@
                 
                 let valueText = '';
                 if (isBattleTab) {
-                    valueText = `<span style="font-size: 14px; font-weight: 800; color: #f1c40f; letter-spacing: -0.5px;">🏆 ${r.battleWins || 0}승</span>`;
+                    valueText = `<span style="font-size: 14px; font-weight: 800; color: #00cec9; letter-spacing: -0.5px;">🦑 ${r.battleWins || 0}회 처치</span>`;
                 } else if (isBossTab) {
                     valueText = `<span style="font-size: 14px; font-weight: 800; color: #ff7675; letter-spacing: -0.5px;">🗡️ ${r.bossKills}회 처치</span>`;
                 } else {
@@ -3949,8 +3966,18 @@
                     return;
                 }
                 if (battleMatchOver) {
-                    if (!isSpacebar && cx >= GAME_WIDTH / 2 - 95 && cx <= GAME_WIDTH / 2 + 95 && cy >= GAME_HEIGHT / 2 + 60 && cy <= GAME_HEIGHT / 2 + 115) {
+                    // [🔄 재도전] 버튼
+                    if (!isSpacebar && cx >= GAME_WIDTH / 2 - 175 && cx <= GAME_WIDTH / 2 - 15 && cy >= GAME_HEIGHT / 2 + 60 && cy <= GAME_HEIGHT / 2 + 115) {
+                        restartKrakenBossBattle();
+                        return;
+                    }
+                    // [🌍 로비로 복귀] 버튼
+                    if (!isSpacebar && cx >= GAME_WIDTH / 2 + 15 && cx <= GAME_WIDTH / 2 + 175 && cy >= GAME_HEIGHT / 2 + 60 && cy <= GAME_HEIGHT / 2 + 115) {
                         exitPvpArena();
+                        return;
+                    }
+                    if (isSpacebar) {
+                        restartKrakenBossBattle();
                         return;
                     }
                     return;
@@ -5676,13 +5703,13 @@
             if (winsBadge) {
                 const currentWins = Number(battleWins || 0);
                 if (ownedSkins.includes('forge_house')) {
-                    winsBadge.innerText = `🎉 20승 달성 (보유중)`;
+                    winsBadge.innerText = `🎉 30회 달성 (보유중)`;
                     winsBadge.style.background = '#27ae60';
                     winsBadge.style.color = '#fff';
                 } else {
-                    winsBadge.innerText = `${currentWins} / 20승`;
-                    winsBadge.style.background = currentWins >= 20 ? '#27ae60' : 'rgba(0,0,0,0.5)';
-                    winsBadge.style.color = currentWins >= 20 ? '#fff' : '#f1c40f';
+                    winsBadge.innerText = `${currentWins} / 30회`;
+                    winsBadge.style.background = currentWins >= 30 ? '#27ae60' : 'rgba(0,0,0,0.5)';
+                    winsBadge.style.color = currentWins >= 30 ? '#fff' : '#f1c40f';
                 }
             }
 
@@ -5725,16 +5752,17 @@
             });
         }
 
+        function startKrakenBossBattle() {
+            closeAdminSwordModal();
+            enterKrakenBossBattle();
+        }
+
         function startPvpWithActiveSword() {
-            startInstantPveBattle();
+            startKrakenBossBattle();
         }
 
         function startInstantPveBattle() {
-            if (!isAdmin()) return;
-            const input = document.getElementById('battle-target-input');
-            const targetUsername = (input && input.value.trim()) ? input.value.trim() : '도전자 섀도우 검사';
-            closeAdminSwordModal();
-            enterPveBattleArena(targetUsername, true);
+            startKrakenBossBattle();
         }
 
         async function sendAdminBattleRequest() {
@@ -6004,261 +6032,130 @@
             }
         }
 
-        function enterPveBattleArena(opponentName = '상대 플레이어', isHost = true) {
+        function enterKrakenBossBattle() {
             inPvpArena = true;
             battleMatchOver = false;
-            isBattleHost = isHost;
-            if (!currentBattleMatchId) {
-                currentBattleMatchId = activeBattleId || incomingBattleId || ('battle_' + (isHost ? currentUser : opponentName) + '_' + (isHost ? opponentName : currentUser));
-            }
             currentPvpSwordIndex = 0;
             savedWorldPos = { x: player.x, y: player.y, cameraY: cameraY };
 
-            playerPvpHp = PLAYER_MAX_PVP_HP; // 3000 HP
+            // 플레이어 체력: 1000 HP (요청사항: 플레이어 채력은 1000)
+            playerPvpHp = 1000;
 
-            if (isHost) {
-                // 신청자 (호스트): 하단 시작
-                player.x = 300;
-                player.y = 660;
-                player.facing = 1;
-                pvpOpponent.x = 300;
-                pvpOpponent.y = 280;
-                pvpOpponent.facing = -1;
-            } else {
-                // 수락자 (게스트): 상단 시작
-                player.x = 300;
-                player.y = 280;
-                player.facing = -1;
-                pvpOpponent.x = 300;
-                pvpOpponent.y = 660;
-                pvpOpponent.facing = 1;
-            }
-
+            player.x = 300;
+            player.y = 660;
+            player.facing = 1;
             player.vx = 0;
             player.vy = 0;
             player.targetTree = null;
             player.axeSwingTimer = 0;
             cameraY = 0;
 
-            pvpOpponent.hp = 3000;
-            pvpOpponent.maxHp = 3000;
-            pvpOpponent.name = opponentName;
-            pvpOpponent.flinchTimer = 0;
-            pvpOpponent.axeSwingTimer = 0;
-            pvpOpponent.walkTimer = 0;
-            pvpOpponent.skin = 'default';
-            pvpOpponent.defeated = false;
+            // 크라켄 보스 초기화 (요청사항: 크라켄 보스고 물공격)
+            krakenBoss.x = 300;
+            krakenBoss.y = 220;
+            krakenBoss.baseY = 220;
+            krakenBoss.radius = 70;
+            krakenBoss.hp = 4000;
+            krakenBoss.maxHp = 4000;
+            krakenBoss.facing = 1;
+            krakenBoss.flinchTimer = 0;
+            krakenBoss.attackTimer = 45;
+            krakenBoss.geyserTimer = 90;
+            krakenBoss.waveTimer = 180;
+            krakenBoss.animTimer = 0;
+            krakenBoss.defeated = false;
 
+            krakenWaterProjectiles = [];
+            krakenGeysers = [];
+            krakenWaves = [];
+            krakenWaterParticles = [];
             pvpSlashEffects = [];
+
             setBossRoomHUDVisible(false);
-
-            // 실시간 원격 리스너 시작
-            startBattleSyncListener();
-
-            // 초기 위치 브로드캐스트
-            broadcastBattleState(true);
 
             floatTexts.push({
                 x: 300,
                 y: 350,
-                text: `⚔️ 1:1 유저 실시간 대결 시작! vs [${opponentName}]`,
-                color: '#f1c40f',
-                life: 120,
+                text: '🦑 심연의 지배자 [크라켄] 보스전 시작!',
+                color: '#00cec9',
+                life: 140,
+                size: 24
+            });
+        }
+
+        function enterPveBattleArena(opponentName = '크라켄', isHost = true) {
+            enterKrakenBossBattle();
+        }
+
+        function restartKrakenBossBattle() {
+            battleMatchOver = false;
+            playerPvpHp = 1000;
+            player.x = 300;
+            player.y = 660;
+            player.vx = 0;
+            player.vy = 0;
+            player.axeSwingTimer = 0;
+
+            krakenBoss.hp = 4000;
+            krakenBoss.flinchTimer = 0;
+            krakenBoss.attackTimer = 45;
+            krakenBoss.geyserTimer = 90;
+            krakenBoss.waveTimer = 180;
+            krakenBoss.defeated = false;
+
+            krakenWaterProjectiles = [];
+            krakenGeysers = [];
+            krakenWaves = [];
+            krakenWaterParticles = [];
+            pvpSlashEffects = [];
+
+            floatTexts.push({
+                x: 300,
+                y: 350,
+                text: '🔄 크라켄 재도전 시작!',
+                color: '#38bdf8',
+                life: 100,
                 size: 24
             });
         }
 
         function startBattleSyncListener() {
-            if (unsubscribeBattleDoc) {
-                unsubscribeBattleDoc();
-                unsubscribeBattleDoc = null;
-            }
-
-            if (typeof db !== 'undefined' && db && currentBattleMatchId && currentBattleMatchId !== 'local_battle') {
-                try {
-                    unsubscribeBattleDoc = db.collection('battles').doc(currentBattleMatchId).onSnapshot(doc => {
-                        if (!doc.exists) return;
-                        const d = doc.data();
-                        if (d.hostState && d.hostState.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
-                            applyOpponentState(d.hostState);
-                        } else if (d.guestState && d.guestState.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
-                            applyOpponentState(d.guestState);
-                        }
-                        if (d.battleEvent && d.battleEvent.senderLower !== (currentUser ? currentUser.toLowerCase() : '')) {
-                            handleBattleIncomingEvent(d.battleEvent);
-                        }
-                    });
-                } catch(e) {}
-            }
+            // PVE 보스전으로 전환되어 로컬 보스 AI 로직으로 실행
         }
 
-        function broadcastBattleState(immediate = false) {
-            if (!inPvpArena || !currentBattleMatchId || !currentUser) return;
-            const now = Date.now();
-            if (!immediate && now - lastBattleSyncTime < 35) return;
-            lastBattleSyncTime = now;
-
-            const statePayload = {
-                type: 'BATTLE_MOVE',
-                battleId: currentBattleMatchId,
-                sender: currentUser,
-                senderLower: currentUser.toLowerCase(),
-                x: Math.round(player.x),
-                y: Math.round(player.y),
-                vx: Number(player.vx.toFixed(2)),
-                vy: Number(player.vy.toFixed(2)),
-                facing: player.facing,
-                walkTimer: Math.round(player.walkTimer || 0),
-                axeSwingTimer: player.axeSwingTimer || 0,
-                skin: equippedSkin,
-                hp: playerPvpHp,
-                timestamp: now
-            };
-
-            try {
-                if (battleChannel) {
-                    battleChannel.postMessage(statePayload);
-                }
-            } catch(e) {}
-
-            try {
-                localStorage.setItem('took_battle_sync_' + currentBattleMatchId + '_' + currentUser.toLowerCase(), JSON.stringify(statePayload));
-            } catch(e) {}
-
-            if (typeof db !== 'undefined' && db && currentBattleMatchId !== 'local_battle') {
-                if (immediate || (now - lastFirestoreSyncTime >= 90)) {
-                    lastFirestoreSyncTime = now;
-                    const updateField = isBattleHost ? 'hostState' : 'guestState';
-                    db.collection('battles').doc(currentBattleMatchId).set({
-                        [updateField]: statePayload,
-                        updatedAt: now
-                    }, { merge: true }).catch(() => {});
-                }
-            }
-        }
-
-        function applyOpponentState(data) {
-            if (!inPvpArena || !data) return;
-            pvpOpponent.x = data.x;
-            pvpOpponent.y = data.y;
-            pvpOpponent.vx = data.vx || 0;
-            pvpOpponent.vy = data.vy || 0;
-            pvpOpponent.facing = data.facing || 1;
-            pvpOpponent.walkTimer = data.walkTimer || 0;
-            pvpOpponent.axeSwingTimer = data.axeSwingTimer || 0;
-            if (data.skin) pvpOpponent.skin = data.skin;
-            if (typeof data.hp === 'number') {
-                pvpOpponent.hp = data.hp;
-            }
-        }
-
-        function sendBattleAction(payload) {
-            if (!currentBattleMatchId || !currentUser) return;
-            const actionData = {
-                type: 'BATTLE_ACTION',
-                battleId: currentBattleMatchId,
-                sender: currentUser,
-                senderLower: currentUser.toLowerCase(),
-                ...payload,
-                timestamp: Date.now()
-            };
-
-            try {
-                if (battleChannel) {
-                    battleChannel.postMessage(actionData);
-                }
-            } catch(e) {}
-
-            try {
-                localStorage.setItem('took_battle_action_' + currentBattleMatchId, JSON.stringify(actionData));
-            } catch(e) {}
-
-            if (typeof db !== 'undefined' && db && currentBattleMatchId !== 'local_battle') {
-                try {
-                    db.collection('battles').doc(currentBattleMatchId).set({
-                        battleEvent: actionData,
-                        updatedAt: Date.now()
-                    }, { merge: true }).catch(() => {});
-                } catch(e) {}
-            }
-        }
-
-        function handleBattleIncomingEvent(evt) {
-            if (!inPvpArena || !evt) return;
-
-            if (evt.action === 'SWING') {
-                pvpOpponent.axeSwingTimer = 16;
-                if (evt.facing) pvpOpponent.facing = evt.facing;
-            } else if (evt.action === 'HIT') {
-                const damage = Number(evt.damage) || 350;
-                playerPvpHp = Math.max(0, playerPvpHp - damage);
-
-                pvpSlashEffects.push({
-                    x: player.x,
-                    y: player.y - 10,
-                    life: 14,
-                    color: '#ff4757',
-                    facing: evt.facing || 1
-                });
-
-                floatTexts.push({
-                    x: player.x,
-                    y: player.y - 70,
-                    text: `-${damage.toFixed(0)}! 💥`,
-                    color: '#ff4757',
-                    life: 55,
-                    size: 22
-                });
-
-                if (playerPvpHp <= 0 && !battleMatchOver) {
-                    handleBattleDefeat(pvpOpponent.name);
-                }
-            } else if (evt.action === 'VICTORY') {
-                if (!battleMatchOver) {
-                    handleBattleDefeat(evt.winner || pvpOpponent.name);
-                }
-            } else if (evt.action === 'EXIT') {
-                floatTexts.push({
-                    x: 300,
-                    y: 350,
-                    text: `상대방 [${pvpOpponent.name}] 님이 결투장을 나갔습니다.`,
-                    color: '#e74c3c',
-                    life: 110,
-                    size: 20
-                });
-                setTimeout(() => {
-                    if (inPvpArena) exitPvpArena();
-                }, 1200);
-            }
-        }
+        function broadcastBattleState(immediate = false) {}
+        function applyOpponentState(data) {}
+        function sendBattleAction(payload) {}
+        function handleBattleIncomingEvent(evt) {}
 
         function checkAndAwardForgeHouseSkin() {
-            if (battleWins >= 20) {
+            // 요청사항: 30번 처치하면 그 하우스 스킨
+            if (battleWins >= 30) {
                 if (!ownedSkins.includes('forge_house')) {
                     ownedSkins.push('forge_house');
-                    saveGame();
+                    saveGame(true);
                     if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
                     if (typeof updateShopSkinUI === 'function') updateShopSkinUI();
                     floatTexts.push({
                         x: player.x,
                         y: player.y - 120,
-                        text: `🎉 1:1 결투 20승 달성! [포지 하우스] 스킨 지급 완료! 🏠⚔️`,
+                        text: '🎉 크라켄 30회 처치 달성! [포지 하우스] 스킨 지급 완료! 🏠⚔️',
                         color: '#f1c40f',
-                        life: 220,
+                        life: 250,
                         size: 26
                     });
                 }
             }
         }
 
-        function handleBattleVictory(opponentName) {
+        function handleBattleVictory(opponentName = '크라켄') {
             if (battleMatchOver) return;
             battleMatchOver = true;
 
             battleWins++;
             pvpWins = battleWins;
             try {
-                localStorage.setItem('battle_wins_' + currentUser, battleWins);
+                localStorage.setItem('battle_wins_' + (currentUser || 'guest'), String(battleWins));
             } catch(e) {}
             if (typeof db !== 'undefined' && db && currentUser) {
                 try {
@@ -6269,30 +6166,26 @@
             }
 
             checkAndAwardForgeHouseSkin();
-
-            sendBattleAction({
-                action: 'VICTORY',
-                winner: currentUser
-            });
+            saveGame(true);
 
             floatTexts.push({
                 x: 300,
                 y: 350,
-                text: `🏆 [${opponentName}] 에게 승리하였습니다! (+1승, 총 ${battleWins}승)`,
+                text: `🏆 심연의 크라켄 격퇴 성공! (+1회, 총 ${battleWins}회 처치)`,
                 color: '#f1c40f',
                 life: 180,
                 size: 26
             });
         }
 
-        function handleBattleDefeat(winnerName) {
+        function handleBattleDefeat(winnerName = '크라켄') {
             if (battleMatchOver) return;
             battleMatchOver = true;
 
             floatTexts.push({
                 x: 300,
                 y: 350,
-                text: `💀 [${winnerName}] 님에게 패배하였습니다...`,
+                text: '💀 심연의 크라켄에게 패배하였습니다...',
                 color: '#e74c3c',
                 life: 180,
                 size: 26
@@ -6300,11 +6193,6 @@
         }
 
         function exitPvpArena() {
-            if (inPvpArena && currentBattleMatchId) {
-                sendBattleAction({
-                    action: 'EXIT'
-                });
-            }
             inPvpArena = false;
             battleMatchOver = false;
             if (unsubscribeBattleDoc) {
@@ -6317,11 +6205,17 @@
             player.targetTree = null;
             player.axeSwingTimer = 0;
 
+            krakenWaterProjectiles = [];
+            krakenGeysers = [];
+            krakenWaves = [];
+            krakenWaterParticles = [];
+            pvpSlashEffects = [];
+
             setBossRoomHUDVisible(true);
             floatTexts.push({
                 x: player.x,
                 y: player.y - 80,
-                text: `🌍 원래 세계로 복귀했습니다!`,
+                text: '🌍 원래 세계로 복귀했습니다!',
                 color: '#2ecc71',
                 life: 70
             });
@@ -6348,23 +6242,245 @@
             }
 
             player.x = Math.max(70, Math.min(GAME_WIDTH - 70, player.x + player.vx));
-            player.y = Math.max(140, Math.min(GAME_HEIGHT - 70, player.y + player.vy));
+            player.y = Math.max(140, Math.min(GAME_HEIGHT - 65, player.y + player.vy));
 
             if (Math.abs(player.vx) > 0.1) player.facing = player.vx > 0 ? 1 : -1;
             if (player.axeSwingTimer > 0) player.axeSwingTimer--;
+            if (hasMoved) player.walkTimer = (player.walkTimer || 0) + 1;
 
-            // 실시간 내 위치/동작 브로드캐스트
-            if (hasMoved || player.axeSwingTimer > 0) {
-                if (hasMoved) player.walkTimer = (player.walkTimer || 0) + 1;
-                broadcastBattleState();
+            // 배경 부유 물거품 갱신
+            if (abyssAmbientBubbles.length < 25) {
+                abyssAmbientBubbles.push({
+                    x: Math.random() * GAME_WIDTH,
+                    y: GAME_HEIGHT + Math.random() * 40,
+                    vy: 0.8 + Math.random() * 1.5,
+                    r: 2 + Math.random() * 4,
+                    alpha: 0.2 + Math.random() * 0.4
+                });
+            }
+            abyssAmbientBubbles.forEach(b => {
+                b.y -= b.vy;
+                b.x += Math.sin(b.y * 0.03) * 0.4;
+                if (b.y < 50) {
+                    b.y = GAME_HEIGHT + 10;
+                    b.x = Math.random() * GAME_WIDTH;
+                }
+            });
+
+            // 크라켄 보스 행동 및 물공격 루프
+            if (!battleMatchOver && krakenBoss.hp > 0) {
+                krakenBoss.animTimer++;
+                krakenBoss.y = krakenBoss.baseY + Math.sin(krakenBoss.animTimer * 0.05) * 12;
+                krakenBoss.facing = player.x >= krakenBoss.x ? 1 : -1;
+                if (krakenBoss.flinchTimer > 0) krakenBoss.flinchTimer--;
+
+                // [물공격 1: 물대포 투사체 (Water Blasts)]
+                krakenBoss.attackTimer--;
+                if (krakenBoss.attackTimer <= 0) {
+                    let dx = player.x - krakenBoss.x;
+                    let dy = player.y - (krakenBoss.y + 25);
+                    let baseAng = Math.atan2(dy, dx);
+
+                    // 1발 또는 3방향 부채꼴 물대포
+                    let isSpread = (krakenBoss.animTimer % 180 > 90);
+                    let angles = isSpread ? [baseAng - 0.28, baseAng, baseAng + 0.28] : [baseAng];
+
+                    angles.forEach(ang => {
+                        krakenWaterProjectiles.push({
+                            x: krakenBoss.x,
+                            y: krakenBoss.y + 25,
+                            vx: Math.cos(ang) * 5.6,
+                            vy: Math.sin(ang) * 5.6,
+                            radius: 14,
+                            life: 160
+                        });
+                    });
+
+                    // 발사 시 물보라 파티클
+                    for (let i = 0; i < 6; i++) {
+                        krakenWaterParticles.push({
+                            x: krakenBoss.x,
+                            y: krakenBoss.y + 25,
+                            vx: (Math.random() - 0.5) * 4,
+                            vy: (Math.random() - 0.5) * 4,
+                            radius: 3 + Math.random() * 3,
+                            color: '#81ecec',
+                            life: 18,
+                            maxLife: 18
+                        });
+                    }
+
+                    krakenBoss.attackTimer = 90 + Math.floor(Math.random() * 30);
+                }
+
+                // [물공격 2: 바닥 물기둥 분출 (Aqua Geyser)]
+                krakenBoss.geyserTimer--;
+                if (krakenBoss.geyserTimer <= 0) {
+                    krakenGeysers.push({
+                        x: player.x,
+                        y: player.y,
+                        radius: 48,
+                        timer: 50,
+                        maxTimer: 50,
+                        state: 'warning',
+                        duration: 25,
+                        hit: false
+                    });
+                    krakenBoss.geyserTimer = 150 + Math.floor(Math.random() * 40);
+                }
+
+                // [물공격 3: 촉수 물보라 충격파 (Tentacle Splash Wave)]
+                krakenBoss.waveTimer--;
+                if (krakenBoss.waveTimer <= 0) {
+                    krakenWaves.push({
+                        x: krakenBoss.x,
+                        y: krakenBoss.y + 40,
+                        radius: 35,
+                        maxRadius: 330,
+                        speed: 4.8,
+                        hit: false
+                    });
+                    krakenBoss.waveTimer = 220 + Math.floor(Math.random() * 50);
+                }
             }
 
-            // 상대방 피격 플린치 및 스윙 쿨타임 갱신 (★ AI 봇 이동/공격 로직 완전 배제!)
-            if (pvpOpponent.flinchTimer > 0) pvpOpponent.flinchTimer--;
-            if (pvpOpponent.axeSwingTimer > 0) pvpOpponent.axeSwingTimer--;
-            if (Math.hypot(pvpOpponent.vx || 0, pvpOpponent.vy || 0) > 0.15) {
-                pvpOpponent.walkTimer = (pvpOpponent.walkTimer || 0) + 1;
-            }
+            // 물대포 투사체 업데이트 및 플레이어 피격 (데미지: 100)
+            krakenWaterProjectiles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life--;
+
+                if (Math.random() < 0.4) {
+                    krakenWaterParticles.push({
+                        x: p.x,
+                        y: p.y,
+                        vx: -p.vx * 0.15 + (Math.random() - 0.5) * 1.5,
+                        vy: -p.vy * 0.15 + (Math.random() - 0.5) * 1.5,
+                        radius: 2.5 + Math.random() * 2,
+                        color: 'rgba(0, 206, 201, 0.7)',
+                        life: 16,
+                        maxLife: 16
+                    });
+                }
+
+                if (!battleMatchOver) {
+                    let dist = Math.hypot(p.x - player.x, p.y - player.y);
+                    if (dist < p.radius + 18) {
+                        p.life = 0;
+                        playerPvpHp = Math.max(0, playerPvpHp - KRAKEN_DAMAGE); // 정확히 100 DMG!
+
+                        for (let i = 0; i < 10; i++) {
+                            let ang = Math.random() * Math.PI * 2;
+                            let spd = 2 + Math.random() * 3.5;
+                            krakenWaterParticles.push({
+                                x: player.x,
+                                y: player.y,
+                                vx: Math.cos(ang) * spd,
+                                vy: Math.sin(ang) * spd,
+                                radius: 3 + Math.random() * 3,
+                                color: '#00cec9',
+                                life: 22,
+                                maxLife: 22
+                            });
+                        }
+
+                        floatTexts.push({
+                            x: player.x,
+                            y: player.y - 65,
+                            text: `-${KRAKEN_DAMAGE}! 💧`,
+                            color: '#00cec9',
+                            life: 60,
+                            size: 24
+                        });
+
+                        if (playerPvpHp <= 0) {
+                            handleBattleDefeat('크라켄');
+                        }
+                    }
+                }
+            });
+            krakenWaterProjectiles = krakenWaterProjectiles.filter(p => p.life > 0 && p.x > 30 && p.x < GAME_WIDTH - 30 && p.y > 60 && p.y < GAME_HEIGHT - 30);
+
+            // 바닥 물기둥 업데이트 및 플레이어 피격 (데미지: 100)
+            krakenGeysers.forEach(g => {
+                if (g.state === 'warning') {
+                    g.timer--;
+                    if (g.timer <= 0) {
+                        g.state = 'erupting';
+                        // 솟구치는 물보라 파티클
+                        for (let i = 0; i < 18; i++) {
+                            krakenWaterParticles.push({
+                                x: g.x + (Math.random() - 0.5) * g.radius,
+                                y: g.y,
+                                vx: (Math.random() - 0.5) * 3,
+                                vy: -4 - Math.random() * 6,
+                                radius: 3 + Math.random() * 4,
+                                color: '#74b9ff',
+                                life: 28,
+                                maxLife: 28
+                            });
+                        }
+                    }
+                } else if (g.state === 'erupting') {
+                    g.duration--;
+                    if (!g.hit && !battleMatchOver) {
+                        let dist = Math.hypot(player.x - g.x, player.y - g.y);
+                        if (dist < g.radius + 14) {
+                            g.hit = true;
+                            playerPvpHp = Math.max(0, playerPvpHp - KRAKEN_DAMAGE); // 정확히 100 DMG!
+
+                            floatTexts.push({
+                                x: player.x,
+                                y: player.y - 70,
+                                text: `-${KRAKEN_DAMAGE}! 🌊`,
+                                color: '#0984e3',
+                                life: 65,
+                                size: 26
+                            });
+
+                            if (playerPvpHp <= 0) {
+                                handleBattleDefeat('크라켄');
+                            }
+                        }
+                    }
+                }
+            });
+            krakenGeysers = krakenGeysers.filter(g => g.duration > 0 || g.state === 'warning');
+
+            // 촉수 물보라 충격파 업데이트 및 플레이어 피격 (데미지: 100)
+            krakenWaves.forEach(w => {
+                w.radius += w.speed;
+                if (!w.hit && !battleMatchOver) {
+                    let dist = Math.hypot(player.x - w.x, player.y - w.y);
+                    if (Math.abs(dist - w.radius) < 22) {
+                        w.hit = true;
+                        playerPvpHp = Math.max(0, playerPvpHp - KRAKEN_DAMAGE); // 정확히 100 DMG!
+
+                        floatTexts.push({
+                            x: player.x,
+                            y: player.y - 65,
+                            text: `-${KRAKEN_DAMAGE}! 💦`,
+                            color: '#74b9ff',
+                            life: 60,
+                            size: 24
+                        });
+
+                        if (playerPvpHp <= 0) {
+                            handleBattleDefeat('크라켄');
+                        }
+                    }
+                }
+            });
+            krakenWaves = krakenWaves.filter(w => w.radius < w.maxRadius);
+
+            // 파티클 수명 갱신
+            krakenWaterParticles.forEach(pt => {
+                pt.x += pt.vx;
+                pt.y += pt.vy;
+                pt.vy += 0.14;
+                pt.life--;
+            });
+            krakenWaterParticles = krakenWaterParticles.filter(pt => pt.life > 0);
 
             // 슬래시 이펙트 수명 갱신
             pvpSlashEffects.forEach(s => s.life--);
@@ -6381,18 +6497,17 @@
             let weaponColor = curTierData.bladeColor;
 
             player.axeSwingTimer = 16;
-            let dx = pvpOpponent.x - player.x;
-            player.facing = dx >= 0 ? 1 : -1;
+            player.facing = krakenBoss.x >= player.x ? 1 : -1;
 
-            let dist = Math.hypot(player.x - pvpOpponent.x, player.y - pvpOpponent.y);
-            const hitSuccess = (dist < 135);
+            let dist = Math.hypot(player.x - krakenBoss.x, player.y - krakenBoss.y);
+            const hitSuccess = (dist < 155);
 
             if (hitSuccess) {
-                pvpOpponent.hp = Math.max(0, pvpOpponent.hp - damage);
-                pvpOpponent.flinchTimer = 16;
+                krakenBoss.hp = Math.max(0, krakenBoss.hp - damage);
+                krakenBoss.flinchTimer = 14;
 
-                const slashX = (player.x + pvpOpponent.x) / 2;
-                const slashY = (player.y + pvpOpponent.y) / 2 - 10;
+                const slashX = (player.x + krakenBoss.x) / 2;
+                const slashY = (player.y + krakenBoss.y) / 2 - 10;
 
                 pvpSlashEffects.push({
                     x: slashX,
@@ -6402,148 +6517,409 @@
                     facing: player.facing
                 });
 
+                // 크라켄 피격 시 튀는 푸른 물방울 파티클
+                for (let i = 0; i < 9; i++) {
+                    let ang = Math.random() * Math.PI * 2;
+                    let spd = 2 + Math.random() * 4;
+                    krakenWaterParticles.push({
+                        x: krakenBoss.x + (Math.random() - 0.5) * 50,
+                        y: krakenBoss.y + 20,
+                        vx: Math.cos(ang) * spd,
+                        vy: Math.sin(ang) * spd - 2,
+                        radius: 3 + Math.random() * 3.5,
+                        color: '#74b9ff',
+                        life: 24,
+                        maxLife: 24
+                    });
+                }
+
                 floatTexts.push({
-                    x: pvpOpponent.x,
-                    y: pvpOpponent.y - 70,
-                    text: `-${damage.toFixed(0)}! 💥`,
+                    x: krakenBoss.x,
+                    y: krakenBoss.y - 65,
+                    text: `-${damage.toFixed(0)}! ⚔️`,
                     color: weaponColor,
                     life: 55,
-                    size: 22
+                    size: 24
                 });
 
-                sendBattleAction({
-                    action: 'HIT',
-                    damage: damage,
-                    slashX: slashX,
-                    slashY: slashY,
-                    facing: player.facing,
-                    newOpponentHp: pvpOpponent.hp
-                });
-
-                if (pvpOpponent.hp <= 0 && !battleMatchOver) {
-                    handleBattleVictory(pvpOpponent.name);
+                if (krakenBoss.hp <= 0 && !battleMatchOver) {
+                    handleBattleVictory('크라켄');
                 }
-            } else {
-                sendBattleAction({
-                    action: 'SWING',
-                    facing: player.facing
+            }
+        }
+
+        function drawKrakenBoss(c) {
+            c.save();
+            c.translate(krakenBoss.x, krakenBoss.y);
+            
+            // 피격 플린치 효과 (밝은 청록 발광)
+            if (krakenBoss.flinchTimer > 0) {
+                c.filter = 'brightness(2.2) drop-shadow(0 0 20px #00cec9)';
+            }
+
+            const anim = krakenBoss.animTimer || 0;
+
+            // 1. 심연의 물 소용돌이 베이스
+            c.fillStyle = 'rgba(0, 0, 0, 0.45)';
+            c.beginPath();
+            c.ellipse(0, 48, 80, 24, 0, 0, Math.PI * 2);
+            c.fill();
+
+            c.strokeStyle = 'rgba(0, 206, 201, 0.45)';
+            c.lineWidth = 2.5;
+            c.setLineDash([8, 6]);
+            c.beginPath();
+            c.ellipse(0, 48, 85 + Math.sin(anim * 0.08) * 4, 25 + Math.cos(anim * 0.08) * 2, 0, 0, Math.PI * 2);
+            c.stroke();
+            c.setLineDash([]);
+
+            // 2. 8개의 거대한 물결치는 촉수 (좌 4개, 우 4개)
+            const tentacleConfigs = [
+                [-45, 10, -115 + Math.cos(anim * 0.06 + 0) * 18, 55 + Math.sin(anim * 0.05 + 0) * 22, -90, -15, 16],
+                [-35, 20, -100 + Math.cos(anim * 0.06 + 1.2) * 16, 75 + Math.sin(anim * 0.05 + 1.2) * 20, -75, 45, 14],
+                [-22, 28, -75 + Math.cos(anim * 0.06 + 2.4) * 15, 95 + Math.sin(anim * 0.05 + 2.4) * 18, -55, 65, 13],
+                [-10, 32, -35 + Math.cos(anim * 0.06 + 3.6) * 12, 108 + Math.sin(anim * 0.05 + 3.6) * 15, -25, 75, 12],
+                [10, 32, 35 + Math.cos(anim * 0.06 + 4.0) * 12, 108 + Math.sin(anim * 0.05 + 4.0) * 15, 25, 75, 12],
+                [22, 28, 75 + Math.cos(anim * 0.06 + 2.8) * 15, 95 + Math.sin(anim * 0.05 + 2.8) * 18, 55, 65, 13],
+                [35, 20, 100 + Math.cos(anim * 0.06 + 1.6) * 16, 75 + Math.sin(anim * 0.05 + 1.6) * 20, 75, 45, 14],
+                [45, 10, 115 + Math.cos(anim * 0.06 + 0.4) * 18, 55 + Math.sin(anim * 0.05 + 0.4) * 22, 90, -15, 16]
+            ];
+
+            tentacleConfigs.forEach((t) => {
+                c.save();
+                let tentGrad = c.createLinearGradient(t[0], t[1], t[2], t[3]);
+                tentGrad.addColorStop(0, '#0c2461');
+                tentGrad.addColorStop(0.5, '#1e3799');
+                tentGrad.addColorStop(1, '#00cec9');
+
+                c.strokeStyle = tentGrad;
+                c.lineWidth = t[6];
+                c.lineCap = 'round';
+                c.beginPath();
+                c.moveTo(t[0], t[1]);
+                c.quadraticCurveTo(t[4], t[5], t[2], t[3]);
+                c.stroke();
+
+                // 촉수 빨판 (Suction Cups)
+                c.fillStyle = '#81ecec';
+                c.shadowColor = '#00cec9';
+                c.shadowBlur = 6;
+                let midX = (t[0] + t[2]) / 2 + (t[4] - (t[0] + t[2]) / 2) * 0.5;
+                let midY = (t[1] + t[3]) / 2 + (t[5] - (t[1] + t[3]) / 2) * 0.5;
+                c.beginPath();
+                c.arc(midX, midY, 3.5, 0, Math.PI * 2);
+                c.fill();
+                c.beginPath();
+                c.arc(t[2] * 0.8 + t[0] * 0.2, t[3] * 0.8 + t[1] * 0.2, 2.5, 0, Math.PI * 2);
+                c.fill();
+                c.restore();
+            });
+
+            // 3. 거대한 크라켄 머리/외투막 (Mantle)
+            let headGrad = c.createRadialGradient(0, -20, 10, 0, 0, 75);
+            headGrad.addColorStop(0, '#2e86de');
+            headGrad.addColorStop(0.4, '#1b3a6b');
+            headGrad.addColorStop(0.85, '#0a1931');
+            headGrad.addColorStop(1, '#040b17');
+
+            c.fillStyle = headGrad;
+            c.shadowColor = '#00cec9';
+            c.shadowBlur = 15;
+            c.beginPath();
+            c.moveTo(-55, 30);
+            c.bezierCurveTo(-75, 10, -70, -55, 0, -68);
+            c.bezierCurveTo(70, -55, 75, 10, 55, 30);
+            c.bezierCurveTo(30, 42, -30, 42, -55, 30);
+            c.closePath();
+            c.fill();
+
+            c.strokeStyle = '#00cec9';
+            c.lineWidth = 2.5;
+            c.stroke();
+
+            // 4. 발광 고대 심연 룬 무늬
+            c.shadowBlur = 8;
+            c.strokeStyle = 'rgba(0, 206, 201, 0.65)';
+            c.lineWidth = 2;
+            c.beginPath();
+            c.arc(0, -25, 18, Math.PI * 0.2, Math.PI * 0.8);
+            c.stroke();
+            c.beginPath();
+            c.arc(0, -42, 10, 0, Math.PI * 2);
+            c.stroke();
+
+            // 5. 무시무시한 황금빛/네온빛 눈 (2개)
+            const eyeOffsets = [-24, 24];
+            eyeOffsets.forEach((ex) => {
+                c.save();
+                c.translate(ex, 5);
+                
+                c.fillStyle = '#000000';
+                c.beginPath();
+                c.ellipse(0, 0, 12, 8, 0, 0, Math.PI * 2);
+                c.fill();
+                c.strokeStyle = '#00cec9';
+                c.lineWidth = 1.5;
+                c.stroke();
+
+                c.fillStyle = '#f1c40f';
+                c.shadowColor = '#f39c12';
+                c.shadowBlur = 12;
+                c.beginPath();
+                c.ellipse(0, 0, 9, 6, 0, 0, Math.PI * 2);
+                c.fill();
+
+                c.fillStyle = '#050505';
+                c.shadowBlur = 0;
+                c.beginPath();
+                c.ellipse(0, 0, 2.5, 5.5, 0, 0, Math.PI * 2);
+                c.fill();
+
+                c.fillStyle = '#ffffff';
+                c.beginPath();
+                c.arc(-3, -2, 2, 0, Math.PI * 2);
+                c.fill();
+
+                c.strokeStyle = '#0a1931';
+                c.lineWidth = 3;
+                c.beginPath();
+                c.moveTo(-11, -8);
+                c.lineTo(11, -5);
+                c.stroke();
+
+                c.restore();
+            });
+
+            // 6. 물뿜는 주구 입 (Siphon)
+            c.fillStyle = '#061326';
+            c.beginPath();
+            c.ellipse(0, 28, 12, 7, 0, 0, Math.PI * 2);
+            c.fill();
+            c.strokeStyle = '#00cec9';
+            c.lineWidth = 1.5;
+            c.stroke();
+
+            // 입에서 뿜어 나오는 물거품 이펙트
+            if (anim % 4 === 0) {
+                krakenWaterParticles.push({
+                    x: krakenBoss.x + (Math.random() - 0.5) * 14,
+                    y: krakenBoss.y + 26,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: 1.5 + Math.random() * 2,
+                    radius: 2 + Math.random() * 2.5,
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    life: 20,
+                    maxLife: 20
                 });
             }
 
-            broadcastBattleState(true);
+            c.restore();
+
+            // 머리 위 네임태그 & 미니 HP바
+            c.save();
+            c.fillStyle = '#00cec9';
+            c.font = 'bold 13px Arial';
+            c.textAlign = 'center';
+            c.shadowColor = 'black';
+            c.shadowBlur = 5;
+            c.fillText('🦑 심연의 지배자 [크라켄]', krakenBoss.x, krakenBoss.y - 78);
+
+            const hpRatio = Math.max(0, krakenBoss.hp / krakenBoss.maxHp);
+            c.fillStyle = 'rgba(0,0,0,0.6)';
+            c.fillRect(krakenBoss.x - 55, krakenBoss.y - 72, 110, 8);
+            
+            let hpGrad = c.createLinearGradient(krakenBoss.x - 55, 0, krakenBoss.x + 55, 0);
+            hpGrad.addColorStop(0, '#0984e3');
+            hpGrad.addColorStop(1, '#00cec9');
+            c.fillStyle = hpGrad;
+            c.fillRect(krakenBoss.x - 55, krakenBoss.y - 72, 110 * hpRatio, 8);
+            
+            c.strokeStyle = '#00cec9';
+            c.lineWidth = 1;
+            c.strokeRect(krakenBoss.x - 55, krakenBoss.y - 72, 110, 8);
+            c.restore();
         }
 
         function drawPvpArena() {
             ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-            // 1. 바닥 링
-            ctx.fillStyle = '#0f141f';
+            // 1. 심연의 바다 경기장 배경
+            let oceanGrad = ctx.createRadialGradient(GAME_WIDTH / 2, GAME_HEIGHT / 2, 40, GAME_WIDTH / 2, GAME_HEIGHT / 2, 320);
+            oceanGrad.addColorStop(0, '#071f3d');
+            oceanGrad.addColorStop(0.5, '#05152a');
+            oceanGrad.addColorStop(0.85, '#030c18');
+            oceanGrad.addColorStop(1, '#01050b');
+            ctx.fillStyle = oceanGrad;
             ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-            let ringGrad = ctx.createRadialGradient(GAME_WIDTH / 2, GAME_HEIGHT / 2, 40, GAME_WIDTH / 2, GAME_HEIGHT / 2, 280);
-            ringGrad.addColorStop(0, 'rgba(43, 122, 240, 0.15)');
-            ringGrad.addColorStop(0.7, 'rgba(17, 23, 38, 0.9)');
-            ringGrad.addColorStop(1, '#0b0f19');
-            ctx.fillStyle = ringGrad;
+            // 배경 부유 물거품 그리기
+            abyssAmbientBubbles.forEach(b => {
+                ctx.save();
+                ctx.fillStyle = `rgba(0, 206, 201, ${b.alpha})`;
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = `rgba(255, 255, 255, ${b.alpha * 0.8})`;
+                ctx.lineWidth = 0.8;
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            // 마법 원형 결투장 경계 링
+            ctx.strokeStyle = '#00cec9';
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#00cec9';
+            ctx.shadowBlur = 18;
             ctx.beginPath();
             ctx.arc(GAME_WIDTH / 2, GAME_HEIGHT / 2, 280, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.strokeStyle = '#2b7af0';
-            ctx.lineWidth = 4;
             ctx.stroke();
+            ctx.shadowBlur = 0;
 
-            ctx.strokeStyle = 'rgba(241, 196, 15, 0.4)';
+            ctx.strokeStyle = 'rgba(116, 185, 255, 0.45)';
             ctx.lineWidth = 2;
-            ctx.setLineDash([12, 10]);
+            ctx.setLineDash([14, 10]);
             ctx.beginPath();
             ctx.arc(GAME_WIDTH / 2, GAME_HEIGHT / 2, 230, 0, Math.PI * 2);
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // 횃불 기둥 4개
-            const torches = [
-                { x: 90, y: 160 }, { x: GAME_WIDTH - 90, y: 160 },
-                { x: 90, y: GAME_HEIGHT - 120 }, { x: GAME_WIDTH - 90, y: GAME_HEIGHT - 120 }
+            // 4개 코너 발광 심연 크리스탈 등대
+            const crystals = [
+                { x: 80, y: 150 }, { x: GAME_WIDTH - 80, y: 150 },
+                { x: 80, y: GAME_HEIGHT - 110 }, { x: GAME_WIDTH - 80, y: GAME_HEIGHT - 110 }
             ];
-            torches.forEach(t => {
-                ctx.fillStyle = '#2c3e50';
-                ctx.fillRect(t.x - 10, t.y, 20, 45);
-                ctx.fillStyle = '#f39c12';
+            crystals.forEach(cr => {
+                ctx.fillStyle = '#0a1931';
+                ctx.fillRect(cr.x - 8, cr.y, 16, 40);
+                
+                let glowR = 10 + Math.sin(Date.now() * 0.005 + cr.x) * 2;
+                ctx.fillStyle = '#00cec9';
+                ctx.shadowColor = '#00cec9';
+                ctx.shadowBlur = 16;
                 ctx.beginPath();
-                ctx.arc(t.x, t.y - 6, 9 + Math.sin(Date.now() * 0.01 + t.x) * 2, 0, Math.PI * 2);
+                ctx.arc(cr.x, cr.y - 6, glowR, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.fillStyle = '#ff4757';
-                ctx.beginPath();
-                ctx.arc(t.x, t.y - 8, 5, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.shadowBlur = 0;
             });
 
-            // 2. 실제 상대 플레이어 캐릭터 그리기
-            ctx.save();
-            // 머리 위 닉네임 명찰
-            ctx.fillStyle = '#ff7675';
-            ctx.font = 'bold 12px Arial';
-            ctx.textAlign = 'center';
-            ctx.shadowColor = 'black';
-            ctx.shadowBlur = 4;
-            ctx.fillText(`⚔️ ${pvpOpponent.name || '상대 플레이어'}`, pvpOpponent.x, pvpOpponent.y - 38);
+            // 2. 바닥 물기둥 (경고존 및 분출) 그리기
+            krakenGeysers.forEach(g => {
+                ctx.save();
+                if (g.state === 'warning') {
+                    const pulse = (Math.sin(Date.now() * 0.02) + 1) * 0.5;
+                    ctx.fillStyle = `rgba(0, 206, 201, ${0.15 + pulse * 0.22})`;
+                    ctx.beginPath();
+                    ctx.ellipse(g.x, g.y, g.radius, g.radius * 0.52, 0, 0, Math.PI * 2);
+                    ctx.fill();
 
-            // 상대 머리 위 미니 HP바
-            const oppHp = Math.max(0, pvpOpponent.hp);
-            ctx.fillStyle = 'rgba(0,0,0,0.5)';
-            ctx.fillRect(pvpOpponent.x - 25, pvpOpponent.y - 34, 50, 6);
-            ctx.fillStyle = '#ff4757';
-            ctx.fillRect(pvpOpponent.x - 25, pvpOpponent.y - 34, (oppHp / 3000) * 50, 6);
-            ctx.strokeStyle = '#c0392b';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(pvpOpponent.x - 25, pvpOpponent.y - 34, 50, 6);
-            ctx.restore();
+                    ctx.strokeStyle = '#00cec9';
+                    ctx.lineWidth = 2.5;
+                    ctx.setLineDash([6, 6]);
+                    ctx.beginPath();
+                    ctx.ellipse(g.x, g.y, g.radius, g.radius * 0.52, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
 
-            ctx.save();
-            ctx.translate(pvpOpponent.x, pvpOpponent.y);
-            ctx.scale(pvpOpponent.facing, 1);
-            if (pvpOpponent.flinchTimer > 0) ctx.filter = 'brightness(1.8) hue-rotate(90deg)';
+                    ctx.fillStyle = '#ff7675';
+                    ctx.font = 'bold 11px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('⚠️ 물기둥 위험!', g.x, g.y - g.radius * 0.55);
+                } else if (g.state === 'erupting') {
+                    let gGrad = ctx.createLinearGradient(g.x, g.y, g.x, g.y - 140);
+                    gGrad.addColorStop(0, 'rgba(0, 206, 201, 0.9)');
+                    gGrad.addColorStop(0.5, 'rgba(116, 185, 255, 0.85)');
+                    gGrad.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
 
-            ctx.fillStyle = 'rgba(0,0,0,0.35)';
-            ctx.beginPath();
-            ctx.ellipse(0, 24, 22, 9, 0, 0, Math.PI * 2);
-            ctx.fill();
+                    ctx.fillStyle = gGrad;
+                    ctx.shadowColor = '#00cec9';
+                    ctx.shadowBlur = 20;
 
-            const oppCharObj = {
-                colors: { skin: '#ffeaa7', shirt: '#3498db', hat: '#2c3e50' },
-                facing: 1
-            };
-            drawCharacter(ctx, oppCharObj, 0, 0, pvpOpponent.flinchTimer > 0, pvpOpponent.walkTimer || 0, pvpOpponent.skin || 'default', true);
+                    ctx.beginPath();
+                    ctx.moveTo(g.x - g.radius * 0.8, g.y);
+                    ctx.quadraticCurveTo(g.x - g.radius * 0.4, g.y - 70, g.x - g.radius * 0.6, g.y - 140);
+                    ctx.lineTo(g.x + g.radius * 0.6, g.y - 140);
+                    ctx.quadraticCurveTo(g.x + g.radius * 0.4, g.y - 70, g.x + g.radius * 0.8, g.y);
+                    ctx.closePath();
+                    ctx.fill();
 
-            // 상대 플레이어 무기 그리기
-            ctx.save();
-            ctx.translate(16, 5);
-            let oppSwingAngle = pvpOpponent.axeSwingTimer > 0 ? (pvpOpponent.axeSwingTimer / 16) * 1.5 - 0.75 : 0.3;
-            ctx.rotate(oppSwingAngle);
-            if (pvpOpponent.name && pvpOpponent.name.toLowerCase() === 'adminaccount') {
-                ctx.fillStyle = '#2b7af0';
-                ctx.shadowColor = '#2b7af0';
-                ctx.shadowBlur = 10;
-                ctx.fillRect(0, -32, 6, 32);
-                ctx.fillStyle = '#2c3e50';
-                ctx.fillRect(-5, 0, 16, 4);
-                ctx.fillStyle = '#8d5524';
-                ctx.fillRect(1, 4, 4, 10);
-            } else {
-                ctx.fillStyle = '#7f8c8d';
-                ctx.fillRect(0, -28, 5, 28);
-                ctx.fillStyle = '#bdc3c7';
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(g.x, g.y - 140, g.radius * 0.55, 0, Math.PI * 2);
+                    ctx.arc(g.x - 14, g.y - 130, g.radius * 0.4, 0, Math.PI * 2);
+                    ctx.arc(g.x + 14, g.y - 130, g.radius * 0.4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            });
+
+            // 3. 물보라 충격파 파동 그리기
+            krakenWaves.forEach(w => {
+                ctx.save();
+                let alpha = Math.max(0, 1 - (w.radius / w.maxRadius));
+                ctx.strokeStyle = `rgba(0, 206, 201, ${alpha * 0.85})`;
+                ctx.lineWidth = 5;
+                ctx.shadowColor = '#00cec9';
+                ctx.shadowBlur = 15;
                 ctx.beginPath();
-                ctx.arc(0, -26, 9, 0, Math.PI);
-                ctx.fill();
-            }
-            ctx.restore();
-            ctx.restore();
+                ctx.ellipse(w.x, w.y, w.radius, w.radius * 0.52, 0, 0, Math.PI * 2);
+                ctx.stroke();
 
-            // 3. 내 플레이어 그리기
+                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.9})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.ellipse(w.x, w.y, w.radius * 0.96, w.radius * 0.5, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            // 4. 크라켄 보스 그리기
+            drawKrakenBoss(ctx);
+
+            // 5. 물대포 투사체 그리기
+            krakenWaterProjectiles.forEach(p => {
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                
+                let pGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, p.radius);
+                pGrad.addColorStop(0, '#ffffff');
+                pGrad.addColorStop(0.4, '#00cec9');
+                pGrad.addColorStop(0.85, '#0984e3');
+                pGrad.addColorStop(1, 'rgba(9, 132, 227, 0)');
+                
+                ctx.fillStyle = pGrad;
+                ctx.shadowColor = '#00cec9';
+                ctx.shadowBlur = 14;
+                ctx.beginPath();
+                ctx.arc(0, 0, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                let ang = Math.atan2(p.vy, p.vx);
+                ctx.rotate(ang);
+                ctx.fillStyle = 'rgba(0, 206, 201, 0.45)';
+                ctx.beginPath();
+                ctx.moveTo(0, -p.radius * 0.7);
+                ctx.lineTo(-p.radius * 2.2, 0);
+                ctx.lineTo(0, p.radius * 0.7);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.restore();
+            });
+
+            // 6. 물방울 파티클 그리기
+            krakenWaterParticles.forEach(pt => {
+                ctx.save();
+                let alpha = Math.min(1.0, pt.life / pt.maxLife);
+                ctx.fillStyle = pt.color;
+                ctx.globalAlpha = alpha;
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // 7. 내 플레이어 캐릭터 그리기
             ctx.save();
-            // 내 머리 위 닉네임 명찰
             ctx.fillStyle = '#2ecc71';
             ctx.font = 'bold 12px Arial';
             ctx.textAlign = 'center';
@@ -6551,12 +6927,12 @@
             ctx.shadowBlur = 4;
             ctx.fillText(`👑 ${currentUser || '나'} (나)`, player.x, player.y - 38);
 
-            // 내 머리 위 미니 HP바
+            // 머리 위 1000 HP 미니 게이지 바
             const myHp = Math.max(0, playerPvpHp);
             ctx.fillStyle = 'rgba(0,0,0,0.5)';
             ctx.fillRect(player.x - 25, player.y - 34, 50, 6);
             ctx.fillStyle = '#2ecc71';
-            ctx.fillRect(player.x - 25, player.y - 34, (myHp / 3000) * 50, 6);
+            ctx.fillRect(player.x - 25, player.y - 34, (myHp / 1000) * 50, 6);
             ctx.strokeStyle = '#27ae60';
             ctx.lineWidth = 1;
             ctx.strokeRect(player.x - 25, player.y - 34, 50, 6);
@@ -6573,7 +6949,7 @@
 
             drawCharacter(ctx, player, 0, 0, Math.hypot(player.vx, player.vy) > 0.5, player.walkTimer, equippedSkin);
 
-            // 내 무기 그리기
+            // 내 검 무기 그리기
             ctx.save();
             ctx.translate(16, 5);
             let mySwingAngle = player.axeSwingTimer > 0 ? (player.axeSwingTimer / 16) * 1.5 - 0.75 : 0.3;
@@ -6595,7 +6971,7 @@
             ctx.restore();
             ctx.restore();
 
-            // 4. 슬래시 이펙트
+            // 8. 슬래시 이펙트
             pvpSlashEffects.forEach(s => {
                 ctx.save();
                 ctx.translate(s.x, s.y);
@@ -6610,9 +6986,9 @@
                 ctx.restore();
             });
 
-            // 5. 상단 HUD
-            ctx.fillStyle = 'rgba(17, 23, 38, 0.95)';
-            ctx.strokeStyle = '#233554';
+            // 9. 상단 HUD
+            ctx.fillStyle = 'rgba(7, 20, 38, 0.95)';
+            ctx.strokeStyle = '#00cec9';
             ctx.lineWidth = 2;
             ctx.beginPath();
             if (ctx.roundRect) ctx.roundRect(15, 15, GAME_WIDTH - 30, 95, 14);
@@ -6620,33 +6996,39 @@
             ctx.fill();
             ctx.stroke();
 
-            ctx.fillStyle = '#f1c40f';
+            ctx.fillStyle = '#00cec9';
             ctx.font = 'bold 15px Arial';
             ctx.textAlign = 'left';
-            ctx.fillText(`⚔️ 1:1 유저 실시간 대결 (REAL-TIME BATTLE)`, 28, 38);
+            ctx.fillText('🦑 심연의 크라켄 보스전 (PVE BOSS BATTLE)', 28, 38);
 
+            // 내 체력 바 (1000 HP 기준)
             ctx.fillStyle = '#2ecc71';
             ctx.font = 'bold 12px Arial';
-            ctx.fillText(`나 (${currentUser || '나'}): ${playerPvpHp} / 3000`, 28, 62);
+            ctx.fillText(`나 (${currentUser || '플레이어'}): ${playerPvpHp} / 1000 HP`, 28, 62);
             ctx.fillStyle = 'rgba(0,0,0,0.5)';
             ctx.fillRect(28, 70, 200, 14);
             ctx.fillStyle = '#2ecc71';
-            ctx.fillRect(28, 70, Math.max(0, (playerPvpHp / 3000) * 200), 14);
+            ctx.fillRect(28, 70, Math.max(0, (playerPvpHp / 1000) * 200), 14);
             ctx.strokeStyle = '#27ae60';
             ctx.lineWidth = 1.5;
             ctx.strokeRect(28, 70, 200, 14);
 
-            ctx.fillStyle = '#ff7675';
+            // 크라켄 보스 체력 바 (4000 HP 기준)
+            ctx.fillStyle = '#74b9ff';
             ctx.textAlign = 'right';
-            ctx.fillText(`상대 (${pvpOpponent.name}): ${oppHp} / 3000`, GAME_WIDTH - 145, 62);
+            ctx.fillText(`크라켄: ${krakenBoss.hp} / ${krakenBoss.maxHp} HP`, GAME_WIDTH - 145, 62);
             ctx.fillStyle = 'rgba(0,0,0,0.5)';
             ctx.fillRect(GAME_WIDTH - 345, 70, 200, 14);
-            ctx.fillStyle = '#ff4757';
-            ctx.fillRect(GAME_WIDTH - 345, 70, (oppHp / 3000) * 200, 14);
-            ctx.strokeStyle = '#c0392b';
+            let bHpGrad = ctx.createLinearGradient(GAME_WIDTH - 345, 0, GAME_WIDTH - 145, 0);
+            bHpGrad.addColorStop(0, '#0984e3');
+            bHpGrad.addColorStop(1, '#00cec9');
+            ctx.fillStyle = bHpGrad;
+            ctx.fillRect(GAME_WIDTH - 345, 70, Math.max(0, (krakenBoss.hp / krakenBoss.maxHp) * 200), 14);
+            ctx.strokeStyle = '#00cec9';
             ctx.lineWidth = 1.5;
             ctx.strokeRect(GAME_WIDTH - 345, 70, 200, 14);
 
+            // 우측 상단 나가기 버튼
             ctx.fillStyle = '#c0392b';
             ctx.beginPath();
             if (ctx.roundRect) ctx.roundRect(GAME_WIDTH - 125, 25, 95, 34, 8);
@@ -6659,60 +7041,88 @@
             ctx.textAlign = 'center';
             ctx.fillText('🚪 나가기', GAME_WIDTH - 77, 47);
 
-            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            // 하단 조작 안내 힌트
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
             ctx.font = '12px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('💡 화면 클릭 / 터치 또는 [스페이스바]로 상대 공격', GAME_WIDTH / 2, GAME_HEIGHT - 25);
+            ctx.fillText('💡 [WASD / 터치]로 물공격(100 DMG)을 피하고, [클릭 / 스페이스바]로 검을 휘두르세요!', GAME_WIDTH / 2, GAME_HEIGHT - 25);
 
-            // 6. 경기 종료 승패 오버레이 결과창
+            // 10. 승리/패배 결과 오버레이 창
             if (battleMatchOver) {
                 ctx.save();
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.78)';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.82)';
                 ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
                 const isWinner = (playerPvpHp > 0);
                 ctx.textAlign = 'center';
                 if (isWinner) {
                     ctx.fillStyle = '#f1c40f';
-                    ctx.font = 'bold 38px Arial';
+                    ctx.font = 'bold 36px Arial';
                     ctx.shadowColor = '#f39c12';
                     ctx.shadowBlur = 22;
-                    ctx.fillText('🏆 VICTORY!', GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40);
+                    ctx.fillText('🏆 VICTORY!', GAME_WIDTH / 2, GAME_HEIGHT / 2 - 45);
                     ctx.shadowBlur = 0;
                     ctx.fillStyle = '#ffffff';
                     ctx.font = 'bold 16px Arial';
-                    ctx.fillText(`[${pvpOpponent.name}] 님과의 대결에서 승리했습니다!`, GAME_WIDTH / 2, GAME_HEIGHT / 2);
-                    ctx.fillStyle = '#2ecc71';
+                    ctx.fillText('심연의 지배자 크라켄을 격퇴했습니다!', GAME_WIDTH / 2, GAME_HEIGHT / 2 - 10);
+                    
+                    ctx.fillStyle = '#00cec9';
                     ctx.font = 'bold 15px Arial';
-                    ctx.fillText(`🏆 내 1:1 배틀 승리 횟수: ${battleWins}승`, GAME_WIDTH / 2, GAME_HEIGHT / 2 + 30);
+                    ctx.fillText(`🦑 크라켄 총 처치 횟수: ${battleWins} / 30회`, GAME_WIDTH / 2, GAME_HEIGHT / 2 + 18);
+
+                    if (battleWins >= 30) {
+                        ctx.fillStyle = '#f1c40f';
+                        ctx.font = 'bold 14px Arial';
+                        ctx.fillText('🎉 [포지 하우스] 스킨 보상 획득 완료! 🏠⚔️', GAME_WIDTH / 2, GAME_HEIGHT / 2 + 42);
+                    } else {
+                        ctx.fillStyle = '#a0aec0';
+                        ctx.font = '13px Arial';
+                        ctx.fillText(`🏠 [포지 하우스] 스킨 보상까지 앞으로 ${30 - battleWins}회 남음!`, GAME_WIDTH / 2, GAME_HEIGHT / 2 + 42);
+                    }
                 } else {
                     ctx.fillStyle = '#e74c3c';
-                    ctx.font = 'bold 38px Arial';
+                    ctx.font = 'bold 36px Arial';
                     ctx.shadowColor = '#c0392b';
                     ctx.shadowBlur = 22;
-                    ctx.fillText('💀 DEFEAT...', GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40);
+                    ctx.fillText('💀 DEFEAT...', GAME_WIDTH / 2, GAME_HEIGHT / 2 - 45);
                     ctx.shadowBlur = 0;
                     ctx.fillStyle = '#ffffff';
                     ctx.font = 'bold 16px Arial';
-                    ctx.fillText(`[${pvpOpponent.name}] 님과의 대결에서 패배하였습니다.`, GAME_WIDTH / 2, GAME_HEIGHT / 2);
-                    ctx.fillStyle = '#a4b0be';
-                    ctx.font = 'bold 13px Arial';
-                    ctx.fillText('다음 기회에 다시 도전해보세요!', GAME_WIDTH / 2, GAME_HEIGHT / 2 + 30);
+                    ctx.fillText('심연의 크라켄에게 삼켜졌습니다...', GAME_WIDTH / 2, GAME_HEIGHT / 2 - 10);
+                    ctx.fillStyle = '#ff7675';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.fillText('플레이어 체력: 0 / 1000 HP (보스 공격력 100 DMG)', GAME_WIDTH / 2, GAME_HEIGHT / 2 + 20);
+                    ctx.fillStyle = '#a0aec0';
+                    ctx.font = '13px Arial';
+                    ctx.fillText('물대포와 바닥 물기둥을 피하며 다시 도전해보세요!', GAME_WIDTH / 2, GAME_HEIGHT / 2 + 42);
                 }
 
-                // [🌍 로비로 복귀] 버튼
-                ctx.fillStyle = isWinner ? '#27ae60' : '#2c3e50';
+                // [🔄 재도전] 버튼
+                ctx.fillStyle = '#0984e3';
                 ctx.beginPath();
-                if (ctx.roundRect) ctx.roundRect(GAME_WIDTH / 2 - 90, GAME_HEIGHT / 2 + 65, 180, 44, 12);
-                else ctx.rect(GAME_WIDTH / 2 - 90, GAME_HEIGHT / 2 + 65, 180, 44);
+                if (ctx.roundRect) ctx.roundRect(GAME_WIDTH / 2 - 170, GAME_HEIGHT / 2 + 65, 150, 44, 10);
+                else ctx.rect(GAME_WIDTH / 2 - 170, GAME_HEIGHT / 2 + 65, 150, 44);
                 ctx.fill();
-                ctx.strokeStyle = '#ffffff';
+                ctx.strokeStyle = '#00cec9';
                 ctx.lineWidth = 2;
                 ctx.stroke();
-
                 ctx.fillStyle = '#ffffff';
                 ctx.font = 'bold 15px Arial';
-                ctx.fillText('🌍 로비로 복귀', GAME_WIDTH / 2, GAME_HEIGHT / 2 + 92);
+                ctx.fillText('🔄 재도전', GAME_WIDTH / 2 - 95, GAME_HEIGHT / 2 + 92);
+
+                // [🌍 로비로 복귀] 버튼
+                ctx.fillStyle = '#2c3e50';
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(GAME_WIDTH / 2 + 20, GAME_HEIGHT / 2 + 65, 150, 44, 10);
+                else ctx.rect(GAME_WIDTH / 2 + 20, GAME_HEIGHT / 2 + 65, 150, 44);
+                ctx.fill();
+                ctx.strokeStyle = '#bdc3c7';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 15px Arial';
+                ctx.fillText('🌍 로비로 복귀', GAME_WIDTH / 2 + 95, GAME_HEIGHT / 2 + 92);
+
                 ctx.restore();
             }
 
