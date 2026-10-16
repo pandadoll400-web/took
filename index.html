@@ -1235,6 +1235,7 @@
 
             if (currentBossType === 'devil') {
                 if (devilBoss.defeated || playerBossHp <= 0) return;
+                if (player.axeSwingTimer > 8) return;
 
                 player.axeSwingTimer = 16;
                 let dx = devilBoss.x - player.x;
@@ -1270,6 +1271,7 @@
             } else {
                 // 원숭이 보스전 공격
                 if (monkeyBoss.defeated) return;
+                if (player.axeSwingTimer > 8) return;
 
                 player.axeSwingTimer = 16;
                 let dx = monkeyBoss.x - player.x;
@@ -1710,23 +1712,24 @@
             ctx.fillText("🚪 도망치기", 67, 35);
             ctx.restore();
 
-            // 슬래시 타격 이펙트
+            // 슬래시 타격 이펙트 (하드웨어 가속 최적화)
             slashEffects.forEach(s => {
                 ctx.save();
                 ctx.translate(s.x, s.y);
                 ctx.rotate(s.facing > 0 ? -0.4 : 0.4);
                 let alpha = s.life / 14;
                 ctx.strokeStyle = `rgba(255, 234, 167, ${alpha})`;
-                ctx.lineWidth = 6;
-                ctx.shadowColor = '#f1c40f';
-                ctx.shadowBlur = 15;
+                ctx.lineWidth = 5;
                 ctx.beginPath();
                 ctx.arc(0, 0, 45, -0.6 * Math.PI, 0.3 * Math.PI);
+                ctx.stroke();
+                ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
+                ctx.lineWidth = 2;
                 ctx.stroke();
                 ctx.restore();
             });
 
-            // 플로팅 데미지 텍스트
+            // 플로팅 데미지 텍스트 (초고속 하드웨어 가속 텍스트 렌더링)
             floatTexts.forEach(t => {
                 ctx.save();
                 ctx.fillStyle = t.color;
@@ -1734,8 +1737,9 @@
                 let size = t.size || 18;
                 ctx.font = `bold ${size}px Arial`;
                 ctx.textAlign = 'center';
-                ctx.shadowColor = 'black';
-                ctx.shadowBlur = 5;
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 3;
+                ctx.strokeText(t.text, t.x, t.y);
                 ctx.fillText(t.text, t.x, t.y);
                 ctx.restore();
             });
@@ -1771,13 +1775,9 @@
 
             ctx.scale(1.65, 1.65);
 
-            if (flinch) {
-                ctx.filter = 'brightness(1.8) contrast(1.3)';
-            }
-
             let bossProxy = {
                 facing: facing,
-                colors: { skin: '#5c121e', shirt: '#2c000e', hat: '#c0392b' }
+                colors: flinch ? { skin: '#ff7675', shirt: '#ff4757', hat: '#ff6b81' } : { skin: '#5c121e', shirt: '#2c000e', hat: '#c0392b' }
             };
             drawCharacter(ctx, bossProxy, 0, 0, boss.state === 'charging', boss.walkTimer, 'halloween_devil');
 
@@ -6070,6 +6070,7 @@
             krakenWaves = [];
             krakenWaterParticles = [];
             pvpSlashEffects = [];
+            floatTexts = [];
 
             setBossRoomHUDVisible(false);
 
@@ -6108,6 +6109,7 @@
             krakenWaves = [];
             krakenWaterParticles = [];
             pvpSlashEffects = [];
+            floatTexts = [];
 
             floatTexts.push({
                 x: 300,
@@ -6210,6 +6212,7 @@
             krakenWaves = [];
             krakenWaterParticles = [];
             pvpSlashEffects = [];
+            floatTexts = [];
 
             setBossRoomHUDVisible(true);
             floatTexts.push({
@@ -6485,10 +6488,21 @@
             // 슬래시 이펙트 수명 갱신
             pvpSlashEffects.forEach(s => s.life--);
             pvpSlashEffects = pvpSlashEffects.filter(s => s.life > 0);
+
+            // 플로팅 데미지 텍스트 갱신 & 만료 제거 (누적 렉 완전 방지)
+            for (let i = floatTexts.length - 1; i >= 0; i--) {
+                floatTexts[i].y -= 1.2;
+                floatTexts[i].life--;
+                if (floatTexts[i].life <= 0) floatTexts.splice(i, 1);
+            }
+            if (floatTexts.length > 10) {
+                floatTexts.splice(0, floatTexts.length - 10);
+            }
         }
 
         function playerAttackInPvpArena(targetX, targetY) {
             if (!inPvpArena || battleMatchOver) return;
+            if (player.axeSwingTimer > 8) return; // 연속 클릭 스팸으로 인한 렉 방지
 
             const sw = (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0] : { tier: 0, type: 'light' };
             const tiers = swordTiersData[sw.type] || swordTiersData.light;
@@ -6517,29 +6531,31 @@
                     facing: player.facing
                 });
 
-                // 크라켄 피격 시 튀는 푸른 물방울 파티클
-                for (let i = 0; i < 9; i++) {
-                    let ang = Math.random() * Math.PI * 2;
-                    let spd = 2 + Math.random() * 4;
-                    krakenWaterParticles.push({
-                        x: krakenBoss.x + (Math.random() - 0.5) * 50,
-                        y: krakenBoss.y + 20,
-                        vx: Math.cos(ang) * spd,
-                        vy: Math.sin(ang) * spd - 2,
-                        radius: 3 + Math.random() * 3.5,
-                        color: '#74b9ff',
-                        life: 24,
-                        maxLife: 24
-                    });
+                // 크라켄 피격 시 튀는 푸른 물방울 파티클 (렉 방지용 개수 최적화 및 상한)
+                if (krakenWaterParticles.length < 24) {
+                    for (let i = 0; i < 4; i++) {
+                        let ang = Math.random() * Math.PI * 2;
+                        let spd = 2 + Math.random() * 3.5;
+                        krakenWaterParticles.push({
+                            x: krakenBoss.x + (Math.random() - 0.5) * 40,
+                            y: krakenBoss.y + 20,
+                            vx: Math.cos(ang) * spd,
+                            vy: Math.sin(ang) * spd - 1.5,
+                            radius: 3 + Math.random() * 2.5,
+                            color: '#74b9ff',
+                            life: 20,
+                            maxLife: 20
+                        });
+                    }
                 }
 
                 floatTexts.push({
-                    x: krakenBoss.x,
+                    x: krakenBoss.x + (Math.random() - 0.5) * 20,
                     y: krakenBoss.y - 65,
                     text: `-${damage.toFixed(0)}! ⚔️`,
                     color: weaponColor,
-                    life: 55,
-                    size: 24
+                    life: 45,
+                    size: 22
                 });
 
                 if (krakenBoss.hp <= 0 && !battleMatchOver) {
@@ -6552,11 +6568,8 @@
             c.save();
             c.translate(krakenBoss.x, krakenBoss.y);
             
-            // 피격 플린치 효과 (밝은 청록 발광)
-            if (krakenBoss.flinchTimer > 0) {
-                c.filter = 'brightness(2.2) drop-shadow(0 0 20px #00cec9)';
-            }
-
+            // 피격 플린치 상태 플래그 (c.filter 제거 -> 렉 원인 100% 제거)
+            const flinch = krakenBoss.flinchTimer > 0;
             const anim = krakenBoss.animTimer || 0;
 
             // 1. 심연의 물 소용돌이 베이스
@@ -6565,7 +6578,7 @@
             c.ellipse(0, 48, 80, 24, 0, 0, Math.PI * 2);
             c.fill();
 
-            c.strokeStyle = 'rgba(0, 206, 201, 0.45)';
+            c.strokeStyle = flinch ? '#81ecec' : 'rgba(0, 206, 201, 0.45)';
             c.lineWidth = 2.5;
             c.setLineDash([8, 6]);
             c.beginPath();
@@ -6588,9 +6601,15 @@
             tentacleConfigs.forEach((t) => {
                 c.save();
                 let tentGrad = c.createLinearGradient(t[0], t[1], t[2], t[3]);
-                tentGrad.addColorStop(0, '#0c2461');
-                tentGrad.addColorStop(0.5, '#1e3799');
-                tentGrad.addColorStop(1, '#00cec9');
+                if (flinch) {
+                    tentGrad.addColorStop(0, '#ffffff');
+                    tentGrad.addColorStop(0.5, '#81ecec');
+                    tentGrad.addColorStop(1, '#00cec9');
+                } else {
+                    tentGrad.addColorStop(0, '#0c2461');
+                    tentGrad.addColorStop(0.5, '#1e3799');
+                    tentGrad.addColorStop(1, '#00cec9');
+                }
 
                 c.strokeStyle = tentGrad;
                 c.lineWidth = t[6];
@@ -6600,10 +6619,8 @@
                 c.quadraticCurveTo(t[4], t[5], t[2], t[3]);
                 c.stroke();
 
-                // 촉수 빨판 (Suction Cups)
-                c.fillStyle = '#81ecec';
-                c.shadowColor = '#00cec9';
-                c.shadowBlur = 6;
+                // 촉수 빨판 (Suction Cups - shadowBlur 제거로 60fps 보장)
+                c.fillStyle = flinch ? '#ffffff' : '#81ecec';
                 let midX = (t[0] + t[2]) / 2 + (t[4] - (t[0] + t[2]) / 2) * 0.5;
                 let midY = (t[1] + t[3]) / 2 + (t[5] - (t[1] + t[3]) / 2) * 0.5;
                 c.beginPath();
@@ -6617,14 +6634,19 @@
 
             // 3. 거대한 크라켄 머리/외투막 (Mantle)
             let headGrad = c.createRadialGradient(0, -20, 10, 0, 0, 75);
-            headGrad.addColorStop(0, '#2e86de');
-            headGrad.addColorStop(0.4, '#1b3a6b');
-            headGrad.addColorStop(0.85, '#0a1931');
-            headGrad.addColorStop(1, '#040b17');
+            if (flinch) {
+                headGrad.addColorStop(0, '#ffffff');
+                headGrad.addColorStop(0.35, '#81ecec');
+                headGrad.addColorStop(0.8, '#00cec9');
+                headGrad.addColorStop(1, '#0984e3');
+            } else {
+                headGrad.addColorStop(0, '#2e86de');
+                headGrad.addColorStop(0.4, '#1b3a6b');
+                headGrad.addColorStop(0.85, '#0a1931');
+                headGrad.addColorStop(1, '#040b17');
+            }
 
             c.fillStyle = headGrad;
-            c.shadowColor = '#00cec9';
-            c.shadowBlur = 15;
             c.beginPath();
             c.moveTo(-55, 30);
             c.bezierCurveTo(-75, 10, -70, -55, 0, -68);
@@ -6633,14 +6655,13 @@
             c.closePath();
             c.fill();
 
-            c.strokeStyle = '#00cec9';
-            c.lineWidth = 2.5;
+            c.strokeStyle = flinch ? '#ffffff' : '#00cec9';
+            c.lineWidth = flinch ? 3.5 : 2.5;
             c.stroke();
 
             // 4. 발광 고대 심연 룬 무늬
-            c.shadowBlur = 8;
-            c.strokeStyle = 'rgba(0, 206, 201, 0.65)';
-            c.lineWidth = 2;
+            c.strokeStyle = flinch ? '#ffffff' : 'rgba(0, 206, 201, 0.75)';
+            c.lineWidth = 2.5;
             c.beginPath();
             c.arc(0, -25, 18, Math.PI * 0.2, Math.PI * 0.8);
             c.stroke();
@@ -6658,19 +6679,16 @@
                 c.beginPath();
                 c.ellipse(0, 0, 12, 8, 0, 0, Math.PI * 2);
                 c.fill();
-                c.strokeStyle = '#00cec9';
+                c.strokeStyle = flinch ? '#ffffff' : '#00cec9';
                 c.lineWidth = 1.5;
                 c.stroke();
 
-                c.fillStyle = '#f1c40f';
-                c.shadowColor = '#f39c12';
-                c.shadowBlur = 12;
+                c.fillStyle = flinch ? '#ff4757' : '#f1c40f';
                 c.beginPath();
                 c.ellipse(0, 0, 9, 6, 0, 0, Math.PI * 2);
                 c.fill();
 
                 c.fillStyle = '#050505';
-                c.shadowBlur = 0;
                 c.beginPath();
                 c.ellipse(0, 0, 2.5, 5.5, 0, 0, Math.PI * 2);
                 c.fill();
@@ -6695,12 +6713,12 @@
             c.beginPath();
             c.ellipse(0, 28, 12, 7, 0, 0, Math.PI * 2);
             c.fill();
-            c.strokeStyle = '#00cec9';
+            c.strokeStyle = flinch ? '#ffffff' : '#00cec9';
             c.lineWidth = 1.5;
             c.stroke();
 
             // 입에서 뿜어 나오는 물거품 이펙트
-            if (anim % 4 === 0) {
+            if (anim % 6 === 0 && krakenWaterParticles.length < 24) {
                 krakenWaterParticles.push({
                     x: krakenBoss.x + (Math.random() - 0.5) * 14,
                     y: krakenBoss.y + 26,
@@ -6720,8 +6738,9 @@
             c.fillStyle = '#00cec9';
             c.font = 'bold 13px Arial';
             c.textAlign = 'center';
-            c.shadowColor = 'black';
-            c.shadowBlur = 5;
+            c.strokeStyle = '#000000';
+            c.lineWidth = 3;
+            c.strokeText('🦑 심연의 지배자 [크라켄]', krakenBoss.x, krakenBoss.y - 78);
             c.fillText('🦑 심연의 지배자 [크라켄]', krakenBoss.x, krakenBoss.y - 78);
 
             const hpRatio = Math.max(0, krakenBoss.hp / krakenBoss.maxHp);
@@ -6768,12 +6787,9 @@
             // 마법 원형 결투장 경계 링
             ctx.strokeStyle = '#00cec9';
             ctx.lineWidth = 4;
-            ctx.shadowColor = '#00cec9';
-            ctx.shadowBlur = 18;
             ctx.beginPath();
             ctx.arc(GAME_WIDTH / 2, GAME_HEIGHT / 2, 280, 0, Math.PI * 2);
             ctx.stroke();
-            ctx.shadowBlur = 0;
 
             ctx.strokeStyle = 'rgba(116, 185, 255, 0.45)';
             ctx.lineWidth = 2;
@@ -6794,12 +6810,9 @@
                 
                 let glowR = 10 + Math.sin(Date.now() * 0.005 + cr.x) * 2;
                 ctx.fillStyle = '#00cec9';
-                ctx.shadowColor = '#00cec9';
-                ctx.shadowBlur = 16;
                 ctx.beginPath();
                 ctx.arc(cr.x, cr.y - 6, glowR, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.shadowBlur = 0;
             });
 
             // 2. 바닥 물기둥 (경고존 및 분출) 그리기
@@ -6831,9 +6844,6 @@
                     gGrad.addColorStop(1, 'rgba(255, 255, 255, 0.95)');
 
                     ctx.fillStyle = gGrad;
-                    ctx.shadowColor = '#00cec9';
-                    ctx.shadowBlur = 20;
-
                     ctx.beginPath();
                     ctx.moveTo(g.x - g.radius * 0.8, g.y);
                     ctx.quadraticCurveTo(g.x - g.radius * 0.4, g.y - 70, g.x - g.radius * 0.6, g.y - 140);
@@ -6858,8 +6868,6 @@
                 let alpha = Math.max(0, 1 - (w.radius / w.maxRadius));
                 ctx.strokeStyle = `rgba(0, 206, 201, ${alpha * 0.85})`;
                 ctx.lineWidth = 5;
-                ctx.shadowColor = '#00cec9';
-                ctx.shadowBlur = 15;
                 ctx.beginPath();
                 ctx.ellipse(w.x, w.y, w.radius, w.radius * 0.52, 0, 0, Math.PI * 2);
                 ctx.stroke();
@@ -6887,8 +6895,6 @@
                 pGrad.addColorStop(1, 'rgba(9, 132, 227, 0)');
                 
                 ctx.fillStyle = pGrad;
-                ctx.shadowColor = '#00cec9';
-                ctx.shadowBlur = 14;
                 ctx.beginPath();
                 ctx.arc(0, 0, p.radius, 0, Math.PI * 2);
                 ctx.fill();
@@ -6978,10 +6984,11 @@
                 ctx.scale(s.facing || 1, 1);
                 ctx.strokeStyle = s.color || '#fff';
                 ctx.lineWidth = 4;
-                ctx.shadowColor = s.color || '#fff';
-                ctx.shadowBlur = 15;
                 ctx.beginPath();
                 ctx.arc(0, 0, 35, -Math.PI / 3, Math.PI / 3);
+                ctx.stroke();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.lineWidth = 1.5;
                 ctx.stroke();
                 ctx.restore();
             });
@@ -7126,7 +7133,7 @@
                 ctx.restore();
             }
 
-            // 플로팅 텍스트
+            // 플로팅 텍스트 (초고속 하드웨어 가속 텍스트 렌더링)
             floatTexts.forEach(t => {
                 ctx.save();
                 ctx.fillStyle = t.color;
@@ -7134,8 +7141,9 @@
                 let size = t.size || 18;
                 ctx.font = `bold ${size}px Arial`;
                 ctx.textAlign = 'center';
-                ctx.shadowColor = 'black';
-                ctx.shadowBlur = 5;
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 3;
+                ctx.strokeText(t.text, t.x, t.y);
                 ctx.fillText(t.text, t.x, t.y);
                 ctx.restore();
             });
