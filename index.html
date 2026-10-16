@@ -300,7 +300,7 @@
                 
                 <!-- 데미지 & 강화 단계 -->
                 <div style="display: flex; justify-content: center; gap: 20px; font-size: 14px; color: #a0aec0; margin-bottom: 14px;">
-                    <div>데미지: <b id="sword-modal-dmg" style="color: #ffffff; font-size: 15px; font-weight: 800;">300.0</b></div>
+                    <div>데미지: <b id="sword-modal-dmg" style="color: #ffffff; font-size: 15px; font-weight: 800;">50.0</b></div>
                     <div>강화 단계: <b id="sword-modal-tier" style="color: #ffffff; font-size: 15px; font-weight: 800;">[+0]</b></div>
                 </div>
 
@@ -965,20 +965,20 @@
 
         const swordTiersData = {
             light: [
-                { tier: 0, name: '초보자의 칼', damage: 300.0, cost: 100, bladeColor: '#dcdde1', glow: 'none', titleColor: '#ffffff' },
-                { tier: 1, name: '강화된 초보자의 정수', damage: 450.5, cost: 300, bladeColor: '#74b9ff', glow: '0 0 10px #74b9ff', titleColor: '#74b9ff' },
-                { tier: 2, name: '중수의 검', damage: 600.0, cost: 800, bladeColor: '#00cec9', glow: '0 0 12px #00cec9', titleColor: '#81ecec' },
-                { tier: 3, name: '숙련자의 검', damage: 750.5, cost: 3000, bladeColor: '#2ecc71', glow: '0 0 14px #2ecc71', titleColor: '#2ecc71' },
-                { tier: 4, name: '전설의 검', damage: 1000.0, cost: 10000, bladeColor: '#a29bfe', glow: '0 0 18px #a29bfe', titleColor: '#a29bfe' },
-                { tier: 5, name: '진화의 검', damage: 1500.0, cost: 30000, bladeColor: '#f1c40f', glow: '0 0 25px #f1c40f', titleColor: '#f39c12' }
+                { tier: 0, name: '초보자의 칼', damage: 50.0, cost: 100, bladeColor: '#dcdde1', glow: 'none', titleColor: '#ffffff' },
+                { tier: 1, name: '강화된 초보자의 정수', damage: 100.0, cost: 300, bladeColor: '#74b9ff', glow: '0 0 10px #74b9ff', titleColor: '#74b9ff' },
+                { tier: 2, name: '중수의 검', damage: 150.0, cost: 800, bladeColor: '#00cec9', glow: '0 0 12px #00cec9', titleColor: '#81ecec' },
+                { tier: 3, name: '숙련자의 검', damage: 200.0, cost: 3000, bladeColor: '#2ecc71', glow: '0 0 14px #2ecc71', titleColor: '#2ecc71' },
+                { tier: 4, name: '전설의 검', damage: 250.0, cost: 10000, bladeColor: '#a29bfe', glow: '0 0 18px #a29bfe', titleColor: '#a29bfe' },
+                { tier: 5, name: '진화의 검', damage: 300.0, cost: 30000, bladeColor: '#f1c40f', glow: '0 0 25px #f1c40f', titleColor: '#f39c12' }
             ],
             dark: [
-                { tier: 0, name: '어둠의 초보자검', damage: 300.0, cost: 100, bladeColor: '#b2bec3', glow: 'none', titleColor: '#ffffff' },
-                { tier: 1, name: '강화된 심연의 정수', damage: 450.5, cost: 300, bladeColor: '#ff7675', glow: '0 0 10px #ff7675', titleColor: '#ff7675' },
-                { tier: 2, name: '심연 중수의 검', damage: 600.0, cost: 800, bladeColor: '#e84393', glow: '0 0 12px #e84393', titleColor: '#fd79a8' },
-                { tier: 3, name: '숙련자의 마검', damage: 750.5, cost: 3000, bladeColor: '#e17055', glow: '0 0 14px #e17055', titleColor: '#e17055' },
-                { tier: 4, name: '전설의 칠흑검', damage: 1000.0, cost: 10000, bladeColor: '#9b59b6', glow: '0 0 18px #9b59b6', titleColor: '#be2edd' },
-                { tier: 5, name: '진화의 멸망검', damage: 1500.0, cost: 30000, bladeColor: '#ff4757', glow: '0 0 25px #ff4757', titleColor: '#ff4757' }
+                { tier: 0, name: '어둠의 초보자검', damage: 50.0, cost: 100, bladeColor: '#b2bec3', glow: 'none', titleColor: '#ffffff' },
+                { tier: 1, name: '강화된 심연의 정수', damage: 100.0, cost: 300, bladeColor: '#ff7675', glow: '0 0 10px #ff7675', titleColor: '#ff7675' },
+                { tier: 2, name: '심연 중수의 검', damage: 150.0, cost: 800, bladeColor: '#e84393', glow: '0 0 12px #e84393', titleColor: '#fd79a8' },
+                { tier: 3, name: '숙련자의 마검', damage: 200.0, cost: 3000, bladeColor: '#e17055', glow: '0 0 14px #e17055', titleColor: '#e17055' },
+                { tier: 4, name: '전설의 칠흑검', damage: 250.0, cost: 10000, bladeColor: '#9b59b6', glow: '0 0 18px #9b59b6', titleColor: '#be2edd' },
+                { tier: 5, name: '진화의 멸망검', damage: 300.0, cost: 30000, bladeColor: '#ff4757', glow: '0 0 25px #ff4757', titleColor: '#ff4757' }
             ]
         };
 
@@ -1008,8 +1008,8 @@
             y: 220,
             baseY: 220,
             radius: 70,
-            hp: 4000,
-            maxHp: 4000,
+            hp: 5000,
+            maxHp: 5000,
             facing: 1,
             flinchTimer: 0,
             attackTimer: 45,
@@ -6055,8 +6055,8 @@
             krakenBoss.y = 220;
             krakenBoss.baseY = 220;
             krakenBoss.radius = 70;
-            krakenBoss.hp = 4000;
-            krakenBoss.maxHp = 4000;
+            krakenBoss.hp = 5000;
+            krakenBoss.maxHp = 5000;
             krakenBoss.facing = 1;
             krakenBoss.flinchTimer = 0;
             krakenBoss.attackTimer = 45;
@@ -6097,7 +6097,8 @@
             player.vy = 0;
             player.axeSwingTimer = 0;
 
-            krakenBoss.hp = 4000;
+            krakenBoss.hp = 5000;
+            krakenBoss.maxHp = 5000;
             krakenBoss.flinchTimer = 0;
             krakenBoss.attackTimer = 45;
             krakenBoss.geyserTimer = 90;
@@ -7020,7 +7021,7 @@
             ctx.lineWidth = 1.5;
             ctx.strokeRect(28, 70, 200, 14);
 
-            // 크라켄 보스 체력 바 (4000 HP 기준)
+            // 크라켄 보스 체력 바 (5000 HP 기준)
             ctx.fillStyle = '#74b9ff';
             ctx.textAlign = 'right';
             ctx.fillText(`크라켄: ${krakenBoss.hp} / ${krakenBoss.maxHp} HP`, GAME_WIDTH - 145, 62);
