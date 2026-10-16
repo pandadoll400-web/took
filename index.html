@@ -279,6 +279,7 @@
                 <button onclick="adminWarpToSpace()" style="padding: 10px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🚀 우주 나무로 즉시 이동</button>
                 <button onclick="adminEnterDevilBoss()" style="padding: 10px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">😈 할로윈 악마 보스전 바로 입장</button>
                 <button onclick="adminEnterMonkeyBoss()" style="padding: 10px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🐵 원숭이 보스전 바로 입장</button>
+                <button onclick="adminStartGorillaStoryQuest()" style="padding: 10px; background: linear-gradient(135deg, #a29bfe, #6c5ce7); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(108, 92, 231, 0.45);">🦍🧪 [스토리] 고릴라&미친박사 퀘스트 시작</button>
                 <button onclick="adminResetAlienQuest()" style="padding: 10px; background: linear-gradient(135deg, #00cec9, #0984e3); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🧪 외계인 퀘스트 리셋 (재테스트)</button>
                 <button onclick="adminWarpToSwords()" style="padding: 10px; background: linear-gradient(135deg, #e17055, #d63031); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">⚔️ 전설의 검 2자루 위치로 이동</button>
                 <button onclick="adminRefillAll()" style="padding: 10px; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🎒 모든 과일/암석/물고기 999개 충전</button>
@@ -534,6 +535,27 @@
             </div>
 
             <div id="alien-dialog-buttons" style="display: flex; flex-direction: column; gap: 8px;">
+            </div>
+        </div>
+
+        <!-- ⚡ 미친 박사 대화 모달 (Mad Doctor Modal) -->
+        <div id="mad-doctor-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 12, 32, 0.98); color: white; padding: 22px 20px; border-radius: 20px; width: 92%; max-width: 410px; display: none; border: 2.5px solid #a29bfe; z-index: 65; box-shadow: 0 12px 50px rgba(0,0,0,0.95), 0 0 35px rgba(162, 155, 254, 0.45); box-sizing: border-box; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(162, 155, 254, 0.3); padding-bottom: 8px; margin-bottom: 12px;">
+                <h3 style="margin: 0; color: #a29bfe; font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(162, 155, 254, 0.6);">
+                    <span>⚡🥼</span> 미친 박사 (Mad Doctor)
+                </h3>
+                <button onclick="closeMadDoctorModal()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
+            </div>
+
+            <div style="font-size: 46px; margin-bottom: 8px; filter: drop-shadow(0 0 15px rgba(162, 155, 254, 0.8));">
+                👨‍🔬⚡
+            </div>
+
+            <div id="mad-doctor-dialog-text" style="background: rgba(0,0,0,0.45); border: 1px solid rgba(162, 155, 254, 0.25); border-radius: 12px; padding: 14px; margin-bottom: 14px; font-size: 13.5px; line-height: 1.6; color: #ecf0f1; text-align: left; word-break: keep-all;">
+                ...
+            </div>
+
+            <div id="mad-doctor-dialog-buttons" style="display: flex; flex-direction: column; gap: 8px;">
             </div>
         </div>
 
@@ -925,6 +947,30 @@
         let labLasers = [];
         let labSparks = [];
         let labShards = [];
+
+        // 🦍🧪 어드민 전용 고릴라 & 미친 박사 스토리 퀘스트 상태
+        let adminGorillaStoryStage = 'none'; // 'none', 'lab_phase1', 'earth_monkeys_invading', 'earth_mad_doctor_rescues', 'space_ready', 'lab_final_battle', 'mad_doctor_sacrifice', 'completed'
+        let storyPlayerHp = 1000;
+        let finalBattleHitCount = 0;
+        let invadingMonkeys = [];
+        let madDoctor = {
+            x: 0,
+            y: 0,
+            facing: 1,
+            state: 'idle',
+            timer: 0,
+            lasers: []
+        };
+        let rebelAlienScientistBoss = {
+            x: 400,
+            y: 380,
+            hp: 5000,
+            maxHp: 5000,
+            facing: -1,
+            state: 'rebel_boss',
+            flinchTimer: 0,
+            shootCooldown: 0
+        };
 
         // 보스전 & 쪽지 조각 시스템 상태
         let inBossRoom = false;
@@ -2926,6 +2972,30 @@
 
             const dialogText = document.getElementById('alien-dialog-text');
             const buttonsDiv = document.getElementById('alien-dialog-buttons');
+
+            // 👑 어드민 스토리 퀘스트: 우주에서 반란의 외계 과학자 대면
+            if (isAdmin() && adminGorillaStoryStage === 'space_ready') {
+                dialogText.innerHTML = `
+                    <div style="color: #ff0055; font-weight: bold; margin-bottom: 6px; font-size: 15px;">👾 반란의 외계 과학자:</div>
+                    "크하하하하! 미친 박사의 도움을 받아 여기까지 쫓아왔느냐?!<br><br>
+                    내가 고릴라 따위에게 죽은 줄 알았더냐? 그건 내 완전한 반란을 위한 미끼였을 뿐!<br>
+                    네가 가져온 [쪽지 조각] 데이터로 감염된 고릴라는 한 차원 더 흉포하게 진화했다!<br><br>
+                    <b>이 우주는 이제 내 것이다!</b> 감히 나를 막겠다면 내 기밀 연구소로 들어와라. 네 놈의 무덤이 될 것이다!!"
+                `;
+                buttonsDiv.innerHTML = `
+                    <button onclick="enterFinalLabBattle()" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #ff0055, #6c5ce7); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4);">
+                        ⚔️ [최후의 결전] 반란의 외계 실험실 돌입 (2 vs 1)
+                    </button>
+                    <button onclick="closeAlienScientistModal()" style="width: 100%; padding: 9px; background: rgba(255,255,255,0.1); color: #ccc; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; margin-top: 5px;">
+                        닫기
+                    </button>
+                `;
+                modal.style.display = 'block';
+                if (typeof resetJoyMouse === 'function') resetJoyMouse();
+                if (typeof player !== 'undefined') player.targetTree = null;
+                return;
+            }
+
             const hasNote = (inventory['쪽지 조각'] || 0) > 0;
 
             if (hasNote) {
@@ -2979,8 +3049,23 @@
             if (inventory['쪽지 조각'] > 0) {
                 inventory['쪽지 조각']--;
             }
+            if (isAdmin() && adminGorillaStoryStage === 'none') {
+                adminGorillaStoryStage = 'lab_phase1';
+            }
             saveGame();
 
+            startAlienLabSequence();
+        }
+
+        function enterFinalLabBattle() {
+            closeAlienScientistModal();
+            if (inventory['쪽지 조각'] > 0) {
+                inventory['쪽지 조각']--;
+            }
+            adminGorillaStoryStage = 'lab_final_battle';
+            storyPlayerHp = 1000;
+            finalBattleHitCount = 0;
+            saveGame();
             startAlienLabSequence();
         }
 
@@ -2997,13 +3082,84 @@
         }
 
         function initAlienLab() {
-            alienLabState = 'intro';
             alienLabTimer = 0;
             player.x = 300;
             player.y = 750;
             player.vx = 0;
             player.vy = 0;
             player.axeSwingTimer = 0;
+            labLasers = [];
+            labSparks = [];
+            labShards = [];
+
+            // 👑 어드민 2 vs 1 최종 보스전 (고릴라 5000 HP + 반란의 외계 과학자 5000 HP)
+            if (isAdmin() && adminGorillaStoryStage === 'lab_final_battle') {
+                alienLabState = 'final_boss_clash';
+                storyPlayerHp = 1000;
+                finalBattleHitCount = 0;
+
+                infectedGorilla = {
+                    x: 200,
+                    y: 440,
+                    hp: 5000,
+                    maxHp: 5000,
+                    facing: 1,
+                    flinchTimer: 0,
+                    walkTimer: 0,
+                    state: 'fighting',
+                    speed: 2.8
+                };
+
+                rebelAlienScientistBoss = {
+                    x: 400,
+                    y: 440,
+                    hp: 5000,
+                    maxHp: 5000,
+                    facing: -1,
+                    state: 'rebel_boss',
+                    flinchTimer: 0,
+                    shootCooldown: 0
+                };
+
+                alienScientistInLab = {
+                    x: -999,
+                    y: -999,
+                    hp: 0,
+                    facing: 1,
+                    state: 'hidden',
+                    shootCooldown: 0
+                };
+                return;
+            }
+
+            alienLabState = 'intro';
+            if (isAdmin()) {
+                adminGorillaStoryStage = 'lab_phase1';
+                storyPlayerHp = 1000;
+                infectedGorilla = {
+                    x: 300,
+                    y: 290,
+                    hp: 5000,
+                    maxHp: 5000,
+                    facing: 1,
+                    flinchTimer: 0,
+                    walkTimer: 0,
+                    state: 'contained',
+                    speed: 2.8
+                };
+            } else {
+                infectedGorilla = {
+                    x: 300,
+                    y: 290,
+                    hp: 100,
+                    maxHp: 100,
+                    facing: 1,
+                    flinchTimer: 0,
+                    walkTimer: 0,
+                    state: 'contained',
+                    speed: 2.3
+                };
+            }
 
             alienScientistInLab = {
                 x: 180,
@@ -3013,33 +3169,25 @@
                 state: 'standing',
                 shootCooldown: 0
             };
-
-            infectedGorilla = {
-                x: 300,
-                y: 290,
-                hp: 100,
-                maxHp: 100,
-                facing: 1,
-                flinchTimer: 0,
-                walkTimer: 0,
-                state: 'contained',
-                speed: 2.3
-            };
-
-            labLasers = [];
-            labSparks = [];
-            labShards = [];
         }
 
         function exitAlienLab() {
             inAlienLab = false;
             player.x = 300;
-            player.y = 500;
+            player.y = 650;
             cameraY = 0;
             player.targetTree = null;
             player.axeSwingTimer = 0;
 
             setBossRoomHUDVisible(true);
+
+            // 👑 어드민 스토리 퀘스트 1단계 완료: 일반 지형 복귀 후 원숭이 10마리 침공 시작
+            if (isAdmin() && adminGorillaStoryStage === 'lab_phase1') {
+                storyPlayerHp = 1000;
+                floatTexts.push({ x: player.x, y: player.y - 100, text: `⚡ 지상으로 비상 탈출 성공!`, color: '#00cec9', life: 100, size: 20 });
+                startEarthMonkeyInvasion();
+                return;
+            }
 
             alienQuestDone = true;
             try { localStorage.setItem('alien_quest_done', 'true'); } catch(e) {}
@@ -3139,34 +3287,41 @@
             ctx.fill();
             ctx.shadowBlur = 0;
 
+            const isRebelReady = isAdmin() && adminGorillaStoryStage === 'space_ready';
             const signY = y - 62 + floatBob;
-            ctx.fillStyle = 'rgba(10, 16, 32, 0.88)';
-            ctx.strokeStyle = '#00f2fe';
+            ctx.fillStyle = isRebelReady ? 'rgba(32, 10, 20, 0.92)' : 'rgba(10, 16, 32, 0.88)';
+            ctx.strokeStyle = isRebelReady ? '#ff0055' : '#00f2fe';
             ctx.lineWidth = 1.5;
             ctx.beginPath();
-            ctx.roundRect(x - 48, signY - 11, 96, 22, 6);
+            ctx.roundRect(x - (isRebelReady ? 68 : 48), signY - 11, isRebelReady ? 136 : 96, 22, 6);
             ctx.fill();
             ctx.stroke();
 
-            ctx.fillStyle = '#00f2fe';
+            ctx.fillStyle = isRebelReady ? '#ff0055' : '#00f2fe';
             ctx.font = 'bold 11px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText("🧪 외계 과학자", x, signY);
+            ctx.fillText(isRebelReady ? "👾 반란의 외계 과학자" : "🧪 외계 과학자", x, signY);
 
             const distToPlayer = Math.hypot(player.x - x, player.y - y);
             if (distToPlayer < 120) {
                 const tipY = signY - 26;
                 const hasNote = (inventory['쪽지 조각'] || 0) > 0;
-                const tipText = hasNote ? "👉 [스페이스바] 쪽지 조각 전달하기!" : "👉 [스페이스바] 대화하기";
-                const tipColor = hasNote ? '#f1c40f' : '#ffffff';
-                const tipBorder = hasNote ? '#f1c40f' : '#00f2fe';
+                let tipText = hasNote ? "👉 [스페이스바] 쪽지 조각 전달하기!" : "👉 [스페이스바] 대화하기";
+                let tipColor = hasNote ? '#f1c40f' : '#ffffff';
+                let tipBorder = hasNote ? '#f1c40f' : '#00f2fe';
+
+                if (isRebelReady) {
+                    tipText = "👉 [스페이스바] 반란 외계인 대면하기!";
+                    tipColor = '#ff4757';
+                    tipBorder = '#ff0055';
+                }
 
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
                 ctx.strokeStyle = tipBorder;
                 ctx.lineWidth = 1.5;
                 ctx.beginPath();
-                ctx.roundRect(x - 85, tipY - 11, 170, 22, 6);
+                ctx.roundRect(x - 90, tipY - 11, 180, 22, 6);
                 ctx.fill();
                 ctx.stroke();
 
@@ -3312,7 +3467,7 @@
         }
 
         function drawAlienScientistInLab(ctx, sci) {
-            if (sci.state === 'trapped') return;
+            if (sci.state === 'trapped' || sci.state === 'hidden') return;
 
             ctx.save();
             const x = sci.x;
@@ -3323,6 +3478,25 @@
             ctx.beginPath();
             ctx.ellipse(x, y + 22, 20, 8, 0, 0, Math.PI * 2);
             ctx.fill();
+
+            if (sci.state === 'dead') {
+                ctx.translate(x, y + 16);
+                ctx.rotate(1.57 * facing);
+                ctx.fillStyle = '#64748b';
+                ctx.beginPath();
+                ctx.roundRect(-12, -8, 24, 16, 4);
+                ctx.fill();
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.arc(12 * facing, -12, 11, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ff4757';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("💀", 12 * facing, -10);
+                ctx.restore();
+                return;
+            }
 
             if (sci.state === 'injured') {
                 ctx.translate(x, y + 10);
@@ -3526,6 +3700,435 @@
             ctx.restore();
         }
 
+        // ==========================================
+        // ⚡ 미친 박사 (Mad Doctor) & 스토리 보스 / 침공 연출
+        // ==========================================
+        function drawMadDoctor(ctx, doc) {
+            if (!doc || doc.state === 'idle') return;
+            ctx.save();
+            const x = doc.x;
+            const y = doc.y;
+            const facing = doc.facing || 1;
+            const now = Date.now();
+
+            // 그림자
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.beginPath();
+            ctx.ellipse(x, y + 22, 20, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 전격 오라 (자폭 시 황금빛, 평소 보랏빛)
+            ctx.strokeStyle = (doc.state === 'sacrificing') ? '#f1c40f' : '#a29bfe';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            for (let i = 0; i < 4; i++) {
+                let ang = (now * 0.01) + (i * Math.PI / 2);
+                let rx = x + Math.cos(ang) * 26;
+                let ry = y + Math.sin(ang) * 26;
+                ctx.moveTo(rx, ry);
+                ctx.lineTo(rx + (Math.random()-0.5)*15, ry + (Math.random()-0.5)*15);
+            }
+            ctx.stroke();
+
+            ctx.translate(x, y);
+
+            // 다리
+            ctx.fillStyle = '#1e1b4b';
+            ctx.beginPath();
+            ctx.roundRect(-9, 8, 7, 16, 3);
+            ctx.roundRect(2, 8, 7, 16, 3);
+            ctx.fill();
+
+            // 흰색 가운 + 네온 퍼플 테두리
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.roundRect(-14, -14, 28, 26, 5);
+            ctx.fill();
+            ctx.strokeStyle = '#a29bfe';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 넥타이 & 가슴 퀀텀 코어
+            ctx.fillStyle = '#6c5ce7';
+            ctx.fillRect(-4, -12, 8, 14);
+            ctx.fillStyle = '#00cec9';
+            ctx.beginPath();
+            ctx.arc(0, -5, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 플라즈마 블래스터
+            ctx.save();
+            ctx.translate(10 * facing, -2);
+            ctx.fillStyle = '#2d3436';
+            ctx.fillRect(0, -5, 24 * facing, 10);
+            ctx.fillStyle = '#a29bfe';
+            ctx.shadowColor = '#a29bfe';
+            ctx.shadowBlur = 10;
+            ctx.fillRect(4 * facing, -3, 16 * facing, 6);
+            ctx.shadowBlur = 0;
+            ctx.restore();
+
+            // 얼굴
+            ctx.fillStyle = '#ffdfba';
+            ctx.beginPath();
+            ctx.arc(0, -25, 12, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 삐죽삐죽 은발 머리
+            ctx.fillStyle = '#dfe6e9';
+            ctx.beginPath();
+            ctx.moveTo(-13, -25);
+            ctx.lineTo(-18, -36);
+            ctx.lineTo(-8, -33);
+            ctx.lineTo(0, -42);
+            ctx.lineTo(8, -33);
+            ctx.lineTo(18, -36);
+            ctx.lineTo(13, -25);
+            ctx.closePath();
+            ctx.fill();
+
+            // 네온 고글
+            ctx.fillStyle = '#0984e3';
+            ctx.beginPath();
+            ctx.roundRect(-9, -29, 18, 7, 3);
+            ctx.fill();
+            ctx.fillStyle = '#00f2fe';
+            ctx.shadowColor = '#00f2fe';
+            ctx.shadowBlur = 6;
+            ctx.beginPath();
+            ctx.arc(-4 * facing, -25.5, 2.5, 0, Math.PI * 2);
+            ctx.arc(4 * facing, -25.5, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 네임 태그
+            ctx.fillStyle = '#a29bfe';
+            ctx.font = 'bold 10.5px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'black';
+            ctx.shadowBlur = 3;
+            ctx.fillText("⚡ 미친 박사", 0, -46);
+            ctx.shadowBlur = 0;
+
+            ctx.restore();
+        }
+
+        function drawInvadingMonkey(ctx, m) {
+            if (!m) return;
+            ctx.save();
+            ctx.translate(m.x, m.y);
+
+            // 광분 붉은 오라 그림자
+            ctx.fillStyle = 'rgba(255, 0, 85, 0.35)';
+            ctx.beginPath();
+            ctx.ellipse(0, 16, 20, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            const facing = m.facing || 1;
+            const walkBob = Math.sin(m.walkTimer * 0.4) * 3;
+
+            // 다리
+            ctx.fillStyle = '#5c3a21';
+            ctx.fillRect(-8, 6 + walkBob, 6, 12);
+            ctx.fillRect(2, 6 - walkBob, 6, 12);
+
+            // 몸통
+            ctx.fillStyle = '#795548';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 14, 16, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 배
+            ctx.fillStyle = '#d7ccc8';
+            ctx.beginPath();
+            ctx.ellipse(0, 2, 8, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 머리
+            ctx.fillStyle = '#795548';
+            ctx.beginPath();
+            ctx.arc(0, -18, 11, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 얼굴
+            ctx.fillStyle = '#d7ccc8';
+            ctx.beginPath();
+            ctx.ellipse(0, -17, 8, 7, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 광분 붉은 눈빛
+            ctx.fillStyle = '#ff0055';
+            ctx.shadowColor = '#ff0055';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.arc(-3.5 * facing, -18, 2.5, 0, Math.PI * 2);
+            ctx.arc(3.5 * facing, -18, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 발톱 팔
+            ctx.fillStyle = '#5c3a21';
+            ctx.beginPath();
+            ctx.arc(10 * facing, -6 + walkBob, 4, 0, Math.PI * 2);
+            ctx.arc(-10 * facing, -6 - walkBob, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 명찰
+            ctx.fillStyle = '#ff7675';
+            ctx.font = 'bold 9.5px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'black';
+            ctx.shadowBlur = 2;
+            ctx.fillText("💢 광분 원숭이", 0, -32);
+            ctx.shadowBlur = 0;
+
+            ctx.restore();
+        }
+
+        function drawRebelAlienScientistBoss(ctx, sci) {
+            if (!sci || sci.hp <= 0) return;
+            ctx.save();
+            const x = sci.x;
+            const y = sci.y;
+            const facing = sci.facing || 1;
+
+            // 붉은 다크 에너지 오라
+            ctx.fillStyle = 'rgba(255, 0, 85, 0.25)';
+            ctx.beginPath();
+            ctx.ellipse(x, y + 22, 28, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.translate(x, y);
+
+            // 아머 다리
+            ctx.fillStyle = '#2d3436';
+            ctx.beginPath();
+            ctx.roundRect(-10, 8, 8, 16, 3);
+            ctx.roundRect(2, 8, 8, 16, 3);
+            ctx.fill();
+
+            // 다크 엑소슈트 바디
+            ctx.fillStyle = '#1e272e';
+            ctx.beginPath();
+            ctx.roundRect(-16, -14, 32, 26, 5);
+            ctx.fill();
+            ctx.strokeStyle = '#ff0055';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // 가슴 붉은 다크 코어
+            ctx.fillStyle = '#ff0055';
+            ctx.shadowColor = '#ff0055';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.arc(0, -2, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 중화기 다크 블래스터
+            ctx.save();
+            ctx.translate(12 * facing, -3);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, -6, 26 * facing, 12);
+            ctx.fillStyle = '#ff0055';
+            ctx.shadowColor = '#ff0055';
+            ctx.shadowBlur = 10;
+            ctx.fillRect(4 * facing, -4, 18 * facing, 8);
+            ctx.shadowBlur = 0;
+            ctx.restore();
+
+            // 외계인 녹색 머리
+            ctx.fillStyle = '#1dd1a1';
+            ctx.beginPath();
+            ctx.ellipse(0, -26, 14, 16, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 사악한 붉은 바이저
+            ctx.fillStyle = '#ff0055';
+            ctx.shadowColor = '#ff0055';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.roundRect(-8 * facing, -30, 16, 8, 3);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 이름 태그
+            ctx.fillStyle = '#ff0055';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'black';
+            ctx.shadowBlur = 4;
+            ctx.fillText("👾 반란의 외계 과학자", 0, -48);
+            ctx.shadowBlur = 0;
+
+            ctx.restore();
+        }
+
+        function startEarthMonkeyInvasion() {
+            adminGorillaStoryStage = 'earth_monkeys_invading';
+            storyPlayerHp = 1000;
+            invadingMonkeys = [];
+            for (let i = 0; i < 10; i++) {
+                invadingMonkeys.push({
+                    id: i,
+                    x: 70 + (i * 50) + (Math.random() * 20 - 10),
+                    y: 1350 + (Math.random() * 80),
+                    speed: 4.2 + (Math.random() * 1.6),
+                    facing: 1,
+                    state: 'rushing',
+                    walkTimer: Math.floor(Math.random() * 20)
+                });
+            }
+            floatTexts.push({ x: 300, y: player.y - 120, text: `🚨 [비상 경보] 할로윈 지형에서 광분한 원숭이 10마리가 지상으로 쇄도합니다!!`, color: '#ff0055', life: 140, size: 21 });
+        }
+
+        function updateEarthMonkeyInvasion() {
+            if (adminGorillaStoryStage === 'earth_monkeys_invading') {
+                let reachedCount = 0;
+                invadingMonkeys.forEach(m => {
+                    m.walkTimer++;
+                    let dx = player.x - m.x;
+                    let dy = player.y - m.y;
+                    let dist = Math.hypot(dx, dy);
+                    if (dist > 45) {
+                        m.x += (dx / dist) * m.speed;
+                        m.y += (dy / dist) * m.speed;
+                        m.facing = dx > 0 ? 1 : -1;
+                    } else {
+                        reachedCount++;
+                        if (Math.random() < 0.3) {
+                            slashEffects.push({ x: player.x + (Math.random()*40 - 20), y: player.y + (Math.random()*40 - 20), life: 12 });
+                        }
+                    }
+                });
+
+                if (reachedCount >= 3 || invadingMonkeys.some(m => Math.hypot(player.x - m.x, player.y - m.y) < 45)) {
+                    // 원숭이들의 광분 공격! 체력 1000 -> 150 급감
+                    storyPlayerHp = 150;
+                    for (let k = 0; k < 10; k++) {
+                        slashEffects.push({ x: player.x + (Math.random()*60 - 30), y: player.y + (Math.random()*60 - 30), life: 18 });
+                    }
+                    floatTexts.push({ x: player.x, y: player.y - 90, text: `💥 원숭이들의 광분 습격! HP 1000 ➔ 150 급감!!`, color: '#ff0055', life: 90, size: 22 });
+                    
+                    adminGorillaStoryStage = 'earth_mad_doctor_rescues';
+                    madDoctor.x = player.x - 90;
+                    madDoctor.y = player.y - 10;
+                    madDoctor.facing = 1;
+                    madDoctor.state = 'teleporting_in';
+                    madDoctor.timer = 0;
+                    madDoctor.lasers = [];
+                    floatTexts.push({ x: madDoctor.x, y: madDoctor.y - 70, text: `⚡ 찌릿찌릿!! 미친 박사 차원 도약 난입!!`, color: '#a29bfe', life: 90, size: 21 });
+                }
+            } else if (adminGorillaStoryStage === 'earth_mad_doctor_rescues') {
+                madDoctor.timer++;
+                if (madDoctor.timer < 35) {
+                    for (let i = 0; i < 2; i++) {
+                        labSparks.push({
+                            x: madDoctor.x + (Math.random() * 40 - 20),
+                            y: madDoctor.y + (Math.random() * 40 - 20),
+                            vx: (Math.random() - 0.5) * 4,
+                            vy: (Math.random() - 0.5) * 4,
+                            color: '#a29bfe',
+                            life: 20
+                        });
+                    }
+                } else if (madDoctor.timer === 35) {
+                    // 미친 박사의 플라즈마 전격파! 원숭이 10마리 전멸
+                    invadingMonkeys.forEach(m => {
+                        madDoctor.lasers.push({
+                            x1: madDoctor.x + (madDoctor.facing * 18),
+                            y1: madDoctor.y - 10,
+                            x2: m.x,
+                            y2: m.y,
+                            life: 25,
+                            color: '#a29bfe'
+                        });
+                        for (let i = 0; i < 6; i++) {
+                            let a = Math.random() * Math.PI * 2;
+                            let sp = Math.random() * 4 + 2;
+                            labSparks.push({ x: m.x, y: m.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: '#f1c40f', life: 25 });
+                        }
+                        floatTexts.push({ x: m.x, y: m.y - 40, text: `⚡ -9999!`, color: '#a29bfe', life: 40, size: 18 });
+                    });
+                    floatTexts.push({ x: madDoctor.x, y: madDoctor.y - 90, text: `⚡ 닥터의 플라즈마 전격파! 원숭이 전원 섬멸!`, color: '#00f2fe', life: 80, size: 22 });
+                } else if (madDoctor.timer === 75) {
+                    invadingMonkeys = [];
+                    madDoctor.lasers = [];
+                    openMadDoctorModal();
+                }
+            }
+        }
+
+        function openMadDoctorModal() {
+            const modal = document.getElementById('mad-doctor-modal');
+            if (!modal) return;
+            const dialogText = document.getElementById('mad-doctor-dialog-text');
+            const buttonsDiv = document.getElementById('mad-doctor-dialog-buttons');
+
+            dialogText.innerHTML = `
+                <div style="color: #a29bfe; font-weight: bold; margin-bottom: 8px; font-size: 15px;">⚡ 미친 박사 (Mad Doctor):</div>
+                "휴! 한 발만 늦었어도 큰일 날 뻔했군! 내 이름은 <b>미친 박사</b>일세.<br><br>
+                자네를 속인 <b>외계 과학자는 죽은 척 연기한 것뿐이다!</b><br>
+                놈은 네가 방심한 사이 우주 기밀 연구소에서 전 우주를 뒤흔들 <b>[우주 반란]</b>을 일으키려 하고 있어!<br><br>
+                내가 원숭이 무리의 손에서 되찾아 온 <b>[쪽지 조각]</b>을 돌려주겠네.<br>
+                자네만이 놈의 반란을 막을 수 있어! 어서 우주로 가서 외계 과학자를 대면하고 음모를 분쇄하게!!"
+            `;
+
+            buttonsDiv.innerHTML = `
+                <button onclick="proceedToSpaceFromMadDoctor()" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #a29bfe, #6c5ce7); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.45);">
+                    📜 [쪽지 조각 회수] 우주로 가서 외계 과학자 대면하기
+                </button>
+            `;
+
+            modal.style.display = 'block';
+            if (typeof resetJoyMouse === 'function') resetJoyMouse();
+        }
+
+        function closeMadDoctorModal() {
+            const modal = document.getElementById('mad-doctor-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function proceedToSpaceFromMadDoctor() {
+            closeMadDoctorModal();
+            if (!inventory['쪽지 조각']) inventory['쪽지 조각'] = 0;
+            inventory['쪽지 조각']++;
+            saveGame();
+
+            adminGorillaStoryStage = 'space_ready';
+            madDoctor.state = 'idle';
+
+            blackoutState.active = true;
+            blackoutState.text = '🚀 우주 지역으로 긴급 워프 중... (외계 과학자 대면)';
+
+            setTimeout(() => {
+                blackoutState.active = false;
+                player.x = 300;
+                player.y = -7520;
+                cameraY = -7650;
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '🌌 우주 나무에 도착했습니다! 외계 과학자를 대면하세요!', color: '#ff0055', life: 120, size: 20 });
+            }, 1800);
+        }
+
+        function adminStartGorillaStoryQuest() {
+            if (!isAdmin()) return;
+            closeAdminPanelModal();
+            if (inBossRoom) exitBossDimension();
+            if (inPvpArena) exitPvpArena();
+
+            adminGorillaStoryStage = 'lab_phase1';
+            storyPlayerHp = 1000;
+            finalBattleHitCount = 0;
+            alienQuestDone = false;
+            try { localStorage.removeItem('alien_quest_done'); } catch(e) {}
+            if (!inventory['쪽지 조각']) inventory['쪽지 조각'] = 0;
+            inventory['쪽지 조각'] += 1;
+            saveGame();
+
+            startAlienLabSequence();
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🦍🧪 고릴라 & 미친 박사 스토리 퀘스트 시작!', color: '#a29bfe', life: 120, size: 20 });
+        }
+
         function drawAlienLab() {
             ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
             ctx.save();
@@ -3597,15 +4200,21 @@
             if (alienLabState !== 'intro') {
                 drawInfectedGorilla(ctx, infectedGorilla);
             }
+            if (alienLabState === 'final_boss_clash' || alienLabState === 'mad_doctor_sacrifice') {
+                drawRebelAlienScientistBoss(ctx, rebelAlienScientistBoss);
+            }
+            if (madDoctor.state === 'sacrificing') {
+                drawMadDoctor(ctx, madDoctor);
+            }
 
             drawAlienScientistInLab(ctx, alienScientistInLab);
             drawCharacter(ctx, player, player.x, player.y, player.axeSwingTimer > 0, player.walkTimer);
 
             labLasers.forEach(laser => {
                 ctx.save();
-                ctx.strokeStyle = '#00f2fe';
+                ctx.strokeStyle = laser.color || '#00f2fe';
                 ctx.lineWidth = 5;
-                ctx.shadowColor = '#00f2fe';
+                ctx.shadowColor = laser.color || '#00f2fe';
                 ctx.shadowBlur = 12;
                 ctx.beginPath();
                 ctx.moveTo(laser.x1, laser.y1);
@@ -3681,7 +4290,8 @@
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                let hpRatio = Math.max(0, infectedGorilla.hp / infectedGorilla.maxHp);
+                let maxHpVal = isAdmin() ? 5000 : 100;
+                let hpRatio = Math.max(0, infectedGorilla.hp / maxHpVal);
                 let grad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
                 grad.addColorStop(0, '#ff0055');
                 grad.addColorStop(1, '#a29bfe');
@@ -3693,11 +4303,82 @@
                 ctx.fillStyle = '#ffffff';
                 ctx.font = 'bold 12px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText(`🧪 감염된 고릴라 (Infected Gorilla) HP: ${infectedGorilla.hp} / 100`, 300, barY + 15);
+                ctx.fillText(`🧪 감염된 고릴라 (Infected Gorilla) HP: ${infectedGorilla.hp} / ${maxHpVal}`, 300, barY + 15);
 
                 ctx.font = 'bold 11px Arial';
                 ctx.fillStyle = '#00f2fe';
-                ctx.fillText("⚔️ 외계 과학자와 협동하여 공격하세요! (도끼 클릭 또는 스페이스바)", 300, barY + 36);
+                if (isAdmin()) {
+                    ctx.fillText("⚔️ [관리자 스토리] 도끼 공격 고정 300 데미지! (500 HP 도달 시 폭주)", 300, barY + 36);
+                } else {
+                    ctx.fillText("⚔️ 외계 과학자와 협동하여 공격하세요! (도끼 클릭 또는 스페이스바)", 300, barY + 36);
+                }
+                ctx.restore();
+            } else if (alienLabState === 'final_boss_clash') {
+                ctx.save();
+                // 1. 고릴라 체력바 (좌측 상단)
+                const gBarX = 25, gBarY = 18, gBarW = 260, gBarH = 20;
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+                ctx.beginPath(); ctx.roundRect(gBarX, gBarY, gBarW, gBarH, 8); ctx.fill();
+                ctx.strokeStyle = '#ff007f'; ctx.lineWidth = 2; ctx.stroke();
+                let gRatio = Math.max(0, infectedGorilla.hp / 5000);
+                ctx.fillStyle = '#ff0055';
+                ctx.beginPath(); ctx.roundRect(gBarX + 2, gBarY + 2, (gBarW - 4) * gRatio, gBarH - 4, 6); ctx.fill();
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+                ctx.fillText(`🧪 고릴라 HP: ${infectedGorilla.hp} / 5000`, gBarX + gBarW / 2, gBarY + 14);
+
+                // 2. 반란 외계 과학자 체력바 (우측 상단)
+                const sBarX = 315, sBarY = 18, sBarW = 260, sBarH = 20;
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+                ctx.beginPath(); ctx.roundRect(sBarX, sBarY, sBarW, sBarH, 8); ctx.fill();
+                ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 2; ctx.stroke();
+                let sRatio = Math.max(0, rebelAlienScientistBoss.hp / 5000);
+                ctx.fillStyle = '#6c5ce7';
+                ctx.beginPath(); ctx.roundRect(sBarX + 2, sBarY + 2, (sBarW - 4) * sRatio, sBarH - 4, 6); ctx.fill();
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+                ctx.fillText(`👾 반란 과학자 HP: ${rebelAlienScientistBoss.hp} / 5000`, sBarX + sBarW / 2, sBarY + 14);
+
+                // 3. 내 체력바 (중앙)
+                const pBarX = 180, pBarY = 46, pBarW = 240, pBarH = 18;
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.beginPath(); ctx.roundRect(pBarX, pBarY, pBarW, pBarH, 8); ctx.fill();
+                ctx.strokeStyle = (storyPlayerHp <= 50) ? '#ff0055' : '#2ecc71'; ctx.lineWidth = 1.5; ctx.stroke();
+                let pRatio = Math.max(0, storyPlayerHp / 1000);
+                ctx.fillStyle = (storyPlayerHp <= 50) ? '#ff0055' : '#2ecc71';
+                ctx.beginPath(); ctx.roundRect(pBarX + 2, pBarY + 2, (pBarW - 4) * pRatio, pBarH - 4, 6); ctx.fill();
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10.5px Arial'; ctx.textAlign = 'center';
+                ctx.fillText(`❤️ 내 체력: ${storyPlayerHp} / 1000`, pBarX + pBarW / 2, pBarY + 13);
+
+                ctx.fillStyle = '#f1c40f'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+                ctx.fillText("⚔️ [2 vs 1 최종 결전] 도끼로 두 보스를 공격하세요! (데미지 300)", 300, 78);
+                ctx.restore();
+            } else if (alienLabState === 'mad_doctor_sacrifice') {
+                ctx.save();
+                ctx.fillStyle = `rgba(162, 155, 254, ${0.35 + Math.sin(now * 0.02) * 0.15})`;
+                ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+                // 거대한 퀀텀 자폭 링
+                ctx.strokeStyle = '#f1c40f';
+                ctx.lineWidth = 6;
+                ctx.shadowColor = '#f1c40f';
+                ctx.shadowBlur = 30;
+                ctx.beginPath();
+                ctx.arc(300, 480, Math.min(360, alienLabTimer * 5), 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.fillStyle = 'rgba(18, 12, 32, 0.95)';
+                ctx.strokeStyle = '#f1c40f';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.roundRect(60, 430, 480, 58, 12);
+                ctx.fill(); ctx.stroke();
+
+                ctx.fillStyle = '#f1c40f';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("⚡ [미친 박사의 숭고한 희생] 퀀텀 자폭 코어 과부하 폭발!!", 300, 455);
+                ctx.fillStyle = '#dfe6e9';
+                ctx.font = '12px Arial';
+                ctx.fillText("미친 박사: \"자네는 살아남아라... 이것이 내 인생 최고의 연구다...!\"", 300, 475);
                 ctx.restore();
             } else if (alienLabState === 'berserk_strike') {
                 ctx.save();
@@ -3858,7 +4539,8 @@
                     floatTexts.push({ x: infectedGorilla.x + (Math.random()*20 - 10), y: infectedGorilla.y - 45, text: `⚡ -10`, color: '#00f2fe', life: 35, size: 18 });
                 }
 
-                if (infectedGorilla.hp <= 25 || alienLabTimer > 750) {
+                const berserkThreshold = isAdmin() ? 500 : 25;
+                if (infectedGorilla.hp <= berserkThreshold || (!isAdmin() && alienLabTimer > 750)) {
                     alienLabState = 'berserk_strike';
                     alienLabTimer = 0;
                     infectedGorilla.state = 'berserk';
@@ -3875,24 +4557,40 @@
                 }
 
                 if (alienLabTimer === 35) {
-                    alienScientistInLab.state = 'injured';
-                    for (let i = 0; i < 15; i++) {
-                        let a = Math.random() * Math.PI * 2;
-                        let sp = Math.random() * 4 + 1;
-                        labSparks.push({ x: alienScientistInLab.x, y: alienScientistInLab.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: '#ff4757', life: 25 });
+                    if (isAdmin()) {
+                        alienScientistInLab.state = 'dead';
+                        for (let i = 0; i < 25; i++) {
+                            let a = Math.random() * Math.PI * 2;
+                            let sp = Math.random() * 5 + 2;
+                            labSparks.push({ x: alienScientistInLab.x, y: alienScientistInLab.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: '#ff4757', life: 30 });
+                        }
+                        floatTexts.push({ x: alienScientistInLab.x, y: alienScientistInLab.y - 50, text: `💀 고릴라의 일격! 과학자 절명!!`, color: '#ff4757', life: 60, size: 22 });
+                    } else {
+                        alienScientistInLab.state = 'injured';
+                        for (let i = 0; i < 15; i++) {
+                            let a = Math.random() * Math.PI * 2;
+                            let sp = Math.random() * 4 + 1;
+                            labSparks.push({ x: alienScientistInLab.x, y: alienScientistInLab.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: '#ff4757', life: 25 });
+                        }
+                        floatTexts.push({ x: alienScientistInLab.x, y: alienScientistInLab.y - 50, text: `💥 콰앙! 과학자 피격!`, color: '#ff4757', life: 50, size: 20 });
                     }
-                    floatTexts.push({ x: alienScientistInLab.x, y: alienScientistInLab.y - 50, text: `💥 콰앙! 과학자 피격!`, color: '#ff4757', life: 50, size: 20 });
                 }
 
                 if (alienLabTimer === 75) {
-                    alienScientistInLab.state = 'trapped';
-                    alienScientistInLab.x = 300;
-                    alienScientistInLab.y = 310;
-                    infectedGorilla.x = 300;
-                    infectedGorilla.y = 420;
-                    alienLabState = 'imprisoned';
-                    alienLabTimer = 0;
-                    floatTexts.push({ x: 300, y: 220, text: `🔒 과학자 감금 완료!`, color: '#ff0055', life: 80, size: 22 });
+                    if (isAdmin()) {
+                        alienLabState = 'escape_teleport';
+                        alienLabTimer = 0;
+                        floatTexts.push({ x: 300, y: 220, text: `⚡ 비상 긴급 텔레포트 발동!`, color: '#00f2fe', life: 80, size: 22 });
+                    } else {
+                        alienScientistInLab.state = 'trapped';
+                        alienScientistInLab.x = 300;
+                        alienScientistInLab.y = 310;
+                        infectedGorilla.x = 300;
+                        infectedGorilla.y = 420;
+                        alienLabState = 'imprisoned';
+                        alienLabTimer = 0;
+                        floatTexts.push({ x: 300, y: 220, text: `🔒 과학자 감금 완료!`, color: '#ff0055', life: 80, size: 22 });
+                    }
                 }
             } else if (alienLabState === 'imprisoned') {
                 infectedGorilla.facing = (player.x > infectedGorilla.x) ? 1 : -1;
@@ -3904,32 +4602,160 @@
                 if (alienLabTimer > 50) {
                     exitAlienLab();
                 }
+            } else if (alienLabState === 'final_boss_clash') {
+                // 고릴라의 플레이어 추격
+                infectedGorilla.walkTimer++;
+                let gdx = player.x - infectedGorilla.x;
+                let gdy = player.y - infectedGorilla.y;
+                let gDist = Math.hypot(gdx, gdy);
+                if (gDist > 45) {
+                    infectedGorilla.x += (gdx / gDist) * infectedGorilla.speed;
+                    infectedGorilla.y += (gdy / gDist) * infectedGorilla.speed;
+                    infectedGorilla.facing = gdx > 0 ? 1 : -1;
+                }
+
+                // 반란 외계 과학자의 플레이어 레이저 공격 & 거리 유지
+                rebelAlienScientistBoss.shootCooldown++;
+                let rdx = player.x - rebelAlienScientistBoss.x;
+                let rdy = player.y - rebelAlienScientistBoss.y;
+                let rDist = Math.hypot(rdx, rdy);
+                rebelAlienScientistBoss.facing = rdx > 0 ? 1 : -1;
+
+                if (rDist < 120) {
+                    rebelAlienScientistBoss.x -= (rdx / rDist) * 2.0;
+                    rebelAlienScientistBoss.y -= (rdy / rDist) * 2.0;
+                } else if (rDist > 220) {
+                    rebelAlienScientistBoss.x += (rdx / rDist) * 1.5;
+                    rebelAlienScientistBoss.y += (rdy / rDist) * 1.5;
+                }
+                rebelAlienScientistBoss.x = Math.max(80, Math.min(GAME_WIDTH - 80, rebelAlienScientistBoss.x));
+                rebelAlienScientistBoss.y = Math.max(380, Math.min(GAME_HEIGHT - 80, rebelAlienScientistBoss.y));
+
+                if (rebelAlienScientistBoss.shootCooldown >= 60) {
+                    rebelAlienScientistBoss.shootCooldown = 0;
+                    labLasers.push({
+                        x1: rebelAlienScientistBoss.x + (rebelAlienScientistBoss.facing * 16),
+                        y1: rebelAlienScientistBoss.y - 4,
+                        x2: player.x,
+                        y2: player.y,
+                        life: 14,
+                        color: '#ff0055'
+                    });
+                    floatTexts.push({ x: player.x + (Math.random()*20 - 10), y: player.y - 45, text: `💥 -150`, color: '#ff4757', life: 35, size: 18 });
+                    storyPlayerHp = Math.max(100, storyPlayerHp - 150);
+                }
+
+                // 플레이어가 공격 3회 이상 가했거나 일정 시간 경과 시 보스들의 암흑 합동 공격 -> 체력 50으로 급감 및 미친 박사 난입!
+                if (finalBattleHitCount >= 3 || alienLabTimer > 280) {
+                    alienLabState = 'mad_doctor_sacrifice';
+                    alienLabTimer = 0;
+                    storyPlayerHp = 50; // 체력 50으로 급감!
+
+                    for (let k = 0; k < 12; k++) {
+                        slashEffects.push({ x: player.x + (Math.random()*60 - 30), y: player.y + (Math.random()*60 - 30), life: 18 });
+                    }
+                    floatTexts.push({ x: player.x, y: player.y - 80, text: `💥 보스 연합의 암흑 맹공! 내 체력 50 급감!!`, color: '#ff0055', life: 80, size: 22 });
+
+                    madDoctor.x = 300;
+                    madDoctor.y = 560;
+                    madDoctor.state = 'sacrificing';
+                    floatTexts.push({ x: 300, y: 500, text: `⚡ 닥터 난입: "포기하지 마라!! 내 목숨을 바쳐 자폭 코어를 폭주시키겠다!!"`, color: '#a29bfe', life: 100, size: 20 });
+                }
+            } else if (alienLabState === 'mad_doctor_sacrifice') {
+                if (alienLabTimer === 40) {
+                    // 퀀텀 노바 대폭발! 두 보스 완전 소멸
+                    infectedGorilla.hp = 0;
+                    rebelAlienScientistBoss.hp = 0;
+                    for (let i = 0; i < 60; i++) {
+                        let a = Math.random() * Math.PI * 2;
+                        let sp = Math.random() * 8 + 3;
+                        labSparks.push({ x: 300, y: 440, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#f1c40f' : '#a29bfe'), life: 50 });
+                        labShards.push({ x: 300, y: 440, vx: Math.cos(a)*(sp*0.8), vy: Math.sin(a)*(sp*0.8), size: Math.random()*5 + 3, life: 60 });
+                    }
+                    floatTexts.push({ x: 300, y: 340, text: `💥💥 퀀텀 자폭 노바 발동! 두 보스 완전 소멸 (-99999)!`, color: '#f1c40f', life: 120, size: 25 });
+                }
+
+                if (alienLabTimer === 100) {
+                    floatTexts.push({ x: 300, y: 520, text: `🕊️ 미친 박사: "자네는 살아남아라... 이것이 내 인생 최고의 연구다...!"`, color: '#ffeaa7', life: 100, size: 20 });
+                }
+
+                if (alienLabTimer > 160) {
+                    // 플레이어 보호막 감싸여 일반 지상으로 안전 귀환
+                    inAlienLab = false;
+                    player.x = 300;
+                    player.y = 650;
+                    cameraY = 0;
+                    player.targetTree = null;
+                    player.axeSwingTimer = 0;
+                    storyPlayerHp = 1000;
+                    adminGorillaStoryStage = 'completed';
+                    alienQuestDone = true;
+                    try { localStorage.setItem('alien_quest_done', 'true'); } catch(e) {}
+                    saveGame();
+                    setBossRoomHUDVisible(true);
+
+                    setTimeout(() => {
+                        alert("🏆 [스토리 클리어 - 미친 박사의 숭고한 희생]\n\n미친 박사의 자폭 희생으로 '감염된 고릴라'와 '반란의 외계 과학자'를 모두 처치하고 전 우주를 구했습니다!\n\n미친 박사의 마지막 양자 보호막에 감싸여 일반 지상 마을로 무사히 귀환했습니다.");
+                        floatTexts.push({ x: player.x, y: player.y - 100, text: `🏆 우주 반란 분쇄 성공! 지상으로 무사 귀환!`, color: '#00cec9', life: 140, size: 22 });
+                    }, 300);
+                }
             }
         }
 
         function handleAlienLabClick(cx, cy, isSpacebar = false) {
-            if (alienLabState !== 'battle') return;
+            if (alienLabState !== 'battle' && alienLabState !== 'final_boss_clash') return;
 
             player.axeSwingTimer = 15;
-            let distToGorilla = Math.hypot(player.x - infectedGorilla.x, player.y - infectedGorilla.y);
-            let clickDist = Math.hypot(cx - infectedGorilla.x, cy - infectedGorilla.y);
 
-            if (distToGorilla < 120 || (!isSpacebar && clickDist < 80)) {
-                let dmg = 15;
+            let dmg = 15;
+            if (isAdmin()) {
+                dmg = 300;
+            } else {
                 if (equippedAxe === 4) dmg = 25;
                 else if (equippedAxe === 3) dmg = 20;
                 else if (equippedAxe === 2) dmg = 16;
                 else if (equippedAxe === 1) dmg = 13;
+            }
 
-                infectedGorilla.hp = Math.max(0, infectedGorilla.hp - dmg);
-                infectedGorilla.flinchTimer = 10;
-                slashEffects.push({ x: infectedGorilla.x, y: infectedGorilla.y, life: 12 });
-                floatTexts.push({ x: infectedGorilla.x + (Math.random()*30 - 15), y: infectedGorilla.y - 40, text: `💥 -${dmg}`, color: '#ff4757', life: 40, size: 20 });
+            if (alienLabState === 'battle') {
+                let distToGorilla = Math.hypot(player.x - infectedGorilla.x, player.y - infectedGorilla.y);
+                let clickDist = Math.hypot(cx - infectedGorilla.x, cy - infectedGorilla.y);
 
-                for (let i = 0; i < 6; i++) {
-                    let a = Math.random() * Math.PI * 2;
-                    let sp = Math.random() * 4 + 2;
-                    labSparks.push({ x: infectedGorilla.x, y: infectedGorilla.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, color: '#ff007f', life: 20 });
+                if (distToGorilla < 140 || (!isSpacebar && clickDist < 90)) {
+                    infectedGorilla.hp = Math.max(0, infectedGorilla.hp - dmg);
+                    infectedGorilla.flinchTimer = 10;
+                    slashEffects.push({ x: infectedGorilla.x, y: infectedGorilla.y, life: 12 });
+                    floatTexts.push({ x: infectedGorilla.x + (Math.random()*30 - 15), y: infectedGorilla.y - 40, text: `💥 -${dmg}`, color: '#ff4757', life: 40, size: 20 });
+
+                    for (let i = 0; i < 6; i++) {
+                        let a = Math.random() * Math.PI * 2;
+                        let sp = Math.random() * 4 + 2;
+                        labSparks.push({ x: infectedGorilla.x, y: infectedGorilla.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, color: '#ff007f', life: 20 });
+                    }
+                }
+            } else if (alienLabState === 'final_boss_clash') {
+                let distToGorilla = Math.hypot(player.x - infectedGorilla.x, player.y - infectedGorilla.y);
+                let clickDistGorilla = Math.hypot(cx - infectedGorilla.x, cy - infectedGorilla.y);
+                let distToSci = Math.hypot(player.x - rebelAlienScientistBoss.x, player.y - rebelAlienScientistBoss.y);
+                let clickDistSci = Math.hypot(cx - rebelAlienScientistBoss.x, cy - rebelAlienScientistBoss.y);
+
+                let hitAny = false;
+                if (distToGorilla < 140 || (!isSpacebar && clickDistGorilla < 90)) {
+                    infectedGorilla.hp = Math.max(0, infectedGorilla.hp - dmg);
+                    infectedGorilla.flinchTimer = 10;
+                    slashEffects.push({ x: infectedGorilla.x, y: infectedGorilla.y, life: 12 });
+                    floatTexts.push({ x: infectedGorilla.x + (Math.random()*30 - 15), y: infectedGorilla.y - 40, text: `💥 -${dmg}`, color: '#ff4757', life: 40, size: 20 });
+                    hitAny = true;
+                }
+                if (distToSci < 140 || (!isSpacebar && clickDistSci < 90)) {
+                    rebelAlienScientistBoss.hp = Math.max(0, rebelAlienScientistBoss.hp - dmg);
+                    rebelAlienScientistBoss.flinchTimer = 10;
+                    slashEffects.push({ x: rebelAlienScientistBoss.x, y: rebelAlienScientistBoss.y, life: 12 });
+                    floatTexts.push({ x: rebelAlienScientistBoss.x + (Math.random()*30 - 15), y: rebelAlienScientistBoss.y - 40, text: `💥 -${dmg}`, color: '#00f2fe', life: 40, size: 20 });
+                    hitAny = true;
+                }
+                if (hitAny) {
+                    finalBattleHitCount++;
                 }
             }
         }
@@ -8305,9 +9131,15 @@
             if (document.getElementById('fuse-modal').style.display === 'block') return;
             if (document.getElementById('ranking-modal') && document.getElementById('ranking-modal').style.display === 'block') return;
             if (document.getElementById('alien-scientist-modal') && document.getElementById('alien-scientist-modal').style.display === 'block') return;
+            if (document.getElementById('mad-doctor-modal') && document.getElementById('mad-doctor-modal').style.display === 'block') return;
             if (document.getElementById('roulette-modal') && document.getElementById('roulette-modal').style.display === 'block') return;
             if (document.getElementById('admin-panel-modal') && document.getElementById('admin-panel-modal').style.display === 'block') return;
             if (document.getElementById('sword-modal') && document.getElementById('sword-modal').style.display === 'block') return;
+
+            // 👑 어드민 스토리 퀘스트: 할로윈 지형 원숭이 10마리 침공 & 미친 박사 난입 업데이트
+            if (isAdmin() && (adminGorillaStoryStage === 'earth_monkeys_invading' || adminGorillaStoryStage === 'earth_mad_doctor_rescues')) {
+                updateEarthMonkeyInvasion();
+            }
 
             let moveX = 0, moveY = 0;
             if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
@@ -11411,6 +12243,24 @@
             shops.forEach(shop => drawShop(ctx, shop));
             if (typeof fuseBuilding !== 'undefined') drawFuseBuilding(ctx, fuseBuilding);
 
+            // 👑 어드민 스토리 퀘스트: 할로윈 지형 원숭이 10마리 & 미친 박사 렌더링
+            if (isAdmin() && (adminGorillaStoryStage === 'earth_monkeys_invading' || adminGorillaStoryStage === 'earth_mad_doctor_rescues')) {
+                invadingMonkeys.forEach(m => drawInvadingMonkey(ctx, m));
+                drawMadDoctor(ctx, madDoctor);
+                madDoctor.lasers.forEach(laser => {
+                    ctx.save();
+                    ctx.strokeStyle = laser.color || '#a29bfe';
+                    ctx.lineWidth = 5;
+                    ctx.shadowColor = laser.color || '#a29bfe';
+                    ctx.shadowBlur = 12;
+                    ctx.beginPath();
+                    ctx.moveTo(laser.x1, laser.y1);
+                    ctx.lineTo(laser.x2, laser.y2);
+                    ctx.stroke();
+                    ctx.restore();
+                });
+            }
+
             floatTexts.forEach(t => {
                 ctx.fillStyle = t.color; ctx.globalAlpha = t.life / 40;
                 let size = t.size || 18; ctx.font = `bold ${size}px Arial`; ctx.textAlign = 'center';
@@ -11420,6 +12270,28 @@
             ctx.globalAlpha = 1.0;
 
             ctx.restore(); 
+
+            // 👑 어드민 스토리 퀘스트: 지상 플레이어 체력 HUD
+            if (isAdmin() && (adminGorillaStoryStage === 'earth_monkeys_invading' || adminGorillaStoryStage === 'earth_mad_doctor_rescues')) {
+                ctx.save();
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.beginPath();
+                ctx.roundRect(GAME_WIDTH / 2 - 120, 20, 240, 24, 8);
+                ctx.fill();
+                ctx.strokeStyle = (storyPlayerHp <= 150) ? '#ff0055' : '#2ecc71';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                let ratio = Math.max(0, storyPlayerHp / 1000);
+                ctx.fillStyle = (storyPlayerHp <= 150) ? '#ff0055' : '#2ecc71';
+                ctx.beginPath();
+                ctx.roundRect(GAME_WIDTH / 2 - 118, 22, 236 * ratio, 20, 6);
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`❤️ 내 체력: ${storyPlayerHp} / 1000`, GAME_WIDTH / 2, 37);
+                ctx.restore();
+            } 
 
             if (joystick.active) {
                 ctx.beginPath(); ctx.arc(joystick.originX, joystick.originY, 60, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; ctx.fill();
