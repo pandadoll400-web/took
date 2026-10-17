@@ -7437,8 +7437,8 @@
                     floatTexts.push({ x: target.x, y: target.y - 120, text: text, color: '#a29bfe', life: 70, size: 22 });
                     return;
                 }
-                if ((target.type === 'ice' || target.id === 'ice_canyon') && !isAdmin()) {
-                    floatTexts.push({ x: target.x, y: target.y - 100, text: `🔒 관리자(ADMIN) 전용 나무입니다!`, color: '#c7ecee', life: 70 });
+                if (target.id === 'ice_canyon' && !isAdmin()) {
+                    floatTexts.push({ x: target.x, y: target.y - 100, text: `🔒 관리자(ADMIN) 전용 나무입니다!`, color: '#38bdf8', life: 70 });
                     return;
                 }
                 if (player.targetTree === target) {
@@ -12329,11 +12329,7 @@
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
             player.y = Math.max(-8950, Math.min(2600 - player.radius, player.y));
             
-            // 🔒 얼음 지형 및 얼음의 협곡 비관리자 침입 강제 넉백 방어
-            if (!isAdmin() && player.y <= -2970 && player.y >= -4000) {
-                player.y = -2960;
-                if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음 지역은 관리자(ADMIN) 전용입니다!`, color: '#c7ecee', life: 50 });
-            }
+            // 🔒 맨 마지막 지역: 얼음의 협곡(Y: -8000 이하) 비관리자 침입 강제 넉백 방어
             if (!isAdmin() && player.y <= -7970 && player.y >= -9000) {
                 player.y = -7960;
                 if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음의 협곡은 관리자(ADMIN) 전용입니다!`, color: '#38bdf8', life: 50 });
@@ -12348,9 +12344,9 @@
             } else if (level < 20 && player.y < -1970 && player.y > -2500) {
                 player.y = -1970;
                 if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 20 달성 시 통과 가능!`, color: '#fbc531', life: 40 });
-            } else if (!isAdmin() && player.y < -2970 && player.y > -3500) {
+            } else if (level < 35 && player.y < -2970 && player.y > -3500) {
                 player.y = -2970;
-                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음 지역은 관리자(ADMIN) 전용입니다!`, color: '#c7ecee', life: 40 });
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 35 달성 시 통과 가능!`, color: '#c7ecee', life: 40 });
             } else if (level < 50 && player.y < -3970 && player.y > -4500) {
                 player.y = -3970;
                 if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 50 달성 시 통과 가능!`, color: '#2ecc71', life: 40 });
@@ -15149,7 +15145,7 @@
             ctx.fillStyle = '#fbc531'; ctx.fillText("⚡ 격동: 전기 지역 (레벨 20 진입 가능)", GAME_WIDTH / 2, -2020);
 
             ctx.strokeStyle = '#c7ecee'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -3000); ctx.lineTo(GAME_WIDTH, -3000); ctx.stroke();
-            ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 혹한: 얼음 지역 (👑 관리자 전용)", GAME_WIDTH / 2, -3020);
+            ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 혹한: 얼음 지역 (레벨 35 진입 가능)", GAME_WIDTH / 2, -3020);
 
             ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -4000); ctx.lineTo(GAME_WIDTH, -4000); ctx.stroke();
             ctx.fillStyle = '#2ecc71'; ctx.fillText("☣️ 치명적 위험: 방사능 지역 (레벨 50 진입 가능)", GAME_WIDTH / 2, -4020);
@@ -15567,7 +15563,7 @@
                         ctx.fillStyle = 'black'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center';
                         let label = t.unlocked ? "👆 클릭!" : "👆 잠금 해제";
                         if (t.type === 'space') label = isAlienEventStarted() ? "🔒 업데이트 예정" : "🔒 오늘 10시 공개!";
-                        if ((t.type === 'ice' || t.id === 'ice_canyon') && !isAdmin()) label = "🔒 관리자 전용";
+                        if (t.id === 'ice_canyon' && !isAdmin()) label = "🔒 관리자 전용";
                         ctx.fillText(label, t.x, t.y - t.radius - 60);
                     }
 
