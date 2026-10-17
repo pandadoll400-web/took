@@ -999,14 +999,14 @@
             </div>
 
             <!-- 30분 주기 리롤 카운트다운 배너 -->
-            <div style="background: linear-gradient(135deg, rgba(241, 196, 15, 0.15), rgba(230, 126, 34, 0.15)); border: 1.5px solid #f1c40f; border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="background: linear-gradient(135deg, rgba(241, 196, 15, 0.15), rgba(230, 126, 34, 0.15)); border: 1.5px solid #f1c40f; border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
                 <div>
                     <div style="color: #f1c40f; font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 5px;">
-                        <span>⏳</span> <span id="quest-timer-text">다음 갱신: 30분 00초</span>
+                        <span>⏳</span> <span id="quest-timer-text">다음 무료 갱신: 30분 00초</span>
                     </div>
-                    <div style="color: #cbd5e1; font-size: 11px; margin-top: 2px;">30분마다 새로운 퀘스트로 자동 리롤됩니다!</div>
+                    <div style="color: #cbd5e1; font-size: 11px; margin-top: 2px;">30분마다 무료 리롤 / 즉시 리롤 시 💰 100,000 골드</div>
                 </div>
-                <button onclick="manualRerollQuests()" title="즉시 퀘스트 리롤" style="background: rgba(241, 196, 15, 0.2); border: 1px solid #f1c40f; color: #f1c40f; padding: 6px 11px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap;">🎲 즉시 리롤</button>
+                <button onclick="manualRerollQuests()" title="즉시 퀘스트 리롤 (비용: 100,000 골드)" style="background: rgba(241, 196, 15, 0.2); border: 1.5px solid #f1c40f; color: #f1c40f; padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 8px rgba(241,196,15,0.25);">🎲 리롤 (💰10만)</button>
             </div>
 
             <!-- 퀘스트 목록 동적 렌더링 영역 -->
@@ -1885,10 +1885,22 @@
         }
 
         function manualRerollQuests() {
-            if (confirm("퀘스트를 새로운 목록으로 즉시 리롤하시겠습니까?\n(현재 진행 중이던 퀘스트 진행도는 초기화됩니다.)")) {
+            const REROLL_COST = 100000;
+            if (!isAdmin() && money < REROLL_COST) {
+                alert(`💰 골드가 부족합니다!\n\n퀘스트를 즉시 리롤하려면 100,000 골드가 필요합니다.\n(현재 보유 골드: 💰 ${money.toLocaleString()})`);
+                return;
+            }
+
+            if (confirm(`🎲 퀘스트를 새로운 목록으로 즉시 리롤하시겠습니까?\n\n소모 비용: 💰 100,000 골드\n(현재 진행 중이던 퀘스트 진행도는 초기화됩니다.)`)) {
+                if (!isAdmin()) {
+                    money -= REROLL_COST;
+                    updateMoney();
+                }
                 rerollQuests(true);
+                saveGame();
                 renderQuestUI();
-                floatTexts.push({ x: player.x, y: player.y - 100, text: `🎲 퀘스트 리롤 완료!`, color: '#f1c40f', life: 90, size: 20 });
+                floatTexts.push({ x: player.x, y: player.y - 100, text: `-💰100,000 골드 (퀘스트 리롤)`, color: '#ff7675', life: 100, size: 20 });
+                alert(`🎲 100,000 골드를 지불하고 퀘스트를 즉시 리롤했습니다!`);
             }
         }
 
