@@ -143,6 +143,12 @@
             display: block; margin: 20px auto 0; padding: 10px 20px; background: #e74c3c;
             color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;
         }
+
+        @keyframes wlShake {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            20%, 60% { transform: translate(-53%, -50%) scale(1); }
+            40%, 80% { transform: translate(-47%, -50%) scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -163,6 +169,67 @@
             </div>
         </div>
         
+        <!-- 👥 실시간 W / L 선택 모달 (지금 플레이하는 사람 - 30초 한정) -->
+        <div id="wl-poll-overlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); z-index: 920; display: none; opacity: 0; transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;">
+            <div style="background: rgba(15, 20, 32, 0.95); border: 2px solid rgba(129, 140, 248, 0.5); border-radius: 24px; padding: 22px 24px; width: 340px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(99, 102, 241, 0.3); backdrop-filter: blur(12px); text-align: center; position: relative; box-sizing: border-box; color: #fff;">
+                
+                <!-- 닫기 X 버튼 -->
+                <button onclick="closeWLPollOverlay()" style="position: absolute; top: 12px; right: 12px; background: rgba(255, 255, 255, 0.1); border: none; color: #cbd5e1; width: 28px; height: 28px; border-radius: 50%; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.4)'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#cbd5e1'">✕</button>
+
+                <!-- 상단 헤더: "지금 플레이하는 사람" -->
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px;">
+                    <span style="font-size: 22px;">👥</span>
+                    <span style="font-size: 20px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">지금 플레이하는 사람</span>
+                </div>
+                <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px; font-weight: 500;">
+                    1인 1회 선택 가능 · <span id="wl-poll-timer-badge" style="color: #f59e0b; font-weight: 700;">30초</span> 후 자동 닫힘
+                </div>
+
+                <!-- 30초 타이머 진행 바 -->
+                <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.12); border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
+                    <div id="wl-poll-progress-bar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #3b82f6, #ec4899); transition: width 1s linear;"></div>
+                </div>
+
+                <!-- W & L 선택 버튼 영역 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                    
+                    <!-- W 버튼 -->
+                    <button id="wl-btn-w" onclick="voteWLPoll('W')" style="background: linear-gradient(145deg, #1d4ed8, #2563eb); border: 2.5px solid #60a5fa; border-radius: 18px; padding: 14px 10px; cursor: pointer; color: #fff; transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); outline: none;">
+                        <div style="font-size: 38px; font-weight: 950; color: #93c5fd; line-height: 1; text-shadow: 0 3px 12px rgba(37, 99, 235, 0.8); font-family: Impact, Arial Black, sans-serif;">W</div>
+                        <div style="font-size: 11px; font-weight: 800; color: #bfdbfe; letter-spacing: 1px; margin-top: 3px;">WIN</div>
+                        <div style="margin-top: 8px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(147, 197, 253, 0.3); border-radius: 20px; padding: 4px 10px; display: inline-block;">
+                            <span id="wl-count-w-text" style="font-size: 16px; font-weight: 900; color: #60a5fa;">1</span>
+                            <span style="font-size: 11px; color: #93c5fd; margin-left: 2px;">명</span>
+                        </div>
+                    </button>
+
+                    <!-- L 버튼 -->
+                    <button id="wl-btn-l" onclick="voteWLPoll('L')" style="background: linear-gradient(145deg, #be123c, #e11d48); border: 2.5px solid #fb7185; border-radius: 18px; padding: 14px 10px; cursor: pointer; color: #fff; transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28); box-shadow: 0 8px 20px rgba(225, 29, 72, 0.4); outline: none;">
+                        <div style="font-size: 38px; font-weight: 950; color: #fecdd3; line-height: 1; text-shadow: 0 3px 12px rgba(225, 29, 72, 0.8); font-family: Impact, Arial Black, sans-serif;">L</div>
+                        <div style="font-size: 11px; font-weight: 800; color: #ffe4e6; letter-spacing: 1px; margin-top: 3px;">LOSS</div>
+                        <div style="margin-top: 8px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(254, 205, 211, 0.3); border-radius: 20px; padding: 4px 10px; display: inline-block;">
+                            <span id="wl-count-l-text" style="font-size: 16px; font-weight: 900; color: #fb7185;">0</span>
+                            <span style="font-size: 11px; color: #fecdd3; margin-left: 2px;">명</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- 득표 비율 바 -->
+                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; color: #94a3b8; margin-bottom: 5px;">
+                    <span id="wl-percent-w" style="color: #60a5fa;">100%</span>
+                    <span id="wl-percent-l" style="color: #fb7185;">0%</span>
+                </div>
+                <div style="width: 100%; height: 7px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; display: flex; margin-bottom: 12px;">
+                    <div id="wl-bar-w" style="width: 100%; height: 100%; background: #3b82f6; transition: width 0.3s ease;"></div>
+                    <div id="wl-bar-l" style="width: 0%; height: 100%; background: #f43f5e; transition: width 0.3s ease;"></div>
+                </div>
+
+                <!-- 상태 안내 메시지 -->
+                <div id="wl-status-msg" style="font-size: 12px; color: #cbd5e1; font-weight: 600; min-height: 18px;">
+                    W 또는 L을 눌러 선택하세요!
+                </div>
+            </div>
+        </div>
         <!-- 로그인 / 프로필 표시 버튼 (우측 상단) -->
         <div id="user-profile-badge" onclick="openLoginModal()" style="position: absolute; top: 15px; right: 15px; background: rgba(18, 16, 28, 0.88); color: #fff; border: 1.5px solid #38bdf8; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; z-index: 15; box-shadow: 0 4px 12px rgba(0,0,0,0.6); transition: all 0.2s;">
             <span style="font-size: 15px;">👤</span>
@@ -11901,8 +11968,218 @@
             }, 3500);
         }
 
+        // ==========================================
+        // 👥 지금 플레이하는 사람 - 실시간 W / L 선택 시스템 (30초 한정)
+        // ==========================================
+        let wlPollTimer = 30; // 30초 동안 띄움
+        let wlPollTimerInterval = null;
+        let wlFakeWInterval = null;
+        let wlCountW = 1; // 1부터 시작하여 15까지 올라가는 가짜 카운트
+        let wlCountL = 0;
+        let wlUserVoted = false;
+        const WL_STORAGE_KEY = 'wl_user_voted_choice_v1';
+        const WL_W_COUNT_KEY = 'wl_current_fake_w_count';
+        const WL_L_COUNT_KEY = 'wl_current_l_count';
+
+        function startWLPoll() {
+            const overlay = document.getElementById('wl-poll-overlay');
+            if (!overlay) return;
+
+            // 저장된 W, L 카운트 복원 (없으면 기본값 1, 0)
+            try {
+                const savedW = parseInt(localStorage.getItem(WL_W_COUNT_KEY), 10);
+                if (!isNaN(savedW) && savedW >= 1) {
+                    wlCountW = Math.min(savedW, 15);
+                }
+                const savedL = parseInt(localStorage.getItem(WL_L_COUNT_KEY), 10);
+                if (!isNaN(savedL) && savedL >= 0) {
+                    wlCountL = savedL;
+                }
+            } catch (e) {}
+
+            updateWLPollUI();
+
+            // 이미 투표했는지 체크 (1인 1회 제한)
+            let votedChoice = null;
+            try {
+                votedChoice = localStorage.getItem(WL_STORAGE_KEY);
+            } catch (e) {}
+
+            if (votedChoice) {
+                wlUserVoted = true;
+                applyWLVotedState(votedChoice);
+            }
+
+            // 모달 화면 중앙 표시 (부드러운 애니메이션)
+            overlay.style.display = 'block';
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                overlay.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 60);
+
+            // W는 15까지 올라가는 가짜 카운트 (약 1.8초마다 +1씩 증가하여 15에서 멈춤)
+            clearInterval(wlFakeWInterval);
+            if (wlCountW < 15) {
+                wlFakeWInterval = setInterval(() => {
+                    if (wlCountW < 15) {
+                        wlCountW++;
+                        try {
+                            localStorage.setItem(WL_W_COUNT_KEY, wlCountW.toString());
+                        } catch (e) {}
+                        updateWLPollUI();
+                    } else {
+                        clearInterval(wlFakeWInterval);
+                    }
+                }, 1800);
+            }
+
+            // 30초 동안 띄우는 카운트다운 타이머
+            wlPollTimer = 30;
+            const timerBadge = document.getElementById('wl-poll-timer-badge');
+            const progressBar = document.getElementById('wl-poll-progress-bar');
+            if (timerBadge) timerBadge.innerText = `${wlPollTimer}초`;
+            if (progressBar) progressBar.style.width = '100%';
+
+            clearInterval(wlPollTimerInterval);
+            wlPollTimerInterval = setInterval(() => {
+                wlPollTimer--;
+                if (timerBadge) timerBadge.innerText = `${wlPollTimer}초`;
+                if (progressBar) {
+                    const pct = Math.max(0, (wlPollTimer / 30) * 100);
+                    progressBar.style.width = `${pct}%`;
+                }
+
+                if (wlPollTimer <= 0) {
+                    clearInterval(wlPollTimerInterval);
+                    clearInterval(wlFakeWInterval);
+                    closeWLPollOverlay();
+                }
+            }, 1000);
+        }
+
+        function updateWLPollUI() {
+            const wText = document.getElementById('wl-count-w-text');
+            const lText = document.getElementById('wl-count-l-text');
+            const wBar = document.getElementById('wl-bar-w');
+            const lBar = document.getElementById('wl-bar-l');
+            const wPct = document.getElementById('wl-percent-w');
+            const lPct = document.getElementById('wl-percent-l');
+
+            if (wText) wText.innerText = wlCountW;
+            if (lText) lText.innerText = wlCountL;
+
+            const total = wlCountW + wlCountL;
+            if (total > 0) {
+                const wRatio = Math.round((wlCountW / total) * 100);
+                const lRatio = 100 - wRatio;
+                if (wBar) wBar.style.width = `${wRatio}%`;
+                if (lBar) lBar.style.width = `${lRatio}%`;
+                if (wPct) wPct.innerText = `${wRatio}%`;
+                if (lPct) lPct.innerText = `${lRatio}%`;
+            }
+        }
+
+        function voteWLPoll(choice) {
+            // 한 사람당 1번만 누를 수 있음 체크
+            let votedChoice = null;
+            try {
+                votedChoice = localStorage.getItem(WL_STORAGE_KEY);
+            } catch (e) {}
+
+            const overlay = document.getElementById('wl-poll-overlay');
+            const statusMsg = document.getElementById('wl-status-msg');
+
+            if (wlUserVoted || votedChoice) {
+                const chosen = votedChoice || (choice === 'W' ? 'W' : 'L');
+                if (overlay) {
+                    overlay.style.animation = 'none';
+                    void overlay.offsetWidth; // re-flow
+                    overlay.style.animation = 'wlShake 0.4s ease';
+                }
+                if (statusMsg) {
+                    statusMsg.innerHTML = `<span style="color: #f87171; font-weight: 800;">⚠️ 이미 ${chosen}에 투표하셨습니다! (한 사람당 1번만 가능)</span>`;
+                }
+                return;
+            }
+
+            // 투표 저장 (1인 1회 영구)
+            wlUserVoted = true;
+            try {
+                localStorage.setItem(WL_STORAGE_KEY, choice);
+            } catch (e) {}
+
+            if (choice === 'W') {
+                if (wlCountW < 15) {
+                    wlCountW++;
+                    try {
+                        localStorage.setItem(WL_W_COUNT_KEY, wlCountW.toString());
+                    } catch (e) {}
+                }
+            } else if (choice === 'L') {
+                wlCountL++;
+                try {
+                    localStorage.setItem(WL_L_COUNT_KEY, wlCountL.toString());
+                } catch (e) {}
+            }
+
+            updateWLPollUI();
+            applyWLVotedState(choice);
+        }
+
+        function applyWLVotedState(choice) {
+            const btnW = document.getElementById('wl-btn-w');
+            const btnL = document.getElementById('wl-btn-l');
+            const statusMsg = document.getElementById('wl-status-msg');
+
+            if (choice === 'W') {
+                if (btnW) {
+                    btnW.style.borderColor = '#fbbf24';
+                    btnW.style.boxShadow = '0 0 25px rgba(251, 191, 36, 0.7)';
+                    btnW.style.transform = 'scale(1.04)';
+                }
+                if (btnL) {
+                    btnL.style.opacity = '0.55';
+                    btnL.style.filter = 'grayscale(60%)';
+                }
+            } else {
+                if (btnL) {
+                    btnL.style.borderColor = '#fbbf24';
+                    btnL.style.boxShadow = '0 0 25px rgba(251, 191, 36, 0.7)';
+                    btnL.style.transform = 'scale(1.04)';
+                }
+                if (btnW) {
+                    btnW.style.opacity = '0.55';
+                    btnW.style.filter = 'grayscale(60%)';
+                }
+            }
+
+            if (statusMsg) {
+                statusMsg.innerHTML = `<span style="color: #4ade80; font-weight: 800;">✓ [${choice}] 선택 완료!</span> <span style="color: #94a3b8; font-size: 11px;">(한 사람당 1번만 가능)</span>`;
+            }
+        }
+
+        function closeWLPollOverlay() {
+            const overlay = document.getElementById('wl-poll-overlay');
+            if (!overlay) return;
+            clearInterval(wlPollTimerInterval);
+            clearInterval(wlFakeWInterval);
+            overlay.style.opacity = '0';
+            overlay.style.transform = 'translate(-50%, -50%) scale(0.9)';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 400);
+        }
+
         loadGame(); 
         setTimeout(triggerForgeWelcomeOnce, 600);
+        setTimeout(() => {
+            const forgeBanner = document.getElementById('forge-welcome-banner');
+            if (forgeBanner && forgeBanner.style.display !== 'none' && forgeBanner.style.opacity !== '0') {
+                setTimeout(startWLPoll, 3600);
+            } else {
+                startWLPoll();
+            }
+        }, 800);
         setTimeout(checkAndShowHalloweenNotice, 1500);
         setInterval(saveGame, 1000); 
 
