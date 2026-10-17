@@ -301,7 +301,7 @@
                 </div>
                 <span class="hud-tile-label">상점</span>
             </button>
-            <button id="codex-btn" class="hud-tile-btn" onclick="openFossilCodexModal()">
+            <button id="codex-btn" class="hud-tile-btn" onclick="openFossilCodexModal()" style="display: none;">
                 <div class="hud-tile-icon-wrap">
                     <svg viewBox="0 0 24 24" fill="none">
                         <!-- Codex Book -->
@@ -312,7 +312,7 @@
                 </div>
                 <span class="hud-tile-label">도감</span>
             </button>
-            <button id="quest-btn" class="hud-tile-btn" onclick="openQuestModal()">
+            <button id="quest-btn" class="hud-tile-btn" onclick="openQuestModal()" style="display: none;">
                 <div class="hud-tile-icon-wrap">
                     <svg viewBox="0 0 24 24" fill="none">
                         <!-- Quest Paper with Pen matching Image 4 -->
@@ -1104,6 +1104,10 @@
         let currentFossilFilter = 'all';
 
         function openFossilCodexModal() {
+            if (!isAdmin()) {
+                alert("🔒 [고대 화석 도감]\n\n현재 최고 관리자(ADMIN) 전용 선행 공개 중입니다!\n정식 업데이트 때 공개될 예정입니다.");
+                return;
+            }
             const modal = document.getElementById('fossil-codex-modal');
             if (!modal) return;
             renderFossilCodex();
@@ -1189,6 +1193,10 @@
         }
 
         function excavateFossilAtSpot(cx, cy, ignoreDist = false) {
+            if (!isAdmin()) {
+                floatTexts.push({ x: cx, y: cy - 40, text: `🔒 [화석 발굴] 어드민 선행 테스트 중!`, color: '#38bdf8', life: 60, size: 15 });
+                return;
+            }
             let dist = Math.hypot(player.x - cx, player.y - cy);
             if (!ignoreDist && dist > 120) {
                 player.targetTree = null;
@@ -1239,6 +1247,10 @@
         }
 
         function openQuestModal() {
+            if (!isAdmin()) {
+                alert("🔒 [모험 퀘스트 저널]\n\n현재 최고 관리자(ADMIN) 전용 선행 테스트 중입니다!\n정식 업데이트 때 공개될 예정입니다.");
+                return;
+            }
             const modal = document.getElementById('quest-modal');
             if (!modal) return;
             modal.style.display = 'block';
@@ -1629,6 +1641,10 @@
 
                 floatTexts.push({ x: 300, y: 280, text: `😈 어둠의 악마 보스 출현!`, color: '#e74c3c', life: 100, size: 24 });
             } else if (bossType === 'ice_dragon') {
+                if (!isAdmin()) {
+                    alert("🔒 [얼음의 협곡 보스전]\n\n고대 서리룡 보스전은 최고 관리자(ADMIN) 전용 선행 테스트 중입니다!");
+                    return;
+                }
                 // 🐉 얼음의 협곡 보스전 초기화 (고대 서리룡)
                 playerBossHp = 100;
                 iceDragonBoss.hp = 10000;
@@ -5329,7 +5345,10 @@
         }
 
         function teleportToHalloweenZone() {
-            if (!hasHalloweenTeleporter) return;
+            if (!isAdmin()) {
+                alert("🔒 [할로윈 텔레포터]\n\n현재 최고 관리자(ADMIN) 전용 기능입니다!");
+                return;
+            }
             let targetX = halloweenTeleporterBeacon.placed ? halloweenTeleporterBeacon.x : 300;
             let targetY = halloweenTeleporterBeacon.placed ? halloweenTeleporterBeacon.y : 1350;
             player.x = targetX;
@@ -6112,8 +6131,8 @@
                 return;
             }
 
-            // 🐉 3. 얼음의 협곡 고차원 텔레포트 (x: 515, y: -3640) -> 고대 서리룡 보스전 직행
-            if (typeof teleporterIceDragon !== 'undefined') {
+            // 🐉 3. 얼음의 협곡 고차원 텔레포트 (x: 515, y: -3640) -> 고대 서리룡 보스전 직행 (어드민 전용 선행 공개)
+            if (typeof teleporterIceDragon !== 'undefined' && isAdmin()) {
                 let tpIceDist = Math.hypot(cx - teleporterIceDragon.x, cy - teleporterIceDragon.y);
                 let tpIcePlayerDist = Math.hypot(player.x - teleporterIceDragon.x, player.y - teleporterIceDragon.y);
                 if (tpIceDist < 75 || (isSpacebar && tpIcePlayerDist < 90)) {
@@ -6122,8 +6141,8 @@
                 }
             }
 
-            // 🦴 고대 화석 발굴 바위 클릭 감지 (얼음의 협곡 부유섬)
-            if (typeof iceCanyonFossilRocks !== 'undefined') {
+            // 🦴 고대 화석 발굴 바위 클릭 감지 (얼음의 협곡 부유섬 - 어드민 전용 선행 공개)
+            if (typeof iceCanyonFossilRocks !== 'undefined' && isAdmin()) {
                 for (let rock of iceCanyonFossilRocks) {
                     let rDist = Math.hypot(cx - rock.x, cy - rock.y);
                     let rPlayerDist = Math.hypot(player.x - rock.x, player.y - rock.y);
@@ -6134,8 +6153,8 @@
                 }
             }
 
-            // 🔮 미친 박사의 할로윈 텔레포터: 할로윈 지형 아무데나 클릭 시 순간이동 및 비콘 설치
-            if (hasHalloweenTeleporter && !isSpacebar && cy >= 950 && cy <= 2600) {
+            // 🔮 미친 박사의 할로윈 텔레포터: 할로윈 지형 아무데나 클릭 시 순간이동 및 비콘 설치 (어드민 전용)
+            if (isAdmin() && hasHalloweenTeleporter && !isSpacebar && cy >= 950 && cy <= 2600) {
                 let isShopOrFuse = false;
                 for (let shop of shops) {
                     if (cx > shop.x - 20 && cx < shop.x + 200 && cy > shop.y && cy < shop.y + 210) { isShopOrFuse = true; break; }
@@ -7138,7 +7157,7 @@
             { id: 'mad_scientist', name: '매드 사이언티스트', price: 0, icon: '🥼', isReward: true },
             { id: 'archaeologist', name: '고고학자', price: 0, icon: '🤠', isReward: true },
             { id: 'reaper', name: '사신', price: 0, icon: '💀', isReward: true },
-            { id: 'penguin', name: '꼬마 펭귄', price: 15000, icon: '🐧' },
+            { id: 'penguin', name: '꼬마 펭귄', price: 15000, icon: '🐧', adminOnly: true },
             { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, adminOnly: true },
             { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true }
         ];
@@ -9484,12 +9503,10 @@
         function updateUserBadgeUI() {
             const badgeText = document.getElementById('user-status-text');
             const badgeEl = document.getElementById('user-profile-badge');
+            const codexBtn = document.getElementById('codex-btn');
+            const questBtn = document.getElementById('quest-btn');
             const adminBtn = document.getElementById('admin-panel-btn');
             const halloweenBtn = document.getElementById('halloween-teleport-hud-btn');
-
-            if (halloweenBtn) {
-                halloweenBtn.style.display = hasHalloweenTeleporter ? 'flex' : 'none';
-            }
 
             if (isAdmin()) {
                 if (badgeText) badgeText.innerText = '👑 ADMIN';
@@ -9499,6 +9516,10 @@
                     badgeEl.title = `최고 관리자 계정 (${currentUser})`;
                 }
                 if (adminBtn) adminBtn.style.display = 'flex';
+                // 👑 도감, 퀘스트, 할로윈 버튼: 오직 최고 관리자(ADMIN) 계정에만 공개
+                if (codexBtn) codexBtn.style.display = 'flex';
+                if (questBtn) questBtn.style.display = 'flex';
+                if (halloweenBtn) halloweenBtn.style.display = 'flex';
             } else if (currentUser) {
                 if (badgeText) badgeText.innerText = currentUser;
                 if (badgeEl) {
@@ -9507,6 +9528,9 @@
                     badgeEl.title = `로그인 계정: ${currentUser} (클라우드 동기화 됨)`;
                 }
                 if (adminBtn) adminBtn.style.display = 'none';
+                if (codexBtn) codexBtn.style.display = 'none';
+                if (questBtn) questBtn.style.display = 'none';
+                if (halloweenBtn) halloweenBtn.style.display = 'none';
             } else {
                 if (badgeText) badgeText.innerText = '로그인';
                 if (badgeEl) {
@@ -9515,6 +9539,9 @@
                     badgeEl.title = '클릭하여 로그인';
                 }
                 if (adminBtn) adminBtn.style.display = 'none';
+                if (codexBtn) codexBtn.style.display = 'none';
+                if (questBtn) questBtn.style.display = 'none';
+                if (halloweenBtn) halloweenBtn.style.display = 'none';
             }
         }
 
@@ -9647,6 +9674,8 @@
                 fishCollection: fishCollection,
                 radioactiveCollection: radioactiveCollection,
                 caveCollection: caveCollection,
+                fossilCollection: (typeof fossilCollection !== 'undefined') ? fossilCollection : [],
+                hasHalloweenTeleporter: !!hasHalloweenTeleporter,
                 rocketLaunched: rocket.launched,
                 fuseSlots: fuseSlots,
                 activeFuseStartTime: activeFuseStartTime,
@@ -9678,6 +9707,12 @@
             fishCollection = data.fishCollection ? [...data.fishCollection] : [];
             radioactiveCollection = data.radioactiveCollection ? [...data.radioactiveCollection] : [];
             caveCollection = data.caveCollection ? [...data.caveCollection] : [];
+            if (data.fossilCollection) {
+                fossilCollection = [...data.fossilCollection];
+            }
+            if (data.hasHalloweenTeleporter !== undefined) {
+                hasHalloweenTeleporter = !!data.hasHalloweenTeleporter;
+            }
             if (data.rocketLaunched !== undefined) {
                 rocket.launched = data.rocketLaunched;
                 rocket.visible = !rocket.launched;
@@ -13177,8 +13212,12 @@
             ctx.fillStyle = '#1e272e'; ctx.fillRect(0, -7000, GAME_WIDTH, 1000); // Cave
             ctx.fillStyle = '#005f73'; ctx.fillRect(0, -6000, GAME_WIDTH, 1000); // Ocean
             ctx.fillStyle = '#162d16'; ctx.fillRect(0, -5000, GAME_WIDTH, 1000); 
-            // ❄️ 신규 지역: 얼음의 협곡 지형 렌더링 (Image 1 완벽 구현)
-            drawIceCanyonTerrain(ctx);
+            // ❄️ 신규 지역: 얼음의 협곡 지형 렌더링 (Image 1 완벽 구현 - 👑어드민 전용 선행 공개)
+            if (isAdmin()) {
+                drawIceCanyonTerrain(ctx);
+            } else {
+                ctx.fillStyle = '#48dbfb'; ctx.fillRect(0, -4000, GAME_WIDTH, 1000); 
+            }
             ctx.fillStyle = '#273c75'; ctx.fillRect(0, -3000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#2c3e50'; ctx.fillRect(0, -2000, GAME_WIDTH, 1000);  
             ctx.fillStyle = '#cf3a24'; ctx.fillRect(0, -1000, GAME_WIDTH, 1000); 
@@ -13201,7 +13240,11 @@
             ctx.fillStyle = '#fbc531'; ctx.fillText("⚡ 격동: 전기 지역 (레벨 20 진입 가능)", GAME_WIDTH / 2, -2020);
 
             ctx.strokeStyle = '#c7ecee'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -3000); ctx.lineTo(GAME_WIDTH, -3000); ctx.stroke();
-            ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 신규 지역: 얼음의 협곡 (부유섬 & 고대 화석 발굴)", GAME_WIDTH / 2, -3020);
+            if (isAdmin()) {
+                ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 신규 지역: 얼음의 협곡 (부유섬 & 고대 화석 발굴 - 👑어드민)", GAME_WIDTH / 2, -3020);
+            } else {
+                ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 혹한: 얼음 지역 (레벨 35 진입 가능)", GAME_WIDTH / 2, -3020);
+            }
 
             ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -4000); ctx.lineTo(GAME_WIDTH, -4000); ctx.stroke();
             ctx.fillStyle = '#2ecc71'; ctx.fillText("☣️ 치명적 위험: 방사능 지역 (레벨 50 진입 가능)", GAME_WIDTH / 2, -4020);
@@ -13237,10 +13280,10 @@
             trees.forEach(t => renderList.push({ type: 'tree', obj: t, y: t.y }));
             renderList.push({ type: 'teleporter', obj: teleporter, y: teleporter.y });
             renderList.push({ type: 'teleporterHalloween', obj: teleporterHalloween, y: teleporterHalloween.y });
-            if (typeof teleporterIceDragon !== 'undefined') {
+            if (typeof teleporterIceDragon !== 'undefined' && isAdmin()) {
                 renderList.push({ type: 'teleporterIceDragon', obj: teleporterIceDragon, y: teleporterIceDragon.y });
             }
-            if (typeof hasHalloweenTeleporter !== 'undefined' && hasHalloweenTeleporter && typeof halloweenTeleporterBeacon !== 'undefined' && halloweenTeleporterBeacon.placed) {
+            if (typeof hasHalloweenTeleporter !== 'undefined' && hasHalloweenTeleporter && typeof halloweenTeleporterBeacon !== 'undefined' && halloweenTeleporterBeacon.placed && isAdmin()) {
                 renderList.push({ type: 'halloweenBeacon', obj: halloweenTeleporterBeacon, y: halloweenTeleporterBeacon.y });
             }
             renderList.push({ type: 'rankingBoard', obj: rankingBoard, y: rankingBoard.y });
