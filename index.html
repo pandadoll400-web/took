@@ -55,30 +55,46 @@
         }
 
         #bottom-btn-group {
-            position: absolute; bottom: 20px; left: 20px;
-            display: flex; gap: 12px; align-items: center; z-index: 25;
+            position: absolute; bottom: 12px; left: 12px;
+            display: flex; gap: 6px; align-items: center; z-index: 25;
+            user-select: none;
         }
 
-        #inventory-btn {
-            background: #8e44ad; color: white; font-size: 17px; font-weight: bold;
-            padding: 14px 18px; border-radius: 50%; border: 3px solid #9b59b6; cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        .hud-tile-btn {
+            width: 48px; height: 50px;
+            background: linear-gradient(180deg, #1b263b 0%, #0d1527 100%);
+            border: 1.5px solid #2d3e63;
+            border-radius: 9px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 2px; padding: 2px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            transition: all 0.15s ease;
+            box-sizing: border-box;
+            outline: none;
         }
-        #inventory-btn:active { transform: translateY(2px); }
-
-        #shop-btn {
-            background: #f1c40f; color: black; font-size: 17px; font-weight: bold;
-            padding: 14px 18px; border-radius: 50%; border: 3px solid #f39c12; cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        .hud-tile-btn:hover {
+            border-color: #38bdf8;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
         }
-        #shop-btn:active { transform: translateY(2px); }
-
-        #trade-btn {
-            background: #00cec9; color: black; font-size: 17px; font-weight: bold;
-            padding: 14px 18px; border-radius: 50%; border: 3px solid #00b894; cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        .hud-tile-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            background: linear-gradient(180deg, #0d1527 0%, #151e30 100%);
         }
-        #trade-btn:active { transform: translateY(2px); }
+        .hud-tile-icon-wrap {
+            display: flex; align-items: center; justify-content: center;
+            width: 24px; height: 24px;
+        }
+        .hud-tile-icon-wrap svg {
+            width: 22px; height: 22px; display: block;
+        }
+        .hud-tile-label {
+            font-size: 9.5px; font-weight: bold; color: #e2e8f0;
+            line-height: 1; letter-spacing: -0.3px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+        }
 
         .trade-slot-card {
             background: rgba(255, 255, 255, 0.08);
@@ -261,10 +277,77 @@
         </div>
 
         <div id="bottom-btn-group">
-            <button id="inventory-btn">가방</button>
-            <button id="shop-btn">상점</button>
-            <button id="trade-btn" onclick="openTradeRequestModal()">거래</button>
-            <button id="admin-panel-btn" onclick="openAdminPanelModal()" style="display: none; background: linear-gradient(135deg, #f1c40f, #e67e22); color: black; font-weight: bold; border: 2px solid #fff; border-radius: 8px; padding: 10px 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(241, 196, 15, 0.5);">👑 ADMIN</button>
+            <button id="inventory-btn" class="hud-tile-btn">
+                <div class="hud-tile-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <!-- Treasure Chest matching Image 3 -->
+                        <path d="M4 9C4 7.5 5.5 6 12 6C18.5 6 20 7.5 20 9L20 11H4L4 9Z" fill="#cbd5e1" stroke="#475569" stroke-width="1.5"/>
+                        <path d="M4 11H20V18C20 19.1 19.1 20 18 20H6C4.9 20 4 19.1 4 18V11Z" fill="#94a3b8" stroke="#475569" stroke-width="1.5"/>
+                        <rect x="10.5" y="10" width="3" height="4" rx="1" fill="#f1c40f" stroke="#b45309" stroke-width="1"/>
+                        <line x1="6.5" y1="6.5" x2="6.5" y2="19.5" stroke="#64748b" stroke-width="1.2"/>
+                        <line x1="17.5" y1="6.5" x2="17.5" y2="19.5" stroke="#64748b" stroke-width="1.2"/>
+                    </svg>
+                </div>
+                <span class="hud-tile-label">인벤토리</span>
+            </button>
+            <button id="shop-btn" class="hud-tile-btn">
+                <div class="hud-tile-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <!-- Shop stall matching Image 3 -->
+                        <path d="M3 9L5 4H19L21 9V10C21 11.1 20.1 12 19 12C17.9 12 17 11.1 17 10C17 11.1 16.1 12 15 12C13.9 12 13 11.1 13 10C13 11.1 12.1 12 11 12C9.9 12 9 11.1 9 10C9 11.1 8.1 12 7 12C5.9 12 5 11.1 5 10V9L3 9Z" fill="#e2e8f0" stroke="#475569" stroke-width="1.3"/>
+                        <path d="M5 12V20H19V12" fill="#94a3b8" stroke="#475569" stroke-width="1.3"/>
+                        <rect x="9" y="14" width="6" height="6" fill="#1e293b" stroke="#cbd5e1" stroke-width="1"/>
+                    </svg>
+                </div>
+                <span class="hud-tile-label">상점</span>
+            </button>
+            <button id="codex-btn" class="hud-tile-btn" onclick="openFossilCodexModal()">
+                <div class="hud-tile-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <!-- Codex Book -->
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="#f1c40f" stroke-width="1.8"/>
+                        <path d="M6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5v-12A2.5 2.5 0 0 1 6.5 3z" fill="#334155" stroke="#cbd5e1" stroke-width="1.5"/>
+                        <path d="M9 7h6M9 11h4" stroke="#f1c40f" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <span class="hud-tile-label">도감</span>
+            </button>
+            <button id="quest-btn" class="hud-tile-btn" onclick="openQuestModal()">
+                <div class="hud-tile-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <!-- Quest Paper with Pen matching Image 4 -->
+                        <path d="M15 3H6C4.9 3 4 3.9 4 5V19C4 20.1 4.9 21 6 21H16C17.1 21 18 20.1 18 19V6L15 3Z" fill="#e2e8f0" stroke="#475569" stroke-width="1.4"/>
+                        <polyline points="14 3 14 7 18 7" stroke="#475569" stroke-width="1.4"/>
+                        <line x1="7" y1="10" x2="14" y2="10" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/>
+                        <line x1="7" y1="13" x2="13" y2="13" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/>
+                        <line x1="7" y1="16" x2="11" y2="16" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/>
+                        <!-- Slanted Pen -->
+                        <path d="M17 11L21 7L19 5L15 9L17 11Z" fill="#f1c40f" stroke="#b45309" stroke-width="1"/>
+                        <polygon points="15,9 13.5,12.5 17,11" fill="#475569"/>
+                    </svg>
+                </div>
+                <span class="hud-tile-label">퀘스트</span>
+            </button>
+            <button id="trade-btn" class="hud-tile-btn" onclick="openTradeRequestModal()">
+                <div class="hud-tile-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="hud-tile-label">거래</span>
+            </button>
+            <button id="halloween-teleport-hud-btn" class="hud-tile-btn" onclick="teleportToHalloweenZone()" style="display: none; border-color: #a29bfe;">
+                <div class="hud-tile-icon-wrap">
+                    <span style="font-size: 15px;">🔮</span>
+                </div>
+                <span class="hud-tile-label" style="color: #a29bfe;">할로윈</span>
+            </button>
+            <button id="admin-panel-btn" class="hud-tile-btn" onclick="openAdminPanelModal()" style="display: none; border-color: #f1c40f;">
+                <div class="hud-tile-icon-wrap">
+                    <span style="font-size: 15px;">👑</span>
+                </div>
+                <span class="hud-tile-label" style="color: #f1c40f;">ADMIN</span>
+            </button>
         </div>
 
         <!-- 👑 최고 관리자 컨트롤 패널 모달 -->
@@ -274,12 +357,17 @@
                 <button onclick="closeAdminPanelModal()" style="background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; line-height: 1;">✕</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button onclick="adminWarpToIceCanyon()" style="padding: 10px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.45);">❄️ [신규 지역] 얼음의 협곡(부유섬&화석) 즉시 이동</button>
+                <button onclick="adminEnterIceDragonBoss()" style="padding: 10px; background: linear-gradient(135deg, #0369a1, #0ea5e9); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);">🐉 [보스] 고대 서리룡 보스전 바로 입장</button>
+                <button onclick="adminRefillAllFossils()" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);">🦴 [도감] 20종 고대 화석 99개 충전 & 100% 수집</button>
+                <button onclick="adminEquipPenguinSkin()" style="padding: 10px; background: linear-gradient(135deg, #0ea5e9, #38bdf8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🐧 [스킨] 꼬마 펭귄 스킨 즉시 획득 및 장착</button>
                 <button onclick="adminEquipForgeHouse()" style="padding: 10px; background: linear-gradient(135deg, #e67e22, #d35400); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(230, 126, 34, 0.45);">🏠⚔️ [관리자 전용] 포지 하우스 스킨 장착</button>
                 <button onclick="adminEquipForgeCake()" style="padding: 10px; background: linear-gradient(135deg, #e84393, #fd79a8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(232, 67, 147, 0.45);">🎂🔨 [관리자 전용] 포지 케이크 스킨 장착</button>
                 <button onclick="adminWarpToSpace()" style="padding: 10px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🚀 우주 나무로 즉시 이동</button>
                 <button onclick="adminEnterDevilBoss()" style="padding: 10px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">😈 할로윈 악마 보스전 바로 입장</button>
                 <button onclick="adminEnterMonkeyBoss()" style="padding: 10px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🐵 원숭이 보스전 바로 입장</button>
                 <button onclick="adminStartGorillaStoryQuest()" style="padding: 10px; background: linear-gradient(135deg, #a29bfe, #6c5ce7); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(108, 92, 231, 0.45);">🦍🧪 [스토리] 고릴라&미친박사 퀘스트 시작</button>
+                <button onclick="adminToggleHalloweenTeleporter()" style="padding: 10px; background: linear-gradient(135deg, #8e44ad, #9b59b6); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🔮 [관리자] 할로윈 텔레포터 도구 즉시 획득</button>
                 <button onclick="adminResetAlienQuest()" style="padding: 10px; background: linear-gradient(135deg, #00cec9, #0984e3); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🧪 외계인 퀘스트 리셋 (재테스트)</button>
                 <button onclick="adminWarpToSwords()" style="padding: 10px; background: linear-gradient(135deg, #e17055, #d63031); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">⚔️ 전설의 검 2자루 위치로 이동</button>
                 <button onclick="adminRefillAll()" style="padding: 10px; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🎒 모든 과일/암석/물고기 999개 충전</button>
@@ -713,6 +801,99 @@
             <button class="close-btn" onclick="document.getElementById('halloween-modal').style.display='none'" style="background: #4a235a; border: 1px solid #8e44ad;">닫기</button>
         </div>
 
+        <!-- 🦴 고대 화석 도감 모달 (얼음의 협곡 20종 화석 수집) -->
+        <div id="fossil-codex-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 460px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.35); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 24px;">🦴</span>
+                    <div>
+                        <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">고대 화석 도감</h2>
+                        <span style="font-size: 11px; color: #94a3b8;">신규 지역 : 얼음의 협곡 발굴 보고서</span>
+                    </div>
+                </div>
+                <button onclick="closeFossilCodexModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
+            </div>
+
+            <!-- 수집 진행도 바 -->
+            <div style="background: rgba(30, 41, 59, 0.8); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; border: 1px solid #334155;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; margin-bottom: 6px;">
+                    <span style="color: #cbd5e1;">전체 화석 수집 진행도</span>
+                    <span id="fossil-progress-text" style="color: #f1c40f;">0 / 20 (0%)</span>
+                </div>
+                <div style="background: #0f172a; height: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #1e293b;">
+                    <div id="fossil-progress-bar" style="background: linear-gradient(90deg, #38bdf8, #a855f7, #f1c40f); height: 100%; width: 0%; transition: width 0.4s ease;"></div>
+                </div>
+            </div>
+
+            <!-- 등급별 필터 탭 -->
+            <div style="display: flex; gap: 4px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px;">
+                <button onclick="filterFossilCodex('all')" class="fossil-tab-btn active" id="fossil-tab-all" style="padding: 5px 9px; font-size: 11px; font-weight: bold; border-radius: 6px; border: 1px solid #38bdf8; background: #38bdf8; color: #0f172a; cursor: pointer; white-space: nowrap;">전체 (20)</button>
+                <button onclick="filterFossilCodex('일반')" class="fossil-tab-btn" id="fossil-tab-일반" style="padding: 5px 9px; font-size: 11px; font-weight: bold; border-radius: 6px; border: 1px solid #64748b; background: rgba(30,41,59,0.7); color: #cbd5e1; cursor: pointer; white-space: nowrap;">일반 (4)</button>
+                <button onclick="filterFossilCodex('희귀')" class="fossil-tab-btn" id="fossil-tab-희귀" style="padding: 5px 9px; font-size: 11px; font-weight: bold; border-radius: 6px; border: 1px solid #0284c7; background: rgba(30,41,59,0.7); color: #38bdf8; cursor: pointer; white-space: nowrap;">희귀 (4)</button>
+                <button onclick="filterFossilCodex('영웅')" class="fossil-tab-btn" id="fossil-tab-영웅" style="padding: 5px 9px; font-size: 11px; font-weight: bold; border-radius: 6px; border: 1px solid #7c3aed; background: rgba(30,41,59,0.7); color: #a855f7; cursor: pointer; white-space: nowrap;">영웅 (4)</button>
+                <button onclick="filterFossilCodex('전설')" class="fossil-tab-btn" id="fossil-tab-전설" style="padding: 5px 9px; font-size: 11px; font-weight: bold; border-radius: 6px; border: 1px solid #d97706; background: rgba(30,41,59,0.7); color: #f1c40f; cursor: pointer; white-space: nowrap;">전설 (4)</button>
+                <button onclick="filterFossilCodex('신화')" class="fossil-tab-btn" id="fossil-tab-신화" style="padding: 5px 9px; font-size: 11px; font-weight: bold; border-radius: 6px; border: 1px solid #e11d48; background: rgba(30,41,59,0.7); color: #ff0055; cursor: pointer; white-space: nowrap;">신화 (4)</button>
+            </div>
+
+            <!-- 화석 카드 그리드 -->
+            <div id="fossil-codex-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px;"></div>
+
+            <!-- 다른 도감 바로가기 링크 버튼 -->
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;">
+                <button onclick="closeFossilCodexModal(); document.getElementById('radioactive-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; color: #2ecc71; border-radius: 5px; cursor: pointer;">🍏 과일 도감</button>
+                <button onclick="closeFossilCodexModal(); document.getElementById('ocean-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(9, 132, 227, 0.2); border: 1px solid #0984e3; color: #74b9ff; border-radius: 5px; cursor: pointer;">🐟 해양 도감</button>
+                <button onclick="closeFossilCodexModal(); document.getElementById('cave-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(178, 190, 195, 0.2); border: 1px solid #b2bec3; color: #dfe6e9; border-radius: 5px; cursor: pointer;">🪨 암석 도감</button>
+                <button onclick="closeFossilCodexModal(); document.getElementById('halloween-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(243, 156, 18, 0.2); border: 1px solid #f39c12; color: #f1c40f; border-radius: 5px; cursor: pointer;">🎃 할로윈 도감</button>
+            </div>
+        </div>
+
+        <!-- 📜 퀘스트 모달 (요청하신 대로 버튼과 준비 화면 구성) -->
+        <div id="quest-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 22, 34, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 90%; max-width: 420px; max-height: 80%; overflow-y: auto; display: none; border: 2px solid #64748b; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(100, 116, 139, 0.3); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(255,255,255,0.15); padding-bottom: 8px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 22px;">📜</span>
+                    <h2 style="margin: 0; color: #f1c40f; font-size: 18px; font-weight: bold;">모험 퀘스트 저널</h2>
+                </div>
+                <button onclick="closeQuestModal()" style="background: none; border: none; color: #aaa; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
+            </div>
+
+            <div style="background: rgba(241, 196, 15, 0.12); border: 1px dashed #f1c40f; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; text-align: center;">
+                <div style="color: #f1c40f; font-weight: bold; font-size: 13px; margin-bottom: 2px;">✨ 퀘스트 시스템 업데이트 준비 중</div>
+                <div style="color: #cbd5e1; font-size: 11px;">다양한 일일 퀘스트 및 지역별 탐험 임무가 곧 오픈됩니다!</div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 10px; padding: 10px 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-weight: bold; color: #38bdf8; font-size: 13px;">❄️ [지역 탐험] 얼음의 협곡 조사</span>
+                        <span style="font-size: 10px; background: rgba(56,189,248,0.2); color: #38bdf8; padding: 2px 6px; border-radius: 4px;">진행 중</span>
+                    </div>
+                    <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">신규 지역 '얼음의 협곡'을 탐험하고 부유섬의 풍경을 감상하세요.</div>
+                    <div style="font-size: 11px; color: #f1c40f;">보상: 💰 50,000 골드</div>
+                </div>
+
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 10px; padding: 10px 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-weight: bold; color: #a855f7; font-size: 13px;">🦴 [고고학자] 고대 화석 발굴</span>
+                        <span style="font-size: 10px; background: rgba(168,85,247,0.2); color: #a855f7; padding: 2px 6px; border-radius: 4px;">진행 중</span>
+                    </div>
+                    <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">얼음의 협곡에서 고대 화석 3개를 발굴하여 가방에 보관하세요.</div>
+                    <div style="font-size: 11px; color: #f1c40f;">보상: 💎 100,000 골드</div>
+                </div>
+
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 10px; padding: 10px 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-weight: bold; color: #ff0055; font-size: 13px;">🐉 [협곡의 제왕] 고대 서리룡 격퇴</span>
+                        <span style="font-size: 10px; background: rgba(255,0,85,0.2); color: #ff0055; padding: 2px 6px; border-radius: 4px;">도전 과제</span>
+                    </div>
+                    <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">얼음의 협곡 보스 포탈을 타고 들어가 '고대 서리룡'을 쓰러뜨리세요.</div>
+                    <div style="font-size: 11px; color: #f1c40f;">보상: 👑 신화 화석 1개 + 💰 200,000 골드</div>
+                </div>
+            </div>
+
+            <button onclick="closeQuestModal()" style="width: 100%; padding: 10px; background: #334155; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">닫기</button>
+        </div>
+
         <!-- 호박 융합 (퓨즈) 모달 -->
         <div id="fuse-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(30, 20, 10, 0.96); color: white; border-radius: 16px; width: 92%; max-width: 460px; max-height: 85%; overflow-y: auto; display: none; border: 3px solid #d35400; box-shadow: 0 0 25px rgba(230, 126, 34, 0.4); z-index: 45; font-family: 'Arial', sans-serif;">
             <!-- 상단 할로윈 호박/박쥐 장식 배너 -->
@@ -855,6 +1036,221 @@
             type: 'devil'
         };
 
+        // 🐉 3. 얼음의 협곡 고차원 텔레포트 (얼음 나무 오른쪽 옆: 고대 서리룡 보스전)
+        let teleporterIceDragon = {
+            x: 515,
+            y: -3640,
+            radius: 45,
+            type: 'ice_dragon'
+        };
+
+        // ❄️ 얼음의 협곡 고대 화석 발굴 바위 위치들
+        let iceCanyonFossilRocks = [
+            { x: 120, y: -3720, radius: 26, hitTimer: 0 },
+            { x: 480, y: -3700, radius: 26, hitTimer: 0 }
+        ];
+
+        // 🐉 얼음의 협곡 고대 서리룡 보스 객체
+        let iceDragonBoss = {
+            x: 300,
+            y: 280,
+            hp: 10000,
+            maxHp: 10000,
+            wingsAngle: 0,
+            state: 'idle', // 'idle', 'breath_charge', 'breath_attack', 'icicle_storm'
+            stateTimer: 0,
+            flinchTimer: 0,
+            defeated: false,
+            icicles: []
+        };
+
+        // 🦴 [고대 화석 도감] 사용자 지정 20종 화석 아이템 데이터 테이블
+        const FOSSIL_ITEMS = [
+            // 일반 (Common) - 4종
+            { name: '작은 뼛조각', grade: '일반', color: '#b2bec3', icon: '🦴', desc: '고대 생물의 작은 뼛조각. 어디서나 흔히 발견된다.' },
+            { name: '부서진 화석', grade: '일반', color: '#b2bec3', icon: '🪨', desc: '오랜 세월 풍화되어 깨진 화석 조각.' },
+            { name: '고대 이빨 화석', grade: '일반', color: '#b2bec3', icon: '🦷', desc: '작은 고대 초식 동물의 이빨 화석.' },
+            { name: '발톱 화석', grade: '일반', color: '#b2bec3', icon: '🐾', desc: '마모된 고대 포식자의 날카로운 발톱 화석.' },
+
+            // 희귀 (Rare) - 4종
+            { name: '삼엽충 화석', grade: '희귀', color: '#0984e3', icon: '🪲', desc: '고대 바다를 누비던 완벽한 형태의 삼엽충 화석.' },
+            { name: '고대 조개 화석', grade: '희귀', color: '#0984e3', icon: '🐚', desc: '나선형 껍질이 고스란히 굳어버린 암모나이트 조개 화석.' },
+            { name: '매머드 상아 화석', grade: '희귀', color: '#0984e3', icon: '🦣', desc: '빙하기를 호령하던 거대 매머드의 단단한 상아.' },
+            { name: '공룡 알 화석', grade: '희귀', color: '#0984e3', icon: '🥚', desc: '화석화된 신비로운 둥지 속 공룡 알.' },
+
+            // 영웅 (Hero / Epic) - 4종
+            { name: '랩터 두개골 화석', grade: '영웅', color: '#a29bfe', icon: '🦖', desc: '민첩한 사냥꾼 벨로키랍토르의 두개골 화석.' },
+            { name: '검룡 꼬리뼈 화석', grade: '영웅', color: '#a29bfe', icon: '🗡️', desc: '골판과 치명적인 가시가 보존된 스테고사우루스의 꼬리뼈.' },
+            { name: '익룡 날개 화석', grade: '영웅', color: '#a29bfe', icon: '🦅', desc: '고대 하늘을 가르던 프테라노돈의 거대한 날개뼈.' },
+            { name: '고대 포식자 턱뼈', grade: '영웅', color: '#a29bfe', icon: '🐊', desc: '바위를 부수는 무시무시한 악력을 지닌 고대 포식자의 턱뼈.' },
+
+            // 전설 (Legendary) - 4종
+            { name: '티라노사우루스 두개골', grade: '전설', color: '#f1c40f', icon: '👑', desc: '백악기 최강의 제왕, 티라노사우루스의 거대한 두개골.' },
+            { name: '거대 용각류 화석', grade: '전설', color: '#f1c40f', icon: '🦕', desc: '지구를 뒤흔들었던 초대형 브라키오사우루스의 전신 척추 화석.' },
+            { name: '고대 공룡 심장 화석', grade: '전설', color: '#f1c40f', icon: '💖', desc: '기적적으로 광물화되어 굳어진 공룡의 태고 심장.' },
+            { name: '황금 공룡 발톱', grade: '전설', color: '#f1c40f', icon: '✨', desc: '고대 마력과 황금빛 광물로 결정화된 전설의 발톱.' },
+
+            // 신화 (Mythic) - 4종
+            { name: '태초의 공룡 화석', grade: '신화', color: '#ff0055', icon: '🌋', desc: '지구에 생명이 태동하던 순간의 태초 공룡 화석.' },
+            { name: '멸종의 군주 화석', grade: '신화', color: '#ff0055', icon: '☄️', desc: '대멸종 운석 충돌 속에서도 파괴되지 않은 군주의 뼈.' },
+            { name: '창세의 생명체 화석', grade: '신화', color: '#ff0055', icon: '🌟', desc: '전 우주의 진화 암호가 새겨진 기적의 화석.' },
+            { name: '세계수호룡 완전체 화석', grade: '신화', color: '#ff0055', icon: '🐉', desc: '얼음의 협곡을 창조하고 세계를 수호했던 원초 드래곤의 완전체 화석.' }
+        ];
+
+        let fossilCollection = [];
+        try {
+            fossilCollection = JSON.parse(localStorage.getItem('fossil_collection') || '[]');
+        } catch(e) { fossilCollection = []; }
+        let currentFossilFilter = 'all';
+
+        function openFossilCodexModal() {
+            const modal = document.getElementById('fossil-codex-modal');
+            if (!modal) return;
+            renderFossilCodex();
+            modal.style.display = 'block';
+            if (typeof resetJoyMouse === 'function') resetJoyMouse();
+            if (typeof player !== 'undefined') player.targetTree = null;
+        }
+
+        function closeFossilCodexModal() {
+            const modal = document.getElementById('fossil-codex-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function filterFossilCodex(grade) {
+            currentFossilFilter = grade;
+            document.querySelectorAll('.fossil-tab-btn').forEach(btn => {
+                btn.style.background = 'rgba(30,41,59,0.7)';
+                btn.style.color = '#cbd5e1';
+                btn.style.borderColor = '#64748b';
+            });
+            const activeBtn = document.getElementById('fossil-tab-' + grade);
+            if (activeBtn) {
+                activeBtn.style.background = '#38bdf8';
+                activeBtn.style.color = '#0f172a';
+                activeBtn.style.borderColor = '#38bdf8';
+            }
+            renderFossilCodex();
+        }
+
+        function renderFossilCodex() {
+            const grid = document.getElementById('fossil-codex-grid');
+            const pText = document.getElementById('fossil-progress-text');
+            const pBar = document.getElementById('fossil-progress-bar');
+            if (!grid) return;
+
+            // 전체 수집률 계산
+            let collectedCount = 0;
+            FOSSIL_ITEMS.forEach(item => {
+                if ((inventory[item.name] || 0) > 0 || fossilCollection.includes(item.name)) {
+                    collectedCount++;
+                    if (!fossilCollection.includes(item.name)) fossilCollection.push(item.name);
+                }
+            });
+
+            let percent = Math.round((collectedCount / FOSSIL_ITEMS.length) * 100);
+            if (pText) pText.innerText = `${collectedCount} / ${FOSSIL_ITEMS.length} (${percent}%)`;
+            if (pBar) pBar.style.width = `${percent}%`;
+
+            grid.innerHTML = '';
+            const filtered = (currentFossilFilter === 'all') 
+                ? FOSSIL_ITEMS 
+                : FOSSIL_ITEMS.filter(f => f.grade === currentFossilFilter);
+
+            filtered.forEach(item => {
+                let isOwned = (inventory[item.name] || 0) > 0 || fossilCollection.includes(item.name);
+                let count = inventory[item.name] || 0;
+                let cardBg = isOwned ? 'rgba(30, 41, 59, 0.88)' : 'rgba(15, 23, 42, 0.65)';
+                let cardBorder = isOwned ? item.color : '#334155';
+                let glow = isOwned ? `0 0 10px ${item.color}44` : 'none';
+
+                grid.innerHTML += `
+                    <div style="background: ${cardBg}; border: 1.5px solid ${cardBorder}; border-radius: 10px; padding: 10px; box-shadow: ${glow}; display: flex; flex-direction: column; justify-content: space-between; min-height: 94px; box-sizing: border-box;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <span style="font-size: 24px; filter: ${isOwned ? 'none' : 'grayscale(100%) opacity(35%)'};">${item.icon}</span>
+                            <span style="font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; background: ${item.color}22; color: ${item.color}; border: 1px solid ${item.color}66;">
+                                ${item.grade}
+                            </span>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; font-weight: bold; color: ${isOwned ? '#ffffff' : '#64748b'}; margin-bottom: 2px;">
+                                ${isOwned ? item.name : '??? (미발굴)'}
+                            </div>
+                            <div style="font-size: 10px; color: ${isOwned ? '#94a3b8' : '#475569'}; line-height: 1.2;">
+                                ${isOwned ? item.desc : '얼음의 협곡에서 발굴 가능'}
+                            </div>
+                        </div>
+                        <div style="margin-top: 6px; font-size: 10.5px; font-weight: bold; color: ${isOwned ? item.color : '#475569'}; text-align: right;">
+                            ${isOwned ? `보유: x${count}` : '🔒 미발견'}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function excavateFossilAtSpot(cx, cy, ignoreDist = false) {
+            let dist = Math.hypot(player.x - cx, player.y - cy);
+            if (!ignoreDist && dist > 120) {
+                player.targetTree = null;
+                player.vx = (cx - player.x) * 0.05;
+                player.vy = (cy - player.y) * 0.05;
+                floatTexts.push({ x: cx, y: cy - 40, text: `⛏️ 화석 바위로 더 다가가야 합니다!`, color: '#38bdf8', life: 50, size: 15 });
+                return;
+            }
+
+            if (equippedAxe === 0 && axeLevel === 0 && !isAdmin()) {
+                floatTexts.push({ x: cx, y: cy - 40, text: `❌ 도끼를 장착해야 발굴할 수 있습니다!`, color: '#e74c3c', life: 60, size: 15 });
+                return;
+            }
+
+            player.axeSwingTimer = 16;
+            for (let i = 0; i < 16; i++) {
+                let a = Math.random() * Math.PI * 2;
+                let sp = Math.random() * 4 + 2;
+                labSparks.push({ x: cx, y: cy, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#38bdf8' : '#f1c40f'), life: 25 });
+            }
+
+            let rand = Math.random() * 100;
+            let targetGrade = '일반';
+            if (rand < 1) targetGrade = '신화';
+            else if (rand < 7) targetGrade = '전설';
+            else if (rand < 20) targetGrade = '영웅';
+            else if (rand < 50) targetGrade = '희귀';
+            else targetGrade = '일반';
+
+            let candidates = FOSSIL_ITEMS.filter(f => f.grade === targetGrade);
+            let picked = candidates[Math.floor(Math.random() * candidates.length)];
+
+            if (!inventory[picked.name]) inventory[picked.name] = 0;
+            inventory[picked.name]++;
+            if (!fossilCollection.includes(picked.name)) {
+                fossilCollection.push(picked.name);
+                try { localStorage.setItem('fossil_collection', JSON.stringify(fossilCollection)); } catch(e) {}
+            }
+            saveGame();
+
+            floatTexts.push({
+                x: cx, y: cy - 60,
+                text: `⛏️ [화석 발굴] ${picked.icon} [${picked.grade}] ${picked.name} 획득!`,
+                color: picked.color,
+                life: 100,
+                size: (targetGrade === '신화' || targetGrade === '전설') ? 20 : 16
+            });
+        }
+
+        function openQuestModal() {
+            const modal = document.getElementById('quest-modal');
+            if (!modal) return;
+            modal.style.display = 'block';
+            if (typeof resetJoyMouse === 'function') resetJoyMouse();
+            if (typeof player !== 'undefined') player.targetTree = null;
+        }
+
+        function closeQuestModal() {
+            const modal = document.getElementById('quest-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
         // 🎰 할로윈 행운의 룰렛 머신 (할로윈 퓨즈머신 x:190, y:2050 옆: x:85, y:2140)
         let rouletteMachine = {
             x: 85,
@@ -971,6 +1367,12 @@
             flinchTimer: 0,
             shootCooldown: 0
         };
+
+        // 🔮 미친 박사의 할로윈 텔레포터 상태
+        let hasHalloweenTeleporter = (localStorage.getItem('has_halloween_teleporter') === 'true') || false;
+        let halloweenTeleporterBeacon = JSON.parse(localStorage.getItem('halloween_teleporter_beacon') || '{"placed":false,"x":300,"y":1350}');
+        let monkeyAttackWave = 0;
+        let monkeyAttackTimer = 0;
 
         // 보스전 & 쪽지 조각 시스템 상태
         let inBossRoom = false;
@@ -1226,6 +1628,20 @@
                 setBossRoomHUDVisible(false);
 
                 floatTexts.push({ x: 300, y: 280, text: `😈 어둠의 악마 보스 출현!`, color: '#e74c3c', life: 100, size: 24 });
+            } else if (bossType === 'ice_dragon') {
+                // 🐉 얼음의 협곡 보스전 초기화 (고대 서리룡)
+                playerBossHp = 100;
+                iceDragonBoss.hp = 10000;
+                iceDragonBoss.maxHp = 10000;
+                iceDragonBoss.x = 300;
+                iceDragonBoss.y = 280;
+                iceDragonBoss.flinchTimer = 0;
+                iceDragonBoss.defeated = false;
+                iceDragonBoss.state = 'idle';
+                iceDragonBoss.stateTimer = 0;
+                iceDragonBoss.icicles = [];
+                setBossRoomHUDVisible(false);
+                floatTexts.push({ x: 300, y: 280, text: `❄️ [얼음의 협곡 수호룡] 고대 서리룡 출현!`, color: '#38bdf8', life: 100, size: 24 });
             } else {
                 // 원숭이 보스전 초기화 (일반 지형)
                 monkeyBoss.hp = 100;
@@ -1314,7 +1730,7 @@
                         }, 1000);
                     }
                 }
-            } else {
+            } else if (currentBossType === 'monkey') {
                 // 원숭이 보스전 공격
                 if (monkeyBoss.defeated) return;
                 if (player.axeSwingTimer > 8) return;
@@ -1350,6 +1766,71 @@
                             floatTexts.push({ x: 300, y: 300, text: `📜 쪽지 조각이 일반 나무에 심어졌습니다!`, color: '#f1c40f', life: 120, size: 22 });
                             alert("🎉 원숭이 보스를 쓰러뜨렸습니다!\n\n📜 신비로운 [쪽지 조각]이 원래 세계의 일반 나무에 심어졌습니다!\n일반 나무를 3번 완전히 부수면(쓰러뜨리면) 쪽지 조각이 나타납니다! (현재: 0/3)");
                         }, 1000);
+                    }
+                }
+            } else if (currentBossType === 'ice_dragon') {
+                // 🐉 얼음의 협곡 고대 서리룡 공격 (Image 2 구현)
+                if (iceDragonBoss.defeated || playerBossHp <= 0) return;
+                if (player.axeSwingTimer > 8) return;
+
+                player.axeSwingTimer = 16;
+                let dx = iceDragonBoss.x - player.x;
+                player.facing = dx >= 0 ? 1 : -1;
+
+                let dragonDmg = 300;
+                if (equippedAxe === 3) dragonDmg = 450;
+                else if (equippedAxe === 2) dragonDmg = 350;
+
+                let hitTarget = (Math.hypot(player.x - iceDragonBoss.x, player.y - iceDragonBoss.y) < 220) ||
+                                (Math.hypot(player.x - (iceDragonBoss.x - 140), player.y - 480) < 130) ||
+                                (Math.hypot(player.x - (iceDragonBoss.x + 140), player.y - 480) < 130);
+
+                if (hitTarget) {
+                    iceDragonBoss.hp = Math.max(0, iceDragonBoss.hp - dragonDmg);
+                    iceDragonBoss.flinchTimer = 14;
+
+                    for (let s = 0; s < 10; s++) {
+                        let a = Math.random() * Math.PI * 2;
+                        labSparks.push({ x: targetX, y: targetY, vx: Math.cos(a)*5, vy: Math.sin(a)*5, color: '#38bdf8', life: 25 });
+                    }
+                    slashEffects.push({
+                        x: targetX, y: targetY - 15, life: 14, facing: player.facing
+                    });
+
+                    const dragonRoars = ['크그극...!! ❄️', '쿠오오오!! ⚡', '키에에엑!! 💥'];
+                    const roar = dragonRoars[Math.floor(Math.random() * dragonRoars.length)];
+                    floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 80, text: `-${dragonDmg} (${roar})`, color: '#38bdf8', life: 45, size: 20 });
+
+                    if (iceDragonBoss.hp <= 0 && !iceDragonBoss.defeated) {
+                        iceDragonBoss.defeated = true;
+                        money += 100000;
+                        updateMoney();
+
+                        // 🏆 고대 화석 드롭 (신화/전설 1종 보장 + 추가 3종 지급!)
+                        let dropFossils = [];
+                        let highPool = FOSSIL_ITEMS.filter(f => f.grade === '신화' || f.grade === '전설');
+                        let guaranteedHigh = highPool[Math.floor(Math.random() * highPool.length)];
+                        dropFossils.push(guaranteedHigh);
+
+                        for (let k = 0; k < 3; k++) {
+                            let f = FOSSIL_ITEMS[Math.floor(Math.random() * FOSSIL_ITEMS.length)];
+                            dropFossils.push(f);
+                        }
+
+                        dropFossils.forEach(item => {
+                            if (!inventory[item.name]) inventory[item.name] = 0;
+                            inventory[item.name]++;
+                            if (!fossilCollection.includes(item.name)) fossilCollection.push(item.name);
+                        });
+                        try { localStorage.setItem('fossil_collection', JSON.stringify(fossilCollection)); } catch(e) {}
+                        saveGame();
+
+                        floatTexts.push({ x: 300, y: 350, text: `💥 [승리] 고대 서리룡 격퇴 성공!`, color: '#38bdf8', life: 100, size: 28 });
+                        setTimeout(() => {
+                            exitBossDimension();
+                            let namesStr = dropFossils.map(d => `[${d.grade}] ${d.name}`).join(', ');
+                            alert(`🎉 [보스 격퇴 완료!] 얼음의 협곡 수호룡 '고대 서리룡'을 처치했습니다!\n\n💰 보상: 100,000 골드\n🦴 발굴된 고대 화석: ${namesStr}\n\n화석 도감에 등록되었습니다! 하단 [도감] 버튼에서 확인하세요.`);
+                        }, 1200);
                     }
                 }
             }
@@ -1490,7 +1971,7 @@
                         }
                     }
                 }
-            } else {
+            } else if (currentBossType === 'monkey') {
                 // 👑 원숭이 보스 이동 및 피격 AI (일반 지형 보스)
                 if (!monkeyBoss.defeated) {
                     monkeyBoss.walkTimer++;
@@ -1508,7 +1989,92 @@
                             monkeyBoss.x -= (bdx / bdist) * monkeyBoss.moveSpeed;
                             monkeyBoss.y -= (bdy / bdist) * monkeyBoss.moveSpeed;
                         }
-                        if (Math.abs(bdx) > 5) monkeyBoss.facing = bdx >= 0 ? 1 : -1;
+                    }
+                }
+            } else if (currentBossType === 'ice_dragon') {
+                // 🐉 고대 서리룡 보스 AI (Image 2 구현)
+                if (!iceDragonBoss.defeated && playerBossHp > 0) {
+                    iceDragonBoss.stateTimer++;
+                    iceDragonBoss.wingsAngle = Math.sin(Date.now() * 0.003) * 0.15;
+                    if (iceDragonBoss.flinchTimer > 0) iceDragonBoss.flinchTimer--;
+
+                    // 공격 패턴 상태머신
+                    if (iceDragonBoss.state === 'idle') {
+                        if (iceDragonBoss.stateTimer > 90) {
+                            iceDragonBoss.stateTimer = 0;
+                            let p = Math.random();
+                            if (p < 0.5) {
+                                iceDragonBoss.state = 'breath_charge';
+                                iceDragonBoss.stateTimer = 50; // 차징 50프레임
+                                floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 60, text: `❄️ 서리룡이 냉기 숨결을 모읍니다!`, color: '#38bdf8', life: 50, size: 18 });
+                            } else {
+                                iceDragonBoss.state = 'icicle_storm';
+                                iceDragonBoss.stateTimer = 85;
+                                iceDragonBoss.icicles = [];
+                                for (let k = 0; k < 6; k++) {
+                                    iceDragonBoss.icicles.push({
+                                        x: 80 + Math.random() * (GAME_WIDTH - 160),
+                                        y: -50 - (k * 60),
+                                        groundY: 620 + (Math.random() * 180),
+                                        vy: 5 + Math.random() * 3
+                                    });
+                                }
+                                floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 60, text: `🌨️ 날카로운 고드름 폭풍 소환!!`, color: '#0284c7', life: 60, size: 18 });
+                            }
+                        }
+                    } else if (iceDragonBoss.state === 'breath_charge') {
+                        for (let k = 0; k < 3; k++) {
+                            let a = Math.random() * Math.PI * 2;
+                            labSparks.push({ x: iceDragonBoss.x + Math.cos(a)*30, y: iceDragonBoss.y + 40 + Math.sin(a)*30, vx: -Math.cos(a)*3, vy: -Math.sin(a)*3, color: '#38bdf8', life: 15 });
+                        }
+                        if (iceDragonBoss.stateTimer >= 50) {
+                            iceDragonBoss.state = 'breath_attack';
+                            iceDragonBoss.stateTimer = 65;
+                        }
+                    } else if (iceDragonBoss.state === 'breath_attack') {
+                        iceDragonBoss.stateTimer--;
+                        if (iceDragonBoss.stateTimer % 20 === 0) {
+                            if (player.x > 120 && player.x < GAME_WIDTH - 120 && player.y > 550) {
+                                playerBossHp = Math.max(0, playerBossHp - 15);
+                                slashEffects.push({ x: player.x, y: player.y, life: 16 });
+                                floatTexts.push({ x: player.x, y: player.y - 60, text: `❄️ -15 HP (절대영도 브레스!)`, color: '#38bdf8', life: 40, size: 18 });
+                                if (playerBossHp <= 0) {
+                                    handlePlayerBossDefeat();
+                                    return;
+                                }
+                            }
+                        }
+                        if (iceDragonBoss.stateTimer <= 0) {
+                            iceDragonBoss.state = 'idle';
+                            iceDragonBoss.stateTimer = 0;
+                        }
+                    } else if (iceDragonBoss.state === 'icicle_storm') {
+                        iceDragonBoss.stateTimer--;
+                        if (iceDragonBoss.icicles) {
+                            iceDragonBoss.icicles.forEach(ic => {
+                                ic.y += ic.vy;
+                                if (ic.y >= ic.groundY && !ic.hit) {
+                                    ic.hit = true;
+                                    for (let s = 0; s < 6; s++) {
+                                        let a = Math.random() * Math.PI * 2;
+                                        labSparks.push({ x: ic.x, y: ic.groundY, vx: Math.cos(a)*4, vy: Math.sin(a)*4, color: '#e0f2fe', life: 20 });
+                                    }
+                                    if (Math.hypot(player.x - ic.x, player.y - ic.groundY) < 45) {
+                                        playerBossHp = Math.max(0, playerBossHp - 12);
+                                        floatTexts.push({ x: player.x, y: player.y - 60, text: `💥 -12 HP (고드름 충돌!)`, color: '#0284c7', life: 40, size: 18 });
+                                        if (playerBossHp <= 0) {
+                                            handlePlayerBossDefeat();
+                                            return;
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                        if (iceDragonBoss.stateTimer <= 0) {
+                            iceDragonBoss.state = 'idle';
+                            iceDragonBoss.stateTimer = 0;
+                            iceDragonBoss.icicles = [];
+                        }
                     }
                 }
             }
@@ -1658,6 +2224,114 @@
                         drawCharacter(ctx, player, player.x, player.y, player.axeSwingTimer > 0, player.walkTimer);
                     }
                 });
+
+            } else if (currentBossType === 'ice_dragon') {
+                // ❄️ 얼음의 협곡 보스전: 혹한의 빙룡 결투장 (Image 2 완벽 구현)
+                let iceCavernGrad = ctx.createRadialGradient(GAME_WIDTH/2, 320, 40, GAME_WIDTH/2, 320, 540);
+                iceCavernGrad.addColorStop(0, '#102a43');
+                iceCavernGrad.addColorStop(0.5, '#061727');
+                iceCavernGrad.addColorStop(1, '#020617');
+                ctx.fillStyle = iceCavernGrad;
+                ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+                // 1. 거대한 얼음 가시 기둥들 (Ice Stalagmites)
+                ctx.fillStyle = '#1e3a5f';
+                ctx.beginPath();
+                ctx.moveTo(0, 500); ctx.lineTo(60, 160); ctx.lineTo(100, 520);
+                ctx.moveTo(30, 480); ctx.lineTo(90, 100); ctx.lineTo(130, 500);
+                ctx.moveTo(GAME_WIDTH, 500); ctx.lineTo(GAME_WIDTH - 60, 160); ctx.lineTo(GAME_WIDTH - 100, 520);
+                ctx.moveTo(GAME_WIDTH - 30, 480); ctx.lineTo(GAME_WIDTH - 90, 100); ctx.lineTo(GAME_WIDTH - 130, 500);
+                ctx.fill();
+
+                // 2. 바닥 거대 빙판 & 빛나는 균열 (Cracked Ice Arena)
+                ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+                ctx.lineWidth = 2.5;
+                ctx.shadowColor = '#38bdf8';
+                ctx.shadowBlur = 10;
+                [
+                    [300, 600, 120, 720], [300, 600, 480, 740], [300, 600, 200, 880],
+                    [300, 600, 400, 860], [300, 600, 80, 560], [300, 600, 520, 580]
+                ].forEach(([x1, y1, x2, y2]) => {
+                    ctx.beginPath();
+                    let mx = (x1 + x2) / 2 + (Math.sin(x1) * 20);
+                    let my = (y1 + y2) / 2 + (Math.cos(y1) * 15);
+                    ctx.moveTo(x1, y1); ctx.lineTo(mx, my); ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                });
+                ctx.shadowBlur = 0;
+
+                // 3. 보스 드래곤 렌더링 (Image 2 서리룡)
+                drawFrostDragonBoss(ctx, iceDragonBoss);
+
+                // 4. 낙하 고드름 스톰 공격 렌더링
+                if (iceDragonBoss.icicles && iceDragonBoss.icicles.length > 0) {
+                    iceDragonBoss.icicles.forEach(ic => {
+                        ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+                        ctx.beginPath(); ctx.ellipse(ic.x, ic.groundY, 18 * Math.min(1, Math.max(0.2, ic.y / ic.groundY)), 6, 0, 0, Math.PI*2); ctx.fill();
+                        ctx.fillStyle = '#e0f2fe';
+                        ctx.strokeStyle = '#38bdf8';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(ic.x, ic.y + 35);
+                        ctx.lineTo(ic.x - 10, ic.y);
+                        ctx.lineTo(ic.x + 10, ic.y);
+                        ctx.closePath();
+                        ctx.fill(); ctx.stroke();
+                    });
+                }
+
+                // 5. 드래곤 브레스 공격 이펙트
+                if (iceDragonBoss.state === 'breath_attack') {
+                    let bGrad = ctx.createRadialGradient(iceDragonBoss.x, iceDragonBoss.y + 40, 10, iceDragonBoss.x, 650, 180);
+                    bGrad.addColorStop(0, '#ffffff');
+                    bGrad.addColorStop(0.3, 'rgba(56, 189, 248, 0.85)');
+                    bGrad.addColorStop(0.7, 'rgba(14, 165, 233, 0.45)');
+                    bGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    ctx.fillStyle = bGrad;
+                    ctx.beginPath();
+                    ctx.moveTo(iceDragonBoss.x - 25, iceDragonBoss.y + 30);
+                    ctx.lineTo(iceDragonBoss.x + 25, iceDragonBoss.y + 30);
+                    ctx.lineTo(GAME_WIDTH - 60, 750);
+                    ctx.lineTo(60, 750);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+
+                // 6. 플레이어 렌더링
+                drawCharacter(ctx, player, player.x, player.y, player.axeSwingTimer > 0, player.walkTimer);
+
+                // 7. 상단 UI: 보스 체력바 & 내 체력바
+                let barW = 380, barH = 22, barX = (GAME_WIDTH - barW) / 2;
+                let bRatio = Math.max(0, iceDragonBoss.hp / iceDragonBoss.maxHp);
+                let bBarY = 20;
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.beginPath(); ctx.roundRect(barX, bBarY, barW, barH, 11); ctx.fill();
+                ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2.5; ctx.stroke();
+
+                let dGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+                dGrad.addColorStop(0, '#0284c7');
+                dGrad.addColorStop(0.5, '#38bdf8');
+                dGrad.addColorStop(1, '#e0f2fe');
+                ctx.fillStyle = dGrad;
+                ctx.beginPath(); ctx.roundRect(barX + 2, bBarY + 2, Math.max(0, (barW - 4) * bRatio), barH - 4, 9); ctx.fill();
+
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12.5px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(`🐉 [얼음의 협곡 수호룡] 고대 서리룡  ${iceDragonBoss.hp} / ${iceDragonBoss.maxHp} HP`, GAME_WIDTH / 2, bBarY + 11);
+
+                let pRatio = Math.max(0, playerBossHp / 100);
+                let pBarY = 50;
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.beginPath(); ctx.roundRect(barX, pBarY, barW, barH, 11); ctx.fill();
+                ctx.strokeStyle = playerBossHp <= 30 ? '#ff4757' : '#2ecc71'; ctx.lineWidth = 2.5; ctx.stroke();
+
+                let pGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+                if (playerBossHp <= 30) { pGrad.addColorStop(0, '#c0392b'); pGrad.addColorStop(1, '#ff4757'); }
+                else { pGrad.addColorStop(0, '#27ae60'); pGrad.addColorStop(1, '#2ecc71'); }
+                ctx.fillStyle = pGrad;
+                ctx.beginPath(); ctx.roundRect(barX + 2, pBarY + 2, Math.max(0, (barW - 4) * pRatio), barH - 4, 9); ctx.fill();
+
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12.5px Arial'; ctx.textAlign = 'center';
+                ctx.fillText(`❤️ [내 체력]  ${playerBossHp} / 100 HP`, GAME_WIDTH / 2, pBarY + 11);
 
             } else {
                 // 👑 원숭이 보스전: 고차원 시공간 배경
@@ -1837,6 +2511,412 @@
             ctx.restore();
         }
 
+        // 🐉 얼음의 협곡 고대 서리룡 보스 렌더링 (Image 2 완벽 구현)
+        function drawFrostDragonBoss(ctx, dragon) {
+            if (!dragon || dragon.hp <= 0) return;
+            const now = Date.now();
+            const wingFlap = Math.sin(now * 0.003) * 0.12;
+            const breathe = Math.sin(now * 0.004) * 4;
+            const x = dragon.x;
+            const y = dragon.y + breathe;
+
+            ctx.save();
+            // 1. 거대한 푸른 얼음 날개 (Ice Dragon Wings - Image 2)
+            // 좌측 날개
+            ctx.save();
+            ctx.translate(x - 60, y - 20);
+            ctx.rotate(-wingFlap);
+            let wingGradL = ctx.createLinearGradient(0, 0, -220, -100);
+            wingGradL.addColorStop(0, '#0c2461');
+            wingGradL.addColorStop(0.4, '#1e90ff');
+            wingGradL.addColorStop(0.8, '#4bcffa');
+            wingGradL.addColorStop(1, 'rgba(224, 242, 254, 0.85)');
+            ctx.fillStyle = wingGradL;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(-120, -130);
+            ctx.quadraticCurveTo(-180, -90, -230, -50);
+            ctx.quadraticCurveTo(-200, 20, -140, 50);
+            ctx.quadraticCurveTo(-80, 40, 0, 20);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#0a3d62'; ctx.lineWidth = 6; ctx.lineCap = 'round';
+            ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-120, -130); ctx.lineTo(-230, -50); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(-120, -130); ctx.lineTo(-140, 50); ctx.stroke();
+            ctx.fillStyle = '#e0f2fe';
+            ctx.beginPath(); ctx.moveTo(-120, -130); ctx.lineTo(-135, -160); ctx.lineTo(-115, -135); ctx.fill();
+            ctx.restore();
+
+            // 우측 날개
+            ctx.save();
+            ctx.translate(x + 60, y - 20);
+            ctx.rotate(wingFlap);
+            let wingGradR = ctx.createLinearGradient(0, 0, 220, -100);
+            wingGradR.addColorStop(0, '#0c2461');
+            wingGradR.addColorStop(0.4, '#1e90ff');
+            wingGradR.addColorStop(0.8, '#4bcffa');
+            wingGradR.addColorStop(1, 'rgba(224, 242, 254, 0.85)');
+            ctx.fillStyle = wingGradR;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(120, -130);
+            ctx.quadraticCurveTo(180, -90, 230, -50);
+            ctx.quadraticCurveTo(200, 20, 140, 50);
+            ctx.quadraticCurveTo(80, 40, 0, 20);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#0a3d62'; ctx.lineWidth = 6; ctx.lineCap = 'round';
+            ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(120, -130); ctx.lineTo(230, -50); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(120, -130); ctx.lineTo(140, 50); ctx.stroke();
+            ctx.fillStyle = '#e0f2fe';
+            ctx.beginPath(); ctx.moveTo(120, -130); ctx.lineTo(135, -160); ctx.lineTo(115, -135); ctx.fill();
+            ctx.restore();
+
+            // 2. 드래곤 목 & 가슴 몸통 (중앙)
+            let bodyGrad = ctx.createLinearGradient(x - 50, y, x + 50, y);
+            bodyGrad.addColorStop(0, '#0f2027');
+            bodyGrad.addColorStop(0.3, '#203a43');
+            bodyGrad.addColorStop(0.7, '#2c5364');
+            bodyGrad.addColorStop(1, '#0f2027');
+            ctx.fillStyle = bodyGrad;
+            ctx.beginPath();
+            ctx.moveTo(x - 55, y - 40);
+            ctx.quadraticCurveTo(x - 85, y + 60, x - 50, y + 150);
+            ctx.lineTo(x + 50, y + 150);
+            ctx.quadraticCurveTo(x + 85, y + 60, x + 55, y - 40);
+            ctx.closePath();
+            ctx.fill();
+
+            // 가슴 빙결 갑피 플레이트
+            ctx.fillStyle = '#38bdf8';
+            for (let k = 0; k < 4; k++) {
+                let py = y + 20 + (k * 28);
+                let pw = 36 - (k * 4);
+                ctx.beginPath(); ctx.roundRect(x - pw/2, py, pw, 16, 4); ctx.fill();
+            }
+
+            // 3. 앞발 거대한 서리 발톱 (Ice Claws anchored on floor - Image 2)
+            [x - 140, x + 140].forEach((clawX, idx) => {
+                let clawFacing = (idx === 0) ? 1 : -1;
+                ctx.save();
+                ctx.translate(clawX, y + 180);
+                ctx.fillStyle = '#1e3a5f';
+                ctx.beginPath(); ctx.roundRect(-24, -40, 48, 50, 8); ctx.fill();
+                ctx.fillStyle = '#0f2b48';
+                ctx.beginPath(); ctx.ellipse(0, 10, 36, 18, 0, 0, Math.PI*2); ctx.fill();
+                [-24, -8, 8, 24].forEach((fx, cIdx) => {
+                    let clawH = (cIdx === 1 || cIdx === 2) ? 38 : 28;
+                    ctx.fillStyle = '#e0f2fe';
+                    ctx.strokeStyle = '#38bdf8';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(fx - 5, 12);
+                    ctx.lineTo(fx + 5, 12);
+                    ctx.lineTo(fx + (clawFacing * 3), 12 + clawH);
+                    ctx.closePath();
+                    ctx.fill(); ctx.stroke();
+                });
+                ctx.restore();
+            });
+
+            // 4. 거대한 드래곤 머리 & 뿔 (Head & Horns - Image 2)
+            ctx.save();
+            ctx.translate(x, y - 50);
+
+            // 좌우 거대한 얼음 뿔들
+            ctx.fillStyle = '#e0f2fe';
+            ctx.strokeStyle = '#0284c7';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath(); ctx.moveTo(-18, -25); ctx.quadraticCurveTo(-60, -90, -95, -125); ctx.quadraticCurveTo(-65, -80, -32, -35); ctx.closePath(); ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(-25, -15); ctx.quadraticCurveTo(-65, -45, -85, -60); ctx.quadraticCurveTo(-50, -35, -28, -5); ctx.closePath(); ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(18, -25); ctx.quadraticCurveTo(60, -90, 95, -125); ctx.quadraticCurveTo(65, -80, 32, -35); ctx.closePath(); ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(25, -15); ctx.quadraticCurveTo(65, -45, 85, -60); ctx.quadraticCurveTo(50, -35, 28, -5); ctx.closePath(); ctx.fill(); ctx.stroke();
+
+            // 머리통
+            ctx.fillStyle = '#1e3a5f';
+            ctx.beginPath();
+            ctx.moveTo(0, -45);
+            ctx.lineTo(-38, -15);
+            ctx.lineTo(-42, 20);
+            ctx.lineTo(-24, 60);
+            ctx.lineTo(24, 60);
+            ctx.lineTo(42, 20);
+            ctx.lineTo(38, -15);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 3; ctx.stroke();
+
+            // 이마 서리 수정
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = '#00f2fe'; ctx.shadowBlur = 15;
+            ctx.beginPath(); ctx.moveTo(0, -35); ctx.lineTo(-10, -20); ctx.lineTo(0, -5); ctx.lineTo(10, -20); ctx.closePath(); ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 청록빛 드래곤 눈
+            ctx.fillStyle = '#00f2fe';
+            ctx.shadowColor = '#00f2fe'; ctx.shadowBlur = 18;
+            ctx.beginPath(); ctx.ellipse(-20, 5, 8, 4, -0.2, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(20, 5, 8, 4, 0.2, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath(); ctx.arc(-20, 5, 2.5, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(20, 5, 2.5, 0, Math.PI*2); ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 턱 벌리기 & 서리 브레스 구강
+            let isOpen = (dragon.state === 'breath_charge' || dragon.state === 'breath_attack');
+            let jawDrop = isOpen ? 22 : 8;
+
+            ctx.fillStyle = isOpen ? '#e0f2fe' : '#030712';
+            if (isOpen) { ctx.shadowColor = '#38bdf8'; ctx.shadowBlur = 25; }
+            ctx.beginPath(); ctx.roundRect(-22, 42, 44, jawDrop + 10, 6); ctx.fill();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#ffffff';
+            [-16, -10, -4, 2, 8, 14].forEach(tx => {
+                ctx.beginPath(); ctx.moveTo(tx, 42); ctx.lineTo(tx + 4, 42); ctx.lineTo(tx + 2, 48); ctx.closePath(); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(tx, 42 + jawDrop + 10); ctx.lineTo(tx + 4, 42 + jawDrop + 10); ctx.lineTo(tx + 2, 42 + jawDrop + 4); ctx.closePath(); ctx.fill();
+            });
+
+            ctx.restore();
+            ctx.restore();
+        }
+
+        // ❄️ [신규 지역 : 얼음의 협곡] 지형 렌더링 (Image 1 완벽 구현)
+        function drawIceCanyonTerrain(ctx) {
+            const now = Date.now();
+            // 1. 고산 설산 하늘 그라데이션
+            let skyGrad = ctx.createLinearGradient(0, -4000, 0, -3000);
+            skyGrad.addColorStop(0, '#0a192f');
+            skyGrad.addColorStop(0.3, '#1e3a5f');
+            skyGrad.addColorStop(0.65, '#38bdf8');
+            skyGrad.addColorStop(0.9, '#bae6fd');
+            skyGrad.addColorStop(1, '#e0f2fe');
+            ctx.fillStyle = skyGrad;
+            ctx.fillRect(0, -4000, GAME_WIDTH, 1000);
+
+            // 2. 원경 거대 설산 능선
+            ctx.fillStyle = '#64748b';
+            ctx.beginPath();
+            ctx.moveTo(0, -3700);
+            ctx.lineTo(80, -3880); ctx.lineTo(140, -3780);
+            ctx.lineTo(240, -3950); ctx.lineTo(310, -3830);
+            ctx.lineTo(420, -3980); ctx.lineTo(510, -3820);
+            ctx.lineTo(GAME_WIDTH, -3900);
+            ctx.lineTo(GAME_WIDTH, -3000); ctx.lineTo(0, -3000);
+            ctx.closePath();
+            ctx.fill();
+
+            // 설산 만년설 눈 덮개
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.moveTo(80, -3880); ctx.lineTo(60, -3840); ctx.lineTo(75, -3850); ctx.lineTo(80, -3835); ctx.lineTo(95, -3855); ctx.lineTo(80, -3880);
+            ctx.moveTo(240, -3950); ctx.lineTo(210, -3900); ctx.lineTo(230, -3910); ctx.lineTo(240, -3895); ctx.lineTo(260, -3915); ctx.lineTo(240, -3950);
+            ctx.moveTo(420, -3980); ctx.lineTo(385, -3920); ctx.lineTo(405, -3930); ctx.lineTo(420, -3910); ctx.lineTo(445, -3935); ctx.lineTo(420, -3980);
+            ctx.fill();
+
+            // 3. 좌측 상단 부유섬
+            drawFloatingIsland(ctx, 35, -3840, 190, 52);
+            // 4. 우측 상단 부유섬
+            drawFloatingIsland(ctx, 375, -3800, 190, 56);
+            // 5. 중앙 메인 부유섬 (나무 및 바위 위치)
+            drawFloatingIsland(ctx, 50, -3600, 500, 75);
+
+            // 6. 폭포수 (부유섬에서 쏟아지는 빙하 폭포)
+            drawGlacialWaterfall(ctx, 115, -3790, 16, 130);
+            drawGlacialWaterfall(ctx, 455, -3745, 18, 120);
+
+            // 7. 눈 덮인 침엽수들
+            drawSnowPineTree(ctx, 75, -3855, 0.7);
+            drawSnowPineTree(ctx, 165, -3850, 0.65);
+            drawSnowPineTree(ctx, 415, -3815, 0.75);
+            drawSnowPineTree(ctx, 505, -3810, 0.6);
+            drawSnowPineTree(ctx, 105, -3620, 1.0);
+            drawSnowPineTree(ctx, 495, -3610, 0.95);
+
+            // 8. 고대 화석 발굴 바위들
+            iceCanyonFossilRocks.forEach(rock => {
+                drawFossilRock(ctx, rock.x, rock.y, rock.radius);
+            });
+
+            // 9. 흩날리는 눈보라 파티클
+            ctx.fillStyle = '#ffffff';
+            for (let i = 0; i < 40; i++) {
+                let sx = ((now * 0.04) + (i * 73)) % GAME_WIDTH;
+                let sy = -4000 + (((now * 0.08) + (i * 97)) % 1000);
+                let sSize = (i % 3 === 0) ? 2.5 : 1.5;
+                let alpha = 0.35 + 0.5 * Math.sin(now * 0.003 + i);
+                ctx.globalAlpha = Math.max(0.1, alpha);
+                ctx.beginPath(); ctx.arc(sx, sy, sSize, 0, Math.PI * 2); ctx.fill();
+            }
+            ctx.globalAlpha = 1.0;
+        }
+
+        // 부유섬 렌더링 함수
+        function drawFloatingIsland(ctx, x, y, w, h) {
+            ctx.save();
+            // 바위 암벽 밑부분 (V자 형태의 깎아지른 절벽 암벽)
+            let rockGrad = ctx.createLinearGradient(x, y, x, y + h + 80);
+            rockGrad.addColorStop(0, '#475569');
+            rockGrad.addColorStop(0.4, '#334155');
+            rockGrad.addColorStop(1, '#0f172a');
+            ctx.fillStyle = rockGrad;
+            ctx.beginPath();
+            ctx.moveTo(x, y + 10);
+            ctx.lineTo(x + w * 0.2, y + h + 45);
+            ctx.lineTo(x + w * 0.5, y + h + 80);
+            ctx.lineTo(x + w * 0.8, y + h + 40);
+            ctx.lineTo(x + w, y + 10);
+            ctx.closePath();
+            ctx.fill();
+
+            // 부유섬 하단 고드름들
+            ctx.fillStyle = 'rgba(224, 242, 254, 0.85)';
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1;
+            [0.15, 0.35, 0.55, 0.75, 0.9].forEach(ratio => {
+                let ix = x + w * ratio;
+                let iy = y + 15;
+                ctx.beginPath();
+                ctx.moveTo(ix - 4, iy);
+                ctx.lineTo(ix + 4, iy);
+                ctx.lineTo(ix, iy + 22);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+            });
+
+            // 상단 설원 평원 (눈 덮인 대지)
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(x - 5, y - 5, w + 10, 22, 10);
+            ctx.fill(); ctx.stroke();
+
+            // 눈 밑 초목 레이어
+            ctx.fillStyle = '#1e3a1e';
+            ctx.beginPath();
+            ctx.roundRect(x, y + 12, w, 10, 4);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // 빙하 폭포수 렌더링
+        function drawGlacialWaterfall(ctx, x, y, w, h) {
+            ctx.save();
+            const now = Date.now();
+            let flowGrad = ctx.createLinearGradient(x, y, x, y + h);
+            flowGrad.addColorStop(0, '#ffffff');
+            flowGrad.addColorStop(0.3, '#38bdf8');
+            flowGrad.addColorStop(0.8, '#0284c7');
+            flowGrad.addColorStop(1, 'rgba(255, 255, 255, 0.1)');
+            ctx.fillStyle = flowGrad;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + w, y);
+            ctx.lineTo(x + w + 4, y + h);
+            ctx.lineTo(x - 4, y + h);
+            ctx.closePath();
+            ctx.fill();
+
+            // 폭포 하단 뭉게구름 안개
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+            let cloudBob = Math.sin(now * 0.005) * 3;
+            ctx.beginPath();
+            ctx.arc(x - 6, y + h + cloudBob, 16, 0, Math.PI*2);
+            ctx.arc(x + w/2, y + h - 4 + cloudBob, 20, 0, Math.PI*2);
+            ctx.arc(x + w + 6, y + h + cloudBob, 16, 0, Math.PI*2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // 눈 덮인 전나무 (침엽수)
+        function drawSnowPineTree(ctx, x, y, scale = 1.0) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+
+            // 갈색 줄기
+            ctx.fillStyle = '#4a2810';
+            ctx.fillRect(-4, -10, 8, 20);
+
+            // 3단 침엽수 잎 & 눈
+            [-10, -25, -40].forEach((ty, idx) => {
+                let tw = 24 - (idx * 5);
+                // 짙은 청록 소나무 잎
+                ctx.fillStyle = '#14532d';
+                ctx.beginPath();
+                ctx.moveTo(-tw, ty);
+                ctx.lineTo(0, ty - 18);
+                ctx.lineTo(tw, ty);
+                ctx.closePath();
+                ctx.fill();
+                // 잎 위에 쌓인 눈
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(-tw + 2, ty - 2);
+                ctx.lineTo(0, ty - 18);
+                ctx.lineTo(tw - 2, ty - 2);
+                ctx.quadraticCurveTo(0, ty - 6, -tw + 2, ty - 2);
+                ctx.closePath();
+                ctx.fill();
+            });
+            ctx.restore();
+        }
+
+        // 고대 화석 발굴 바위
+        function drawFossilRock(ctx, x, y, r) {
+            ctx.save();
+            const now = Date.now();
+            const pulse = Math.sin(now * 0.005) * 3;
+
+            // 바위 그림자
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.beginPath(); ctx.ellipse(x, y + r * 0.8, r * 1.2, r * 0.45, 0, 0, Math.PI*2); ctx.fill();
+
+            // 얼어붙은 바위 덩어리
+            let rGrad = ctx.createRadialGradient(x - 5, y - 5, 4, x, y, r);
+            rGrad.addColorStop(0, '#cbd5e1');
+            rGrad.addColorStop(0.5, '#64748b');
+            rGrad.addColorStop(1, '#334155');
+            ctx.fillStyle = rGrad;
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x - r, y);
+            ctx.lineTo(x - r * 0.7, y - r * 0.8);
+            ctx.lineTo(x, y - r);
+            ctx.lineTo(x + r * 0.8, y - r * 0.6);
+            ctx.lineTo(x + r, y);
+            ctx.lineTo(x + r * 0.6, y + r * 0.7);
+            ctx.lineTo(x - r * 0.5, y + r * 0.7);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            // 바위 표면 얼음 속에 묻힌 황금빛 고대 화석 뼈다귀 모양
+            ctx.fillStyle = '#f1c40f';
+            ctx.shadowColor = '#f1c40f';
+            ctx.shadowBlur = 10 + pulse;
+            ctx.beginPath();
+            ctx.ellipse(x, y - 2, 8, 4, Math.PI / 4, 0, Math.PI*2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 상단 네온 라벨
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.roundRect(x - 45, y - r - 26, 90, 20, 6);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = 'bold 10px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("⛏️ 고대 화석 바위", x, y - r - 16);
+            ctx.restore();
+        }
+
         // 👑 숲의 수호자 원숭이 보스 렌더링 (일반 지형 보스)
         function drawMonkeyBoss(ctx, boss) {
             ctx.save();
@@ -1985,12 +3065,16 @@
             let time = Date.now() * 0.003;
             let pulse = 1 + Math.sin(time * 2.5) * 0.12;
             let isDevil = (bossType === 'devil');
+            let isIceDragon = (bossType === 'ice_dragon');
 
             // 1. 바닥 차원 마법진 & 빛나는 아우라
             let auraGrad = ctx.createRadialGradient(0, 15, 8, 0, 15, 54 * pulse);
             if (isDevil) {
                 auraGrad.addColorStop(0, 'rgba(231, 76, 60, 0.85)');
                 auraGrad.addColorStop(0.4, 'rgba(142, 68, 173, 0.5)');
+            } else if (isIceDragon) {
+                auraGrad.addColorStop(0, 'rgba(56, 189, 248, 0.9)');
+                auraGrad.addColorStop(0.4, 'rgba(2, 132, 199, 0.55)');
             } else {
                 auraGrad.addColorStop(0, 'rgba(155, 89, 182, 0.85)');
                 auraGrad.addColorStop(0.4, 'rgba(52, 152, 219, 0.5)');
@@ -2002,8 +3086,8 @@
             ctx.fill();
 
             // 바닥 미래형 금속 단상 발판
-            ctx.fillStyle = isDevil ? '#201016' : '#2c3e50';
-            ctx.strokeStyle = isDevil ? '#e74c3c' : '#6c5ce7';
+            ctx.fillStyle = isDevil ? '#201016' : (isIceDragon ? '#0f2942' : '#2c3e50');
+            ctx.strokeStyle = isDevil ? '#e74c3c' : (isIceDragon ? '#38bdf8' : '#6c5ce7');
             ctx.lineWidth = 3;
             ctx.beginPath();
             ctx.ellipse(0, 15, 46, 20, 0, 0, Math.PI * 2);
@@ -2013,7 +3097,7 @@
             // 내부 회전 룬 문자 링
             ctx.save();
             ctx.rotate(time * (isDevil ? -0.9 : 0.8));
-            ctx.strokeStyle = isDevil ? '#ff7675' : '#a29bfe';
+            ctx.strokeStyle = isDevil ? '#ff7675' : (isIceDragon ? '#e0f2fe' : '#a29bfe');
             ctx.lineWidth = 2.5;
             ctx.setLineDash([12, 8]);
             ctx.beginPath();
@@ -2028,13 +3112,17 @@
                     colGrad.addColorStop(0, '#201016');
                     colGrad.addColorStop(0.5, '#4a1525');
                     colGrad.addColorStop(1, '#c0392b');
+                } else if (isIceDragon) {
+                    colGrad.addColorStop(0, '#0a192f');
+                    colGrad.addColorStop(0.5, '#1e3a5f');
+                    colGrad.addColorStop(1, '#38bdf8');
                 } else {
                     colGrad.addColorStop(0, '#1e272e');
                     colGrad.addColorStop(0.5, '#34495e');
                     colGrad.addColorStop(1, '#6c5ce7');
                 }
                 ctx.fillStyle = colGrad;
-                ctx.strokeStyle = isDevil ? '#e74c3c' : '#a29bfe';
+                ctx.strokeStyle = isDevil ? '#e74c3c' : (isIceDragon ? '#38bdf8' : '#a29bfe');
                 ctx.lineWidth = 2;
 
                 ctx.beginPath();
@@ -2042,7 +3130,7 @@
                 ctx.fill();
                 ctx.stroke();
 
-                ctx.strokeStyle = isDevil ? '#ff4757' : ((idx === 0) ? '#00cec9' : '#f1c40f');
+                ctx.strokeStyle = isDevil ? '#ff4757' : (isIceDragon ? '#e0f2fe' : ((idx === 0) ? '#00cec9' : '#f1c40f'));
                 ctx.lineWidth = 3;
                 ctx.shadowColor = ctx.strokeStyle;
                 ctx.shadowBlur = 10;
@@ -2052,7 +3140,7 @@
                 ctx.stroke();
                 ctx.shadowBlur = 0;
 
-                ctx.fillStyle = isDevil ? '#ff4757' : ((idx === 0) ? '#00cec9' : '#f1c40f');
+                ctx.fillStyle = isDevil ? '#ff4757' : (isIceDragon ? '#e0f2fe' : ((idx === 0) ? '#00cec9' : '#f1c40f'));
                 ctx.beginPath();
                 ctx.arc(px, -66, 7 * pulse, 0, Math.PI * 2);
                 ctx.fill();
@@ -2064,6 +3152,10 @@
                 portalGrad.addColorStop(0, '#ffffff');
                 portalGrad.addColorStop(0.3, '#ff4757');
                 portalGrad.addColorStop(0.7, '#8e44ad');
+            } else if (isIceDragon) {
+                portalGrad.addColorStop(0, '#ffffff');
+                portalGrad.addColorStop(0.3, '#38bdf8');
+                portalGrad.addColorStop(0.7, '#0284c7');
             } else {
                 portalGrad.addColorStop(0, '#ffffff');
                 portalGrad.addColorStop(0.3, '#00cec9');
@@ -2071,7 +3163,7 @@
             }
             portalGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
             ctx.fillStyle = portalGrad;
-            ctx.shadowColor = isDevil ? '#ff4757' : '#00cec9';
+            ctx.shadowColor = isDevil ? '#ff4757' : (isIceDragon ? '#38bdf8' : '#00cec9');
             ctx.shadowBlur = 25;
             ctx.beginPath();
             ctx.ellipse(0, -25, 22 * pulse, 45 * pulse, 0, 0, Math.PI * 2);
@@ -2096,10 +3188,10 @@
             let bob = Math.sin(time * 2) * 4;
             ctx.translate(0, -90 + bob);
 
-            ctx.fillStyle = isDevil ? 'rgba(30, 10, 18, 0.95)' : 'rgba(15, 12, 34, 0.92)';
-            ctx.strokeStyle = isDevil ? '#e74c3c' : '#a29bfe';
+            ctx.fillStyle = isDevil ? 'rgba(30, 10, 18, 0.95)' : (isIceDragon ? 'rgba(10, 25, 48, 0.95)' : 'rgba(15, 12, 34, 0.92)');
+            ctx.strokeStyle = isDevil ? '#e74c3c' : (isIceDragon ? '#38bdf8' : '#a29bfe');
             ctx.lineWidth = 2.5;
-            ctx.shadowColor = isDevil ? '#e74c3c' : '#6c5ce7';
+            ctx.shadowColor = isDevil ? '#e74c3c' : (isIceDragon ? '#38bdf8' : '#6c5ce7');
             ctx.shadowBlur = 12;
             ctx.beginPath();
             ctx.roundRect(-68, -20, 136, 38, 8);
@@ -2117,6 +3209,16 @@
                 ctx.fillStyle = '#f1c40f';
                 ctx.font = 'bold 11px Arial';
                 ctx.fillText("토요일 10시 공개!", 0, 9);
+            } else if (isIceDragon) {
+                ctx.fillStyle = '#38bdf8';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("🐉 얼음의 협곡 보스", 0, -6);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10.5px Arial';
+                ctx.fillText("❄️ [고대 서리룡]", 0, 9);
             } else {
                 ctx.fillStyle = '#ffffff';
                 ctx.font = 'bold 12px Arial';
@@ -3967,19 +5069,22 @@
         function startEarthMonkeyInvasion() {
             adminGorillaStoryStage = 'earth_monkeys_invading';
             storyPlayerHp = 1000;
+            monkeyAttackWave = 0;
+            monkeyAttackTimer = 0;
             invadingMonkeys = [];
             for (let i = 0; i < 10; i++) {
                 invadingMonkeys.push({
                     id: i,
-                    x: 70 + (i * 50) + (Math.random() * 20 - 10),
-                    y: 1350 + (Math.random() * 80),
-                    speed: 4.2 + (Math.random() * 1.6),
+                    x: 60 + (i * 52) + (Math.random() * 20 - 10),
+                    y: 1380 + (Math.random() * 80),
+                    speed: 1.6 + (Math.random() * 0.4), // 천천히 긴장감 있게 올라오도록 조정
                     facing: 1,
                     state: 'rushing',
-                    walkTimer: Math.floor(Math.random() * 20)
+                    walkTimer: Math.floor(Math.random() * 20),
+                    screechCooldown: Math.floor(Math.random() * 50)
                 });
             }
-            floatTexts.push({ x: 300, y: player.y - 120, text: `🚨 [비상 경보] 할로윈 지형에서 광분한 원숭이 10마리가 지상으로 쇄도합니다!!`, color: '#ff0055', life: 140, size: 21 });
+            floatTexts.push({ x: 300, y: player.y - 120, text: `🚨 [긴급 경보] 할로윈 지형 깊은 곳에서 광분한 원숭이 10마리가 기어올라오고 있습니다!!`, color: '#ff0055', life: 200, size: 21 });
         }
 
         function updateEarthMonkeyInvasion() {
@@ -3987,41 +5092,76 @@
                 let reachedCount = 0;
                 invadingMonkeys.forEach(m => {
                     m.walkTimer++;
+                    m.screechCooldown = (m.screechCooldown || 0) + 1;
+                    if (m.screechCooldown > 80 && Math.random() < 0.25) {
+                        m.screechCooldown = 0;
+                        floatTexts.push({ x: m.x, y: m.y - 25, text: `끼에에엑!!`, color: '#ff4757', life: 40, size: 13 });
+                    }
+
                     let dx = player.x - m.x;
                     let dy = player.y - m.y;
                     let dist = Math.hypot(dx, dy);
-                    if (dist > 45) {
+                    if (dist > 55) {
                         m.x += (dx / dist) * m.speed;
                         m.y += (dy / dist) * m.speed;
                         m.facing = dx > 0 ? 1 : -1;
                     } else {
                         reachedCount++;
-                        if (Math.random() < 0.3) {
-                            slashEffects.push({ x: player.x + (Math.random()*40 - 20), y: player.y + (Math.random()*40 - 20), life: 12 });
-                        }
+                        // 플레이어 주변을 포위하며 선회
+                        let ang = (Date.now() * 0.003) + (m.id * (Math.PI / 5));
+                        let targetCircleX = player.x + Math.cos(ang) * 50;
+                        let targetCircleY = player.y + Math.sin(ang) * 40;
+                        m.x += (targetCircleX - m.x) * 0.1;
+                        m.y += (targetCircleY - m.y) * 0.1;
+                        m.facing = (player.x > m.x) ? 1 : -1;
                     }
                 });
 
-                if (reachedCount >= 3 || invadingMonkeys.some(m => Math.hypot(player.x - m.x, player.y - m.y) < 45)) {
-                    // 원숭이들의 광분 공격! 체력 1000 -> 150 급감
-                    storyPlayerHp = 150;
-                    for (let k = 0; k < 10; k++) {
-                        slashEffects.push({ x: player.x + (Math.random()*60 - 30), y: player.y + (Math.random()*60 - 30), life: 18 });
+                // 원숭이들이 포위 후 3단계 웨이브로 천천히 연타 공격
+                if (reachedCount >= 4 || invadingMonkeys.some(m => Math.hypot(player.x - m.x, player.y - m.y) < 55)) {
+                    monkeyAttackTimer++;
+
+                    // 1차 공격 (40프레임): 1000 -> 700
+                    if (monkeyAttackTimer === 40) {
+                        storyPlayerHp = 700;
+                        for (let k = 0; k < 6; k++) {
+                            slashEffects.push({ x: player.x + (Math.random()*50 - 25), y: player.y + (Math.random()*50 - 25), life: 16 });
+                        }
+                        floatTexts.push({ x: player.x, y: player.y - 80, text: `💥 1차 집단 할퀴기! (HP: 1000 ➔ 700)`, color: '#ff7675', life: 75, size: 20 });
                     }
-                    floatTexts.push({ x: player.x, y: player.y - 90, text: `💥 원숭이들의 광분 습격! HP 1000 ➔ 150 급감!!`, color: '#ff0055', life: 90, size: 22 });
-                    
-                    adminGorillaStoryStage = 'earth_mad_doctor_rescues';
-                    madDoctor.x = player.x - 90;
-                    madDoctor.y = player.y - 10;
-                    madDoctor.facing = 1;
-                    madDoctor.state = 'teleporting_in';
-                    madDoctor.timer = 0;
-                    madDoctor.lasers = [];
-                    floatTexts.push({ x: madDoctor.x, y: madDoctor.y - 70, text: `⚡ 찌릿찌릿!! 미친 박사 차원 도약 난입!!`, color: '#a29bfe', life: 90, size: 21 });
+
+                    // 2차 공격 (120프레임): 700 -> 400
+                    if (monkeyAttackTimer === 120) {
+                        storyPlayerHp = 400;
+                        for (let k = 0; k < 8; k++) {
+                            slashEffects.push({ x: player.x + (Math.random()*60 - 30), y: player.y + (Math.random()*60 - 30), life: 18 });
+                        }
+                        floatTexts.push({ x: player.x, y: player.y - 80, text: `💥 2차 광분 물어뜯기! (HP: 700 ➔ 400)`, color: '#ff4757', life: 75, size: 21 });
+                    }
+
+                    // 3차 공격 (200프레임): 400 -> 150
+                    if (monkeyAttackTimer === 200) {
+                        storyPlayerHp = 150;
+                        for (let k = 0; k < 12; k++) {
+                            slashEffects.push({ x: player.x + (Math.random()*70 - 35), y: player.y + (Math.random()*70 - 35), life: 20 });
+                        }
+                        floatTexts.push({ x: player.x, y: player.y - 90, text: `💥 3차 전원 총공격! (HP: 400 ➔ 150 빈사 위기!)`, color: '#ff0055', life: 90, size: 23 });
+
+                        adminGorillaStoryStage = 'earth_mad_doctor_rescues';
+                        madDoctor.x = player.x - 90;
+                        madDoctor.y = player.y - 10;
+                        madDoctor.facing = 1;
+                        madDoctor.state = 'teleporting_in';
+                        madDoctor.timer = 0;
+                        madDoctor.lasers = [];
+                        floatTexts.push({ x: madDoctor.x, y: madDoctor.y - 70, text: `⚡ 찌지직... 차원 균열 감지! 공간 왜곡 발생!`, color: '#a29bfe', life: 90, size: 20 });
+                    }
                 }
             } else if (adminGorillaStoryStage === 'earth_mad_doctor_rescues') {
                 madDoctor.timer++;
-                if (madDoctor.timer < 35) {
+
+                // 1단계: 차원문 개방 및 스파크 (0 ~ 80프레임)
+                if (madDoctor.timer < 80) {
                     for (let i = 0; i < 2; i++) {
                         labSparks.push({
                             x: madDoctor.x + (Math.random() * 40 - 20),
@@ -4029,31 +5169,45 @@
                             vx: (Math.random() - 0.5) * 4,
                             vy: (Math.random() - 0.5) * 4,
                             color: '#a29bfe',
-                            life: 20
+                            life: 25
                         });
                     }
-                } else if (madDoctor.timer === 35) {
-                    // 미친 박사의 플라즈마 전격파! 원숭이 10마리 전멸
-                    invadingMonkeys.forEach(m => {
-                        madDoctor.lasers.push({
-                            x1: madDoctor.x + (madDoctor.facing * 18),
-                            y1: madDoctor.y - 10,
-                            x2: m.x,
-                            y2: m.y,
-                            life: 25,
-                            color: '#a29bfe'
-                        });
-                        for (let i = 0; i < 6; i++) {
-                            let a = Math.random() * Math.PI * 2;
-                            let sp = Math.random() * 4 + 2;
-                            labSparks.push({ x: m.x, y: m.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: '#f1c40f', life: 25 });
-                        }
-                        floatTexts.push({ x: m.x, y: m.y - 40, text: `⚡ -9999!`, color: '#a29bfe', life: 40, size: 18 });
+                    if (madDoctor.timer === 40) {
+                        floatTexts.push({ x: madDoctor.x, y: madDoctor.y - 80, text: `⚡ 미친 박사 등장: "괴물 녀석들아, 거기서 멈춰라!!"`, color: '#a29bfe', life: 80, size: 21 });
+                    }
+                }
+                // 2단계: 캐논 에너지 충전 (80 ~ 150프레임)
+                else if (madDoctor.timer === 100) {
+                    floatTexts.push({ x: madDoctor.x, y: madDoctor.y - 70, text: `⚡ 플라즈마 융합 캐논 에너지 충전 중... (100%)`, color: '#00f2fe', life: 60, size: 19 });
+                }
+                // 3단계: 연쇄 전격 발사 (150프레임)
+                else if (madDoctor.timer === 150) {
+                    invadingMonkeys.forEach((m, idx) => {
+                        setTimeout(() => {
+                            madDoctor.lasers.push({
+                                x1: madDoctor.x + (madDoctor.facing * 18),
+                                y1: madDoctor.y - 10,
+                                x2: m.x,
+                                y2: m.y,
+                                life: 30,
+                                color: '#a29bfe'
+                            });
+                            for (let i = 0; i < 8; i++) {
+                                let a = Math.random() * Math.PI * 2;
+                                let sp = Math.random() * 4 + 2;
+                                labSparks.push({ x: m.x, y: m.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: '#f1c40f', life: 30 });
+                            }
+                            floatTexts.push({ x: m.x, y: m.y - 40, text: `⚡ -9999!`, color: '#a29bfe', life: 40, size: 18 });
+                        }, idx * 60);
                     });
-                    floatTexts.push({ x: madDoctor.x, y: madDoctor.y - 90, text: `⚡ 닥터의 플라즈마 전격파! 원숭이 전원 섬멸!`, color: '#00f2fe', life: 80, size: 22 });
-                } else if (madDoctor.timer === 75) {
+                    floatTexts.push({ x: madDoctor.x, y: madDoctor.y - 90, text: `⚡ 닥터의 플라즈마 연쇄 전격파 발사!!`, color: '#00f2fe', life: 80, size: 22 });
+                }
+                // 4단계: 원숭이 소멸 및 마무리 (240프레임)
+                else if (madDoctor.timer === 240) {
                     invadingMonkeys = [];
                     madDoctor.lasers = [];
+                    floatTexts.push({ x: madDoctor.x, y: madDoctor.y - 70, text: `👨‍🔬 미친 박사: "휴... 간발의 차였군. 자네 괜찮은가?"`, color: '#ffeaa7', life: 70, size: 20 });
+                } else if (madDoctor.timer === 270) {
                     openMadDoctorModal();
                 }
             }
@@ -4110,6 +5264,98 @@
             }, 1800);
         }
 
+        // 🔮 미친 박사의 할로윈 텔레포터 설치 및 순간이동 비콘 렌더링
+        function drawHalloweenTeleporterBeacon(ctx, x, y) {
+            ctx.save();
+            const now = Date.now();
+            const floatBob = Math.sin(now * 0.004) * 4;
+
+            // 바닥 마법진
+            ctx.strokeStyle = '#a29bfe';
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = '#6c5ce7';
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(x, y + 15, 38, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#f1c40f';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(x, y + 15, 26, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 수직 에너지 빛기둥
+            let beamGrad = ctx.createLinearGradient(x, y + 15, x, y - 70);
+            beamGrad.addColorStop(0, 'rgba(162, 155, 254, 0.45)');
+            beamGrad.addColorStop(0.7, 'rgba(241, 196, 15, 0.25)');
+            beamGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            ctx.fillStyle = beamGrad;
+            ctx.fillRect(x - 20, y - 70, 40, 85);
+
+            // 홀로그램 코어 장치
+            ctx.fillStyle = '#6c5ce7';
+            ctx.beginPath();
+            ctx.roundRect(x - 14, y - 25 + floatBob, 28, 20, 6);
+            ctx.fill();
+            ctx.strokeStyle = '#00f2fe';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 코어 센서 불빛
+            ctx.fillStyle = '#00f2fe';
+            ctx.shadowColor = '#00f2fe';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.arc(x - 6, y - 15 + floatBob, 3, 0, Math.PI * 2);
+            ctx.arc(x + 6, y - 15 + floatBob, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 네온 타이틀
+            ctx.fillStyle = 'rgba(18, 12, 32, 0.9)';
+            ctx.strokeStyle = '#a29bfe';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(x - 85, y - 56 + floatBob, 170, 22, 6);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#f1c40f';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("🔮 미친 박사의 할로윈 텔레포터", x, y - 45 + floatBob);
+            ctx.restore();
+        }
+
+        function teleportToHalloweenZone() {
+            if (!hasHalloweenTeleporter) return;
+            let targetX = halloweenTeleporterBeacon.placed ? halloweenTeleporterBeacon.x : 300;
+            let targetY = halloweenTeleporterBeacon.placed ? halloweenTeleporterBeacon.y : 1350;
+            player.x = targetX;
+            player.y = targetY;
+            cameraY = targetY - 400;
+            player.vx = 0; player.vy = 0; player.targetTree = null;
+            for (let i = 0; i < 20; i++) {
+                let a = Math.random() * Math.PI * 2;
+                let sp = Math.random() * 5 + 2;
+                labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: '#f1c40f', life: 30 });
+            }
+            floatTexts.push({ x: player.x, y: player.y - 80, text: `⚡ [할로윈 텔레포트] 할로윈 지형 도착!`, color: '#f1c40f', life: 80, size: 20 });
+        }
+
+        function adminToggleHalloweenTeleporter() {
+            if (!isAdmin()) return;
+            hasHalloweenTeleporter = true;
+            try { localStorage.setItem('has_halloween_teleporter', 'true'); } catch(e) {}
+            if (!inventory['미친 박사의 할로윈 텔레포터']) inventory['미친 박사의 할로윈 텔레포터'] = 0;
+            inventory['미친 박사의 할로윈 텔레포터'] = 1;
+            saveGame();
+            closeAdminPanelModal();
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🔮 [관리자] 미친 박사의 할로윈 텔레포터 도구 획득!', color: '#f1c40f', life: 100, size: 20 });
+            alert("🔮 [미친 박사의 할로윈 텔레포터 획득 완료!]\n\n하단 버튼 [🔮 할로윈 텔레포터]를 누르거나 할로윈 지형(Y: 1000~1700)으로 가면 도구를 설치할 수 있으며,\n할로윈 지형 아무 곳이나 클릭하면 그 좌표로 즉시 순간이동합니다!");
+        }
+
         function adminStartGorillaStoryQuest() {
             if (!isAdmin()) return;
             closeAdminPanelModal();
@@ -4119,6 +5365,8 @@
             adminGorillaStoryStage = 'lab_phase1';
             storyPlayerHp = 1000;
             finalBattleHitCount = 0;
+            monkeyAttackWave = 0;
+            monkeyAttackTimer = 0;
             alienQuestDone = false;
             try { localStorage.removeItem('alien_quest_done'); } catch(e) {}
             if (!inventory['쪽지 조각']) inventory['쪽지 조각'] = 0;
@@ -4666,20 +5914,32 @@
                     // 퀀텀 노바 대폭발! 두 보스 완전 소멸
                     infectedGorilla.hp = 0;
                     rebelAlienScientistBoss.hp = 0;
-                    for (let i = 0; i < 60; i++) {
+                    for (let i = 0; i < 70; i++) {
                         let a = Math.random() * Math.PI * 2;
                         let sp = Math.random() * 8 + 3;
-                        labSparks.push({ x: 300, y: 440, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#f1c40f' : '#a29bfe'), life: 50 });
-                        labShards.push({ x: 300, y: 440, vx: Math.cos(a)*(sp*0.8), vy: Math.sin(a)*(sp*0.8), size: Math.random()*5 + 3, life: 60 });
+                        labSparks.push({ x: 300, y: 440, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#f1c40f' : '#a29bfe'), life: 55 });
+                        labShards.push({ x: 300, y: 440, vx: Math.cos(a)*(sp*0.8), vy: Math.sin(a)*(sp*0.8), size: Math.random()*5 + 3, life: 65 });
                     }
-                    floatTexts.push({ x: 300, y: 340, text: `💥💥 퀀텀 자폭 노바 발동! 두 보스 완전 소멸 (-99999)!`, color: '#f1c40f', life: 120, size: 25 });
+                    floatTexts.push({ x: 300, y: 340, text: `💥💥 퀀텀 자폭 노바 발동! 두 보스 완전 소멸 (-99999)!`, color: '#f1c40f', life: 130, size: 25 });
                 }
 
-                if (alienLabTimer === 100) {
-                    floatTexts.push({ x: 300, y: 520, text: `🕊️ 미친 박사: "자네는 살아남아라... 이것이 내 인생 최고의 연구다...!"`, color: '#ffeaa7', life: 100, size: 20 });
+                if (alienLabTimer === 120) {
+                    floatTexts.push({ x: 300, y: 520, text: `🕊️ 미친 박사: "크윽... 자네는 반드시 살아남아라... 이것이 내 인생 최고의 연구다...!"`, color: '#ffeaa7', life: 110, size: 20 });
                 }
 
-                if (alienLabTimer > 160) {
+                if (alienLabTimer === 220) {
+                    floatTexts.push({ x: 300, y: 520, text: `🔮 미친 박사: "...내 마지막 연구 결과물인 [할로윈 텔레포터] 도구를 건네주마...!"`, color: '#a29bfe', life: 110, size: 20 });
+                }
+
+                if (alienLabTimer === 320) {
+                    floatTexts.push({ x: 300, y: 520, text: `🔮 미친 박사: "이 도구를 할로윈 지형에 설치하면... 클릭하는 곳으로 즉시 공간 도약을 할 수 있을 걸세..."`, color: '#f1c40f', life: 110, size: 19 });
+                }
+
+                if (alienLabTimer === 420) {
+                    floatTexts.push({ x: 300, y: 520, text: `🕊️ 미친 박사: "이제 작별이다, 용감한 탐험가여... 지상으로 무사히 귀환하라...!!"`, color: '#ffeaa7', life: 110, size: 20 });
+                }
+
+                if (alienLabTimer > 520) {
                     // 플레이어 보호막 감싸여 일반 지상으로 안전 귀환
                     inAlienLab = false;
                     player.x = 300;
@@ -4691,13 +5951,20 @@
                     adminGorillaStoryStage = 'completed';
                     alienQuestDone = true;
                     try { localStorage.setItem('alien_quest_done', 'true'); } catch(e) {}
+
+                    // 🔮 미친 박사의 할로윈 텔레포터 도구 지급
+                    hasHalloweenTeleporter = true;
+                    try { localStorage.setItem('has_halloween_teleporter', 'true'); } catch(e) {}
+                    if (!inventory['미친 박사의 할로윈 텔레포터']) inventory['미친 박사의 할로윈 텔레포터'] = 0;
+                    inventory['미친 박사의 할로윈 텔레포터'] = 1;
+                    updateUserBadgeUI();
                     saveGame();
                     setBossRoomHUDVisible(true);
 
                     setTimeout(() => {
-                        alert("🏆 [스토리 클리어 - 미친 박사의 숭고한 희생]\n\n미친 박사의 자폭 희생으로 '감염된 고릴라'와 '반란의 외계 과학자'를 모두 처치하고 전 우주를 구했습니다!\n\n미친 박사의 마지막 양자 보호막에 감싸여 일반 지상 마을로 무사히 귀환했습니다.");
-                        floatTexts.push({ x: player.x, y: player.y - 100, text: `🏆 우주 반란 분쇄 성공! 지상으로 무사 귀환!`, color: '#00cec9', life: 140, size: 22 });
-                    }, 300);
+                        alert("🏆 [스토리 클리어 - 미친 박사의 숭고한 희생]\n\n미친 박사의 자폭 희생으로 외계 보스들을 모두 처치하고 전 우주를 구했습니다!\n\n🔮 미친 박사의 유품: [미친 박사의 할로윈 텔레포터] 도구 획득!\n\n- 할로윈 지형 아무 곳이나 클릭하면 그 좌표로 즉시 순간이동하고 비콘을 설치합니다.\n- 하단 [🔮 할로윈] HUD 버튼을 눌러 언제든 해당 위치로 즉시 이동할 수 있습니다.");
+                        floatTexts.push({ x: player.x, y: player.y - 100, text: `🏆 우주 반란 분쇄 성공! [할로윈 텔레포터] 획득!`, color: '#f1c40f', life: 140, size: 22 });
+                    }, 400);
                 }
             }
         }
@@ -4843,6 +6110,57 @@
             if (tpHalDist < 75 || (isSpacebar && tpHalPlayerDist < 90)) {
                 openBossPortalModal();
                 return;
+            }
+
+            // 🐉 3. 얼음의 협곡 고차원 텔레포트 (x: 515, y: -3640) -> 고대 서리룡 보스전 직행
+            if (typeof teleporterIceDragon !== 'undefined') {
+                let tpIceDist = Math.hypot(cx - teleporterIceDragon.x, cy - teleporterIceDragon.y);
+                let tpIcePlayerDist = Math.hypot(player.x - teleporterIceDragon.x, player.y - teleporterIceDragon.y);
+                if (tpIceDist < 75 || (isSpacebar && tpIcePlayerDist < 90)) {
+                    enterBossDimension('ice_dragon');
+                    return;
+                }
+            }
+
+            // 🦴 고대 화석 발굴 바위 클릭 감지 (얼음의 협곡 부유섬)
+            if (typeof iceCanyonFossilRocks !== 'undefined') {
+                for (let rock of iceCanyonFossilRocks) {
+                    let rDist = Math.hypot(cx - rock.x, cy - rock.y);
+                    let rPlayerDist = Math.hypot(player.x - rock.x, player.y - rock.y);
+                    if (rDist < rock.radius + 35 || (isSpacebar && rPlayerDist < 90)) {
+                        excavateFossilAtSpot(rock.x, rock.y);
+                        return;
+                    }
+                }
+            }
+
+            // 🔮 미친 박사의 할로윈 텔레포터: 할로윈 지형 아무데나 클릭 시 순간이동 및 비콘 설치
+            if (hasHalloweenTeleporter && !isSpacebar && cy >= 950 && cy <= 2600) {
+                let isShopOrFuse = false;
+                for (let shop of shops) {
+                    if (cx > shop.x - 20 && cx < shop.x + 200 && cy > shop.y && cy < shop.y + 210) { isShopOrFuse = true; break; }
+                }
+                if (typeof fuseBuilding !== 'undefined') {
+                    if (cx > fuseBuilding.x - 20 && cx < fuseBuilding.x + fuseBuilding.width + 20 && cy > fuseBuilding.y && cy < fuseBuilding.y + fuseBuilding.height + 20) isShopOrFuse = true;
+                }
+                if (!isShopOrFuse) {
+                    halloweenTeleporterBeacon.placed = true;
+                    halloweenTeleporterBeacon.x = Math.max(40, Math.min(GAME_WIDTH - 40, cx));
+                    halloweenTeleporterBeacon.y = cy;
+                    try { localStorage.setItem('halloween_teleporter_beacon', JSON.stringify(halloweenTeleporterBeacon)); } catch(e) {}
+                    
+                    player.x = halloweenTeleporterBeacon.x;
+                    player.y = halloweenTeleporterBeacon.y;
+                    cameraY = halloweenTeleporterBeacon.y - 400;
+                    player.vx = 0; player.vy = 0; player.targetTree = null;
+                    for (let i = 0; i < 20; i++) {
+                        let a = Math.random() * Math.PI * 2;
+                        let sp = Math.random() * 5 + 2;
+                        labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: '#f1c40f', life: 30 });
+                    }
+                    floatTexts.push({ x: player.x, y: player.y - 80, text: `🔮 [할로윈 도구] 클릭 좌표로 즉시 순간이동!`, color: '#f1c40f', life: 80, size: 20 });
+                    return;
+                }
             }
 
             // 🏆 랭킹 보드 클릭 감지 (일반 나무 왼쪽)
@@ -5626,6 +6944,11 @@
 
         function getItemColor(itemName) {
             if (itemName === '쪽지 조각') return '#f1c40f';
+            if (itemName === '미친 박사의 할로윈 텔레포터') return '#a29bfe';
+            if (typeof FOSSIL_ITEMS !== 'undefined') {
+                const fossil = FOSSIL_ITEMS.find(f => f.name === itemName);
+                if (fossil) return fossil.color;
+            }
             let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '').replace('동굴 ', '').replace('할로윈 ', '');
             let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables];
             for (let t of tables) {
@@ -5815,6 +7138,7 @@
             { id: 'mad_scientist', name: '매드 사이언티스트', price: 0, icon: '🥼', isReward: true },
             { id: 'archaeologist', name: '고고학자', price: 0, icon: '🤠', isReward: true },
             { id: 'reaper', name: '사신', price: 0, icon: '💀', isReward: true },
+            { id: 'penguin', name: '꼬마 펭귄', price: 15000, icon: '🐧' },
             { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, adminOnly: true },
             { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true }
         ];
@@ -6219,6 +7543,14 @@
             });
             // 쪽지 조각 99개
             adminInventory['쪽지 조각'] = 99;
+            adminInventory['미친 박사의 할로윈 텔레포터'] = 1;
+
+            // 모든 20종 고대 화석 각 99개 충전
+            if (typeof FOSSIL_ITEMS !== 'undefined') {
+                FOSSIL_ITEMS.forEach(f => {
+                    adminInventory[f.name] = 99;
+                });
+            }
 
             const allSkinIds = skinsData.map(s => s.id);
 
@@ -6235,6 +7567,7 @@
                 fishCollection: [...oceanFishNames],
                 radioactiveCollection: [...baseFruitNames],
                 caveCollection: [...caveStoneNames],
+                fossilCollection: (typeof FOSSIL_ITEMS !== 'undefined') ? FOSSIL_ITEMS.map(f => f.name) : [],
                 rocketLaunched: true,
                 fuseSlots: [null, null, null],
                 activeFuseStartTime: 0,
@@ -6311,6 +7644,13 @@
             fishCollection = [...data.fishCollection];
             radioactiveCollection = [...data.radioactiveCollection];
             caveCollection = [...data.caveCollection];
+            if (typeof FOSSIL_ITEMS !== 'undefined') {
+                fossilCollection = FOSSIL_ITEMS.map(f => f.name);
+                try { localStorage.setItem('fossil_collection', JSON.stringify(fossilCollection)); } catch(e) {}
+            }
+            hasHalloweenTeleporter = true;
+            try { localStorage.setItem('has_halloween_teleporter', 'true'); } catch(e) {}
+            updateUserBadgeUI();
             level = 10000;
             maxXp = 100000000;
             xp = 0;
@@ -6327,7 +7667,50 @@
             saveGame();
             closeAdminPanelModal();
             floatTexts.push({ x: player.x, y: player.y - 80, text: '🎒 풀세팅 & 아이템 999개 충전 완료!', color: '#f1c40f', life: 100, size: 20 });
-            alert('👑 [adminaccount] 모든 과일, 암석, 물고기, 호박이 999개로 충전되었습니다!\n모든 도끼(고대 도끼), 15종 스킨(포지 하우스, 포지 케이크 포함), LV. 10000, 무한 골드가 완벽 적용되었습니다.');
+            alert('👑 [adminaccount] 모든 과일, 암석, 물고기, 호박, 20종 고대 화석이 999개로 충전되었습니다!\n모든 도끼(고대 도끼), 전 스킨(펭귄, 포지 하우스, 포지 케이크 포함), LV. 10000, 무한 골드가 완벽 적용되었습니다.');
+        }
+
+        function adminWarpToIceCanyon() {
+            if (!isAdmin()) return;
+            closeAdminPanelModal();
+            if (inBossRoom) exitBossDimension();
+            if (inPvpArena) exitPvpArena();
+            player.x = 300;
+            player.y = -3650;
+            cameraY = -3800;
+            player.targetTree = null;
+            player.vx = 0; player.vy = 0;
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '❄️ 얼음의 협곡(부유섬 & 고대 화석 발굴지)으로 워프!', color: '#38bdf8', life: 100, size: 20 });
+        }
+
+        function adminEnterIceDragonBoss() {
+            if (!isAdmin()) return;
+            closeAdminPanelModal();
+            enterBossDimension('ice_dragon');
+        }
+
+        function adminRefillAllFossils() {
+            if (!isAdmin()) return;
+            closeAdminPanelModal();
+            FOSSIL_ITEMS.forEach(item => {
+                if (!inventory[item.name]) inventory[item.name] = 0;
+                inventory[item.name] += 99;
+                if (!fossilCollection.includes(item.name)) fossilCollection.push(item.name);
+            });
+            try { localStorage.setItem('fossil_collection', JSON.stringify(fossilCollection)); } catch(e) {}
+            saveGame();
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🦴 [관리자] 20종 고대 화석 전원 충전 및 도감 완료!', color: '#38bdf8', life: 100, size: 20 });
+            alert('🦴 [화석 도감 올클리어!]\n20종 고대 화석이 각 99개씩 충전되었으며, 화석 도감에 100% 등록되었습니다!\n하단 [도감] 버튼에서 확인해보세요.');
+        }
+
+        function adminEquipPenguinSkin() {
+            if (!isAdmin()) return;
+            closeAdminPanelModal();
+            if (!ownedSkins.includes('penguin')) ownedSkins.push('penguin');
+            useSkin = 'penguin';
+            updateInvSkinUI();
+            saveGame();
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🐧 [관리자] 꼬마 펭귄 스킨 장착 완료!', color: '#38bdf8', life: 100, size: 20 });
         }
 
         function adminEquipForgeHouse() {
@@ -8102,6 +9485,11 @@
             const badgeText = document.getElementById('user-status-text');
             const badgeEl = document.getElementById('user-profile-badge');
             const adminBtn = document.getElementById('admin-panel-btn');
+            const halloweenBtn = document.getElementById('halloween-teleport-hud-btn');
+
+            if (halloweenBtn) {
+                halloweenBtn.style.display = hasHalloweenTeleporter ? 'flex' : 'none';
+            }
 
             if (isAdmin()) {
                 if (badgeText) badgeText.innerText = '👑 ADMIN';
@@ -8110,7 +9498,7 @@
                     badgeEl.style.background = 'linear-gradient(135deg, rgba(241, 196, 15, 0.35), rgba(230, 126, 34, 0.35))';
                     badgeEl.title = `최고 관리자 계정 (${currentUser})`;
                 }
-                if (adminBtn) adminBtn.style.display = 'inline-block';
+                if (adminBtn) adminBtn.style.display = 'flex';
             } else if (currentUser) {
                 if (badgeText) badgeText.innerText = currentUser;
                 if (badgeEl) {
@@ -9246,6 +10634,11 @@
                             let dropCount = Math.floor(Math.random() * (tree.drops[1] - tree.drops[0] + 1)) + tree.drops[0];
                             for(let i=0; i<dropCount; i++) spawnFruit(tree.x, tree.y, tree.type);
 
+                            // ❄️ 얼음의 협곡 얼음 나무 벌목 시 50% 확률로 고대 화석 발굴 드롭!
+                            if (tree.type === 'ice' && Math.random() < 0.5) {
+                                excavateFossilAtSpot(tree.x, tree.y, true);
+                            }
+
                             // 쪽지가 심어진 일반 나무 벌목 카운트 (3번 완전히 부수면 쪽지 조각 드롭)
                             if (noteEmbedded && tree.id === 'normal') {
                                 noteTreeHits++;
@@ -9560,6 +10953,73 @@
                 // 후드 옷깃 장식
                 ctx.fillStyle = '#1e1e24';
                 ctx.beginPath(); ctx.ellipse(0, -8, 14, 5, 0, 0, Math.PI*2); ctx.fill();
+
+            } else if (useSkin === 'penguin') {
+                // 🐧 꼬마 펭귄 스킨: 귀여운 아기 펭귄 (통통한 몸매, 배 하얀 털, 주황 부리와 발, 빨간 목도리)
+                ctx.fillStyle = 'rgba(0,0,0,0.25)';
+                ctx.beginPath(); ctx.ellipse(0, 20, 16, 6, 0, 0, Math.PI*2); ctx.fill();
+                ctx.translate(0, -bobbing);
+
+                // 주황색 물갈퀴 발 (뒤뚱뒤뚱 걷기 애니메이션)
+                let fAngle = (walkAngle * Math.PI) / 180;
+                ctx.fillStyle = '#ff9f43';
+                // 왼발
+                ctx.save(); ctx.translate(-7, 14); ctx.rotate(fAngle);
+                ctx.beginPath(); ctx.ellipse(0, 4, 6, 3.5, 0, 0, Math.PI*2); ctx.fill(); ctx.restore();
+                // 오른발
+                ctx.save(); ctx.translate(7, 14); ctx.rotate(-fAngle);
+                ctx.beginPath(); ctx.ellipse(0, 4, 6, 3.5, 0, 0, Math.PI*2); ctx.fill(); ctx.restore();
+
+                // 검정색 통통한 몸통 & 머리 (일체형 라운드 바디)
+                ctx.fillStyle = '#1e272e';
+                ctx.beginPath(); ctx.ellipse(0, 2, 16, 17, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(0, -14, 13, 0, Math.PI*2); ctx.fill();
+
+                // 배 하얀 털 부분 (둥근 타원형)
+                ctx.fillStyle = '#f5f6fa';
+                ctx.beginPath(); ctx.ellipse(0, 4, 10, 13, 0, 0, Math.PI*2); ctx.fill();
+
+                // 얼굴 하얀 눈가 패치
+                ctx.beginPath(); ctx.ellipse(-4 + (facing * 1.5), -14, 4.5, 5.5, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(4 + (facing * 1.5), -14, 4.5, 5.5, 0, 0, Math.PI*2); ctx.fill();
+
+                // 깜찍한 큰 눈동자 & 반짝이는 하이라이트
+                ctx.fillStyle = '#1e272e';
+                ctx.beginPath(); ctx.arc(-4 + (facing * 2.5), -14, 2.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(4 + (facing * 2.5), -14, 2.5, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(-4 + (facing * 2.5) + 0.8, -15, 1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(4 + (facing * 2.5) + 0.8, -15, 1, 0, Math.PI*2); ctx.fill();
+
+                // 볼터치 핑크
+                ctx.fillStyle = 'rgba(255, 107, 129, 0.45)';
+                ctx.beginPath(); ctx.arc(-8 + (facing * 1.5), -11, 2.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(8 + (facing * 1.5), -11, 2.5, 0, Math.PI*2); ctx.fill();
+
+                // 주황색 부리
+                ctx.fillStyle = '#ff9f43';
+                ctx.beginPath();
+                ctx.moveTo(-4 + (facing * 2.5), -11);
+                ctx.lineTo(4 + (facing * 2.5), -11);
+                ctx.lineTo(facing * 4, -7);
+                ctx.closePath();
+                ctx.fill();
+
+                // 빨간색 겨울 니트 목도리 (스카프)
+                ctx.fillStyle = '#ee5253';
+                ctx.beginPath(); ctx.roundRect(-12, -4, 24, 6, 3); ctx.fill();
+                ctx.beginPath(); ctx.rect(-3 * facing, 0, 6, 10); ctx.fill();
+
+                // 날개 (플리퍼/지느러미 손 - 뒤뚱거릴 때 흔들림)
+                let armS = isShaking ? Math.sin(Date.now() * 0.02) * 12 : 0;
+                let flap = Math.sin((walkTimer || 0) * 0.2) * 0.4;
+                ctx.fillStyle = '#1e272e';
+                // 왼날개
+                ctx.save(); ctx.translate(-14, 0); ctx.rotate(Math.PI / 6 + flap + armS * 0.04);
+                ctx.beginPath(); ctx.ellipse(0, 6, 3.5, 10, 0, 0, Math.PI*2); ctx.fill(); ctx.restore();
+                // 오른날개
+                ctx.save(); ctx.translate(14, 0); ctx.rotate(-Math.PI / 6 - flap - armS * 0.04);
+                ctx.beginPath(); ctx.ellipse(0, 6, 3.5, 10, 0, 0, Math.PI*2); ctx.fill(); ctx.restore();
 
             } else if (useSkin.startsWith('ghost')) {
                 let floatOffset = Math.sin(Date.now() * 0.005) * 5 - bobbing;
@@ -11717,7 +13177,8 @@
             ctx.fillStyle = '#1e272e'; ctx.fillRect(0, -7000, GAME_WIDTH, 1000); // Cave
             ctx.fillStyle = '#005f73'; ctx.fillRect(0, -6000, GAME_WIDTH, 1000); // Ocean
             ctx.fillStyle = '#162d16'; ctx.fillRect(0, -5000, GAME_WIDTH, 1000); 
-            ctx.fillStyle = '#48dbfb'; ctx.fillRect(0, -4000, GAME_WIDTH, 1000); 
+            // ❄️ 신규 지역: 얼음의 협곡 지형 렌더링 (Image 1 완벽 구현)
+            drawIceCanyonTerrain(ctx);
             ctx.fillStyle = '#273c75'; ctx.fillRect(0, -3000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#2c3e50'; ctx.fillRect(0, -2000, GAME_WIDTH, 1000);  
             ctx.fillStyle = '#cf3a24'; ctx.fillRect(0, -1000, GAME_WIDTH, 1000); 
@@ -11740,7 +13201,7 @@
             ctx.fillStyle = '#fbc531'; ctx.fillText("⚡ 격동: 전기 지역 (레벨 20 진입 가능)", GAME_WIDTH / 2, -2020);
 
             ctx.strokeStyle = '#c7ecee'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -3000); ctx.lineTo(GAME_WIDTH, -3000); ctx.stroke();
-            ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 혹한: 얼음 지역 (레벨 35 진입 가능)", GAME_WIDTH / 2, -3020);
+            ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 신규 지역: 얼음의 협곡 (부유섬 & 고대 화석 발굴)", GAME_WIDTH / 2, -3020);
 
             ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -4000); ctx.lineTo(GAME_WIDTH, -4000); ctx.stroke();
             ctx.fillStyle = '#2ecc71'; ctx.fillText("☣️ 치명적 위험: 방사능 지역 (레벨 50 진입 가능)", GAME_WIDTH / 2, -4020);
@@ -11776,6 +13237,12 @@
             trees.forEach(t => renderList.push({ type: 'tree', obj: t, y: t.y }));
             renderList.push({ type: 'teleporter', obj: teleporter, y: teleporter.y });
             renderList.push({ type: 'teleporterHalloween', obj: teleporterHalloween, y: teleporterHalloween.y });
+            if (typeof teleporterIceDragon !== 'undefined') {
+                renderList.push({ type: 'teleporterIceDragon', obj: teleporterIceDragon, y: teleporterIceDragon.y });
+            }
+            if (typeof hasHalloweenTeleporter !== 'undefined' && hasHalloweenTeleporter && typeof halloweenTeleporterBeacon !== 'undefined' && halloweenTeleporterBeacon.placed) {
+                renderList.push({ type: 'halloweenBeacon', obj: halloweenTeleporterBeacon, y: halloweenTeleporterBeacon.y });
+            }
             renderList.push({ type: 'rankingBoard', obj: rankingBoard, y: rankingBoard.y });
             renderList.push({ type: 'rouletteMachine', obj: rouletteMachine, y: rouletteMachine.y });
             if (typeof adminSwords !== 'undefined' && adminSwords[0]) {
@@ -12231,6 +13698,10 @@
                     drawTeleporter(ctx, item.obj.x, item.obj.y, 'monkey');
                 } else if (item.type === 'teleporterHalloween') {
                     drawTeleporter(ctx, item.obj.x, item.obj.y, 'devil');
+                } else if (item.type === 'teleporterIceDragon') {
+                    drawTeleporter(ctx, item.obj.x, item.obj.y, 'ice_dragon');
+                } else if (item.type === 'halloweenBeacon') {
+                    drawHalloweenTeleporterBeacon(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'rankingBoard') {
                     drawRankingBoard(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'rouletteMachine') {
