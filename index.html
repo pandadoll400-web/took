@@ -301,17 +301,6 @@
                 </div>
                 <span class="hud-tile-label">상점</span>
             </button>
-            <button id="codex-btn" class="hud-tile-btn" onclick="openFossilCodexModal()" style="display: none;">
-                <div class="hud-tile-icon-wrap">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <!-- Codex Book -->
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="#f1c40f" stroke-width="1.8"/>
-                        <path d="M6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5v-12A2.5 2.5 0 0 1 6.5 3z" fill="#334155" stroke="#cbd5e1" stroke-width="1.5"/>
-                        <path d="M9 7h6M9 11h4" stroke="#f1c40f" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg>
-                </div>
-                <span class="hud-tile-label">도감</span>
-            </button>
             <button id="quest-btn" class="hud-tile-btn" onclick="openQuestModal()" style="display: none;">
                 <div class="hud-tile-icon-wrap">
                     <svg viewBox="0 0 24 24" fill="none">
@@ -361,6 +350,7 @@
                 <button onclick="adminEnterIceDragonBoss()" style="padding: 10px; background: linear-gradient(135deg, #0369a1, #0ea5e9); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);">🐉 [보스] 고대 서리룡 보스전 바로 입장</button>
                 <button onclick="adminRefillAllFossils()" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);">🦴 [도감] 20종 고대 화석 99개 충전 & 100% 수집</button>
                 <button onclick="adminEquipPenguinSkin()" style="padding: 10px; background: linear-gradient(135deg, #0ea5e9, #38bdf8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🐧 [스킨] 꼬마 펭귄 스킨 즉시 획득 및 장착</button>
+                <button onclick="adminGetCerberusSkin()" style="padding: 10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.45);">🐺🔥 [스킨] 공룡 화석&심장 충전 + 케르베로스 스킨 획득</button>
                 <button onclick="adminEquipForgeHouse()" style="padding: 10px; background: linear-gradient(135deg, #e67e22, #d35400); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(230, 126, 34, 0.45);">🏠⚔️ [관리자 전용] 포지 하우스 스킨 장착</button>
                 <button onclick="adminEquipForgeCake()" style="padding: 10px; background: linear-gradient(135deg, #e84393, #fd79a8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(232, 67, 147, 0.45);">🎂🔨 [관리자 전용] 포지 케이크 스킨 장착</button>
                 <button onclick="adminWarpToSpace()" style="padding: 10px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🚀 우주 나무로 즉시 이동</button>
@@ -801,6 +791,57 @@
             <button class="close-btn" onclick="document.getElementById('halloween-modal').style.display='none'" style="background: #4a235a; border: 1px solid #8e44ad;">닫기</button>
         </div>
 
+        <!-- ⛏️ 고대 화석 바위 발굴 & 케르베로스 융합 제단 모달 -->
+        <div id="fossil-rock-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 440px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 26px;">⛏️</span>
+                    <div>
+                        <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold;">고대 화석 바위</h2>
+                        <span style="font-size: 11px; color: #94a3b8;">얼음의 협곡 고대 지층 화석 발굴 & 영혼 융합 제단</span>
+                    </div>
+                </div>
+                <button onclick="closeFossilRockModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
+            </div>
+
+            <!-- 화석 채굴 섹션 -->
+            <div style="background: rgba(30, 41, 59, 0.7); border-radius: 12px; padding: 12px; margin-bottom: 14px; border: 1px solid #334155; text-align: center;">
+                <div style="font-size: 14px; font-weight: bold; color: #e2e8f0; margin-bottom: 5px;">⛏️ 바위 채굴하기</div>
+                <div style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">빙하 암석을 도끼로 타격하여 고대 화석을 발굴합니다.</div>
+                <button onclick="mineFromFossilRockModal()" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 8px; padding: 10px 22px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);">⛏️ 화석 발굴하기 (클릭)</button>
+            </div>
+
+            <!-- 보유 화석 현황 -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+                <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid #f59e0b; border-radius: 10px; padding: 10px; text-align: center;">
+                    <div style="font-size: 24px;">🦖</div>
+                    <div style="font-size: 13px; font-weight: bold; color: #fbbf24; margin: 4px 0;">공룡 화석</div>
+                    <div id="rock-modal-dino-count" style="font-size: 14px; font-weight: bold; color: #fff;">보유: 0개</div>
+                </div>
+                <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid #f43f5e; border-radius: 10px; padding: 10px; text-align: center;">
+                    <div style="font-size: 24px;">💖</div>
+                    <div style="font-size: 13px; font-weight: bold; color: #fb7185; margin: 4px 0;">공룡 심장 화석</div>
+                    <div id="rock-modal-heart-count" style="font-size: 14px; font-weight: bold; color: #fff;">보유: 0개</div>
+                </div>
+            </div>
+
+            <!-- 🐺🔥 케르베로스 스킨 융합 섹션 -->
+            <div style="background: linear-gradient(135deg, rgba(30, 20, 20, 0.85), rgba(45, 15, 15, 0.95)); border: 2px solid #ef4444; border-radius: 14px; padding: 14px; text-align: center; box-shadow: 0 0 20px rgba(239, 68, 68, 0.25);">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px;">
+                    <span style="font-size: 22px;">🐺🔥</span>
+                    <span style="font-weight: bold; font-size: 15px; color: #f87171;">고대 영혼 융합: 케르베로스 스킨</span>
+                </div>
+                <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 10px; line-height: 1.4;">
+                    [공룡 화석] 1개 + [공룡 심장 화석] 1개를 융합하면<br>
+                    태고의 삼두 맹수 <strong>'케르베로스' 스킨</strong>이 탄생합니다!
+                </div>
+
+                <div id="cerberus-fuse-action-area">
+                    <!-- Dynamic button inserted by updateFossilRockModal() -->
+                </div>
+            </div>
+        </div>
+
         <!-- 🦴 고대 화석 도감 모달 (얼음의 협곡 20종 화석 수집) -->
         <div id="fossil-codex-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 460px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.35); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
@@ -1036,18 +1077,18 @@
             type: 'devil'
         };
 
-        // 🐉 3. 얼음의 협곡 고차원 텔레포트 (얼음 나무 오른쪽 옆: 고대 서리룡 보스전)
+        // 🐉 3. 얼음의 협곡 고차원 텔레포트 (Lv 125 신규 지역 우측 발판, 고대 서리룡 보스전)
         let teleporterIceDragon = {
-            x: 515,
-            y: -3640,
+            x: 505,
+            y: -8540,
             radius: 45,
             type: 'ice_dragon'
         };
 
-        // ❄️ 얼음의 협곡 고대 화석 발굴 바위 위치들
+        // ❄️ 얼음의 협곡 고대 화석 발굴 바위 위치들 (안 겹치도록 완벽 분리 배치)
         let iceCanyonFossilRocks = [
-            { x: 120, y: -3720, radius: 26, hitTimer: 0 },
-            { x: 480, y: -3700, radius: 26, hitTimer: 0 }
+            { x: 95, y: -8540, radius: 28, hitTimer: 0 },
+            { x: 490, y: -8730, radius: 28, hitTimer: 0 }
         ];
 
         // 🐉 얼음의 협곡 고대 서리룡 보스 객체
@@ -1085,9 +1126,9 @@
             { name: '고대 포식자 턱뼈', grade: '영웅', color: '#a29bfe', icon: '🐊', desc: '바위를 부수는 무시무시한 악력을 지닌 고대 포식자의 턱뼈.' },
 
             // 전설 (Legendary) - 4종
-            { name: '티라노사우루스 두개골', grade: '전설', color: '#f1c40f', icon: '👑', desc: '백악기 최강의 제왕, 티라노사우루스의 거대한 두개골.' },
+            { name: '공룡 화석', grade: '전설', color: '#f1c40f', icon: '🦖', desc: '완벽한 형태로 보존된 고대 제왕 공룡의 전신 골격 화석.' },
             { name: '거대 용각류 화석', grade: '전설', color: '#f1c40f', icon: '🦕', desc: '지구를 뒤흔들었던 초대형 브라키오사우루스의 전신 척추 화석.' },
-            { name: '고대 공룡 심장 화석', grade: '전설', color: '#f1c40f', icon: '💖', desc: '기적적으로 광물화되어 굳어진 공룡의 태고 심장.' },
+            { name: '공룡 심장 화석', grade: '전설', color: '#ff0055', icon: '💖', desc: '기적적으로 광물화되어 붉게 고동치는 공룡의 태고 심장 화석.' },
             { name: '황금 공룡 발톱', grade: '전설', color: '#f1c40f', icon: '✨', desc: '고대 마력과 황금빛 광물로 결정화된 전설의 발톱.' },
 
             // 신화 (Mythic) - 4종
@@ -1192,11 +1233,144 @@
             });
         }
 
-        function excavateFossilAtSpot(cx, cy, ignoreDist = false) {
-            if (!isAdmin()) {
-                floatTexts.push({ x: cx, y: cy - 40, text: `🔒 [화석 발굴] 어드민 선행 테스트 중!`, color: '#38bdf8', life: 60, size: 15 });
+        let currentActiveFossilRock = null;
+
+        function getDinoFossilKey() {
+            const keys = ['공룡 화석', '공룡화석', '공룡 화석 바위', '태초의 공룡 화석'];
+            for (let k of keys) {
+                if (inventory[k] && inventory[k] > 0) return k;
+            }
+            return null;
+        }
+
+        function getHeartFossilKey() {
+            const keys = ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'];
+            for (let k of keys) {
+                if (inventory[k] && inventory[k] > 0) return k;
+            }
+            return null;
+        }
+
+        function openFossilRockModal(rock) {
+            currentActiveFossilRock = rock;
+            const modal = document.getElementById('fossil-rock-modal');
+            if (!modal) return;
+            updateFossilRockModal();
+            modal.style.display = 'block';
+            if (typeof resetJoyMouse === 'function') resetJoyMouse();
+            if (typeof player !== 'undefined') player.targetTree = null;
+        }
+
+        function closeFossilRockModal() {
+            const modal = document.getElementById('fossil-rock-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function updateFossilRockModal() {
+            const dinoCountEl = document.getElementById('rock-modal-dino-count');
+            const heartCountEl = document.getElementById('rock-modal-heart-count');
+            const actionAreaEl = document.getElementById('cerberus-fuse-action-area');
+
+            let dinoCount = 0;
+            ['공룡 화석', '공룡화석', '공룡 화석 바위', '태초의 공룡 화석'].forEach(k => {
+                if (inventory[k]) dinoCount += inventory[k];
+            });
+
+            let heartCount = 0;
+            ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'].forEach(k => {
+                if (inventory[k]) heartCount += inventory[k];
+            });
+
+            if (dinoCountEl) dinoCountEl.innerText = `보유: ${dinoCount}개`;
+            if (heartCountEl) heartCountEl.innerText = `보유: ${heartCount}개`;
+
+            if (actionAreaEl) {
+                if (ownedSkins.includes('cerberus')) {
+                    const isEquipped = (equippedSkin === 'cerberus');
+                    actionAreaEl.innerHTML = `
+                        <div style="color: #4ade80; font-weight: bold; margin-bottom: 8px;">✨ 케르베로스 스킨 보유 중!</div>
+                        ${isEquipped 
+                            ? `<button disabled style="background: #e67e22; color: white; padding: 9px 20px; border: none; border-radius: 8px; font-weight: bold;">장착 중</button>` 
+                            : `<button onclick="equipSkin('cerberus'); updateFossilRockModal();" style="background: #3b82f6; color: white; padding: 9px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">즉시 장착하기</button>`
+                        }
+                    `;
+                } else if (dinoCount >= 1 && heartCount >= 1) {
+                    actionAreaEl.innerHTML = `
+                        <button onclick="fuseCerberusSkin()" style="background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 11px 24px; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 18px rgba(239, 68, 68, 0.6);">🔥 융합하기 (케르베로스 스킨 획득!)</button>
+                    `;
+                } else {
+                    actionAreaEl.innerHTML = `
+                        <button disabled style="background: #475569; color: #94a3b8; padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px;">재료 부족 (각 1개 필요 - 상단 발굴 버튼 클릭!)</button>
+                    `;
+                }
+            }
+        }
+
+        function mineFromFossilRockModal() {
+            if (currentActiveFossilRock) {
+                currentActiveFossilRock.hitTimer = 15;
+            }
+            player.axeSwingTimer = 16;
+            let cx = currentActiveFossilRock ? currentActiveFossilRock.x : player.x;
+            let cy = currentActiveFossilRock ? currentActiveFossilRock.y : player.y;
+
+            for (let i = 0; i < 22; i++) {
+                let a = Math.random() * Math.PI * 2;
+                let sp = Math.random() * 5 + 2;
+                labSparks.push({ x: cx, y: cy, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#38bdf8' : '#f59e0b'), life: 30 });
+            }
+
+            let r = Math.random();
+            let pickedItem = null;
+            if (r < 0.35) {
+                pickedItem = FOSSIL_ITEMS.find(f => f.name === '공룡 화석') || { name: '공룡 화석', color: '#f1c40f', grade: '전설', icon: '🦖' };
+            } else if (r < 0.70) {
+                pickedItem = FOSSIL_ITEMS.find(f => f.name === '공룡 심장 화석') || { name: '공룡 심장 화석', color: '#ff0055', grade: '전설', icon: '💖' };
+            } else {
+                let candidates = FOSSIL_ITEMS.filter(f => f.name !== '공룡 화석' && f.name !== '공룡 심장 화석');
+                pickedItem = candidates[Math.floor(Math.random() * candidates.length)];
+            }
+
+            if (!inventory[pickedItem.name]) inventory[pickedItem.name] = 0;
+            inventory[pickedItem.name]++;
+            if (!fossilCollection.includes(pickedItem.name)) {
+                fossilCollection.push(pickedItem.name);
+                try { localStorage.setItem('fossil_collection', JSON.stringify(fossilCollection)); } catch(e) {}
+            }
+            saveGame();
+            updateFossilRockModal();
+
+            floatTexts.push({ x: cx, y: cy - 60, text: `⛏️ [발굴 성공] ${pickedItem.icon || '🦴'} ${pickedItem.name} 획득!`, color: pickedItem.color || '#38bdf8', life: 90, size: 18 });
+        }
+
+        function fuseCerberusSkin() {
+            let dinoKey = getDinoFossilKey();
+            let heartKey = getHeartFossilKey();
+            if (!dinoKey || !heartKey) {
+                alert("재료가 부족합니다! 공룡 화석과 공룡 심장 화석이 각 1개씩 필요합니다.");
                 return;
             }
+            inventory[dinoKey]--;
+            inventory[heartKey]--;
+            if (!ownedSkins.includes('cerberus')) {
+                ownedSkins.push('cerberus');
+            }
+            equippedSkin = 'cerberus';
+            saveGame();
+            updateShopSkinUI();
+            updateInvSkinUI();
+            updateFossilRockModal();
+
+            floatTexts.push({ x: player.x, y: player.y - 100, text: `🐺🔥 [스킨 탄생] 케르베로스 스킨 획득 & 장착!`, color: '#ef4444', life: 120, size: 22 });
+            for (let i = 0; i < 35; i++) {
+                let a = Math.random() * Math.PI * 2;
+                let sp = Math.random() * 6 + 2;
+                labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#ef4444' : '#f97316'), life: 40 });
+            }
+            alert("🎉 [전설의 융합 성공!]\n\n고대 공룡 화석과 공룡 심장 화석의 태고 에너지가 결합하여\n지옥의 삼두 맹수 [🐺🔥 케르베로스 스킨]이 탄생했습니다!\n\n현재 즉시 장착되었으며, 가방(인벤토리)의 [스킨] 탭에서도 언제든 변경할 수 있습니다.");
+        }
+
+        function excavateFossilAtSpot(cx, cy, ignoreDist = false) {
             let dist = Math.hypot(player.x - cx, player.y - cy);
             if (!ignoreDist && dist > 120) {
                 player.targetTree = null;
@@ -1218,16 +1392,23 @@
                 labSparks.push({ x: cx, y: cy, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#38bdf8' : '#f1c40f'), life: 25 });
             }
 
-            let rand = Math.random() * 100;
-            let targetGrade = '일반';
-            if (rand < 1) targetGrade = '신화';
-            else if (rand < 7) targetGrade = '전설';
-            else if (rand < 20) targetGrade = '영웅';
-            else if (rand < 50) targetGrade = '희귀';
-            else targetGrade = '일반';
-
-            let candidates = FOSSIL_ITEMS.filter(f => f.grade === targetGrade);
-            let picked = candidates[Math.floor(Math.random() * candidates.length)];
+            let r = Math.random();
+            let picked = null;
+            if (r < 0.3) {
+                picked = FOSSIL_ITEMS.find(f => f.name === '공룡 화석') || FOSSIL_ITEMS[12];
+            } else if (r < 0.6) {
+                picked = FOSSIL_ITEMS.find(f => f.name === '공룡 심장 화석') || FOSSIL_ITEMS[14];
+            } else {
+                let rand = Math.random() * 100;
+                let targetGrade = '일반';
+                if (rand < 2) targetGrade = '신화';
+                else if (rand < 10) targetGrade = '전설';
+                else if (rand < 25) targetGrade = '영웅';
+                else if (rand < 55) targetGrade = '희귀';
+                else targetGrade = '일반';
+                let candidates = FOSSIL_ITEMS.filter(f => f.grade === targetGrade);
+                picked = candidates[Math.floor(Math.random() * candidates.length)];
+            }
 
             if (!inventory[picked.name]) inventory[picked.name] = 0;
             inventory[picked.name]++;
@@ -1242,7 +1423,7 @@
                 text: `⛏️ [화석 발굴] ${picked.icon} [${picked.grade}] ${picked.name} 획득!`,
                 color: picked.color,
                 life: 100,
-                size: (targetGrade === '신화' || targetGrade === '전설') ? 20 : 16
+                size: (picked.grade === '신화' || picked.grade === '전설') ? 20 : 16
             });
         }
 
@@ -2697,68 +2878,66 @@
             ctx.restore();
         }
 
-        // ❄️ [신규 지역 : 얼음의 협곡] 지형 렌더링 (Image 1 완벽 구현)
+        // ❄️ [신규 지역 : 얼음의 협곡] 지형 렌더링 (레벨 125 진입 가능, Y: -9000 ~ -8000)
         function drawIceCanyonTerrain(ctx) {
             const now = Date.now();
-            // 1. 고산 설산 하늘 그라데이션
-            let skyGrad = ctx.createLinearGradient(0, -4000, 0, -3000);
-            skyGrad.addColorStop(0, '#0a192f');
-            skyGrad.addColorStop(0.3, '#1e3a5f');
+            // 1. 고산 설산 하늘 그라데이션 (-9000 ~ -8000)
+            let skyGrad = ctx.createLinearGradient(0, -9000, 0, -8000);
+            skyGrad.addColorStop(0, '#06101e');
+            skyGrad.addColorStop(0.3, '#102a45');
             skyGrad.addColorStop(0.65, '#38bdf8');
             skyGrad.addColorStop(0.9, '#bae6fd');
             skyGrad.addColorStop(1, '#e0f2fe');
             ctx.fillStyle = skyGrad;
-            ctx.fillRect(0, -4000, GAME_WIDTH, 1000);
+            ctx.fillRect(0, -9000, GAME_WIDTH, 1000);
 
-            // 2. 원경 거대 설산 능선
-            ctx.fillStyle = '#64748b';
+            // 2. 원경 거대 설산 능선 (-9000 ~ -8700 배경)
+            ctx.fillStyle = '#475569';
             ctx.beginPath();
-            ctx.moveTo(0, -3700);
-            ctx.lineTo(80, -3880); ctx.lineTo(140, -3780);
-            ctx.lineTo(240, -3950); ctx.lineTo(310, -3830);
-            ctx.lineTo(420, -3980); ctx.lineTo(510, -3820);
-            ctx.lineTo(GAME_WIDTH, -3900);
-            ctx.lineTo(GAME_WIDTH, -3000); ctx.lineTo(0, -3000);
+            ctx.moveTo(0, -8700);
+            ctx.lineTo(80, -8880); ctx.lineTo(140, -8780);
+            ctx.lineTo(240, -8950); ctx.lineTo(310, -8830);
+            ctx.lineTo(420, -8980); ctx.lineTo(510, -8820);
+            ctx.lineTo(GAME_WIDTH, -8900);
+            ctx.lineTo(GAME_WIDTH, -8000); ctx.lineTo(0, -8000);
             ctx.closePath();
             ctx.fill();
 
             // 설산 만년설 눈 덮개
             ctx.fillStyle = '#ffffff';
             ctx.beginPath();
-            ctx.moveTo(80, -3880); ctx.lineTo(60, -3840); ctx.lineTo(75, -3850); ctx.lineTo(80, -3835); ctx.lineTo(95, -3855); ctx.lineTo(80, -3880);
-            ctx.moveTo(240, -3950); ctx.lineTo(210, -3900); ctx.lineTo(230, -3910); ctx.lineTo(240, -3895); ctx.lineTo(260, -3915); ctx.lineTo(240, -3950);
-            ctx.moveTo(420, -3980); ctx.lineTo(385, -3920); ctx.lineTo(405, -3930); ctx.lineTo(420, -3910); ctx.lineTo(445, -3935); ctx.lineTo(420, -3980);
+            ctx.moveTo(80, -8880); ctx.lineTo(60, -8840); ctx.lineTo(75, -8850); ctx.lineTo(80, -8835); ctx.lineTo(95, -8855); ctx.lineTo(80, -8880);
+            ctx.moveTo(240, -8950); ctx.lineTo(210, -8900); ctx.lineTo(230, -8910); ctx.lineTo(240, -8895); ctx.lineTo(260, -8915); ctx.lineTo(240, -8950);
+            ctx.moveTo(420, -8980); ctx.lineTo(385, -8920); ctx.lineTo(405, -8930); ctx.lineTo(420, -8910); ctx.lineTo(445, -8935); ctx.lineTo(420, -8980);
             ctx.fill();
 
-            // 3. 좌측 상단 부유섬
-            drawFloatingIsland(ctx, 35, -3840, 190, 52);
-            // 4. 우측 상단 부유섬
-            drawFloatingIsland(ctx, 375, -3800, 190, 56);
-            // 5. 중앙 메인 부유섬 (나무 및 바위 위치)
-            drawFloatingIsland(ctx, 50, -3600, 500, 75);
+            // 3. 원경 설산 위 미니 침엽수들 (배경)
+            drawSnowPineTree(ctx, 60, -8870, 0.55);
+            drawSnowPineTree(ctx, 220, -8940, 0.5);
+            drawSnowPineTree(ctx, 440, -8960, 0.55);
 
-            // 6. 폭포수 (부유섬에서 쏟아지는 빙하 폭포)
-            drawGlacialWaterfall(ctx, 115, -3790, 16, 130);
-            drawGlacialWaterfall(ctx, 455, -3745, 18, 120);
+            // 4. 좌측 상단 부유섬 (x: 30, y: -8750, w: 150, h: 40)
+            drawFloatingIsland(ctx, 30, -8750, 150, 40);
+            drawSnowPineTree(ctx, 50, -8765, 0.7);
 
-            // 7. 눈 덮인 침엽수들
-            drawSnowPineTree(ctx, 75, -3855, 0.7);
-            drawSnowPineTree(ctx, 165, -3850, 0.65);
-            drawSnowPineTree(ctx, 415, -3815, 0.75);
-            drawSnowPineTree(ctx, 505, -3810, 0.6);
-            drawSnowPineTree(ctx, 105, -3620, 1.0);
-            drawSnowPineTree(ctx, 495, -3610, 0.95);
+            // 5. 우측 상단 부유섬 (x: 410, y: -8720, w: 160, h: 42 - 고대 화석 바위 2 받침 발판)
+            drawFloatingIsland(ctx, 410, -8720, 160, 42);
+            drawSnowPineTree(ctx, 550, -8735, 0.75);
 
-            // 8. 고대 화석 발굴 바위들
-            iceCanyonFossilRocks.forEach(rock => {
-                drawFossilRock(ctx, rock.x, rock.y, rock.radius);
-            });
+            // 6. 메인 하단 대형 부유섬 (x: 40, y: -8530, w: 520, h: 70 - 나무, 화석 바위 1, 텔레포터가 위치하는 메인 지형)
+            drawFloatingIsland(ctx, 40, -8530, 520, 70);
 
-            // 9. 흩날리는 눈보라 파티클
+            // 7. 빙하 폭포수 (부유섬 틈새로 쏟아져 내리는 빙하수 - 위치 분리 배치)
+            // 좌측 폭포: x: 150 (바위 1과 나무 사이)
+            drawGlacialWaterfall(ctx, 150, -8710, 14, 140);
+            // 우측 폭포: x: 390 (나무와 텔레포터 사이)
+            drawGlacialWaterfall(ctx, 390, -8710, 14, 140);
+
+            // 8. 흩날리는 눈보라 파티클
             ctx.fillStyle = '#ffffff';
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 45; i++) {
                 let sx = ((now * 0.04) + (i * 73)) % GAME_WIDTH;
-                let sy = -4000 + (((now * 0.08) + (i * 97)) % 1000);
+                let sy = -9000 + (((now * 0.08) + (i * 97)) % 1000);
                 let sSize = (i % 3 === 0) ? 2.5 : 1.5;
                 let alpha = 0.35 + 0.5 * Math.sin(now * 0.003 + i);
                 ctx.globalAlpha = Math.max(0.1, alpha);
@@ -2880,10 +3059,18 @@
         }
 
         // 고대 화석 발굴 바위
-        function drawFossilRock(ctx, x, y, r) {
+        function drawFossilRock(ctx, x, y, r, hitTimer = 0) {
             ctx.save();
             const now = Date.now();
             const pulse = Math.sin(now * 0.005) * 3;
+
+            let shakeX = 0, shakeY = 0;
+            if (hitTimer > 0) {
+                shakeX = (Math.random() - 0.5) * 6;
+                shakeY = (Math.random() - 0.5) * 6;
+            }
+
+            ctx.translate(shakeX, shakeY);
 
             // 바위 그림자
             ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
@@ -2918,18 +3105,22 @@
             ctx.shadowBlur = 0;
 
             // 상단 네온 라벨
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
             ctx.strokeStyle = '#38bdf8';
             ctx.lineWidth = 1.2;
             ctx.beginPath();
-            ctx.roundRect(x - 45, y - r - 26, 90, 20, 6);
+            ctx.roundRect(x - 50, y - r - 32, 100, 26, 6);
             ctx.fill(); ctx.stroke();
 
             ctx.fillStyle = '#38bdf8';
             ctx.font = 'bold 10px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText("⛏️ 고대 화석 바위", x, y - r - 16);
+            ctx.fillText("⛏️ 고대 화석 바위", x, y - r - 22);
+
+            ctx.fillStyle = '#f1c40f';
+            ctx.font = 'bold 9px Arial';
+            ctx.fillText("👆 클릭: 발굴 & 융합", x, y - r - 10);
             ctx.restore();
         }
 
@@ -6131,8 +6322,8 @@
                 return;
             }
 
-            // 🐉 3. 얼음의 협곡 고차원 텔레포트 (x: 515, y: -3640) -> 고대 서리룡 보스전 직행 (어드민 전용 선행 공개)
-            if (typeof teleporterIceDragon !== 'undefined' && isAdmin()) {
+            // 🐉 3. 얼음의 협곡 고차원 텔레포트 (x: 505, y: -8540) -> 고대 서리룡 보스전 직행
+            if (typeof teleporterIceDragon !== 'undefined') {
                 let tpIceDist = Math.hypot(cx - teleporterIceDragon.x, cy - teleporterIceDragon.y);
                 let tpIcePlayerDist = Math.hypot(player.x - teleporterIceDragon.x, player.y - teleporterIceDragon.y);
                 if (tpIceDist < 75 || (isSpacebar && tpIcePlayerDist < 90)) {
@@ -6141,13 +6332,13 @@
                 }
             }
 
-            // 🦴 고대 화석 발굴 바위 클릭 감지 (얼음의 협곡 부유섬 - 어드민 전용 선행 공개)
-            if (typeof iceCanyonFossilRocks !== 'undefined' && isAdmin()) {
+            // 🦴 고대 화석 발굴 바위 클릭 감지 (얼음의 협곡 부유섬: 발굴 및 케르베로스 융합)
+            if (typeof iceCanyonFossilRocks !== 'undefined') {
                 for (let rock of iceCanyonFossilRocks) {
                     let rDist = Math.hypot(cx - rock.x, cy - rock.y);
                     let rPlayerDist = Math.hypot(player.x - rock.x, player.y - rock.y);
                     if (rDist < rock.radius + 35 || (isSpacebar && rPlayerDist < 90)) {
-                        excavateFossilAtSpot(rock.x, rock.y);
+                        openFossilRockModal(rock);
                         return;
                     }
                 }
@@ -7159,7 +7350,8 @@
             { id: 'reaper', name: '사신', price: 0, icon: '💀', isReward: true },
             { id: 'penguin', name: '꼬마 펭귄', price: 15000, icon: '🐧', adminOnly: true },
             { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, adminOnly: true },
-            { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true }
+            { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true },
+            { id: 'cerberus', name: '케르베로스', price: 0, icon: '🐺🔥', isReward: true }
         ];
 
         function updateShopSkinUI() {
@@ -7275,6 +7467,9 @@
             if (skinId === 'forge_cake' || skinId === 'forge_house') {
                 scale = (pCanvas.width < 60) ? 0.52 : 0.60;
                 yOffset = 22;
+            } else if (skinId === 'cerberus') {
+                scale = (pCanvas.width < 60) ? 0.60 : 0.70;
+                yOffset = 14;
             }
             pCtx.save();
             pCtx.translate(pCanvas.width / 2, pCanvas.height / 2 + yOffset);
@@ -7381,6 +7576,11 @@
                 id: 'space', type: 'space', x: GAME_WIDTH / 2, y: -7650, radius: 200, trunkRadius: 75,
                 progress: 0, maxProgress: 500, shakeAngle: 0,
                 unlocked: false, price: 0, reqLevel: 105, color1: '#000000', color2: '#2c003e', drops: [0, 0] 
+            },
+            {
+                id: 'ice_canyon', type: 'ice_canyon', x: GAME_WIDTH / 2, y: -8620, radius: 180, trunkRadius: 65,
+                progress: 0, maxProgress: 450, shakeAngle: 0,
+                unlocked: false, price: 30000000, reqLevel: 125, color1: '#e0f2fe', color2: '#38bdf8', drops: [16, 26] 
             },
             {
                 id: 'halloween', type: 'halloween', x: GAME_WIDTH / 2, y: 1350, radius: 140, trunkRadius: 40,
@@ -7695,11 +7895,29 @@
             if (inBossRoom) exitBossDimension();
             if (inPvpArena) exitPvpArena();
             player.x = 300;
-            player.y = -3650;
-            cameraY = -3800;
+            player.y = -8540;
+            cameraY = -8650;
             player.targetTree = null;
             player.vx = 0; player.vy = 0;
             floatTexts.push({ x: player.x, y: player.y - 80, text: '❄️ 얼음의 협곡(부유섬 & 고대 화석 발굴지)으로 워프!', color: '#38bdf8', life: 100, size: 20 });
+        }
+
+        function adminGetCerberusSkin() {
+            if (!isAdmin()) return;
+            closeAdminPanelModal();
+            if (!inventory['공룡 화석']) inventory['공룡 화석'] = 0;
+            inventory['공룡 화석'] += 10;
+            if (!inventory['공룡 심장 화석']) inventory['공룡 심장 화석'] = 0;
+            inventory['공룡 심장 화석'] += 10;
+            if (!ownedSkins.includes('cerberus')) {
+                ownedSkins.push('cerberus');
+            }
+            equippedSkin = 'cerberus';
+            saveGame();
+            updateShopSkinUI();
+            updateInvSkinUI();
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🐺🔥 케르베로스 스킨 획득 & 장착 완료!', color: '#ef4444', life: 100, size: 20 });
+            alert("🐺🔥 [치트 완료]\n공룡 화석 10개와 공룡 심장 화석 10개가 인벤토리에 지급되었으며,\n'케르베로스 스킨'이 즉시 획득 및 장착되었습니다!");
         }
 
         function adminEnterIceDragonBoss() {
@@ -9516,8 +9734,8 @@
                     badgeEl.title = `최고 관리자 계정 (${currentUser})`;
                 }
                 if (adminBtn) adminBtn.style.display = 'flex';
-                // 👑 도감, 퀘스트, 할로윈 버튼: 오직 최고 관리자(ADMIN) 계정에만 공개
-                if (codexBtn) codexBtn.style.display = 'flex';
+                // 👑 퀘스트, 할로윈 버튼: 오직 최고 관리자(ADMIN) 계정에만 공개 (도감 버튼은 요청에 의해 HUD에서 영구 제거됨)
+                if (codexBtn) codexBtn.style.display = 'none';
                 if (questBtn) questBtn.style.display = 'flex';
                 if (halloweenBtn) halloweenBtn.style.display = 'flex';
             } else if (currentUser) {
@@ -10448,7 +10666,7 @@
             if (type === 'ocean') return oceanDropTables;
             if (type === 'radioactive') return radioactiveDropTables;
             if (type === 'cave') return caveDropTables;
-            if (type === 'ice') return iceDropTables;
+            if (type === 'ice' || type === 'ice_canyon') return iceDropTables;
             if (type === 'electric') return electricDropTables;
             if (type === 'twisted') return twistedDropTables;
             if (type === 'fire') return fireDropTables;
@@ -10518,6 +10736,7 @@
                     else if (type === 'twisted') trait = '뒤틀린 ';
                     else if (type === 'electric') trait = '전기 ';
                     else if (type === 'ice') trait = '얼음 ';
+                    else if (type === 'ice_canyon') trait = '빙하 ';
                     else if (type === 'radioactive') trait = '방사능 ';
                     else if (type === 'ocean') trait = '심해 ';
                     else if (type === 'cave') trait = '동굴 ';
@@ -10558,6 +10777,7 @@
             if (document.getElementById('roulette-modal') && document.getElementById('roulette-modal').style.display === 'block') return;
             if (document.getElementById('admin-panel-modal') && document.getElementById('admin-panel-modal').style.display === 'block') return;
             if (document.getElementById('sword-modal') && document.getElementById('sword-modal').style.display === 'block') return;
+            if (document.getElementById('fossil-rock-modal') && document.getElementById('fossil-rock-modal').style.display === 'block') return;
 
             // 👑 어드민 스토리 퀘스트: 할로윈 지형 원숭이 10마리 침공 & 미친 박사 난입 업데이트
             if (isAdmin() && (adminGorillaStoryStage === 'earth_monkeys_invading' || adminGorillaStoryStage === 'earth_mad_doctor_rescues')) {
@@ -10584,7 +10804,7 @@
             } else { player.walkTimer = 0; }
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
-            player.y = Math.max(-7950, Math.min(2600 - player.radius, player.y));
+            player.y = Math.max(-8950, Math.min(2600 - player.radius, player.y));
             
             if (level < 3 && player.y < 30 && player.y > -500) {
                 player.y = 30;
@@ -10610,6 +10830,9 @@
             } else if (level < 105 && player.y < -6970 && player.y > -7500) {
                 player.y = -6970;
                 if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 105 달성 시 통과 가능!`, color: '#a29bfe', life: 40 });
+            } else if (level < 125 && !isAdmin() && player.y < -7970 && player.y > -8500) {
+                player.y = -7970;
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `❄️ 레벨 125 달성 시 통과 가능!`, color: '#38bdf8', life: 40 });
             }
 
             shops.forEach(shop => {
@@ -10645,7 +10868,7 @@
             }
 
             let targetCamY = player.y - GAME_HEIGHT / 2 + 100;
-            targetCamY = Math.max(-8000, Math.min(1800, targetCamY));
+            targetCamY = Math.max(-9000, Math.min(1800, targetCamY));
             cameraY += (targetCamY - cameraY) * 0.1;
 
             trees.forEach(tree => {
@@ -11055,6 +11278,145 @@
                 // 오른날개
                 ctx.save(); ctx.translate(14, 0); ctx.rotate(-Math.PI / 6 - flap - armS * 0.04);
                 ctx.beginPath(); ctx.ellipse(0, 6, 3.5, 10, 0, 0, Math.PI*2); ctx.fill(); ctx.restore();
+
+            } else if (useSkin === 'cerberus') {
+                // 🐺🔥 케르베로스 스킨: 지옥의 삼두 맹수 (흑요석 모피, 3개의 늑대 머리, 타오르는 붉은 눈, 불꽃 발톱, 마그마 혈관, 꼬리 화염)
+                ctx.fillStyle = 'rgba(239, 68, 68, 0.35)';
+                ctx.beginPath(); ctx.ellipse(0, 22, 22, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.translate(0, -bobbing);
+
+                let fAngle = (walkAngle * Math.PI) / 180;
+
+                // 1. 발 & 발톱 (애니메이션)
+                ctx.fillStyle = '#1e1b29';
+                // 왼발
+                ctx.save(); ctx.translate(-8, 14); ctx.rotate(fAngle);
+                ctx.beginPath(); ctx.ellipse(0, 4, 6, 4, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#ef4444'; // 발톱 붉은 발광
+                ctx.beginPath(); ctx.arc(-3, 7, 1.5, 0, Math.PI*2); ctx.arc(0, 8, 1.5, 0, Math.PI*2); ctx.arc(3, 7, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+                // 오른발
+                ctx.save(); ctx.translate(8, 14); ctx.rotate(-fAngle);
+                ctx.fillStyle = '#1e1b29';
+                ctx.beginPath(); ctx.ellipse(0, 4, 6, 4, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath(); ctx.arc(-3, 7, 1.5, 0, Math.PI*2); ctx.arc(0, 8, 1.5, 0, Math.PI*2); ctx.arc(3, 7, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+                // 2. 불타는 꼬리 (좌우 살랑임)
+                let tailWiggle = Math.sin(Date.now() * 0.008) * 0.25;
+                ctx.save();
+                ctx.translate(-12 * facing, 8);
+                ctx.rotate(tailWiggle - (facing * 0.3));
+                ctx.fillStyle = '#1e1b29';
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.quadraticCurveTo(-10 * facing, -6, -18 * facing, -2);
+                ctx.quadraticCurveTo(-10 * facing, 2, 0, 4);
+                ctx.fill();
+                // 꼬리 끝 불꽃
+                ctx.fillStyle = '#f97316';
+                ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 10;
+                ctx.beginPath(); ctx.arc(-18 * facing, -2, 5, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath(); ctx.arc(-18 * facing, -2, 2.5, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+                ctx.shadowBlur = 0;
+
+                // 3. 단단한 흑요석 몸통 & 마그마 혈관
+                ctx.fillStyle = '#1e1b29';
+                ctx.beginPath(); ctx.roundRect(-16, -6, 32, 22, 10); ctx.fill();
+                // 흉곽 마그마 혈관
+                ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-8, 0); ctx.lineTo(-2, 6); ctx.lineTo(4, 2); ctx.lineTo(8, 8);
+                ctx.moveTo(-4, 8); ctx.lineTo(2, 12);
+                ctx.stroke();
+
+                // 가시 돋친 강철 목걸이
+                ctx.fillStyle = '#334155';
+                ctx.beginPath(); ctx.roundRect(-17, -8, 34, 6, 3); ctx.fill();
+                ctx.fillStyle = '#cbd5e1'; // 은빛 스파이크
+                for(let spk = -14; spk <= 14; spk += 7) {
+                    ctx.beginPath();
+                    ctx.moveTo(spk - 2, -8); ctx.lineTo(spk + 2, -8); ctx.lineTo(spk, -13); ctx.closePath();
+                    ctx.fill();
+                }
+
+                // 4. 세 개의 늑대 머리 (좌, 우, 중앙)
+                // 좌측 머리 (Left Head)
+                ctx.save();
+                ctx.translate(-13, -13);
+                ctx.rotate(-0.35);
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath(); ctx.moveTo(-6, -6); ctx.lineTo(-12, -18); ctx.lineTo(-2, -10); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath(); ctx.moveTo(-5, -7); ctx.lineTo(-10, -15); ctx.lineTo(-3, -10); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#1e1b29';
+                ctx.beginPath(); ctx.ellipse(0, 0, 9, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(-4, 3, 6, 4, -0.2, 0, Math.PI*2); ctx.fill();
+                ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 8;
+                ctx.fillStyle = '#f87171';
+                ctx.beginPath(); ctx.ellipse(-3, -2, 2.5, 1.8, -0.3, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath(); ctx.arc(-3, -2, 1, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.moveTo(-7, 4); ctx.lineTo(-5, 8); ctx.lineTo(-3, 4); ctx.closePath(); ctx.fill();
+                ctx.restore();
+
+                // 우측 머리 (Right Head)
+                ctx.save();
+                ctx.translate(13, -13);
+                ctx.rotate(0.35);
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath(); ctx.moveTo(6, -6); ctx.lineTo(12, -18); ctx.lineTo(2, -10); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath(); ctx.moveTo(5, -7); ctx.lineTo(10, -15); ctx.lineTo(3, -10); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#1e1b29';
+                ctx.beginPath(); ctx.ellipse(0, 0, 9, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(4, 3, 6, 4, 0.2, 0, Math.PI*2); ctx.fill();
+                ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 8;
+                ctx.fillStyle = '#f87171';
+                ctx.beginPath(); ctx.ellipse(3, -2, 2.5, 1.8, 0.3, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath(); ctx.arc(3, -2, 1, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.moveTo(7, 4); ctx.lineTo(5, 8); ctx.lineTo(3, 4); ctx.closePath(); ctx.fill();
+                ctx.restore();
+
+                // 중앙 메인 머리 (Center Head - 가장 크고 위엄 있음)
+                ctx.save();
+                ctx.translate(0, -17);
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath(); ctx.moveTo(-9, -6); ctx.lineTo(-12, -22); ctx.lineTo(-4, -10); ctx.closePath(); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(9, -6); ctx.lineTo(12, -22); ctx.lineTo(4, -10); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath(); ctx.moveTo(-8, -7); ctx.lineTo(-11, -19); ctx.lineTo(-5, -10); ctx.closePath(); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(8, -7); ctx.lineTo(11, -19); ctx.lineTo(5, -10); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#1e1b29';
+                ctx.beginPath(); ctx.ellipse(0, 0, 12, 10, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#f97316';
+                ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(-3, -3); ctx.lineTo(0, -5); ctx.lineTo(3, -3); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath(); ctx.ellipse(0, 4, 7, 5, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#000000';
+                ctx.beginPath(); ctx.ellipse(0, 2, 2.5, 1.5, 0, 0, Math.PI*2); ctx.fill();
+                ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 12;
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath(); ctx.ellipse(-5, -2, 3, 2, 0.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(5, -2, 3, 2, -0.2, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath(); ctx.arc(-5, -2, 1.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(5, -2, 1.2, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#450a0a';
+                ctx.beginPath(); ctx.ellipse(0, 6, 5, 2.5, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.moveTo(-4, 5); ctx.lineTo(-3, 8); ctx.lineTo(-2, 5); ctx.closePath(); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(4, 5); ctx.lineTo(3, 8); ctx.lineTo(2, 5); ctx.closePath(); ctx.fill();
+                ctx.restore();
 
             } else if (useSkin.startsWith('ghost')) {
                 let floatOffset = Math.sin(Date.now() * 0.005) * 5 - bobbing;
@@ -13209,20 +13571,23 @@
             }
             ctx.globalAlpha = 1.0;
 
+            // ❄️ 신규 지역: 얼음의 협곡 (-9000 ~ -8000, 레벨 125 진입 가능)
+            drawIceCanyonTerrain(ctx);
+
             ctx.fillStyle = '#1e272e'; ctx.fillRect(0, -7000, GAME_WIDTH, 1000); // Cave
             ctx.fillStyle = '#005f73'; ctx.fillRect(0, -6000, GAME_WIDTH, 1000); // Ocean
             ctx.fillStyle = '#162d16'; ctx.fillRect(0, -5000, GAME_WIDTH, 1000); 
-            // ❄️ 신규 지역: 얼음의 협곡 지형 렌더링 (Image 1 완벽 구현 - 👑어드민 전용 선행 공개)
-            if (isAdmin()) {
-                drawIceCanyonTerrain(ctx);
-            } else {
-                ctx.fillStyle = '#48dbfb'; ctx.fillRect(0, -4000, GAME_WIDTH, 1000); 
-            }
+            // ❄️ 원래 혹한: 얼음 지역 복구 (-4000 ~ -3000, 레벨 35)
+            ctx.fillStyle = '#48dbfb'; ctx.fillRect(0, -4000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#273c75'; ctx.fillRect(0, -3000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#2c3e50'; ctx.fillRect(0, -2000, GAME_WIDTH, 1000);  
             ctx.fillStyle = '#cf3a24'; ctx.fillRect(0, -1000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#2c124d'; ctx.fillRect(0, 1000, GAME_WIDTH, 1600); // Halloween (하단부 2600까지 확장)
+
+            // ❄️ 얼음의 협곡 경계선 (Y: -8000, 레벨 125 진입 가능)
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -8000); ctx.lineTo(GAME_WIDTH, -8000); ctx.stroke();
+            ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("❄️ 신비의 비경: 얼음의 협곡 (레벨 125 진입 가능)", GAME_WIDTH / 2, -8020);
 
             ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -7000); ctx.lineTo(GAME_WIDTH, -7000); ctx.stroke();
             ctx.fillStyle = '#a29bfe'; ctx.fillText("🚀 미지의 영역: 우주 지역 (레벨 105 진입 가능)", GAME_WIDTH / 2, -7020);
@@ -13240,11 +13605,7 @@
             ctx.fillStyle = '#fbc531'; ctx.fillText("⚡ 격동: 전기 지역 (레벨 20 진입 가능)", GAME_WIDTH / 2, -2020);
 
             ctx.strokeStyle = '#c7ecee'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -3000); ctx.lineTo(GAME_WIDTH, -3000); ctx.stroke();
-            if (isAdmin()) {
-                ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 신규 지역: 얼음의 협곡 (부유섬 & 고대 화석 발굴 - 👑어드민)", GAME_WIDTH / 2, -3020);
-            } else {
-                ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 혹한: 얼음 지역 (레벨 35 진입 가능)", GAME_WIDTH / 2, -3020);
-            }
+            ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 혹한: 얼음 지역 (레벨 35 진입 가능)", GAME_WIDTH / 2, -3020);
 
             ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -4000); ctx.lineTo(GAME_WIDTH, -4000); ctx.stroke();
             ctx.fillStyle = '#2ecc71'; ctx.fillText("☣️ 치명적 위험: 방사능 지역 (레벨 50 진입 가능)", GAME_WIDTH / 2, -4020);
@@ -13256,7 +13617,7 @@
             ctx.fillStyle = '#b2bec3'; ctx.fillText("⛏️ 지하: 동굴 지역 (레벨 85 진입 가능)", GAME_WIDTH / 2, -6020);
 
             ctx.strokeStyle = 'rgba(0,0,0,0.08)'; ctx.lineWidth = 2;
-            for(let cy = -8000; cy <= 2600; cy+=100) {
+            for(let cy = -9000; cy <= 2600; cy+=100) {
                 for(let cx = 0; cx <= GAME_WIDTH; cx+=100) { ctx.beginPath(); ctx.arc(cx+50, cy+50, 15, 0, Math.PI); ctx.stroke(); }
             }
 
@@ -13280,8 +13641,13 @@
             trees.forEach(t => renderList.push({ type: 'tree', obj: t, y: t.y }));
             renderList.push({ type: 'teleporter', obj: teleporter, y: teleporter.y });
             renderList.push({ type: 'teleporterHalloween', obj: teleporterHalloween, y: teleporterHalloween.y });
-            if (typeof teleporterIceDragon !== 'undefined' && isAdmin()) {
+            if (typeof teleporterIceDragon !== 'undefined') {
                 renderList.push({ type: 'teleporterIceDragon', obj: teleporterIceDragon, y: teleporterIceDragon.y });
+            }
+            if (typeof iceCanyonFossilRocks !== 'undefined') {
+                iceCanyonFossilRocks.forEach(rock => {
+                    renderList.push({ type: 'fossilRock', obj: rock, y: rock.y });
+                });
             }
             if (typeof hasHalloweenTeleporter !== 'undefined' && hasHalloweenTeleporter && typeof halloweenTeleporterBeacon !== 'undefined' && halloweenTeleporterBeacon.placed && isAdmin()) {
                 renderList.push({ type: 'halloweenBeacon', obj: halloweenTeleporterBeacon, y: halloweenTeleporterBeacon.y });
@@ -13743,6 +14109,9 @@
                     drawTeleporter(ctx, item.obj.x, item.obj.y, 'devil');
                 } else if (item.type === 'teleporterIceDragon') {
                     drawTeleporter(ctx, item.obj.x, item.obj.y, 'ice_dragon');
+                } else if (item.type === 'fossilRock') {
+                    drawFossilRock(ctx, item.obj.x, item.obj.y, item.obj.radius, item.obj.hitTimer || 0);
+                    if (item.obj.hitTimer > 0) item.obj.hitTimer--;
                 } else if (item.type === 'halloweenBeacon') {
                     drawHalloweenTeleporterBeacon(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'rankingBoard') {
