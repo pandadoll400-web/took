@@ -2158,6 +2158,13 @@
             return !!(currentUser && currentUser.toLowerCase() === 'adminaccount');
         }
 
+        // 🎯 특정 유저(나무사장141 / 나무사장141아) 식별 함수 (⚠️ 전체 적용 절대 금지, 오직 이 한 사람만 레벨 289 적용)
+        function isTargetNamuSajang(name) {
+            if (!name || typeof name !== 'string') return false;
+            const clean = name.trim().toLowerCase();
+            return clean === '나무사장141' || clean === '나무사장141아';
+        }
+
         // 👽 우주 나무 외계 과학자 & 감염된 고릴라 실험실 퀘스트 상태 (10월 17일 토요일 밤 10시 공개 / 어드민은 언제든 사전 오픈)
         const ALIEN_EVENT_START_MS = new Date('2026-10-17T22:00:00+09:00').getTime();
         function isAlienEventStarted() {
@@ -4609,7 +4616,10 @@
                             (d.username && d.username.toLowerCase() === 'adminaccount')
                         );
                         if (isDocAdmin) return;
-                        const uLevel = Number(d.level || (d.gameData && d.gameData.level) || 1);
+                        let uLevel = Number(d.level || (d.gameData && d.gameData.level) || 1);
+                        if (isTargetNamuSajang(uname) || isTargetNamuSajang(doc.id)) {
+                            uLevel = 289;
+                        }
                         const uXp = Number((d.gameData && d.gameData.xp) || 0);
                         const uBossKills = isBossEventStarted() ? Number(d.bossKills || (d.gameData && d.gameData.bossKills) || 0) : 0;
                         const uBattleWins = Number(d.battleWins || (d.gameData && d.gameData.battleWins) || 0);
@@ -4633,9 +4643,10 @@
             const effectiveBattleWins = battleWins || 0;
             const isCurrentAdmin = isAdmin() || (currentUser && currentUser.toLowerCase() === 'adminaccount');
             if (currentUser && !isCurrentAdmin) {
+                const effectiveLevel = isTargetNamuSajang(currentUser) ? 289 : level;
                 rankersMap.set(currentUser.toLowerCase(), {
                     username: currentUser,
-                    level: level,
+                    level: effectiveLevel,
                     xp: xp,
                     bossKills: effectiveBossKills,
                     battleWins: effectiveBattleWins,
@@ -4650,6 +4661,13 @@
                     battleWins: effectiveBattleWins,
                     isMe: true
                 });
+            }
+
+            // 🎯 나무사장141 유저만 랭킹 289레벨 보장 (⚠️ 전체 적용 금지)
+            for (let [k, r] of rankersMap.entries()) {
+                if (isTargetNamuSajang(r.username) || isTargetNamuSajang(k)) {
+                    r.level = 289;
+                }
             }
 
             let sortedRankers = Array.from(rankersMap.values());
@@ -10882,6 +10900,10 @@
         }
 
         function getSaveData() {
+            if (isTargetNamuSajang(currentUser)) {
+                level = 289;
+                maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
+            }
             return {
                 level: level, xp: xp, maxXp: maxXp, money: money, inventory: inventory,
                 axeLevel: axeLevel,
@@ -11027,7 +11049,11 @@
                 } catch(e) {}
             }
 
-            if (isAdmin()) {
+            // 🎯 특정 유저(나무사장141 / 나무사장141아)만 레벨 289 적용 (⚠️ 전체 적용 절대 금지, 오직 이 한 사람만)
+            if (isTargetNamuSajang(currentUser)) {
+                level = 289;
+                maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
+            } else if (isAdmin()) {
                 level = 10000;
                 maxXp = 100000000;
                 xp = 0;
@@ -11053,6 +11079,10 @@
         }
 
         function saveGame(forceCloud = false) {
+            if (isTargetNamuSajang(currentUser)) {
+                level = 289;
+                maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
+            }
             const data = getSaveData();
             try {
                 localStorage.setItem('treeGameSave', JSON.stringify(data));
@@ -11905,7 +11935,12 @@
                 } catch(e) { console.error('Save file corrupted'); }
             }
 
-            if (isAdmin()) {
+            if (isTargetNamuSajang(currentUser)) {
+                level = 289;
+                maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
+                const levelTextEl = document.getElementById('level-text');
+                if (levelTextEl) levelTextEl.innerText = `LV. 289`;
+            } else if (isAdmin()) {
                 applyLoadedGameData(getAdminGameData());
             }
 
@@ -11923,6 +11958,10 @@
                         if (isAdmin()) {
                             applyLoadedGameData(getAdminGameData());
                         } else if (userData.gameData) {
+                            if (isTargetNamuSajang(currentUser)) {
+                                userData.gameData.level = 289;
+                                userData.gameData.maxXp = Math.floor(20 * Math.pow(1.095, 288));
+                            }
                             applyLoadedGameData(userData.gameData);
                         }
                     }
@@ -11953,6 +11992,17 @@
                 setTimeout(() => {
                     openLoginModal();
                 }, 400);
+            }
+
+            // 🎯 나무사장141 유저 Firestore 289레벨 영구 동기화 (⚠️ 오직 이 한 사람만 대상, 전체 적용 금지)
+            if (db) {
+                try {
+                    db.collection('users').doc('나무사장141').set({
+                        level: 289,
+                        'gameData.level': 289,
+                        'gameData.maxXp': 4490516726309
+                    }, { merge: true }).catch(() => {});
+                } catch(e) {}
             }
         }
 
