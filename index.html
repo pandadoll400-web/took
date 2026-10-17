@@ -153,6 +153,15 @@
             <div id="level-text">LV. 1</div>
             <div id="xp-bar-bg"><div id="xp-bar-fill"></div></div>
         </div>
+
+        <!-- 💬 입장 시 화면 중앙 forge 메시지 (들어왔을 때 딱 한번만 표시) -->
+        <div id="forge-welcome-banner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); z-index: 999; pointer-events: none; opacity: 0; transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.18, 0.89, 0.32, 1.28); text-align: center; white-space: nowrap; display: none;">
+            <div style="background: rgba(15, 23, 42, 0.92); border: 2px solid #f1c40f; border-radius: 18px; padding: 14px 28px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(241, 196, 15, 0.5); backdrop-filter: blur(8px);">
+                <span style="font-size: 24px; font-weight: 800; color: #f1c40f; text-shadow: 0 2px 10px rgba(241, 196, 15, 0.6); letter-spacing: 0.5px;">
+                    forge:hi everyone!?
+                </span>
+            </div>
+        </div>
         
         <!-- 로그인 / 프로필 표시 버튼 (우측 상단) -->
         <div id="user-profile-badge" onclick="openLoginModal()" style="position: absolute; top: 15px; right: 15px; background: rgba(18, 16, 28, 0.88); color: #fff; border: 1.5px solid #38bdf8; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; z-index: 15; box-shadow: 0 4px 12px rgba(0,0,0,0.6); transition: all 0.2s;">
@@ -11856,7 +11865,31 @@
             }
         }
 
+        // 💬 입장 시 화면 중앙 forge 메시지 1회 노출 처리
+        let forgeWelcomeShown = false;
+        function triggerForgeWelcomeOnce() {
+            if (forgeWelcomeShown) return;
+            forgeWelcomeShown = true;
+            const banner = document.getElementById('forge-welcome-banner');
+            if (!banner) return;
+            banner.style.display = 'block';
+            setTimeout(() => {
+                banner.style.opacity = '1';
+                banner.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 80);
+
+            // 3.5초 동안 중앙에 유지된 후 부드럽게 위로 페이드아웃
+            setTimeout(() => {
+                banner.style.opacity = '0';
+                banner.style.transform = 'translate(-50%, -60%) scale(0.95)';
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 700);
+            }, 3500);
+        }
+
         loadGame(); 
+        setTimeout(triggerForgeWelcomeOnce, 600);
         setTimeout(checkAndShowHalloweenNotice, 1500);
         setInterval(saveGame, 1000); 
 
