@@ -301,7 +301,7 @@
                 </div>
                 <span class="hud-tile-label">상점</span>
             </button>
-            <button id="quest-btn" class="hud-tile-btn" onclick="openQuestModal()" style="display: none;">
+            <button id="quest-btn" class="hud-tile-btn" onclick="openQuestModal()">
                 <div class="hud-tile-icon-wrap">
                     <svg viewBox="0 0 24 24" fill="none">
                         <!-- Quest Paper with Pen matching Image 4 -->
@@ -988,8 +988,8 @@
             </div>
         </div>
 
-        <!-- 📜 퀘스트 모달 (요청하신 대로 버튼과 준비 화면 구성) -->
-        <div id="quest-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 22, 34, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 90%; max-width: 420px; max-height: 80%; overflow-y: auto; display: none; border: 2px solid #64748b; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(100, 116, 139, 0.3); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <!-- 📜 퀘스트 모달 (30분 주기 리롤 & 골드 보상 지급) -->
+        <div id="quest-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 22, 34, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 90%; max-width: 440px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #f1c40f; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(241, 196, 15, 0.3); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(255,255,255,0.15); padding-bottom: 8px; margin-bottom: 12px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 22px;">📜</span>
@@ -998,41 +998,22 @@
                 <button onclick="closeQuestModal()" style="background: none; border: none; color: #aaa; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
             </div>
 
-            <div style="background: rgba(241, 196, 15, 0.12); border: 1px dashed #f1c40f; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; text-align: center;">
-                <div style="color: #f1c40f; font-weight: bold; font-size: 13px; margin-bottom: 2px;">✨ 퀘스트 시스템 업데이트 준비 중</div>
-                <div style="color: #cbd5e1; font-size: 11px;">다양한 일일 퀘스트 및 지역별 탐험 임무가 곧 오픈됩니다!</div>
+            <!-- 30분 주기 리롤 카운트다운 배너 -->
+            <div style="background: linear-gradient(135deg, rgba(241, 196, 15, 0.15), rgba(230, 126, 34, 0.15)); border: 1.5px solid #f1c40f; border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="color: #f1c40f; font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 5px;">
+                        <span>⏳</span> <span id="quest-timer-text">다음 갱신: 30분 00초</span>
+                    </div>
+                    <div style="color: #cbd5e1; font-size: 11px; margin-top: 2px;">30분마다 새로운 퀘스트로 자동 리롤됩니다!</div>
+                </div>
+                <button onclick="manualRerollQuests()" title="즉시 퀘스트 리롤" style="background: rgba(241, 196, 15, 0.2); border: 1px solid #f1c40f; color: #f1c40f; padding: 6px 11px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap;">🎲 즉시 리롤</button>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
-                <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 10px; padding: 10px 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <span style="font-weight: bold; color: #38bdf8; font-size: 13px;">❄️ [지역 탐험] 얼음의 협곡 조사</span>
-                        <span style="font-size: 10px; background: rgba(56,189,248,0.2); color: #38bdf8; padding: 2px 6px; border-radius: 4px;">진행 중</span>
-                    </div>
-                    <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">신규 지역 '얼음의 협곡'을 탐험하고 부유섬의 풍경을 감상하세요.</div>
-                    <div style="font-size: 11px; color: #f1c40f;">보상: 💰 50,000 골드</div>
-                </div>
-
-                <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 10px; padding: 10px 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <span style="font-weight: bold; color: #a855f7; font-size: 13px;">🦴 [고고학자] 고대 화석 발굴</span>
-                        <span style="font-size: 10px; background: rgba(168,85,247,0.2); color: #a855f7; padding: 2px 6px; border-radius: 4px;">진행 중</span>
-                    </div>
-                    <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">얼음의 협곡에서 고대 화석 3개를 발굴하여 가방에 보관하세요.</div>
-                    <div style="font-size: 11px; color: #f1c40f;">보상: 💎 100,000 골드</div>
-                </div>
-
-                <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 10px; padding: 10px 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <span style="font-weight: bold; color: #ff0055; font-size: 13px;">🐉 [협곡의 제왕] 고대 서리룡 격퇴</span>
-                        <span style="font-size: 10px; background: rgba(255,0,85,0.2); color: #ff0055; padding: 2px 6px; border-radius: 4px;">도전 과제</span>
-                    </div>
-                    <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">얼음의 협곡 보스 포탈을 타고 들어가 '고대 서리룡'을 쓰러뜨리세요.</div>
-                    <div style="font-size: 11px; color: #f1c40f;">보상: 👑 신화 화석 1개 + 💰 200,000 골드</div>
-                </div>
+            <!-- 퀘스트 목록 동적 렌더링 영역 -->
+            <div id="quest-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
             </div>
 
-            <button onclick="closeQuestModal()" style="width: 100%; padding: 10px; background: #334155; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">닫기</button>
+            <button onclick="closeQuestModal()" style="width: 100%; padding: 11px; background: #334155; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer;">닫기</button>
         </div>
 
         <!-- 호박 융합 (퓨즈) 모달 -->
@@ -1699,14 +1680,331 @@
             });
         }
 
-        function openQuestModal() {
-            if (!isAdmin()) {
-                alert("🔒 [모험 퀘스트 저널]\n\n현재 최고 관리자(ADMIN) 전용 선행 테스트 중입니다!\n정식 업데이트 때 공개될 예정입니다.");
+        // ==========================================
+        // 📜 모험 퀘스트 저널 시스템 (30분 주기 리롤 & 골드 보상)
+        // ==========================================
+        const QUEST_CYCLE_MS = 30 * 60 * 1000; // 30분 주기 (1,800,000ms)
+
+        const QUEST_TEMPLATES = [
+            // 🪓 벌목 관련
+            { id: 'chop_5', title: '나무 벌목 훈련', desc: '어떤 나무든 5회 벌목하세요.', type: 'chop', target: 5, reward: 50000, icon: '🪓', cat: 'chop' },
+            { id: 'chop_12', title: '숙련된 나무꾼', desc: '어떤 나무든 12회 벌목하세요.', type: 'chop', target: 12, reward: 120000, icon: '🪓', cat: 'chop' },
+            { id: 'chop_20', title: '숲의 개척자', desc: '어떤 나무든 20회 벌목하세요.', type: 'chop', target: 20, reward: 220000, icon: '🪓', cat: 'chop' },
+
+            // 🍎 과일 수확 관련
+            { id: 'fruit_15', title: '풍성한 과일 수확', desc: '바닥에 떨어진 과일 15개를 주우세요.', type: 'fruit', target: 15, reward: 40000, icon: '🍎', cat: 'fruit' },
+            { id: 'fruit_30', title: '과일 바구니 가득', desc: '바닥에 떨어진 과일 30개를 주우세요.', type: 'fruit', target: 30, reward: 85000, icon: '🍇', cat: 'fruit' },
+            { id: 'fruit_50', title: '대풍년의 기쁨', desc: '바닥에 떨어진 과일 50개를 주우세요.', type: 'fruit', target: 50, reward: 160000, icon: '🍍', cat: 'fruit' },
+
+            // 📦 손님 납품 관련
+            { id: 'deliver_3', title: '신속한 주문 배송', desc: '상점 손님 3명에게 과일을 납품하세요.', type: 'deliver', target: 3, reward: 60000, icon: '📦', cat: 'deliver' },
+            { id: 'deliver_6', title: '단골 손님 응대', desc: '상점 손님 6명에게 과일을 납품하세요.', type: 'deliver', target: 6, reward: 130000, icon: '🚚', cat: 'deliver' },
+            { id: 'deliver_10', title: '납품의 달인', desc: '상점 손님 10명에게 과일을 납품하세요.', type: 'deliver', target: 10, reward: 260000, icon: '👑', cat: 'deliver' },
+
+            // 💰 골드 획득 관련
+            { id: 'gold_50k', title: '소소한 목돈 벌기', desc: '납품 및 활동으로 50,000 골드를 획득하세요.', type: 'gold', target: 50000, reward: 50000, icon: '💰', cat: 'gold' },
+            { id: 'gold_150k', title: '자산 증식의 꿈', desc: '납품 및 활동으로 150,000 골드를 획득하세요.', type: 'gold', target: 150000, reward: 100000, icon: '💰', cat: 'gold' },
+
+            // 🎣 바다 낚시 관련
+            { id: 'fish_3', title: '바다의 강태공', desc: '바다에서 해양 생물/물고기 3마리를 낚으세요.', type: 'fish', target: 3, reward: 70000, icon: '🎣', cat: 'explore' },
+            { id: 'fish_7', title: '심해 탐사 낚시', desc: '바다에서 해양 생물/물고기 7마리를 낚으세요.', type: 'fish', target: 7, reward: 160000, icon: '🐠', cat: 'explore' },
+
+            // ⛏️ 동굴 채광 관련
+            { id: 'mine_3', title: '동굴 암석 채굴', desc: '동굴에서 광석/보석 3개를 채집하세요.', type: 'mine', target: 3, reward: 70000, icon: '⛏️', cat: 'explore' },
+            { id: 'mine_6', title: '신비한 광물 조사', desc: '동굴에서 광석/보석 6개를 채집하세요.', type: 'mine', target: 6, reward: 160000, icon: '💎', cat: 'explore' },
+
+            // 🎃 할로윈 호박 채집
+            { id: 'pumpkin_3', title: '할로윈 호박 채집', desc: '할로윈 지역에서 호박 3개를 채집하세요.', type: 'pumpkin', target: 3, reward: 80000, icon: '🎃', cat: 'special' },
+            { id: 'pumpkin_6', title: '축제의 호박 마스터', desc: '할로윈 지역에서 호박 6개를 채집하세요.', type: 'pumpkin', target: 6, reward: 180000, icon: '🎃', cat: 'special' },
+
+            // 🎰 룰렛 돌리기
+            { id: 'roulette_1', title: '행운의 룰렛 도전', desc: '할로윈 행운의 룰렛을 1회 돌려보세요.', type: 'roulette', target: 1, reward: 50000, icon: '🎰', cat: 'special' },
+
+            // ⚔️ PVP 결투 참여 / 승리
+            { id: 'pvp_1', title: '결투장 승리자', desc: 'PVP 결투에서 1승을 거두세요.', type: 'pvp', target: 1, reward: 120000, icon: '⚔️', cat: 'special' }
+        ];
+
+        let currentQuestCycle = -1;
+        let activeQuests = [];
+        let questTimerInterval = null;
+
+        function getQuestCycleIndex() {
+            return Math.floor(Date.now() / QUEST_CYCLE_MS);
+        }
+
+        function getQuestCycleRemainingTime() {
+            const elapsed = Date.now() % QUEST_CYCLE_MS;
+            const remainingMs = Math.max(0, QUEST_CYCLE_MS - elapsed);
+            const minutes = Math.floor(remainingMs / 60000);
+            const seconds = Math.floor((remainingMs % 60000) / 1000);
+            return {
+                remainingMs,
+                minutes,
+                seconds,
+                formatted: `${minutes}분 ${seconds < 10 ? '0' : ''}${seconds}초`
+            };
+        }
+
+        function rerollQuests(force = false) {
+            currentQuestCycle = getQuestCycleIndex();
+            // 4개 카테고리에서 1개씩 선별하여 다채롭게 구성
+            const cats = ['chop', 'fruit', 'deliver', 'explore', 'gold', 'special'];
+            const shuffledCats = [...cats].sort(() => Math.random() - 0.5);
+            const selectedCats = shuffledCats.slice(0, 4);
+
+            let selected = [];
+            selectedCats.forEach(cat => {
+                const pool = QUEST_TEMPLATES.filter(q => q.cat === cat);
+                if (pool.length > 0) {
+                    const picked = pool[Math.floor(Math.random() * pool.length)];
+                    selected.push(picked);
+                }
+            });
+
+            // 부족할 경우 채우기
+            if (selected.length < 4) {
+                const remaining = QUEST_TEMPLATES.filter(q => !selected.some(s => s.id === q.id));
+                while (selected.length < 4 && remaining.length > 0) {
+                    const idx = Math.floor(Math.random() * remaining.length);
+                    selected.push(remaining.splice(idx, 1)[0]);
+                }
+            }
+
+            activeQuests = selected.map(template => ({
+                id: template.id,
+                title: template.title,
+                desc: template.desc,
+                icon: template.icon,
+                type: template.type,
+                target: template.target,
+                progress: 0,
+                rewardGold: template.reward,
+                completed: false,
+                claimed: false
+            }));
+
+            saveQuestData();
+            updateQuestHudBadge();
+        }
+
+        function loadQuestData() {
+            const key = 'treegame_quests_' + (currentUser || 'guest');
+            try {
+                const raw = localStorage.getItem(key);
+                if (raw) {
+                    const data = JSON.parse(raw);
+                    if (data && data.cycle === getQuestCycleIndex() && Array.isArray(data.quests) && data.quests.length > 0) {
+                        currentQuestCycle = data.cycle;
+                        activeQuests = data.quests;
+                        updateQuestHudBadge();
+                        return;
+                    }
+                }
+            } catch(e) {
+                console.warn('Load quest err:', e);
+            }
+            rerollQuests();
+        }
+
+        function saveQuestData() {
+            const key = 'treegame_quests_' + (currentUser || 'guest');
+            try {
+                localStorage.setItem(key, JSON.stringify({
+                    cycle: currentQuestCycle,
+                    quests: activeQuests
+                }));
+            } catch(e) {}
+        }
+
+        function checkQuestCycleRoll() {
+            const nowCycle = getQuestCycleIndex();
+            if (currentQuestCycle !== nowCycle) {
+                rerollQuests();
+                renderQuestUI();
+            }
+        }
+
+        function trackQuestProgress(type, amount = 1, extraData = {}) {
+            checkQuestCycleRoll();
+            if (!activeQuests || activeQuests.length === 0) return;
+
+            let hasChange = false;
+            activeQuests.forEach(q => {
+                if (q.claimed) return;
+                if (q.type === type) {
+                    const prevProgress = q.progress || 0;
+                    q.progress = Math.min(q.target, prevProgress + amount);
+                    if (q.progress >= q.target && !q.completed) {
+                        q.completed = true;
+                        floatTexts.push({
+                            x: player.x,
+                            y: player.y - 120,
+                            text: `📜 퀘스트 완료: [${q.title}]!`,
+                            color: '#f1c40f',
+                            life: 110,
+                            size: 20
+                        });
+                    }
+                    hasChange = true;
+                }
+            });
+
+            if (hasChange) {
+                saveQuestData();
+                updateQuestHudBadge();
+                const modal = document.getElementById('quest-modal');
+                if (modal && modal.style.display === 'block') {
+                    renderQuestUI();
+                }
+            }
+        }
+
+        function claimQuestReward(questId) {
+            const quest = activeQuests.find(q => q.id === questId);
+            if (!quest) return;
+            if (!quest.completed || quest.claimed) return;
+
+            quest.claimed = true;
+            const reward = quest.rewardGold || 0;
+            money += reward;
+            updateMoney();
+            saveGame();
+            saveQuestData();
+            updateQuestHudBadge();
+            renderQuestUI();
+
+            floatTexts.push({
+                x: player.x,
+                y: player.y - 100,
+                text: `💰 +${reward.toLocaleString()} 골드 획득!`,
+                color: '#2ecc71',
+                life: 120,
+                size: 22
+            });
+            alert(`🎉 퀘스트 달성 완료!\n[${quest.title}]\n\n보상: 💰 ${reward.toLocaleString()} 골드가 지급되었습니다!`);
+        }
+
+        function manualRerollQuests() {
+            if (confirm("퀘스트를 새로운 목록으로 즉시 리롤하시겠습니까?\n(현재 진행 중이던 퀘스트 진행도는 초기화됩니다.)")) {
+                rerollQuests(true);
+                renderQuestUI();
+                floatTexts.push({ x: player.x, y: player.y - 100, text: `🎲 퀘스트 리롤 완료!`, color: '#f1c40f', life: 90, size: 20 });
+            }
+        }
+
+        function renderQuestUI() {
+            const listEl = document.getElementById('quest-list');
+            if (!listEl) return;
+            updateQuestTimerDisplay();
+
+            if (!activeQuests || activeQuests.length === 0) {
+                listEl.innerHTML = `<div style="text-align:center; color:#888; padding:20px;">진행 가능한 퀘스트가 없습니다.</div>`;
                 return;
             }
+
+            listEl.innerHTML = '';
+            activeQuests.forEach(q => {
+                const percent = Math.min(100, Math.floor(((q.progress || 0) / q.target) * 100));
+                const isReady = q.completed && !q.claimed;
+                const isClaimed = q.claimed;
+
+                let borderCol = '#334155';
+                let bgCol = 'rgba(30, 41, 59, 0.7)';
+                if (isReady) {
+                    borderCol = '#f1c40f';
+                    bgCol = 'rgba(241, 196, 15, 0.12)';
+                } else if (isClaimed) {
+                    borderCol = '#1e293b';
+                    bgCol = 'rgba(15, 23, 42, 0.5)';
+                }
+
+                let badgeHtml = '';
+                if (isClaimed) {
+                    badgeHtml = `<span style="font-size:10px; background:rgba(100,116,139,0.3); color:#94a3b8; padding:2px 6px; border-radius:4px; font-weight:bold;">✔ 보상 수령</span>`;
+                } else if (isReady) {
+                    badgeHtml = `<span style="font-size:10px; background:rgba(241,196,15,0.25); color:#f1c40f; padding:2px 6px; border-radius:4px; font-weight:bold;">✨ 완료 (보상 대기)</span>`;
+                } else {
+                    badgeHtml = `<span style="font-size:10px; background:rgba(56,189,248,0.2); color:#38bdf8; padding:2px 6px; border-radius:4px; font-weight:bold;">진행 중</span>`;
+                }
+
+                let btnHtml = '';
+                if (isClaimed) {
+                    btnHtml = `<button disabled style="width:100%; margin-top:8px; padding:7px; background:#1e293b; color:#64748b; border:1px solid #334155; border-radius:6px; font-size:12px; font-weight:bold; cursor:default;">✔ 보상 수령 완료</button>`;
+                } else if (isReady) {
+                    btnHtml = `<button onclick="claimQuestReward('${q.id}')" style="width:100%; margin-top:8px; padding:9px; background:linear-gradient(135deg, #f1c40f, #e67e22); color:#111; border:none; border-radius:6px; font-size:13px; font-weight:bold; cursor:pointer; box-shadow:0 0 12px rgba(241,196,15,0.5);">💰 골드 보상 받기 (+${q.rewardGold.toLocaleString()} 골드)</button>`;
+                } else {
+                    btnHtml = `<div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+                        <span style="font-size:11px; color:#f1c40f; font-weight:bold;">보상: 💰 ${q.rewardGold.toLocaleString()} 골드</span>
+                        <span style="font-size:11px; color:#38bdf8; font-weight:bold;">${q.progress || 0} / ${q.target} (${percent}%)</span>
+                    </div>`;
+                }
+
+                listEl.innerHTML += `
+                    <div style="background:${bgCol}; border:1.5px solid ${borderCol}; border-radius:10px; padding:10px 12px; transition: all 0.2s;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <span style="font-weight:bold; color:#fff; font-size:13px; display:flex; align-items:center; gap:5px;">
+                                <span>${q.icon}</span> <span>${q.title}</span>
+                            </span>
+                            ${badgeHtml}
+                        </div>
+                        <div style="font-size:11px; color:#94a3b8; margin-bottom:8px;">${q.desc}</div>
+                        <!-- 게이지 바 -->
+                        <div style="background:rgba(0,0,0,0.4); border-radius:5px; height:7px; overflow:hidden;">
+                            <div style="width:${percent}%; height:100%; background:${isReady || isClaimed ? '#2ecc71' : '#38bdf8'}; transition: width 0.3s;"></div>
+                        </div>
+                        ${btnHtml}
+                    </div>
+                `;
+            });
+        }
+
+        function updateQuestHudBadge() {
+            const btn = document.getElementById('quest-btn');
+            if (!btn) return;
+            const hasUnclaimed = activeQuests && activeQuests.some(q => q.completed && !q.claimed);
+            if (hasUnclaimed) {
+                btn.style.borderColor = '#f1c40f';
+                btn.style.boxShadow = '0 0 12px rgba(241, 196, 15, 0.7)';
+            } else {
+                btn.style.borderColor = '';
+                btn.style.boxShadow = '';
+            }
+        }
+
+        function startQuestModalTimer() {
+            stopQuestModalTimer();
+            updateQuestTimerDisplay();
+            questTimerInterval = setInterval(() => {
+                updateQuestTimerDisplay();
+                if (currentQuestCycle !== getQuestCycleIndex()) {
+                    rerollQuests();
+                    renderQuestUI();
+                }
+            }, 1000);
+        }
+
+        function stopQuestModalTimer() {
+            if (questTimerInterval) {
+                clearInterval(questTimerInterval);
+                questTimerInterval = null;
+            }
+        }
+
+        function updateQuestTimerDisplay() {
+            const timerEl = document.getElementById('quest-timer-text');
+            if (timerEl) {
+                const remaining = getQuestCycleRemainingTime();
+                timerEl.innerText = `다음 갱신: ${remaining.formatted}`;
+            }
+        }
+
+        function openQuestModal() {
             const modal = document.getElementById('quest-modal');
             if (!modal) return;
+            loadQuestData();
+            renderQuestUI();
             modal.style.display = 'block';
+            startQuestModalTimer();
             if (typeof resetJoyMouse === 'function') resetJoyMouse();
             if (typeof player !== 'undefined') player.targetTree = null;
         }
@@ -1714,6 +2012,7 @@
         function closeQuestModal() {
             const modal = document.getElementById('quest-modal');
             if (modal) modal.style.display = 'none';
+            stopQuestModalTimer();
         }
 
         // 🎰 할로윈 행운의 룰렛 머신 (할로윈 퓨즈머신 x:190, y:2050 옆: x:85, y:2140)
@@ -4696,6 +4995,7 @@
             saveGame();
 
             isRouletteSpinning = true;
+            if (typeof trackQuestProgress === 'function') trackQuestProgress('roulette', 1);
 
             const spinBtn = document.getElementById('roulette-spin-btn');
             const banner = document.getElementById('roulette-result-banner');
@@ -9188,6 +9488,7 @@
 
             battleWins++;
             pvpWins = battleWins;
+            if (typeof trackQuestProgress === 'function') trackQuestProgress('pvp', 1);
             try {
                 localStorage.setItem('battle_wins_' + (currentUser || 'guest'), String(battleWins));
             } catch(e) {}
@@ -10319,7 +10620,7 @@
                     badgeEl.title = `최고 관리자 계정 (${currentUser})`;
                 }
                 if (adminBtn) adminBtn.style.display = 'flex';
-                // 👑 퀘스트, 할로윈 버튼: 오직 최고 관리자(ADMIN) 계정에만 공개 (도감 버튼은 요청에 의해 HUD에서 영구 제거됨)
+                // 👑 퀘스트 버튼: 모든 플레이어에게 정식 출시 공개! (할로윈 버튼은 관리자 전용)
                 if (codexBtn) codexBtn.style.display = 'none';
                 if (questBtn) questBtn.style.display = 'flex';
                 if (halloweenBtn) halloweenBtn.style.display = 'flex';
@@ -10332,7 +10633,7 @@
                 }
                 if (adminBtn) adminBtn.style.display = 'none';
                 if (codexBtn) codexBtn.style.display = 'none';
-                if (questBtn) questBtn.style.display = 'none';
+                if (questBtn) questBtn.style.display = 'flex';
                 if (halloweenBtn) halloweenBtn.style.display = 'none';
             } else {
                 if (badgeText) badgeText.innerText = '로그인';
@@ -10343,9 +10644,10 @@
                 }
                 if (adminBtn) adminBtn.style.display = 'none';
                 if (codexBtn) codexBtn.style.display = 'none';
-                if (questBtn) questBtn.style.display = 'none';
+                if (questBtn) questBtn.style.display = 'flex';
                 if (halloweenBtn) halloweenBtn.style.display = 'none';
             }
+            if (typeof updateQuestHudBadge === 'function') updateQuestHudBadge();
         }
 
         async function handleTreeGameLogin() {
@@ -10474,6 +10776,7 @@
                 equippedAxe: equippedAxe,
                 ownedAxes: getOwnedAxesList(),
                 ownedSkins: ownedSkins, equippedSkin: equippedSkin,
+                questData: { cycle: currentQuestCycle, quests: activeQuests },
                 treeUnlocked: trees.map(t => t.unlocked),
                 fishCollection: fishCollection,
                 radioactiveCollection: radioactiveCollection,
@@ -10515,6 +10818,12 @@
                 equippedAxe = data.equippedAxe;
             } else {
                 equippedAxe = axeLevel;
+            }
+            if (data && data.questData && data.questData.cycle === getQuestCycleIndex() && Array.isArray(data.questData.quests)) {
+                currentQuestCycle = data.questData.cycle;
+                activeQuests = data.questData.quests;
+            } else if (typeof loadQuestData === 'function') {
+                loadQuestData();
             }
             ownedSkins = (data.ownedSkins && data.ownedSkins.length > 0) ? [...data.ownedSkins] : ['default'];
             if (!ownedSkins.includes('default')) ownedSkins.unshift('default');
@@ -11490,6 +11799,8 @@
 
             updateUserBadgeUI();
             initTradeHoldEvents();
+            if (typeof loadQuestData === 'function') loadQuestData();
+            if (typeof updateQuestHudBadge === 'function') updateQuestHudBadge();
 
             // 만약 이미 로그인된 계정이 있다면, 클라우드에서 최신 데이터를 가져와 자동 동기화!
             if (currentUser && db) {
@@ -11776,6 +12087,7 @@
 
                         if (tree.progress >= maxP) {
                             tree.progress = 0;
+                            if (typeof trackQuestProgress === 'function') trackQuestProgress('chop', 1);
                             let dropCount = Math.floor(Math.random() * (tree.drops[1] - tree.drops[0] + 1)) + tree.drops[0];
                             for(let i=0; i<dropCount; i++) spawnFruit(tree.x, tree.y, tree.type);
 
@@ -11821,8 +12133,14 @@
                         // 특성이 붙은 과일도 동적으로 인벤토리에 추가
                         if (inventory[f.fruit] === undefined) inventory[f.fruit] = 0;
                         inventory[f.fruit]++;
-                        
+
                         let baseName = f.fruit.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '').replace('동굴 ', '');
+                        if (typeof trackQuestProgress === 'function') {
+                            trackQuestProgress('fruit', 1);
+                            if (oceanFishNames.includes(baseName)) trackQuestProgress('fish', 1);
+                            if (caveStoneNames.includes(baseName)) trackQuestProgress('mine', 1);
+                            if (baseName.includes('호박') || baseName.includes('잭오랜턴')) trackQuestProgress('pumpkin', 1);
+                        }
                         if (oceanFishNames.includes(baseName) && !fishCollection.includes(baseName)) {
                             let inInv = (inventory[baseName] > 0) || (inventory['심해 ' + baseName] > 0);
                             if (inInv) {
@@ -11904,6 +12222,10 @@
                             
                             totalEarned = Math.floor(totalEarned);
                             money += totalEarned; updateMoney();
+                            if (typeof trackQuestProgress === 'function') {
+                                trackQuestProgress('deliver', 1);
+                                trackQuestProgress('gold', totalEarned);
+                            }
                             
                             // 주울 때와 완전히 동일한 XP 지급!
                             let baseItemXp = 2; // 기본값
