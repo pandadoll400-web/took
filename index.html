@@ -346,6 +346,8 @@
                 <button onclick="closeAdminPanelModal()" style="background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; line-height: 1;">✕</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button onclick="adminWarpToPetMachine()" style="padding: 10px; background: linear-gradient(135deg, #0ea5e9, #38bdf8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);">🐾 [신규] 얼음 지형 고급 펫 머신으로 이동</button>
+                <button onclick="adminToggle10PmEvent()" style="padding: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);">👽😈 [이벤트] 외계박사 & 악마보스 10시 이벤트 공개 토글</button>
                 <button onclick="adminWarpToIceCanyon()" style="padding: 10px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.45);">❄️ [신규 지역] 얼음의 협곡(부유섬&화석) 즉시 이동</button>
                 <button onclick="adminEnterIceDragonBoss()" style="padding: 10px; background: linear-gradient(135deg, #0369a1, #0ea5e9); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);">🐉 [보스] 고대 서리룡 보스전 바로 입장</button>
                 <button onclick="adminRefillAllFossils()" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);">🦴 [도감] 20종 고대 화석 99개 충전 & 100% 수집</button>
@@ -532,7 +534,7 @@
             <!-- 오픈 일정 안내 카드 -->
             <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
                 <span style="color: #bbb;">📅 보스전 오픈 일정:</span>
-                <span id="boss-cooldown-status-badge" style="font-weight: bold; color: #ff7675;">🔒 토요일 10시 공개!</span>
+                <span id="boss-cooldown-status-badge" style="font-weight: bold; color: #ff7675;">🔒 오늘 밤 10시 공개!</span>
             </div>
 
             <!-- 내 보스 처치 수 기록 -->
@@ -542,7 +544,7 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button id="boss-enter-btn" onclick="enterBossDimension('devil')" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #7f8c8d, #4b5563); color: white; border: 1px solid #f39c12; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);">🔒 토요일 10시 공개!</button>
+                <button id="boss-enter-btn" onclick="enterBossDimension('devil')" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #7f8c8d, #4b5563); color: white; border: 1px solid #f39c12; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);">🔒 오늘 밤 10시 공개!</button>
                 <div style="display: flex; gap: 8px;">
                     <button onclick="openRankingModal('boss'); closeBossPortalModal();" style="flex: 1; padding: 10px; background: #8e44ad; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🏆 최다 처치 랭킹</button>
                     <button onclick="closeBossPortalModal()" style="flex: 1; padding: 10px; background: rgba(255,255,255,0.12); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">닫기</button>
@@ -789,6 +791,59 @@
             <div id="halloween-progress" style="text-align: center; margin-bottom: 15px; font-weight: bold; color: #f1c40f;">진행도: 0 / 1</div>
             <div class="grid" id="halloween-grid" style="display: flex; justify-content: center;"></div>
             <button class="close-btn" onclick="document.getElementById('halloween-modal').style.display='none'" style="background: #4a235a; border: 1px solid #8e44ad;">닫기</button>
+        </div>
+
+        <!-- 🐾 [ADMIN] 얼음 지형 고급 펫 머신 모달 (Pet System Lab) -->
+        <div id="pet-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #0f172a, #090d16); color: white; padding: 22px 20px; border-radius: 20px; width: 94%; max-width: 460px; max-height: 88%; overflow-y: auto; display: none; border: 2px solid #f1c40f; z-index: 60; box-shadow: 0 16px 50px rgba(0,0,0,0.95), 0 0 35px rgba(241, 196, 15, 0.35); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(241, 196, 15, 0.35); padding-bottom: 12px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 28px; filter: drop-shadow(0 0 10px #f1c40f);">🐾</span>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <h2 style="margin: 0; color: #f1c40f; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">고대 크리스탈 펫 머신</h2>
+                            <span style="background: rgba(241, 196, 15, 0.2); color: #f1c40f; border: 1px solid #f1c40f; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">ADMIN ONLY</span>
+                        </div>
+                        <span style="font-size: 11px; color: #94a3b8;">얼음 지형 비밀 연구소 · 펫 시스템 프로토타입</span>
+                    </div>
+                </div>
+                <button onclick="closePetMachineModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
+            </div>
+
+            <!-- 관리자 상태 & 시스템 안내 배너 -->
+            <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 1px solid #38bdf8; border-radius: 12px; padding: 12px; margin-bottom: 14px; text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 12px; font-weight: bold; color: #38bdf8;">👑 최고 관리자 권한 승인됨</span>
+                    <span id="pet-machine-status-badge" style="font-size: 10px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 2px 7px; border-radius: 6px; font-weight: bold;">개발 연구 단계 (Alpha)</span>
+                </div>
+                <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.5;">
+                    얼음 지형에 극비 연구용으로 설치된 <b>고급 펫 융합 머신</b>입니다.<br>
+                    선택한 펫의 능력치를 확인하고, 필드 동행 소환을 테스트할 수 있습니다.
+                </div>
+            </div>
+
+            <!-- 활성화된 펫 & 동행 ON/OFF 컨트롤 -->
+            <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(241, 196, 15, 0.5); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+                <div style="font-size: 11px; color: #94a3b8; margin-bottom: 4px;">현재 동행 선택 펫</div>
+                <div id="pet-modal-active-name" style="font-size: 17px; font-weight: 900; color: #f1c40f; margin-bottom: 8px;">🐺❄️ [신화] 칠흑의 눈꽃 늑대</div>
+                <div id="pet-modal-active-buff" style="font-size: 12px; color: #38bdf8; margin-bottom: 12px; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 6px;">과일 수확량 +50% / 이동속도 +20% / 빙결 오라</div>
+                <button id="pet-follow-toggle-btn" onclick="toggleAdminPetFollow()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>🐾</span> <span id="pet-follow-toggle-text">필드 동행 소환 활성화 (ON)</span>
+                </button>
+            </div>
+
+            <!-- 펫 도감/프리뷰 카드 목록 -->
+            <div style="font-size: 13px; font-weight: bold; color: #e2e8f0; margin-bottom: 8px; text-align: left; display: flex; align-items: center; gap: 6px;">
+                <span>✨</span> <span>신비로운 펫 라인업 (4종)</span>
+            </div>
+            <div id="pet-cards-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+                <!-- Dynamically rendered by updatePetMachineModalUI() -->
+            </div>
+
+            <div style="text-align: center;">
+                <button onclick="closePetMachineModal()" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.1); color: #cbd5e1; border: 1px solid #475569; border-radius: 8px; font-size: 13px; cursor: pointer;">
+                    닫기
+                </button>
+            </div>
         </div>
 
         <!-- ⛏️ 고대 화석 바위 발굴 & 케르베로스 융합 제단 모달 -->
@@ -1091,6 +1146,56 @@
             { x: 490, y: -8730, radius: 28, hitTimer: 0 }
         ];
 
+        // 🐾 [ADMIN] 얼음 지형 고급 펫 머신 (Pet System Alpha Machine - x: 130, y: -3450)
+        let petMachine = {
+            x: 130,
+            y: -3450,
+            radius: 46
+        };
+
+        // 🐾 관리자 전용 프리미엄 펫 도감 데이터 테이블 (4종)
+        let adminPetsData = [
+            {
+                id: 'frost_wolf',
+                name: '칠흑의 눈꽃 늑대',
+                icon: '🐺❄️',
+                tier: 'MYTHIC',
+                tierColor: '#ef4444',
+                desc: '태고의 만년설 속에서 깨어난 영수. 혹한의 한기로 과일 수확량을 증폭시킵니다.',
+                buff: '과일 수확량 +50% / 이동속도 +20% / 빙결 오라'
+            },
+            {
+                id: 'baby_ice_dragon',
+                name: '빙룡 베이비',
+                icon: '🐉❄️',
+                tier: 'LEGENDARY',
+                tierColor: '#38bdf8',
+                desc: '얼음 협곡 고대 서리룡의 새끼. 적에게 얼음 브레스를 뿜어 보스를 얼어붙게 합니다.',
+                buff: '얼음 브레스 자동 타격 / 보스전 피해량 +35%'
+            },
+            {
+                id: 'aurora_fox',
+                name: '오로라 구미호',
+                icon: '🦊✨',
+                tier: 'ANCIENT',
+                tierColor: '#f59e0b',
+                desc: '극광의 빛을 품은 신비로운 9개의 꼬리를 지닌 여우. 주변에 황금 과일을 부릅니다.',
+                buff: '15초마다 황금 과일 자동 드랍 / 행운 +30%'
+            },
+            {
+                id: 'penguin_butler',
+                name: '황제 펭귄 집사',
+                icon: '🐧🎩',
+                tier: 'RARE',
+                tierColor: '#10b981',
+                desc: '얼음 왕국의 정중한 집사 펭귄. 정산 거래를 도와 엄청난 골드 보너스를 획득합니다.',
+                buff: '상점 판매 시 골드 +50% 보너스 정산'
+            }
+        ];
+        let adminActivePet = localStorage.getItem('admin_active_pet') || 'frost_wolf';
+        let adminPetFollowEnabled = localStorage.getItem('admin_pet_follow') === 'true';
+        let followPetPos = { x: 260, y: 650, floatTimer: 0 };
+
         // 🐉 얼음의 협곡 고대 서리룡 보스 객체
         let iceDragonBoss = {
             x: 300,
@@ -1264,6 +1369,128 @@
         function closeFossilRockModal() {
             const modal = document.getElementById('fossil-rock-modal');
             if (modal) modal.style.display = 'none';
+        }
+
+        // ==========================================
+        // 🐾 [ADMIN] 얼음 지형 고급 펫 머신 컨트롤 함수들
+        // ==========================================
+        function openPetMachineModal() {
+            if (!isAdmin()) {
+                alert('🔒 관리자(Admin) 전용 머신입니다!');
+                return;
+            }
+            const modal = document.getElementById('pet-machine-modal');
+            if (!modal) return;
+            updatePetMachineModalUI();
+            modal.style.display = 'block';
+            if (typeof resetJoyMouse === 'function') resetJoyMouse();
+            if (typeof player !== 'undefined') player.targetTree = null;
+        }
+
+        function closePetMachineModal() {
+            const modal = document.getElementById('pet-machine-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function selectAdminPet(petId) {
+            adminActivePet = petId;
+            try { localStorage.setItem('admin_active_pet', petId); } catch(e) {}
+            const pet = adminPetsData.find(p => p.id === petId);
+            floatTexts.push({ x: player.x, y: player.y - 80, text: `🐾 [펫 선택] ${pet ? pet.name : petId}!`, color: '#38bdf8', life: 80, size: 18 });
+            updatePetMachineModalUI();
+        }
+
+        function toggleAdminPetFollow() {
+            adminPetFollowEnabled = !adminPetFollowEnabled;
+            try { localStorage.setItem('admin_pet_follow', adminPetFollowEnabled ? 'true' : 'false'); } catch(e) {}
+            const pet = adminPetsData.find(p => p.id === adminActivePet);
+            floatTexts.push({
+                x: player.x,
+                y: player.y - 80,
+                text: adminPetFollowEnabled ? `🐾 ${pet ? pet.name : '펫'} 필드 동행 활성화!` : `🐾 펫 동행 해제`,
+                color: adminPetFollowEnabled ? '#2ecc71' : '#94a3b8',
+                life: 90,
+                size: 19
+            });
+            updatePetMachineModalUI();
+        }
+
+        function updatePetMachineModalUI() {
+            const nameEl = document.getElementById('pet-modal-active-name');
+            const buffEl = document.getElementById('pet-modal-active-buff');
+            const toggleBtn = document.getElementById('pet-follow-toggle-btn');
+            const toggleText = document.getElementById('pet-follow-toggle-text');
+            const container = document.getElementById('pet-cards-container');
+
+            const activePet = adminPetsData.find(p => p.id === adminActivePet) || adminPetsData[0];
+            if (nameEl) nameEl.innerHTML = `${activePet.icon} <span style="color: ${activePet.tierColor};">[${activePet.tier}]</span> ${activePet.name}`;
+            if (buffEl) buffEl.innerText = activePet.buff;
+
+            if (toggleBtn && toggleText) {
+                if (adminPetFollowEnabled) {
+                    toggleBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    toggleText.innerText = '🐾 필드 동행 소환 중 (클릭 시 소환 해제)';
+                } else {
+                    toggleBtn.style.background = 'linear-gradient(135deg, #0284c7, #38bdf8)';
+                    toggleText.innerText = '🐾 필드 동행 소환 활성화 (ON)';
+                }
+            }
+
+            if (container) {
+                container.innerHTML = adminPetsData.map(pet => {
+                    const isSelected = pet.id === adminActivePet;
+                    return `
+                        <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid ${isSelected ? '#f1c40f' : '#334155'}; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: ${isSelected ? '0 0 15px rgba(241, 196, 15, 0.3)' : 'none'};">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="font-size: 30px; background: rgba(0,0,0,0.3); width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid ${pet.tierColor};">
+                                    ${pet.icon.slice(0, 2)}
+                                </div>
+                                <div style="text-align: left;">
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <span style="font-size: 13.5px; font-weight: bold; color: #fff;">${pet.name}</span>
+                                        <span style="font-size: 9.5px; font-weight: bold; color: ${pet.tierColor}; background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 4px; border: 1px solid ${pet.tierColor};">${pet.tier}</span>
+                                    </div>
+                                    <div style="font-size: 11px; color: #94a3b8; margin: 2px 0;">${pet.desc}</div>
+                                    <div style="font-size: 10.5px; color: #38bdf8; font-weight: bold;">⚡ ${pet.buff}</div>
+                                </div>
+                            </div>
+                            <div>
+                                ${isSelected 
+                                    ? `<button disabled style="background: rgba(241, 196, 15, 0.2); color: #f1c40f; border: 1px solid #f1c40f; padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">선택됨</button>`
+                                    : `<button onclick="selectAdminPet('${pet.id}')" style="background: linear-gradient(135deg, #0ea5e9, #38bdf8); color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.4);">선택</button>`
+                                }
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function adminWarpToPetMachine() {
+            if (!isAdmin()) return;
+            closeAdminPanelModal();
+            if (inBossRoom) exitBossDimension();
+            if (inPvpArena) exitPvpArena();
+            player.x = petMachine.x + 40;
+            player.y = petMachine.y;
+            cameraY = petMachine.y - 400;
+            player.targetTree = null;
+            player.vx = 0; player.vy = 0;
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🐾 얼음 지형 고급 펫 머신으로 워프!', color: '#38bdf8', life: 100, size: 20 });
+        }
+
+        function adminToggle10PmEvent() {
+            if (!isAdmin()) return;
+            const currentForced = localStorage.getItem('force_alien_event') === 'true';
+            if (currentForced) {
+                localStorage.removeItem('force_alien_event');
+                alert('🔒 [이벤트 토글] 외계박사 & 악마보스 10시 이벤트를 원상태(정규 22:00 오픈 대기)로 잠갔습니다.');
+            } else {
+                localStorage.setItem('force_alien_event', 'true');
+                alert('🎉 [이벤트 토글] 오늘 10시 외계박사 & 악마보스 이벤트가 전격 [전체 공개] 상태로 즉시 활성화되었습니다!\n일반 플레이어도 악마 보스전 입장 및 우주 로켓/외계 박사 퀘스트를 플레이할 수 있습니다.');
+            }
+            closeAdminPanelModal();
+            location.reload();
         }
 
         function updateFossilRockModal() {
@@ -1580,6 +1807,9 @@
         const BOSS_EVENT_START_MS = new Date('2026-10-17T22:00:00+09:00').getTime();
         function isBossEventStarted() {
             if (isAdmin()) return true;
+            if (typeof window !== 'undefined' && (window.FORCE_ALIEN_EVENT || localStorage.getItem('force_alien_event') === 'true')) {
+                return true;
+            }
             return Date.now() >= BOSS_EVENT_START_MS;
         }
         let lastBossFightTime = 0;
@@ -1732,13 +1962,42 @@
                     enterBtn.innerText = `⚔️ 악마 보스전 바로 입장 (ADMIN)`;
                     enterBtn.style.background = `linear-gradient(135deg, #e74c3c, #c0392b)`;
                 }
+            } else if (isBossEventStarted()) {
+                const now = Date.now();
+                const diff = now - lastBossFightTime;
+                if (diff < BOSS_COOLDOWN_MS) {
+                    const remainSec = Math.ceil((BOSS_COOLDOWN_MS - diff) / 1000);
+                    const remainMin = Math.floor(remainSec / 60);
+                    const sec = remainSec % 60;
+                    if (badge) {
+                        badge.innerText = `⏳ 쿨타임 대기 중 (${remainMin}분 ${sec}초 남음)`;
+                        badge.style.color = '#f1c40f';
+                    }
+                    if (enterBtn) {
+                        enterBtn.innerText = `⏳ 쿨타임 대기 중`;
+                        enterBtn.style.background = `linear-gradient(135deg, #7f8c8d, #4b5563)`;
+                    }
+                } else {
+                    if (badge) {
+                        badge.innerText = `🟢 전격 공개 오픈! 입장 가능`;
+                        badge.style.color = '#2ecc71';
+                    }
+                    if (enterBtn) {
+                        enterBtn.innerText = `⚔️ 악마 보스전 입장하기`;
+                        enterBtn.style.background = `linear-gradient(135deg, #e74c3c, #c0392b)`;
+                    }
+                }
             } else {
+                const now = Date.now();
+                const diffMs = Math.max(0, BOSS_EVENT_START_MS - now);
+                const remainHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const remainMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
                 if (badge) {
-                    badge.innerText = `🔒 토요일 10시 공개!`;
+                    badge.innerText = `🔒 오늘 밤 10시 공개! (${remainHours}시간 ${remainMins}분 후)`;
                     badge.style.color = '#ff7675';
                 }
                 if (enterBtn) {
-                    enterBtn.innerText = `🔒 토요일 10시 공개!`;
+                    enterBtn.innerText = `🔒 오늘 밤 10시 공개!`;
                     enterBtn.style.background = `linear-gradient(135deg, #7f8c8d, #4b5563)`;
                 }
             }
@@ -1769,11 +2028,11 @@
             const spawnX = (bossType === 'devil') ? teleporterHalloween.x : teleporter.x;
             const spawnY = (bossType === 'devil') ? teleporterHalloween.y : teleporter.y;
 
-            // 🔒 지금은 악마 보스전 입장 불가 (토요일 10시 공개) - 관리자는 즉시 입장 허용!
-            if (bossType === 'devil' && !isAdmin()) {
+            // 🔒 지금은 악마 보스전 입장 불가 (토요일 10시 공개) - 관리자 혹은 10시 공개 후 입장 허용!
+            if (bossType === 'devil' && !isBossEventStarted()) {
                 closeBossPortalModal();
-                floatTexts.push({ x: spawnX, y: spawnY - 70, text: `🔒 토요일 10시 공개!`, color: '#ff7675', life: 100, size: 20 });
-                alert("🔒 [악마 보스전 예고]\n\n악마 보스전은 지금은 입장할 수 없습니다.\n10월 17일 토요일 밤 10시에 전격 공개됩니다!\n'Halloween omega ax'를 획득하고 모험을 준비해 주세요!");
+                floatTexts.push({ x: spawnX, y: spawnY - 70, text: `🔒 오늘 밤 10시 공개!`, color: '#ff7675', life: 100, size: 20 });
+                alert("🔒 [악마 보스전 예고]\n\n악마 보스전은 오늘 10시(밤 10시)에 전격 공개됩니다!\n'Halloween omega ax'를 획득하고 모험을 준비해 주세요!");
                 return;
             }
 
@@ -3124,6 +3383,249 @@
             ctx.restore();
         }
 
+        // ==========================================
+        // 🐾 [ADMIN] 얼음 지형 고급 펫 머신 렌더링
+        // ==========================================
+        function drawPetMachine(ctx, x, y) {
+            ctx.save();
+            const now = Date.now();
+            const bob = Math.sin(now * 0.0035) * 6;
+            const pulse = Math.sin(now * 0.005) * 4;
+
+            // 1. 바닥 에너지 그림자 및 얼음 마법진
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+            ctx.beginPath();
+            ctx.ellipse(x, y + 42, 54, 18, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 바닥 발광 룬 서클
+            ctx.save();
+            ctx.translate(x, y + 38);
+            ctx.scale(1, 0.4);
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 12 + pulse;
+            ctx.beginPath();
+            ctx.arc(0, 0, 48, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 회전 룬 사각 서클
+            ctx.rotate(now * 0.001);
+            ctx.strokeStyle = '#f1c40f';
+            ctx.lineWidth = 1.5;
+            for (let i = 0; i < 4; i++) {
+                ctx.rotate(Math.PI / 2);
+                ctx.strokeRect(-16, -16, 32, 32);
+            }
+            ctx.restore();
+
+            // 2. 하단 티타늄 & 크리스탈 베이스 받침대
+            let baseGrad = ctx.createLinearGradient(x - 42, y, x + 42, y);
+            baseGrad.addColorStop(0, '#1e293b');
+            baseGrad.addColorStop(0.3, '#334155');
+            baseGrad.addColorStop(0.5, '#64748b');
+            baseGrad.addColorStop(0.7, '#334155');
+            baseGrad.addColorStop(1, '#0f172a');
+            ctx.fillStyle = baseGrad;
+            ctx.strokeStyle = '#f1c40f';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.roundRect(x - 42, y + 16, 84, 26, 8);
+            ctx.fill();
+            ctx.stroke();
+
+            // 베이스 금장 네온 라인
+            ctx.fillStyle = '#38bdf8';
+            ctx.fillRect(x - 32, y + 26, 64, 4);
+
+            // 3. 중앙 투명 인큐베이터 캡슐 유리관 (Glass Chamber)
+            let glassGrad = ctx.createLinearGradient(x - 36, y - 55, x + 36, y + 15);
+            glassGrad.addColorStop(0, 'rgba(56, 189, 248, 0.15)');
+            glassGrad.addColorStop(0.3, 'rgba(14, 165, 233, 0.35)');
+            glassGrad.addColorStop(0.7, 'rgba(56, 189, 248, 0.25)');
+            glassGrad.addColorStop(1, 'rgba(2, 132, 199, 0.45)');
+            ctx.fillStyle = glassGrad;
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.roundRect(x - 34, y - 55, 68, 72, 14);
+            ctx.fill();
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // 유리 반사광 하이라이트
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+            ctx.beginPath();
+            ctx.roundRect(x - 28, y - 48, 10, 58, 4);
+            ctx.fill();
+
+            // 4. 캡슐 내부 상승하는 나노 기포 파티클
+            for (let b = 0; b < 5; b++) {
+                let bx = x - 20 + ((b * 11 + (now * 0.02)) % 40);
+                let by = y + 10 - (((now * 0.04) + b * 20) % 55);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.beginPath();
+                ctx.arc(bx, by, 2.2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 5. 캡슐 내부 부유하는 전설의 황금 크리스탈 펫 알 (Pet Core)
+            let eggY = y - 18 + bob;
+            ctx.save();
+            ctx.translate(x, eggY);
+
+            // 회전 에너지 링 1
+            ctx.save();
+            ctx.rotate(now * 0.003);
+            ctx.strokeStyle = 'rgba(241, 196, 15, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 24, 8, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+
+            // 회전 에너지 링 2
+            ctx.save();
+            ctx.rotate(-now * 0.0025);
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 24, 8, Math.PI / 3, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+
+            // 펫 코어 알 그라데이션
+            let eggGrad = ctx.createRadialGradient(-3, -5, 2, 0, 0, 16);
+            eggGrad.addColorStop(0, '#ffffff');
+            eggGrad.addColorStop(0.4, '#fde047');
+            eggGrad.addColorStop(0.8, '#eab308');
+            eggGrad.addColorStop(1, '#ca8a04');
+            ctx.fillStyle = eggGrad;
+            ctx.shadowColor = '#facc15';
+            ctx.shadowBlur = 16 + pulse;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 13, 17, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 펫 코어 중앙 각인
+            ctx.fillStyle = '#78350f';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("🐾", 0, 1);
+            ctx.restore();
+
+            // 6. 상단 챔버 돔 & 에너지 송신 안테나
+            let topGrad = ctx.createLinearGradient(x - 36, y - 72, x + 36, y - 55);
+            topGrad.addColorStop(0, '#1e293b');
+            topGrad.addColorStop(0.5, '#64748b');
+            topGrad.addColorStop(1, '#0f172a');
+            ctx.fillStyle = topGrad;
+            ctx.strokeStyle = '#f1c40f';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.roundRect(x - 36, y - 72, 72, 18, 6);
+            ctx.fill();
+            ctx.stroke();
+
+            // 안테나 & 크리스탈 팁
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x, y - 72);
+            ctx.lineTo(x, y - 86);
+            ctx.stroke();
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.arc(x, y - 88, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 7. 상단 플로팅 네온 뱃지
+            let badgeBob = Math.sin(now * 0.004) * 3;
+            ctx.save();
+            ctx.translate(x, y - 110 + badgeBob);
+
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+            ctx.strokeStyle = '#f1c40f';
+            ctx.lineWidth = 1.8;
+            ctx.shadowColor = '#f1c40f';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.roundRect(-68, -16, 136, 32, 8);
+            ctx.fill();
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#f1c40f';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("👑 ADMIN 🐾 펫 머신", 0, -3);
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = 'bold 9px Arial';
+            ctx.fillText("✨ 클릭: 펫 시스템 랩", 0, 9);
+            ctx.restore();
+
+            ctx.restore();
+        }
+
+        // 🐾 [ADMIN] 플레이어 동행 펫 렌더링
+        function drawFollowingPet(ctx, playerObj) {
+            if (!isAdmin() || !adminPetFollowEnabled) return;
+            const now = Date.now();
+            const petInfo = adminPetsData.find(p => p.id === adminActivePet) || adminPetsData[0];
+
+            let targetX = playerObj.x + (playerObj.vx < 0 ? 36 : -36);
+            let targetY = playerObj.y - 25;
+            followPetPos.x += (targetX - followPetPos.x) * 0.12;
+            followPetPos.y += (targetY - followPetPos.y) * 0.12;
+            followPetPos.floatTimer += 0.05;
+
+            let px = followPetPos.x;
+            let py = followPetPos.y + Math.sin(followPetPos.floatTimer) * 5;
+
+            ctx.save();
+            ctx.fillStyle = 'rgba(0,0,0,0.25)';
+            ctx.beginPath();
+            ctx.ellipse(px, playerObj.y + 12, 14, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowColor = petInfo.tierColor || '#38bdf8';
+            ctx.shadowBlur = 12;
+            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            ctx.beginPath();
+            ctx.arc(px, py, 18, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.font = '22px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(petInfo.icon.slice(0, 2), px, py);
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+            ctx.strokeStyle = petInfo.tierColor;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.roundRect(px - 32, py - 25, 64, 15, 4);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 8.5px Arial';
+            ctx.fillText(petInfo.name, px, py - 17);
+            ctx.restore();
+        }
+
         // 👑 숲의 수호자 원숭이 보스 렌더링 (일반 지형 보스)
         function drawMonkeyBoss(ctx, boss) {
             ctx.save();
@@ -3415,7 +3917,7 @@
 
                 ctx.fillStyle = '#f1c40f';
                 ctx.font = 'bold 11px Arial';
-                ctx.fillText("토요일 10시 공개!", 0, 9);
+                ctx.fillText(isBossEventStarted() ? "⚔️ 전격 공개 오픈!" : "오늘 10시 공개!", 0, 9);
             } else if (isIceDragon) {
                 ctx.fillStyle = '#38bdf8';
                 ctx.font = 'bold 12px Arial';
@@ -3454,7 +3956,9 @@
                 ctx.font = 'bold 11px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                let tipText = isDevil ? "토요일 10시 공개!" : "👆 클릭하여 원숭이 보스전!";
+                let tipText = isDevil 
+                    ? (isBossEventStarted() ? "👆 클릭하여 악마 보스전!" : "오늘 10시 공개!") 
+                    : (isIceDragon ? "👆 클릭하여 서리룡 보스전!" : "👆 클릭하여 원숭이 보스전!");
                 ctx.fillText(tipText, 0, -131);
                 ctx.restore();
             }
@@ -6344,6 +6848,16 @@
                 }
             }
 
+            // 🐾 [ADMIN] 얼음 지형 고급 펫 머신 클릭 감지 (x: 130, y: -3450)
+            if (isAdmin() && typeof petMachine !== 'undefined') {
+                let pDist = Math.hypot(cx - petMachine.x, cy - petMachine.y);
+                let pPlayerDist = Math.hypot(player.x - petMachine.x, player.y - petMachine.y);
+                if (pDist < petMachine.radius + 35 || (isSpacebar && pPlayerDist < 95)) {
+                    openPetMachineModal();
+                    return;
+                }
+            }
+
             // 🔮 미친 박사의 할로윈 텔레포터: 할로윈 지형 아무데나 클릭 시 순간이동 및 비콘 설치 (어드민 전용)
             if (isAdmin() && hasHalloweenTeleporter && !isSpacebar && cy >= 950 && cy <= 2600) {
                 let isShopOrFuse = false;
@@ -6417,8 +6931,8 @@
             let rocketPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - rocket.x, player.y - rocket.y) : 999;
             if (rocketClickDist < 55 || (isSpacebar && rocketPlayerDist < 75)) {
                 if (!isAlienEventStarted()) {
-                    floatTexts.push({ x: rocket.x, y: rocket.y - 65, text: `🔒 토요일 10시 공개!`, color: '#00e5ff', life: 75, size: 18 });
-                    alert("🚀 [우주 로켓 발사대]\n\n우주 탐사와 미지의 우주 영역 이벤트는\n10월 17일 토요일 밤 10시에 전격 공개됩니다!");
+                    floatTexts.push({ x: rocket.x, y: rocket.y - 65, text: `🔒 오늘 밤 10시 공개!`, color: '#00e5ff', life: 75, size: 18 });
+                    alert("🚀 [우주 로켓 발사대]\n\n우주 탐사와 외계박사/미친박사 스토리 이벤트는\n오늘 10시(밤 10시)에 전격 공개됩니다!");
                     return;
                 }
                 if (!rocket.launched) {
@@ -6486,8 +7000,12 @@
 
             if (target) {
                 if (target.type === 'space') {
-                    const text = isAlienEventStarted() ? `🌌 다음 업데이트때 공개!` : `🔒 토요일 10시 공개!`;
+                    const text = isAlienEventStarted() ? `🌌 다음 업데이트때 공개!` : `🔒 오늘 10시 공개!`;
                     floatTexts.push({ x: target.x, y: target.y - 120, text: text, color: '#a29bfe', life: 70, size: 22 });
+                    return;
+                }
+                if ((target.type === 'ice' || target.id === 'ice_canyon') && !isAdmin()) {
+                    floatTexts.push({ x: target.x, y: target.y - 100, text: `🔒 관리자(ADMIN) 전용 나무입니다!`, color: '#c7ecee', life: 70 });
                     return;
                 }
                 if (player.targetTree === target) {
@@ -10778,6 +11296,7 @@
             if (document.getElementById('admin-panel-modal') && document.getElementById('admin-panel-modal').style.display === 'block') return;
             if (document.getElementById('sword-modal') && document.getElementById('sword-modal').style.display === 'block') return;
             if (document.getElementById('fossil-rock-modal') && document.getElementById('fossil-rock-modal').style.display === 'block') return;
+            if (document.getElementById('pet-machine-modal') && document.getElementById('pet-machine-modal').style.display === 'block') return;
 
             // 👑 어드민 스토리 퀘스트: 할로윈 지형 원숭이 10마리 침공 & 미친 박사 난입 업데이트
             if (isAdmin() && (adminGorillaStoryStage === 'earth_monkeys_invading' || adminGorillaStoryStage === 'earth_mad_doctor_rescues')) {
@@ -10806,6 +11325,16 @@
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
             player.y = Math.max(-8950, Math.min(2600 - player.radius, player.y));
             
+            // 🔒 얼음 지형 및 얼음의 협곡 비관리자 침입 강제 넉백 방어
+            if (!isAdmin() && player.y <= -2970 && player.y >= -4000) {
+                player.y = -2960;
+                if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음 지역은 관리자(ADMIN) 전용입니다!`, color: '#c7ecee', life: 50 });
+            }
+            if (!isAdmin() && player.y <= -7970 && player.y >= -9000) {
+                player.y = -7960;
+                if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음의 협곡은 관리자(ADMIN) 전용입니다!`, color: '#38bdf8', life: 50 });
+            }
+
             if (level < 3 && player.y < 30 && player.y > -500) {
                 player.y = 30;
                 if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 3 달성 시 통과 가능!`, color: 'red', life: 40 });
@@ -10815,9 +11344,9 @@
             } else if (level < 20 && player.y < -1970 && player.y > -2500) {
                 player.y = -1970;
                 if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 20 달성 시 통과 가능!`, color: '#fbc531', life: 40 });
-            } else if (level < 35 && player.y < -2970 && player.y > -3500) {
+            } else if (!isAdmin() && player.y < -2970 && player.y > -3500) {
                 player.y = -2970;
-                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 35 달성 시 통과 가능!`, color: '#c7ecee', life: 40 });
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음 지역은 관리자(ADMIN) 전용입니다!`, color: '#c7ecee', life: 40 });
             } else if (level < 50 && player.y < -3970 && player.y > -4500) {
                 player.y = -3970;
                 if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 50 달성 시 통과 가능!`, color: '#2ecc71', life: 40 });
@@ -10830,9 +11359,9 @@
             } else if (level < 105 && player.y < -6970 && player.y > -7500) {
                 player.y = -6970;
                 if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 105 달성 시 통과 가능!`, color: '#a29bfe', life: 40 });
-            } else if (level < 125 && !isAdmin() && player.y < -7970 && player.y > -8500) {
+            } else if (!isAdmin() && player.y < -7970 && player.y > -8500) {
                 player.y = -7970;
-                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `❄️ 레벨 125 달성 시 통과 가능!`, color: '#38bdf8', life: 40 });
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음의 협곡은 관리자(ADMIN) 전용입니다!`, color: '#38bdf8', life: 40 });
             }
 
             shops.forEach(shop => {
@@ -13585,9 +14114,9 @@
             ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#2c124d'; ctx.fillRect(0, 1000, GAME_WIDTH, 1600); // Halloween (하단부 2600까지 확장)
 
-            // ❄️ 얼음의 협곡 경계선 (Y: -8000, 레벨 125 진입 가능)
+            // ❄️ 얼음의 협곡 경계선 (Y: -8000, 관리자 전용)
             ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -8000); ctx.lineTo(GAME_WIDTH, -8000); ctx.stroke();
-            ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("❄️ 신비의 비경: 얼음의 협곡 (레벨 125 진입 가능)", GAME_WIDTH / 2, -8020);
+            ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("❄️ 신비의 비경: 얼음의 협곡 (👑 관리자 전용)", GAME_WIDTH / 2, -8020);
 
             ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -7000); ctx.lineTo(GAME_WIDTH, -7000); ctx.stroke();
             ctx.fillStyle = '#a29bfe'; ctx.fillText("🚀 미지의 영역: 우주 지역 (레벨 105 진입 가능)", GAME_WIDTH / 2, -7020);
@@ -13605,7 +14134,7 @@
             ctx.fillStyle = '#fbc531'; ctx.fillText("⚡ 격동: 전기 지역 (레벨 20 진입 가능)", GAME_WIDTH / 2, -2020);
 
             ctx.strokeStyle = '#c7ecee'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -3000); ctx.lineTo(GAME_WIDTH, -3000); ctx.stroke();
-            ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 혹한: 얼음 지역 (레벨 35 진입 가능)", GAME_WIDTH / 2, -3020);
+            ctx.fillStyle = '#c7ecee'; ctx.fillText("❄️ 혹한: 얼음 지역 (👑 관리자 전용)", GAME_WIDTH / 2, -3020);
 
             ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -4000); ctx.lineTo(GAME_WIDTH, -4000); ctx.stroke();
             ctx.fillStyle = '#2ecc71'; ctx.fillText("☣️ 치명적 위험: 방사능 지역 (레벨 50 진입 가능)", GAME_WIDTH / 2, -4020);
@@ -13648,6 +14177,9 @@
                 iceCanyonFossilRocks.forEach(rock => {
                     renderList.push({ type: 'fossilRock', obj: rock, y: rock.y });
                 });
+            }
+            if (isAdmin() && typeof petMachine !== 'undefined') {
+                renderList.push({ type: 'petMachine', obj: petMachine, y: petMachine.y });
             }
             if (typeof hasHalloweenTeleporter !== 'undefined' && hasHalloweenTeleporter && typeof halloweenTeleporterBeacon !== 'undefined' && halloweenTeleporterBeacon.placed && isAdmin()) {
                 renderList.push({ type: 'halloweenBeacon', obj: halloweenTeleporterBeacon, y: halloweenTeleporterBeacon.y });
@@ -13698,6 +14230,7 @@
 
                 } else if (item.type === 'player') {
                     drawCharacter(ctx, item.obj, item.obj.x, item.obj.y, item.obj === player && player.targetTree !== null, item.obj.walkTimer);
+                    drawFollowingPet(ctx, item.obj);
                 } else if (item.type === 'customer') {
                     drawCharacter(ctx, item.obj, item.obj.x, item.obj.y, false, item.obj.walkTimer, item.obj.skin || null);
                     if (item.obj.x === shopFrontX) {
@@ -14018,7 +14551,8 @@
                         ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(t.x - 55, t.y - t.radius - 80, 110, 30, 5); ctx.fill();
                         ctx.fillStyle = 'black'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center';
                         let label = t.unlocked ? "👆 클릭!" : "👆 잠금 해제";
-                        if (t.type === 'space') label = isAlienEventStarted() ? "🔒 업데이트 예정" : "🔒 토요일 10시 공개!";
+                        if (t.type === 'space') label = isAlienEventStarted() ? "🔒 업데이트 예정" : "🔒 오늘 10시 공개!";
+                        if ((t.type === 'ice' || t.id === 'ice_canyon') && !isAdmin()) label = "🔒 관리자 전용";
                         ctx.fillText(label, t.x, t.y - t.radius - 60);
                     }
 
@@ -14094,7 +14628,7 @@
                         ctx.font = 'bold 11px Arial';
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
-                        ctx.fillText("👉 우측: 토요일 10시 공개!", 0, 0);
+                        ctx.fillText(isBossEventStarted() ? "👉 우측: 😈 악마 보스전 오픈!" : "👉 우측: 오늘 10시 공개!", 0, 0);
                         ctx.restore();
                     }
                 } else if (item.type === 'rocket') {
@@ -14112,6 +14646,8 @@
                 } else if (item.type === 'fossilRock') {
                     drawFossilRock(ctx, item.obj.x, item.obj.y, item.obj.radius, item.obj.hitTimer || 0);
                     if (item.obj.hitTimer > 0) item.obj.hitTimer--;
+                } else if (item.type === 'petMachine') {
+                    drawPetMachine(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'halloweenBeacon') {
                     drawHalloweenTeleporterBeacon(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'rankingBoard') {
