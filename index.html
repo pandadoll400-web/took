@@ -149,6 +149,11 @@
             20%, 60% { transform: translate(-53%, -50%) scale(1); }
             40%, 80% { transform: translate(-47%, -50%) scale(1); }
         }
+
+        @keyframes luckFloat {
+            0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 10px #2ecc71); }
+            50% { transform: translateY(-4px); filter: drop-shadow(0 0 18px #a8ff78); }
+        }
     </style>
 </head>
 <body>
@@ -234,6 +239,14 @@
         <div id="user-profile-badge" onclick="openLoginModal()" style="position: absolute; top: 15px; right: 15px; background: rgba(18, 16, 28, 0.88); color: #fff; border: 1.5px solid #38bdf8; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; z-index: 15; box-shadow: 0 4px 12px rgba(0,0,0,0.6); transition: all 0.2s;">
             <span style="font-size: 15px;">👤</span>
             <span id="user-status-text">로그인</span>
+        </div>
+
+        <!-- 🍀 1.5배 럭 (행운 1.5배 상시 발동 버프 위젯) -->
+        <div id="luck-container" onclick="showLuckBuffInfo()" style="position: absolute; bottom: 16px; right: 16px; text-align: center; z-index: 20; display: flex; flex-direction: column; align-items: center; cursor: pointer; user-select: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+            <div id="luck-icon" style="font-size: 30px; filter: drop-shadow(0 0 10px #2ecc71); animation: luckFloat 2s ease-in-out infinite;">🍀</div>
+            <div id="luck-timer" style="color: #2ecc71; font-weight: 800; background: rgba(15, 23, 42, 0.92); padding: 3px 9px; border-radius: 12px; font-size: 11px; margin-top: 2px; border: 1.5px solid #2ecc71; box-shadow: 0 4px 12px rgba(46, 204, 113, 0.4); white-space: nowrap; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
+                행운 1.5배 ON
+            </div>
         </div>
 
         <!-- TreeGame 로그인 모달 (사진 디자인 완벽 반영) -->
@@ -11985,6 +11998,14 @@
             const overlay = document.getElementById('wl-poll-overlay');
             if (!overlay) return;
 
+            // 🔒 세로고침 및 재방문 시 절대 다시 뜨지 않도록 처리 (이미 투표했거나 봤으면 영구 미노출)
+            try {
+                if (localStorage.getItem(WL_STORAGE_KEY) || localStorage.getItem('wl_poll_seen_v1') === 'true') {
+                    overlay.remove();
+                    return;
+                }
+            } catch (e) {}
+
             // 저장된 W, L 카운트 복원 (없으면 기본값 1, 0)
             try {
                 const savedW = parseInt(localStorage.getItem(WL_W_COUNT_KEY), 10);
@@ -12052,6 +12073,9 @@
                 if (wlPollTimer <= 0) {
                     clearInterval(wlPollTimerInterval);
                     clearInterval(wlFakeWInterval);
+                    try {
+                        localStorage.setItem('wl_poll_seen_v1', 'true');
+                    } catch (e) {}
                     closeWLPollOverlay();
                 }
             }, 1000);
@@ -12106,6 +12130,7 @@
             wlUserVoted = true;
             try {
                 localStorage.setItem(WL_STORAGE_KEY, choice);
+                localStorage.setItem('wl_poll_seen_v1', 'true');
             } catch (e) {}
 
             if (choice === 'W') {
@@ -12159,6 +12184,9 @@
         }
 
         function closeWLPollOverlay() {
+            try {
+                localStorage.setItem('wl_poll_seen_v1', 'true');
+            } catch (e) {}
             const overlay = document.getElementById('wl-poll-overlay');
             if (!overlay) return;
             clearInterval(wlPollTimerInterval);
@@ -12166,7 +12194,7 @@
             overlay.style.opacity = '0';
             overlay.style.transform = 'translate(-50%, -50%) scale(0.9)';
             setTimeout(() => {
-                overlay.style.display = 'none';
+                overlay.remove();
             }, 400);
         }
 
@@ -12181,6 +12209,17 @@
             }
         }, 800);
         setTimeout(checkAndShowHalloweenNotice, 1500);
+        setTimeout(() => {
+            showerLuckyFruits();
+            floatTexts.push({
+                x: player.x,
+                y: player.y - 70,
+                text: '🍀 행운 1.5배 버프 적용 & 과일 뿌리기!',
+                color: '#2ecc71',
+                life: 100,
+                size: 22
+            });
+        }, 1200);
         setInterval(saveGame, 1000); 
 
         function getTables(type) {
@@ -12193,6 +12232,51 @@
             if (type === 'twisted') return twistedDropTables;
             if (type === 'fire') return fireDropTables;
             return normalDropTables;
+        }
+
+        // 🍀 행운 1.5배 (1.5배럭 버프 시스템 - 희귀 과일 1.5배 확률 증폭)
+        let isLuck15Active = true;
+        function getAdjustedTables(type) {
+            let tables = getTables(type);
+            if (!isLuck15Active || !tables || tables.length === 0) return tables;
+            
+            // 일반 등급(0번) 제외 희귀 등급 확률 1.5배 증가
+            let adjusted = JSON.parse(JSON.stringify(tables));
+            let boostSum = 0;
+            for (let i = 1; i < adjusted.length; i++) {
+                let diff = (adjusted[i].chance * 1.5) - adjusted[i].chance;
+                adjusted[i].chance *= 1.5;
+                boostSum += diff;
+            }
+            adjusted[0].chance -= boostSum;
+            if (adjusted[0].chance < 0.05) adjusted[0].chance = 0.05;
+            
+            let total = 0;
+            for (let t of adjusted) total += t.chance;
+            if (total > 0) {
+                for (let t of adjusted) t.chance = t.chance / total;
+            }
+            return adjusted;
+        }
+
+        function showerLuckyFruits() {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    spawnFruit(player.x + (Math.random() - 0.5) * 90, player.y - 40, 'normal');
+                }, i * 110);
+            }
+        }
+
+        function showLuckBuffInfo() {
+            showerLuckyFruits();
+            floatTexts.push({
+                x: player.x,
+                y: player.y - 70,
+                text: '🍀 행운 1.5배 버프 상시 적용 중! (희귀 과일 확률 1.5배 UP)',
+                color: '#2ecc71',
+                life: 90,
+                size: 20
+            });
         }
 
         function generateCustomer(type) {
@@ -12214,7 +12298,7 @@
                 const hwSkins = ['ghost_fedora', 'ghost_classic', 'ghost_purple', 'jack_orange', 'jack_fiery'];
                 customerSkin = hwSkins[Math.floor(Math.random() * hwSkins.length)];
             } else {
-                let tables = getTables(type);
+                let tables = getAdjustedTables(type);
                 let r = Math.random(), cum = 0, tier = tables[0];
                 for (let t of tables) { cum += t.chance; if (r <= cum) { tier = t; break; } }
                 
@@ -12244,7 +12328,7 @@
         }
 
         function spawnFruit(x, y, type) {
-            let tables = getTables(type);
+            let tables = getAdjustedTables(type);
             let r = Math.random(), cum = 0, data = null;
             for (let t of tables) { cum += t.chance; if (r <= cum) { data = { fruit: t.items[Math.floor(Math.random() * t.items.length)], color: t.color, xp: t.xp, price: t.price }; break; } }
             
