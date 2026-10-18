@@ -171,6 +171,23 @@
             <span id="user-status-text">로그인</span>
         </div>
 
+        <!-- 💬 입장 시 화면 중앙 forge 메시지 -->
+        <div id="forge-welcome-banner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); z-index: 999; pointer-events: none; opacity: 0; transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.18, 0.89, 0.32, 1.28); text-align: center; white-space: nowrap; display: none;">
+            <div style="background: rgba(15, 23, 42, 0.94); border: 2.5px solid #f1c40f; border-radius: 20px; padding: 16px 32px; box-shadow: 0 10px 45px rgba(0, 0, 0, 0.95), 0 0 30px rgba(241, 196, 15, 0.6); backdrop-filter: blur(10px);">
+                <span style="font-size: 24px; font-weight: 900; color: #f1c40f; text-shadow: 0 2px 12px rgba(241, 196, 15, 0.7); letter-spacing: 0.5px;">
+                    forge:its update time?!first fuseluck?
+                </span>
+            </div>
+        </div>
+
+        <!-- 🍀 2.5배 퓨즈 럭 (8분 카운트다운 타이머 버프 위젯) -->
+        <div id="fuse-luck-container" onclick="showFuseLuckBuffInfo()" style="position: absolute; bottom: 16px; right: 16px; text-align: center; z-index: 20; display: flex; flex-direction: column; align-items: center; cursor: pointer; user-select: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+            <div id="fuse-luck-icon" style="font-size: 30px; filter: drop-shadow(0 0 10px #f1c40f); animation: luckFloat 2s ease-in-out infinite;">🍀</div>
+            <div id="fuse-luck-timer" style="color: #f1c40f; font-weight: 800; background: rgba(15, 23, 42, 0.94); padding: 4px 10px; border-radius: 12px; font-size: 11px; margin-top: 2px; border: 1.5px solid #f1c40f; box-shadow: 0 4px 14px rgba(241, 196, 15, 0.45); white-space: nowrap; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
+                퓨즈 2.5배 [08:00]
+            </div>
+        </div>
+
         <!-- TreeGame 로그인 모달 (사진 디자인 완벽 반영) -->
         <div id="login-modal-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 100;">
             <div id="login-modal" style="position: relative; background: #12101c; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; padding: 34px 28px; width: 88%; max-width: 360px; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.85); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
@@ -12014,7 +12031,6 @@
 
         let isLuck15Active = false;
         let halloweenInvaderDevil = null;
-        function triggerForgeWelcomeOnce() {}
         function startWLPoll() {}
         function closeWLPollOverlay() {}
         function voteWLPoll() {}
@@ -12025,9 +12041,125 @@
         function updateLuck10MinTimer() {}
         function showLuckBuffInfo() {}
 
+        // 💬 입장 시 화면 중앙 forge 메시지 1회 노출 (forge:its update time?!first fuseluck?)
+        let forgeWelcomeShown = false;
+        function triggerForgeWelcomeOnce() {
+            if (forgeWelcomeShown) return;
+            forgeWelcomeShown = true;
+
+            const banner = document.getElementById('forge-welcome-banner');
+            if (!banner) return;
+            banner.style.display = 'block';
+            setTimeout(() => {
+                banner.style.opacity = '1';
+                banner.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 80);
+
+            // 3.5초 동안 중앙에 유지된 후 부드럽게 위로 페이드아웃
+            setTimeout(() => {
+                banner.style.opacity = '0';
+                banner.style.transform = 'translate(-50%, -60%) scale(0.95)';
+                setTimeout(() => {
+                    banner.remove();
+                }, 700);
+            }, 3500);
+        }
+
+        // ==========================================
+        // 🍀 퓨즈 2.5배 럭 (8분 카운트다운 타이머 버프 시스템)
+        // ==========================================
+        const FUSE_LUCK_DURATION_MS = 8 * 60 * 1000; // 8분
+        let fuseLuckEndTime = 0;
+
+        try {
+            const savedFuseLuckEnd = parseInt(localStorage.getItem('fuse_luck_8m_end_time'), 10);
+            if (!isNaN(savedFuseLuckEnd) && savedFuseLuckEnd > Date.now()) {
+                fuseLuckEndTime = savedFuseLuckEnd;
+            } else {
+                fuseLuckEndTime = Date.now() + FUSE_LUCK_DURATION_MS;
+                localStorage.setItem('fuse_luck_8m_end_time', fuseLuckEndTime.toString());
+            }
+        } catch (e) {
+            fuseLuckEndTime = Date.now() + FUSE_LUCK_DURATION_MS;
+        }
+
+        function updateFuseLuck8MinTimer() {
+            const now = Date.now();
+            const remainMs = fuseLuckEndTime - now;
+            const timerEl = document.getElementById('fuse-luck-timer');
+            const iconEl = document.getElementById('fuse-luck-icon');
+
+            if (remainMs > 0) {
+                isFuseLuck25Active = true;
+                const totalSec = Math.ceil(remainMs / 1000);
+                const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+                const s = String(totalSec % 60).padStart(2, '0');
+                if (timerEl) {
+                    timerEl.innerText = `퓨즈 2.5배 [${m}:${s}]`;
+                    timerEl.style.color = '#f1c40f';
+                    timerEl.style.borderColor = '#f1c40f';
+                }
+                if (iconEl) iconEl.style.filter = 'drop-shadow(0 0 10px #f1c40f)';
+            } else {
+                isFuseLuck25Active = false;
+                if (timerEl) {
+                    timerEl.innerText = `만료됨 (클릭시 충전)`;
+                    timerEl.style.color = '#94a3b8';
+                    timerEl.style.borderColor = '#64748b';
+                }
+                if (iconEl) iconEl.style.filter = 'grayscale(60%)';
+            }
+        }
+
+        function showFuseLuckBuffInfo() {
+            const now = Date.now();
+            const remainMs = fuseLuckEndTime - now;
+            if (remainMs > 0) {
+                const totalSec = Math.ceil(remainMs / 1000);
+                const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+                const s = String(totalSec % 60).padStart(2, '0');
+                floatTexts.push({
+                    x: player.x,
+                    y: player.y - 70,
+                    text: `🍀 퓨즈머신 희귀 2.5배 럭 적용 중! (남은 시간: ${m}:${s})`,
+                    color: '#f1c40f',
+                    life: 90,
+                    size: 20
+                });
+            } else {
+                fuseLuckEndTime = Date.now() + FUSE_LUCK_DURATION_MS;
+                try {
+                    localStorage.setItem('fuse_luck_8m_end_time', fuseLuckEndTime.toString());
+                } catch (e) {}
+                isFuseLuck25Active = true;
+                updateFuseLuck8MinTimer();
+                floatTexts.push({
+                    x: player.x,
+                    y: player.y - 70,
+                    text: `🍀 퓨즈머신 2.5배 럭 8분 충전 완료!`,
+                    color: '#f1c40f',
+                    life: 90,
+                    size: 20
+                });
+            }
+        }
+
         loadGame(); 
+        setTimeout(triggerForgeWelcomeOnce, 600);
         setTimeout(checkAndShowHalloweenNotice, 1500);
+        setTimeout(() => {
+            updateFuseLuck8MinTimer();
+            floatTexts.push({
+                x: player.x,
+                y: player.y - 70,
+                text: '🍀 퓨즈머신 2.5배 럭 발동! (8분 동안 유지)',
+                color: '#f1c40f',
+                life: 110,
+                size: 21
+            });
+        }, 1000);
         setInterval(saveGame, 1000);
+        setInterval(updateFuseLuck8MinTimer, 1000);
 
         function getTables(type) {
             if (type === 'halloween') return halloweenDropTables;
@@ -12142,6 +12274,7 @@
         }
 
         function update() {
+            updateFuseLuck8MinTimer();
             if (inBossRoom) {
                 updateBossRoom();
                 return;
