@@ -4636,6 +4636,8 @@
                         let uLevel = Number(d.level || (d.gameData && d.gameData.level) || 1);
                         if (isTargetNamuSajang(uname) || isTargetNamuSajang(doc.id)) {
                             uLevel = 289;
+                        } else if (uLevel >= 10000 || (uLevel === 1 && d.gameData && d.gameData.unlockedTrees && d.gameData.unlockedTrees.length > 1)) {
+                            uLevel = estimateLegitLevel(d.gameData || d);
                         }
                         const uXp = Number((d.gameData && d.gameData.xp) || 0);
                         const uBossKills = isBossEventStarted() ? Number(d.bossKills || (d.gameData && d.gameData.bossKills) || 0) : 0;
@@ -4660,7 +4662,10 @@
             const effectiveBattleWins = battleWins || 0;
             const isCurrentAdmin = isAdmin() || (currentUser && currentUser.toLowerCase() === 'adminaccount');
             if (currentUser && !isCurrentAdmin) {
-                const effectiveLevel = isTargetNamuSajang(currentUser) ? 289 : level;
+                let effectiveLevel = isTargetNamuSajang(currentUser) ? 289 : level;
+                if (effectiveLevel >= 10000) {
+                    effectiveLevel = estimateLegitLevel(getSaveData());
+                }
                 rankersMap.set(currentUser.toLowerCase(), {
                     username: currentUser,
                     level: effectiveLevel,
@@ -8642,23 +8647,37 @@
         });
         document.getElementById('close-modal-btn').addEventListener('click', () => { document.getElementById('inventory-modal').style.display = 'none'; });
 
-        // 개발자 비밀 치트: 레벨 텍스트 연속 5번 클릭 시 레벨 10000 부여 (로컬/서버 상관없이 동작)
-        let cheatClickCount = 0;
-        let cheatTimeout = null;
-        document.getElementById('level-text').addEventListener('click', () => {
-            cheatClickCount++;
-            if(cheatTimeout) clearTimeout(cheatTimeout);
-            cheatTimeout = setTimeout(() => { cheatClickCount = 0; }, 1000);
-            
-            if(cheatClickCount >= 5) {
-                level = 10000;
-                maxXp = 999999999;
-                document.getElementById('level-text').innerText = `LV. 10000`;
-                alert('개발자 모드 활성화: 레벨 10000 달성!');
-                cheatClickCount = 0;
-                saveGame();
-            }
-        });
+        // 레벨 정상화 및 복구 도우미 함수 (치트로 10000이 되었던 유저들의 본래 레벨 추산 복구)
+        function estimateLegitLevel(d) {
+            if (!d) return 1;
+            const gData = d.gameData || d;
+            let est = 1;
+            const treesList = gData.unlockedTrees || [];
+            if (treesList.includes('space')) est = Math.max(est, 105);
+            else if (treesList.includes('cave')) est = Math.max(est, 85);
+            else if (treesList.includes('ocean')) est = Math.max(est, 65);
+            else if (treesList.includes('radioactive')) est = Math.max(est, 50);
+            else if (treesList.includes('ice') || treesList.includes('ice_canyon')) est = Math.max(est, 35);
+            else if (treesList.includes('electric')) est = Math.max(est, 20);
+            else if (treesList.includes('twisted')) est = Math.max(est, 10);
+            else if (treesList.includes('fire')) est = Math.max(est, 3);
+
+            // 도끼 보유 레벨 기준 보정
+            const axes = gData.ownedAxes || [];
+            if (axes.includes(4)) est = Math.max(est, 35);
+            else if (axes.includes(3)) est = Math.max(est, 20);
+            else if (axes.includes(2)) est = Math.max(est, 10);
+            else if (axes.includes(1)) est = Math.max(est, 3);
+
+            // 자산 기준 가산
+            const m = Number(gData.money || 0);
+            if (m >= 10000000) est = Math.max(est, 80);
+            else if (m >= 1000000) est = Math.max(est, 50);
+            else if (m >= 100000) est = Math.max(est, 25);
+            else if (m >= 10000) est = Math.max(est, 10);
+
+            return Math.min(est, 120);
+        }
 
         // 플레이어
         const player = {
@@ -11689,8 +11708,10 @@
                 ownedAxes = [1, 2, 3, 4];
                 ownedSkins = skinsData.map(s => s.id);
                 trees.forEach(t => t.unlocked = true);
-            } else if (level >= 10000 || maxXp >= 999999999) {
-                level = 1; maxXp = 20; xp = 0;
+            } else if (level >= 10000 || maxXp >= 999999999 || (level === 1 && data && data.unlockedTrees && data.unlockedTrees.length > 1)) {
+                level = estimateLegitLevel(data || getSaveData());
+                maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
+                xp = 0;
             }
 
             document.getElementById('level-text').innerText = `LV. ${level}`;
