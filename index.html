@@ -357,6 +357,7 @@
                 <button onclick="closeAdminPanelModal()" style="background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; line-height: 1;">✕</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button onclick="activateFuseLuck25(!isFuseLuck25Active)" style="padding: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);">🍀 [이벤트] 퓨즈머신 희귀 확률 2.5배 럭 토글</button>
                 <button onclick="adminWarpToPetMachine()" style="padding: 10px; background: linear-gradient(135deg, #0ea5e9, #38bdf8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);">🐾 [신규] 얼음 지형 고급 펫 머신으로 이동</button>
                 <button onclick="adminToggle10PmEvent()" style="padding: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);">👽😈 [이벤트] 외계박사 & 악마보스 10시 이벤트 공개 토글</button>
                 <button onclick="adminWarpToIceCanyon()" style="padding: 10px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.45);">❄️ [신규 지역] 얼음의 협곡(부유섬&화석) 즉시 이동</button>
@@ -1066,10 +1067,10 @@
                 <!-- 퓨전 시간 & 퓨전 버튼 -->
                 <div style="margin-bottom: 8px;">
                     <div style="color: #ffffff; font-weight: bold; font-size: 16px; text-shadow: 1px 1px 2px #000; margin-bottom: 10px;">
-                        퓨전 시간 <span id="fuse-timer-display" style="color: #f1c40f;">(15분)</span>
+                        퓨전 시간 <span id="fuse-timer-display" style="color: #f1c40f;">(0분)</span>
                     </div>
                     <button id="fuse-action-btn" onclick="executeFuse()" style="background: #e67e22; color: white; border: 2px solid #ba4a00; font-size: 16px; font-weight: bold; padding: 10px 30px; border-radius: 8px; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.4); width: 80%;">
-                        퓨전 시작
+                        호박 융합 시작 (0분)
                     </button>
                 </div>
             </div>
@@ -7746,12 +7747,32 @@
         // 호박 융합 (퓨즈) 시스템 상태 및 함수
         let fuseSlots = [null, null, null]; // 3개 슬롯
         let activeFuseStartTime = 0;
-        let activeFuseDurationMs = 15 * 60 * 1000; // 15분
+        let activeFuseDurationMs = 0; // 0분 (기존 15분에서 0분으로 수정)
         let activeFuseResult = null; // 결과 스킨 ID
+
+        // 🍀 퓨즈머신 희귀 스킨 2.5배 럭 시스템 (만들어놓기만 하고 현재는 미실행 대기 상태)
+        let isFuseLuck25Active = false;
+
+        function activateFuseLuck25(enable = true) {
+            isFuseLuck25Active = !!enable;
+            if (document.getElementById('fuse-modal') && document.getElementById('fuse-modal').style.display === 'block') {
+                updateFuseUI();
+            }
+            floatTexts.push({
+                x: player.x,
+                y: player.y - 70,
+                text: isFuseLuck25Active ? '🍀 퓨즈머신 확률 2.5배 럭 활성화!' : '🍀 퓨즈머신 2.5배 럭 비활성화',
+                color: isFuseLuck25Active ? '#2ecc71' : '#e74c3c',
+                life: 90,
+                size: 20
+            });
+            console.log(`[FuseLuck25] status: ${isFuseLuck25Active}`);
+        }
+        window.activateFuseLuck25 = activateFuseLuck25;
 
         function openFuseModal() {
             const now = Date.now();
-            const isFusing = (activeFuseStartTime > 0 && now < activeFuseStartTime + activeFuseDurationMs);
+            const isFusing = (activeFuseDurationMs > 0 && activeFuseStartTime > 0 && now < activeFuseStartTime + activeFuseDurationMs);
             if (isFusing) {
                 const remaining = Math.max(0, activeFuseStartTime + activeFuseDurationMs - now);
                 const rmMin = Math.floor(remaining / 60000);
@@ -7769,8 +7790,8 @@
 
         function updateFuseUI() {
             const now = Date.now();
-            const isFusing = (activeFuseStartTime > 0 && now < activeFuseStartTime + activeFuseDurationMs);
-            const isFuseCompleted = (activeFuseStartTime > 0 && now >= activeFuseStartTime + activeFuseDurationMs);
+            const isFusing = (activeFuseDurationMs > 0 && activeFuseStartTime > 0 && now < activeFuseStartTime + activeFuseDurationMs);
+            const isFuseCompleted = (activeFuseDurationMs > 0 && activeFuseStartTime > 0 && now >= activeFuseStartTime + activeFuseDurationMs);
 
             const timerEl = document.getElementById('fuse-timer-display');
             const actionBtn = document.getElementById('fuse-action-btn');
@@ -7799,12 +7820,12 @@
                 actionBtn.style.cursor = 'pointer';
             } else {
                 if (timerEl) {
-                    timerEl.innerText = '(15분)';
+                    timerEl.innerText = '(0분)';
                     timerEl.style.color = '#f1c40f';
                 }
                 const filledCount = fuseSlots.filter(s => s !== null).length;
                 if (filledCount === 3) {
-                    actionBtn.innerText = '호박 융합 시작 (15분)';
+                    actionBtn.innerText = '호박 융합 시작 (0분)';
                     actionBtn.disabled = false;
                     actionBtn.style.background = '#e67e22';
                     actionBtn.style.cursor = 'pointer';
@@ -7828,21 +7849,41 @@
                 let headerText = '';
 
                 if (hasSpecial) {
-                    headerText = `<div style="color: #ff7675; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-shadow: 1px 1px 2px #000;">🔥 [특수 호박 라인업] 잭오랜턴 / 깨진호박 포함 확률</div>`;
-                    possibleSkins = [
-                        { id: 'ghost_fedora', name: '페도라 유령', percent: '70%', percentColor: '#ffffff', borderColor: '#bdc3c7' },
-                        { id: 'classic_bunny', name: '클래식 버니', percent: '13%', percentColor: '#ff7675', borderColor: '#e17055' },
-                        { id: 'headless_horse', name: '헤드레스 홀스', percent: '9%', percentColor: '#f1c40f', borderColor: '#f39c12' },
-                        { id: 'jack_fiery', name: '불타는 잭오랜턴', percent: '6%', percentColor: '#e67e22', borderColor: '#d35400' },
-                        { id: 'halloween_devil', name: '할로윈의 악마', percent: '2%', percentColor: '#ff4757', borderColor: '#c0392b' }
-                    ];
+                    if (isFuseLuck25Active) {
+                        headerText = `<div style="color: #ff7675; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-shadow: 1px 1px 2px #000;">🔥 [특수 호박 라인업] 잭오랜턴/깨진호박 <span style="color:#2ecc71; font-weight:900;">(🍀 2.5배 럭 적용중!)</span></div>`;
+                        possibleSkins = [
+                            { id: 'ghost_fedora', name: '페도라 유령', percent: '25%', percentColor: '#ffffff', borderColor: '#bdc3c7' },
+                            { id: 'classic_bunny', name: '클래식 버니', percent: '32.5%', percentColor: '#ff7675', borderColor: '#e17055' },
+                            { id: 'headless_horse', name: '헤드레스 홀스', percent: '22.5%', percentColor: '#f1c40f', borderColor: '#f39c12' },
+                            { id: 'jack_fiery', name: '불타는 잭오랜턴', percent: '15%', percentColor: '#e67e22', borderColor: '#d35400' },
+                            { id: 'halloween_devil', name: '할로윈의 악마', percent: '5%', percentColor: '#ff4757', borderColor: '#c0392b' }
+                        ];
+                    } else {
+                        headerText = `<div style="color: #ff7675; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-shadow: 1px 1px 2px #000;">🔥 [특수 호박 라인업] 잭오랜턴 / 깨진호박 포함 확률</div>`;
+                        possibleSkins = [
+                            { id: 'ghost_fedora', name: '페도라 유령', percent: '70%', percentColor: '#ffffff', borderColor: '#bdc3c7' },
+                            { id: 'classic_bunny', name: '클래식 버니', percent: '13%', percentColor: '#ff7675', borderColor: '#e17055' },
+                            { id: 'headless_horse', name: '헤드레스 홀스', percent: '9%', percentColor: '#f1c40f', borderColor: '#f39c12' },
+                            { id: 'jack_fiery', name: '불타는 잭오랜턴', percent: '6%', percentColor: '#e67e22', borderColor: '#d35400' },
+                            { id: 'halloween_devil', name: '할로윈의 악마', percent: '2%', percentColor: '#ff4757', borderColor: '#c0392b' }
+                        ];
+                    }
                 } else {
-                    headerText = `<div style="color: #f1c40f; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-shadow: 1px 1px 2px #000;">🎃 [기본 호박 라인업] 주황 · 초록 · 하얀 호박 확률</div>`;
-                    possibleSkins = [
-                        { id: 'ghost_fedora', name: '페도라 유령', percent: '85%', percentColor: '#ffffff', borderColor: '#bdc3c7' },
-                        { id: 'classic_bunny', name: '클래식 버니', percent: '10%', percentColor: '#ff7675', borderColor: '#e17055' },
-                        { id: 'jack_orange', name: '주황 잭오랜턴', percent: '5%', percentColor: '#e67e22', borderColor: '#d35400' }
-                    ];
+                    if (isFuseLuck25Active) {
+                        headerText = `<div style="color: #f1c40f; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-shadow: 1px 1px 2px #000;">🎃 [기본 호박 라인업] 주황·초록·하얀 호박 <span style="color:#2ecc71; font-weight:900;">(🍀 2.5배 럭 적용중!)</span></div>`;
+                        possibleSkins = [
+                            { id: 'ghost_fedora', name: '페도라 유령', percent: '62.5%', percentColor: '#ffffff', borderColor: '#bdc3c7' },
+                            { id: 'classic_bunny', name: '클래식 버니', percent: '25%', percentColor: '#ff7675', borderColor: '#e17055' },
+                            { id: 'jack_orange', name: '주황 잭오랜턴', percent: '12.5%', percentColor: '#e67e22', borderColor: '#d35400' }
+                        ];
+                    } else {
+                        headerText = `<div style="color: #f1c40f; font-weight: bold; font-size: 13px; margin-bottom: 8px; text-shadow: 1px 1px 2px #000;">🎃 [기본 호박 라인업] 주황 · 초록 · 하얀 호박 확률</div>`;
+                        possibleSkins = [
+                            { id: 'ghost_fedora', name: '페도라 유령', percent: '85%', percentColor: '#ffffff', borderColor: '#bdc3c7' },
+                            { id: 'classic_bunny', name: '클래식 버니', percent: '10%', percentColor: '#ff7675', borderColor: '#e17055' },
+                            { id: 'jack_orange', name: '주황 잭오랜턴', percent: '5%', percentColor: '#e67e22', borderColor: '#d35400' }
+                        ];
+                    }
                 }
 
                 let cardsHtml = `<div style="display: flex; gap: 6px; justify-content: center; align-items: stretch; flex-wrap: wrap;">`;
@@ -7965,8 +8006,8 @@
 
         function executeFuse() {
             const now = Date.now();
-            // 완료 수령
-            if (activeFuseStartTime > 0 && now >= activeFuseStartTime + activeFuseDurationMs) {
+            // 완료 수령 (이전 대기 중이던 결과가 있는 경우)
+            if (activeFuseStartTime > 0 && (activeFuseDurationMs === 0 || now >= activeFuseStartTime + activeFuseDurationMs)) {
                 const rewardSkinId = activeFuseResult || 'ghost_fedora';
                 const skinObj = skinsData.find(s => s.id === rewardSkinId);
                 const skinName = skinObj ? skinObj.name : '할로윈 스킨';
@@ -8004,37 +8045,91 @@
             let rolledSkin = 'ghost_fedora';
             const rand = Math.random() * 100;
 
-            if (hasSpecial) {
-                // 잭오랜턴~깨진 호박 조합 확률:
-                // 70% 페도라 유령, 13% 클래식 버니, 9% 헤드레스 홀스, 6% 불타는 잭오랜턴, 2% 할로윈의 악마
-                if (rand < 70) {
-                    rolledSkin = 'ghost_fedora';
-                } else if (rand < 83) { // 70 + 13 = 83
-                    rolledSkin = 'classic_bunny';
-                } else if (rand < 92) { // 83 + 9 = 92
-                    rolledSkin = 'headless_horse';
-                } else if (rand < 98) { // 92 + 6 = 98
-                    rolledSkin = 'jack_fiery';
-                } else { // 98 ~ 100 = 2%
-                    rolledSkin = 'halloween_devil';
+            if (isFuseLuck25Active) {
+                // 🍀 퓨즈머신 희귀 2.5배 럭 발동 시 확률:
+                if (hasSpecial) {
+                    // 페도라 유령 25%, 클래식 버니 32.5%, 헤드레스 홀스 22.5%, 불타는 잭오랜턴 15%, 할로윈의 악마 5% (희귀 등급 2.5배)
+                    if (rand < 25) {
+                        rolledSkin = 'ghost_fedora';
+                    } else if (rand < 57.5) {
+                        rolledSkin = 'classic_bunny';
+                    } else if (rand < 80) {
+                        rolledSkin = 'headless_horse';
+                    } else if (rand < 95) {
+                        rolledSkin = 'jack_fiery';
+                    } else {
+                        rolledSkin = 'halloween_devil';
+                    }
+                } else {
+                    // 페도라 유령 62.5%, 클래식 버니 25%, 주황 잭오랜턴 12.5% (희귀 등급 2.5배)
+                    if (rand < 62.5) {
+                        rolledSkin = 'ghost_fedora';
+                    } else if (rand < 87.5) {
+                        rolledSkin = 'classic_bunny';
+                    } else {
+                        rolledSkin = 'jack_orange';
+                    }
                 }
             } else {
-                // 주황호박~하얀 호박 조합 확률:
-                // 85% 페도라 유령, 10% 클래식 버니, 5% 주황 잭오랜턴
-                if (rand < 85) {
-                    rolledSkin = 'ghost_fedora';
-                } else if (rand < 95) { // 85 + 10 = 95
-                    rolledSkin = 'classic_bunny';
-                } else { // 95 ~ 100 = 5%
-                    rolledSkin = 'jack_orange';
+                // 기본 확률:
+                if (hasSpecial) {
+                    // 70% 페도라 유령, 13% 클래식 버니, 9% 헤드레스 홀스, 6% 불타는 잭오랜턴, 2% 할로윈의 악마
+                    if (rand < 70) {
+                        rolledSkin = 'ghost_fedora';
+                    } else if (rand < 83) {
+                        rolledSkin = 'classic_bunny';
+                    } else if (rand < 92) {
+                        rolledSkin = 'headless_horse';
+                    } else if (rand < 98) {
+                        rolledSkin = 'jack_fiery';
+                    } else {
+                        rolledSkin = 'halloween_devil';
+                    }
+                } else {
+                    // 85% 페도라 유령, 10% 클래식 버니, 5% 주황 잭오랜턴
+                    if (rand < 85) {
+                        rolledSkin = 'ghost_fedora';
+                    } else if (rand < 95) {
+                        rolledSkin = 'classic_bunny';
+                    } else {
+                        rolledSkin = 'jack_orange';
+                    }
                 }
+            }
+
+            // 0분 즉시 완료 처리
+            if (activeFuseDurationMs === 0) {
+                const rewardSkinId = rolledSkin;
+                const skinObj = skinsData.find(s => s.id === rewardSkinId);
+                const skinName = skinObj ? skinObj.name : '할로윈 스킨';
+                const isDuplicate = ownedSkins.includes(rewardSkinId);
+
+                if (!isDuplicate) {
+                    ownedSkins.push(rewardSkinId);
+                    floatTexts.push({ x: player.x, y: player.y - 100, text: `🎉 [${skinName}] 스킨 즉시 획득!`, color: '#f1c40f', life: 120, size: 22 });
+                    alert(`✨ [즉시 완료] 호박 융합 성공!\n[${skinName}] 스킨을 획득하여 옷장에 추가되었습니다!`);
+                } else {
+                    money += 10000;
+                    updateMoney();
+                    floatTexts.push({ x: player.x, y: player.y - 100, text: `💰 [${skinName}] 중복 획득 (+10,000 골드)`, color: '#f1c40f', life: 120, size: 20 });
+                    alert(`✨ [즉시 완료] 호박 융합 성공!\n이미 보유하고 있는 [${skinName}] 스킨이 나와 10,000 골드로 전환 지급되었습니다! (+10,000 💰)`);
+                }
+
+                activeFuseStartTime = 0;
+                activeFuseResult = null;
+                fuseSlots = [null, null, null];
+                updateFuseUI();
+                updateShopSkinUI();
+                updateInvSkinUI();
+                saveGame();
+                return;
             }
 
             activeFuseStartTime = now;
             activeFuseResult = rolledSkin;
-            document.getElementById('fuse-modal').style.display = 'none'; // 융합 시작 즉시 모달 창 닫기
+            document.getElementById('fuse-modal').style.display = 'none';
             saveGame();
-            floatTexts.push({ x: player.x, y: player.y - 100, text: `🔥 호박 융합 시작! (15분 소요)`, color: '#e67e22', life: 90 });
+            floatTexts.push({ x: player.x, y: player.y - 100, text: `🔥 호박 융합 시작!`, color: '#e67e22', life: 90 });
         }
 
         setInterval(() => {
@@ -14573,8 +14668,8 @@
             // 9. 머리 위 클릭 인디케이터 / 퓨즈 타이머 / 퓨즈 완료 상태 외부 표시!
             let floatY = Math.sin(Date.now() * 0.005) * 4;
             const now = Date.now();
-            const isFusing = (activeFuseStartTime > 0 && now < activeFuseStartTime + activeFuseDurationMs);
-            const isCompleted = (activeFuseStartTime > 0 && now >= activeFuseStartTime + activeFuseDurationMs);
+            const isFusing = (activeFuseDurationMs > 0 && activeFuseStartTime > 0 && now < activeFuseStartTime + activeFuseDurationMs);
+            const isCompleted = (activeFuseDurationMs > 0 && activeFuseStartTime > 0 && now >= activeFuseStartTime + activeFuseDurationMs);
 
             if (isCompleted) {
                 // 퓨즈 완료 시 반짝이는 황금/초록 배너
