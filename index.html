@@ -7791,7 +7791,7 @@
         function updateFuseUI() {
             const now = Date.now();
             const isFusing = (activeFuseDurationMs > 0 && activeFuseStartTime > 0 && now < activeFuseStartTime + activeFuseDurationMs);
-            const isFuseCompleted = (activeFuseDurationMs > 0 && activeFuseStartTime > 0 && now >= activeFuseStartTime + activeFuseDurationMs);
+            const isFuseCompleted = (activeFuseStartTime > 0 && (activeFuseDurationMs === 0 || now >= activeFuseStartTime + activeFuseDurationMs));
 
             const timerEl = document.getElementById('fuse-timer-display');
             const actionBtn = document.getElementById('fuse-action-btn');
@@ -14669,7 +14669,7 @@
             let floatY = Math.sin(Date.now() * 0.005) * 4;
             const now = Date.now();
             const isFusing = (activeFuseDurationMs > 0 && activeFuseStartTime > 0 && now < activeFuseStartTime + activeFuseDurationMs);
-            const isCompleted = (activeFuseDurationMs > 0 && activeFuseStartTime > 0 && now >= activeFuseStartTime + activeFuseDurationMs);
+            const isCompleted = (activeFuseStartTime > 0 && (activeFuseDurationMs === 0 || now >= activeFuseStartTime + activeFuseDurationMs));
 
             if (isCompleted) {
                 // 퓨즈 완료 시 반짝이는 황금/초록 배너
