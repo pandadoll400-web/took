@@ -1052,50 +1052,70 @@
             <button class="close-btn" onclick="document.getElementById('halloween-modal').style.display='none'" style="background: #4a235a; border: 1px solid #8e44ad;">닫기</button>
         </div>
 
-        <!-- 🐾 [ADMIN] 얼음 지형 고급 펫 머신 모달 (Pet System Lab) -->
-        <div id="pet-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #0f172a, #090d16); color: white; padding: 22px 20px; border-radius: 20px; width: 94%; max-width: 460px; max-height: 88%; overflow-y: auto; display: none; border: 2px solid #f1c40f; z-index: 60; box-shadow: 0 16px 50px rgba(0,0,0,0.95), 0 0 35px rgba(241, 196, 15, 0.35); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(241, 196, 15, 0.35); padding-bottom: 12px; margin-bottom: 14px;">
+        <!-- 🐾 [ADMIN] 얼음 지형 고급 펫 머신 / 상점 모달 (Pet System Lab & Synthesis) -->
+        <div id="pet-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #0f172a, #090d16); color: white; padding: 22px 20px; border-radius: 20px; width: 94%; max-width: 480px; max-height: 88%; overflow-y: auto; display: none; border: 2px solid #f1c40f; z-index: 60; box-shadow: 0 16px 50px rgba(0,0,0,0.95), 0 0 35px rgba(241, 196, 15, 0.35); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(241, 196, 15, 0.35); padding-bottom: 12px; margin-bottom: 12px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span style="font-size: 28px; filter: drop-shadow(0 0 10px #f1c40f);">🐾</span>
                     <div>
                         <div style="display: flex; align-items: center; gap: 6px;">
-                            <h2 style="margin: 0; color: #f1c40f; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">고대 크리스탈 펫 머신</h2>
+                            <h2 style="margin: 0; color: #f1c40f; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">고대 크리스탈 펫 상점 & 머신</h2>
                             <span style="background: rgba(241, 196, 15, 0.2); color: #f1c40f; border: 1px solid #f1c40f; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">ADMIN ONLY</span>
                         </div>
-                        <span style="font-size: 11px; color: #94a3b8;">얼음 지형 비밀 연구소 · 펫 시스템 프로토타입</span>
+                        <span style="font-size: 11px; color: #94a3b8;">얼음 지형 비밀 연구소 · 펫 시스템 & 합성 연구실</span>
                     </div>
                 </div>
                 <button onclick="closePetMachineModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
             </div>
 
-            <!-- 관리자 상태 & 시스템 안내 배너 -->
-            <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 1px solid #38bdf8; border-radius: 12px; padding: 12px; margin-bottom: 14px; text-align: left;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-size: 12px; font-weight: bold; color: #38bdf8;">👑 최고 관리자 권한 승인됨</span>
-                    <span id="pet-machine-status-badge" style="font-size: 10px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 2px 7px; border-radius: 6px; font-weight: bold;">개발 연구 단계 (Alpha)</span>
-                </div>
-                <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.5;">
-                    얼음 지형에 극비 연구용으로 설치된 <b>고급 펫 융합 머신</b>입니다.<br>
-                    선택한 펫의 능력치를 확인하고, 필드 동행 소환을 테스트할 수 있습니다.
-                </div>
-            </div>
-
-            <!-- 활성화된 펫 & 동행 ON/OFF 컨트롤 -->
-            <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(241, 196, 15, 0.5); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
-                <div style="font-size: 11px; color: #94a3b8; margin-bottom: 4px;">현재 동행 선택 펫</div>
-                <div id="pet-modal-active-name" style="font-size: 17px; font-weight: 900; color: #f1c40f; margin-bottom: 8px;">🐺❄️ [신화] 칠흑의 눈꽃 늑대</div>
-                <div id="pet-modal-active-buff" style="font-size: 12px; color: #38bdf8; margin-bottom: 12px; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 6px;">과일 수확량 +50% / 이동속도 +20% / 빙결 오라</div>
-                <button id="pet-follow-toggle-btn" onclick="toggleAdminPetFollow()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>🐾</span> <span id="pet-follow-toggle-text">필드 동행 소환 활성화 (ON)</span>
+            <!-- 상단 탭 전환 바 (펫 관리 / 펫 합성) -->
+            <div style="display: flex; gap: 8px; margin-bottom: 14px; background: rgba(30, 41, 59, 0.6); padding: 4px; border-radius: 10px; border: 1px solid rgba(241, 196, 15, 0.3);">
+                <button id="pet-tab-btn-list" onclick="switchPetMachineTab('list')" style="flex: 1; padding: 8px 12px; font-size: 13px; font-weight: bold; border-radius: 8px; border: none; background: #f1c40f; color: #0f172a; cursor: pointer; transition: all 0.2s;">
+                    🐾 펫 도감 & 선택
+                </button>
+                <button id="pet-tab-btn-synth" onclick="switchPetMachineTab('synth')" style="flex: 1; padding: 8px 12px; font-size: 13px; font-weight: bold; border-radius: 8px; border: none; background: transparent; color: #94a3b8; cursor: pointer; transition: all 0.2s;">
+                    ✨ 펫 합성 연구실
                 </button>
             </div>
 
-            <!-- 펫 도감/프리뷰 카드 목록 -->
-            <div style="font-size: 13px; font-weight: bold; color: #e2e8f0; margin-bottom: 8px; text-align: left; display: flex; align-items: center; gap: 6px;">
-                <span>✨</span> <span>신비로운 펫 라인업 (4종)</span>
+            <!-- TAB 1: 펫 도감 & 선택 패널 -->
+            <div id="pet-panel-list">
+                <!-- 활성화된 펫 & 동행 ON/OFF 컨트롤 -->
+                <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(241, 196, 15, 0.5); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+                    <div style="font-size: 11px; color: #94a3b8; margin-bottom: 4px;">현재 동행 선택 펫</div>
+                    <div id="pet-modal-active-name" style="font-size: 17px; font-weight: 900; color: #f1c40f; margin-bottom: 8px;">🐺❄️ [신화] 칠흑의 눈꽃 늑대</div>
+                    <div id="pet-modal-active-buff" style="font-size: 12px; color: #38bdf8; margin-bottom: 12px; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 6px;">과일 수확량 +50% / 이동속도 +20% / 빙결 오라</div>
+                    <button id="pet-follow-toggle-btn" onclick="toggleAdminPetFollow()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span>🐾</span> <span id="pet-follow-toggle-text">필드 동행 소환 활성화 (ON)</span>
+                    </button>
+                </div>
+
+                <!-- 펫 도감/프리뷰 카드 목록 -->
+                <div style="font-size: 13px; font-weight: bold; color: #e2e8f0; margin-bottom: 8px; text-align: left; display: flex; align-items: center; gap: 6px;">
+                    <span>✨</span> <span>신비로운 펫 라인업 & 합성된 펫</span>
+                </div>
+                <div id="pet-cards-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+                    <!-- Dynamically rendered by updatePetMachineModalUI() -->
+                </div>
             </div>
-            <div id="pet-cards-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
-                <!-- Dynamically rendered by updatePetMachineModalUI() -->
+
+            <!-- TAB 2: ✨ 펫 합성 연구실 패널 -->
+            <div id="pet-panel-synth" style="display: none;">
+                <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 1.5px solid #a855f7; border-radius: 12px; padding: 12px; margin-bottom: 14px; text-align: left;">
+                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                        <span style="font-size: 14px;">✨</span>
+                        <span style="font-size: 13px; font-weight: bold; color: #c084fc;">고대 펫 융합 & 합성 챔버</span>
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; line-height: 1.4;">
+                        머신의 강력한 융합 에너지로 펫과 고대 화석을 합성하여<br>
+                        차원을 초월하는 <b>상위 신화/태고 펫</b>을 탄생시킵니다!
+                    </div>
+                </div>
+
+                <!-- 합성 레시피 목록 -->
+                <div id="pet-synth-recipes-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+                    <!-- Dynamically rendered by updatePetMachineModalUI() -->
+                </div>
             </div>
 
             <div style="text-align: center;">
@@ -1105,14 +1125,14 @@
             </div>
         </div>
 
-        <!-- ⛏️ 고대 화석 바위 발굴 & 케르베로스 융합 제단 모달 -->
-        <div id="fossil-rock-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 440px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
+        <!-- ⛏️ [바위 1] 케르베로스 제작 제단 모달 -->
+        <div id="fossil-rock-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 440px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #ef4444; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(239, 68, 68, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(239, 68, 68, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 26px;">⛏️</span>
+                    <span style="font-size: 26px;">🐺🔥</span>
                     <div>
-                        <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold;">고대 화석 바위</h2>
-                        <span style="font-size: 11px; color: #94a3b8;">얼음의 협곡 고대 지층 화석 발굴 & 영혼 융합 제단</span>
+                        <h2 style="margin: 0; color: #f87171; font-size: 19px; font-weight: bold;">케르베로스 제작 바위</h2>
+                        <span style="font-size: 11px; color: #94a3b8;">얼음의 협곡 고대 지층 화석 발굴 & 케르베로스 스킨 제작</span>
                     </div>
                 </div>
                 <button onclick="closeFossilRockModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
@@ -1143,7 +1163,7 @@
             <div style="background: linear-gradient(135deg, rgba(30, 20, 20, 0.85), rgba(45, 15, 15, 0.95)); border: 2px solid #ef4444; border-radius: 14px; padding: 14px; text-align: center; box-shadow: 0 0 20px rgba(239, 68, 68, 0.25);">
                 <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px;">
                     <span style="font-size: 22px;">🐺🔥</span>
-                    <span style="font-weight: bold; font-size: 15px; color: #f87171;">고대 영혼 융합: 케르베로스 스킨</span>
+                    <span style="font-weight: bold; font-size: 15px; color: #f87171;">케르베로스 스킨 제작</span>
                 </div>
                 <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 10px; line-height: 1.4;">
                     [공룡 화석] 1개 + [공룡 심장 화석] 1개를 융합하면<br>
@@ -1153,6 +1173,70 @@
                 <div id="cerberus-fuse-action-area">
                     <!-- Dynamic button inserted by updateFossilRockModal() -->
                 </div>
+            </div>
+        </div>
+
+        <!-- 🦮 [바위 2] 펫 목줄 교환 & 스킨 펫 장착 제단 모달 -->
+        <div id="pet-leash-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 460px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 26px;">🦮</span>
+                    <div>
+                        <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold;">펫 목줄 & 스킨 펫 바위</h2>
+                        <span style="font-size: 11px; color: #94a3b8;">공룡 심장 화석 10개로 목줄 획득 · 보유 스킨을 펫으로 장착</span>
+                    </div>
+                </div>
+                <button onclick="closePetLeashModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
+            </div>
+
+            <!-- 화석 채굴 섹션 -->
+            <div style="background: rgba(30, 41, 59, 0.7); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; border: 1px solid #334155; text-align: center;">
+                <button onclick="mineFromLeashRockModal()" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 8px; padding: 9px 20px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);">⛏️ 화석 발굴하기 (클릭)</button>
+            </div>
+
+            <!-- 1. 목줄 획득 섹션 -->
+            <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95)); border: 1.5px solid #f59e0b; border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px;">
+                    <span style="font-size: 22px;">🦮💖</span>
+                    <span style="font-weight: bold; font-size: 15px; color: #facc15;">신비한 펫 목줄 교환</span>
+                </div>
+                <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 10px; line-height: 1.4;">
+                    [공룡 심장 화석] 10개를 바치면<br>
+                    스킨을 펫으로 길들일 수 있는 <strong>'신비한 목줄'</strong>을 획득합니다!
+                </div>
+                <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <span style="font-size: 13px; color: #94a3b8;">현재 공룡 심장 화석:</span>
+                    <span id="leash-modal-heart-count" style="font-size: 15px; font-weight: bold; color: #fb7185;">0 / 10개</span>
+                </div>
+                <div id="leash-action-area">
+                    <!-- Dynamic button inserted by updatePetLeashModalUI() -->
+                </div>
+            </div>
+
+            <!-- 2. 스킨 펫 장착 섹션 -->
+            <div style="background: rgba(15, 23, 42, 0.9); border: 1.5px solid #38bdf8; border-radius: 14px; padding: 14px; text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="font-weight: bold; font-size: 14px; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
+                        <span>🐾</span> <span>스킨 펫 장착실</span>
+                    </div>
+                    <span id="leash-equipped-badge" style="font-size: 10.5px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 2px 7px; border-radius: 4px; font-weight: bold;">
+                        목줄 필요
+                    </span>
+                </div>
+                <div style="font-size: 11px; color: #94a3b8; margin-bottom: 12px; line-height: 1.4;">
+                    보유한 스킨 중 1개를 골라 당신을 따라다니는 펫으로 장착하세요.<br>
+                    <b style="color: #4ade80;">💡 중요: 펫으로 장착해도 인벤토리의 스킨은 삭제되지 않고 그대로 유지됩니다!</b>
+                </div>
+
+                <div id="skin-pet-list-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto; padding-right: 4px;">
+                    <!-- Dynamically rendered by updatePetLeashModalUI() -->
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 14px;">
+                <button onclick="closePetLeashModal()" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.1); color: #cbd5e1; border: 1px solid #475569; border-radius: 8px; font-size: 13px; cursor: pointer;">
+                    닫기
+                </button>
             </div>
         </div>
 
@@ -1372,28 +1456,37 @@
             type: 'devil'
         };
 
-        // 🐉 3. 얼음의 협곡 고차원 텔레포트 (Lv 125 신규 지역 우측 발판, 고대 서리룡 보스전)
+        // 🐉 3. 얼음의 협곡 고차원 텔레포트 (Lv 125 신규 지역 우측 외곽 분리 배치, 고대 서리룡 보스전)
         let teleporterIceDragon = {
-            x: 505,
-            y: -8540,
-            radius: 45,
+            x: 565,
+            y: -8410,
+            radius: 36,
             type: 'ice_dragon'
         };
 
-        // ❄️ 얼음의 협곡 고대 화석 발굴 바위 위치들 (안 겹치도록 완벽 분리 배치)
+        // ❄️ 얼음의 협곡 고대 화석 바위 2개 (바위 1: 케르베로스 제작, 바위 2: 펫 목줄 & 스킨 펫 장착)
         let iceCanyonFossilRocks = [
-            { x: 95, y: -8540, radius: 28, hitTimer: 0 },
-            { x: 490, y: -8730, radius: 28, hitTimer: 0 }
+            { id: 'cerberus_rock', name: '케르베로스 제작 바위', x: 215, y: -8540, radius: 28, hitTimer: 0 },
+            { id: 'leash_rock', name: '펫 목줄 & 스킨 펫 바위', x: 485, y: -8540, radius: 28, hitTimer: 0 }
         ];
 
-        // 🐾 [ADMIN] 얼음 지형 고급 펫 머신 (Pet System Alpha Machine - x: 130, y: -3450)
+        // 🐾 [ADMIN] 얼음 지형 고급 펫 머신 / 상점 (x: 80, y: -8540)
         let petMachine = {
-            x: 130,
-            y: -3450,
+            x: 80,
+            y: -8540,
             radius: 46
         };
 
-        // 🐾 관리자 전용 프리미엄 펫 도감 데이터 테이블 (4종)
+        // 🦮 펫 목줄 및 스킨 펫 상태 변수
+        let hasPetLeash = false;
+        try { hasPetLeash = localStorage.getItem('has_pet_leash') === 'true'; } catch(e) {}
+        let activeSkinPet = null;
+        try { activeSkinPet = localStorage.getItem('active_skin_pet') || null; } catch(e) {}
+        let synthesizedPets = [];
+        try { synthesizedPets = JSON.parse(localStorage.getItem('synthesized_pets') || '[]'); } catch(e) {}
+        let petMachineTab = 'list'; // 'list' | 'synth'
+
+        // 🐾 관리자 전용 프리미엄 펫 도감 데이터 테이블 (4종 + 합성 펫)
         let adminPetsData = [
             {
                 id: 'frost_wolf',
@@ -1655,12 +1748,97 @@
             updatePetMachineModalUI();
         }
 
+        function switchPetMachineTab(tab) {
+            petMachineTab = tab;
+            const btnList = document.getElementById('pet-tab-btn-list');
+            const btnSynth = document.getElementById('pet-tab-btn-synth');
+            const panelList = document.getElementById('pet-panel-list');
+            const panelSynth = document.getElementById('pet-panel-synth');
+
+            if (btnList && btnSynth && panelList && panelSynth) {
+                if (tab === 'synth') {
+                    btnList.style.background = 'transparent';
+                    btnList.style.color = '#94a3b8';
+                    btnSynth.style.background = '#a855f7';
+                    btnSynth.style.color = '#ffffff';
+                    panelList.style.display = 'none';
+                    panelSynth.style.display = 'block';
+                } else {
+                    btnList.style.background = '#f1c40f';
+                    btnList.style.color = '#0f172a';
+                    btnSynth.style.background = 'transparent';
+                    btnSynth.style.color = '#94a3b8';
+                    panelList.style.display = 'block';
+                    panelSynth.style.display = 'none';
+                }
+            }
+            updatePetMachineModalUI();
+        }
+
+        const PET_SYNTH_RECIPES = [
+            {
+                id: 'synth_frost_drake_wolf',
+                name: '태고 서리늑대룡 (빙랑룡)',
+                icon: '👑🐺❄️',
+                tier: 'MYTHIC EX',
+                tierColor: '#ff0055',
+                desc: '눈꽃 늑대와 빙룡 베이비의 고대 영혼이 융합된 절대 빙하의 군주.',
+                buff: '과일 수확량 +100% / 이동속도 +30% / 서리 브레스 & 빙결 오라',
+                materials: [
+                    { type: 'pet', id: 'frost_wolf', name: '칠흑의 눈꽃 늑대' },
+                    { type: 'pet', id: 'baby_ice_dragon', name: '빙룡 베이비' }
+                ]
+            },
+            {
+                id: 'synth_golden_aurora_spirit',
+                name: '황금 극광 수호령',
+                icon: '🦊✨👑',
+                tier: 'ANCIENT EX',
+                tierColor: '#f59e0b',
+                desc: '구미호의 극광 마력과 황제 펭귄의 풍요의 비술이 결합된 부와 행운의 화신.',
+                buff: '상점 정산 시 골드 2배 (+100%) / 10초마다 황금 과일 자동 드랍',
+                materials: [
+                    { type: 'pet', id: 'aurora_fox', name: '오로라 구미호' },
+                    { type: 'pet', id: 'penguin_butler', name: '황제 펭귄 집사' }
+                ]
+            },
+            {
+                id: 'synth_primal_tyranno',
+                name: '원초의 공룡 심장 군주',
+                icon: '🦖💖🔥',
+                tier: 'DIVINE',
+                tierColor: '#e11d48',
+                desc: '공룡 화석과 공룡 심장 화석의 태고 생명력 융합으로 부활한 백악기의 지배자.',
+                buff: '나무 타격 데미지 +150% / 보스전 데미지 +50% / 화석 발굴 2배',
+                materials: [
+                    { type: 'item', key: '공룡 화석', name: '공룡 화석', count: 5 },
+                    { type: 'item', key: '공룡 심장 화석', name: '공룡 심장 화석', count: 5 }
+                ]
+            }
+        ];
+
         function updatePetMachineModalUI() {
             const nameEl = document.getElementById('pet-modal-active-name');
             const buffEl = document.getElementById('pet-modal-active-buff');
             const toggleBtn = document.getElementById('pet-follow-toggle-btn');
             const toggleText = document.getElementById('pet-follow-toggle-text');
             const container = document.getElementById('pet-cards-container');
+            const synthContainer = document.getElementById('pet-synth-recipes-container');
+
+            // 동적으로 합성된 펫들을 adminPetsData에 등록
+            PET_SYNTH_RECIPES.forEach(rec => {
+                if (synthesizedPets.includes(rec.id) && !adminPetsData.some(p => p.id === rec.id)) {
+                    adminPetsData.push({
+                        id: rec.id,
+                        name: rec.name,
+                        icon: rec.icon,
+                        tier: rec.tier,
+                        tierColor: rec.tierColor,
+                        desc: rec.desc,
+                        buff: rec.buff
+                    });
+                }
+            });
 
             const activePet = adminPetsData.find(p => p.id === adminActivePet) || adminPetsData[0];
             if (nameEl) nameEl.innerHTML = `${activePet.icon} <span style="color: ${activePet.tierColor};">[${activePet.tier}]</span> ${activePet.name}`;
@@ -1682,7 +1860,7 @@
                     return `
                         <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid ${isSelected ? '#f1c40f' : '#334155'}; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: ${isSelected ? '0 0 15px rgba(241, 196, 15, 0.3)' : 'none'};">
                             <div style="display: flex; align-items: center; gap: 12px;">
-                                <div style="font-size: 30px; background: rgba(0,0,0,0.3); width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid ${pet.tierColor};">
+                                <div style="font-size: 28px; background: rgba(0,0,0,0.3); width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid ${pet.tierColor};">
                                     ${pet.icon.slice(0, 2)}
                                 </div>
                                 <div style="text-align: left;">
@@ -1704,6 +1882,346 @@
                     `;
                 }).join('');
             }
+
+            if (synthContainer) {
+                let dinoCount = 0;
+                ['공룡 화석', '공룡화석', '공룡 화석 바위', '태초의 공룡 화석'].forEach(k => { if (inventory[k]) dinoCount += inventory[k]; });
+                let heartCount = 0;
+                ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'].forEach(k => { if (inventory[k]) heartCount += inventory[k]; });
+
+                synthContainer.innerHTML = PET_SYNTH_RECIPES.map(rec => {
+                    const isAlreadyCrafted = synthesizedPets.includes(rec.id);
+                    let canCraft = true;
+                    let matStatus = '';
+
+                    if (rec.id === 'synth_primal_tyranno') {
+                        let okDino = dinoCount >= 5;
+                        let okHeart = heartCount >= 5;
+                        canCraft = okDino && okHeart;
+                        matStatus = `[공룡화석 ${dinoCount}/5개] · [심장화석 ${heartCount}/5개]`;
+                    } else {
+                        canCraft = true; // 기본 관리자 펫 기반 합성은 즉시 가능
+                        matStatus = rec.materials.map(m => m.name).join(' + ');
+                    }
+
+                    return `
+                        <div style="background: rgba(15, 23, 42, 0.8); border: 1.5px solid ${isAlreadyCrafted ? '#10b981' : '#a855f7'}; border-radius: 12px; padding: 12px; text-align: left;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 24px;">${rec.icon}</span>
+                                    <div>
+                                        <div style="font-size: 13.5px; font-weight: bold; color: #fff;">${rec.name}</div>
+                                        <div style="font-size: 10px; color: ${rec.tierColor}; font-weight: bold;">[${rec.tier}]</div>
+                                    </div>
+                                </div>
+                                <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7;">
+                                    ${matStatus}
+                                </span>
+                            </div>
+                            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 4px;">${rec.desc}</div>
+                            <div style="font-size: 10.5px; color: #facc15; font-weight: bold; margin-bottom: 8px;">⚡ ${rec.buff}</div>
+                            <div style="text-align: right;">
+                                ${isAlreadyCrafted 
+                                    ? `<button onclick="selectAdminPet('${rec.id}'); switchPetMachineTab('list');" style="background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">✨ 합성 완료 (동행 선택)</button>`
+                                    : (canCraft 
+                                        ? `<button onclick="synthesizePet('${rec.id}')" style="background: linear-gradient(135deg, #a855f7, #ec4899); color: white; border: none; padding: 7px 16px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 12px rgba(168, 85, 247, 0.5);">✨ 융합 합성하기</button>`
+                                        : `<button disabled style="background: #475569; color: #94a3b8; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px;">재료 부족</button>`
+                                      )
+                                }
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function synthesizePet(recipeId) {
+            const recipe = PET_SYNTH_RECIPES.find(r => r.id === recipeId);
+            if (!recipe) return;
+
+            if (recipe.id === 'synth_primal_tyranno') {
+                let dinoKey = getDinoFossilKey();
+                let heartKey = getHeartFossilKey();
+                let dinoCount = 0;
+                ['공룡 화석', '공룡화석', '공룡 화석 바위', '태초의 공룡 화석'].forEach(k => { if (inventory[k]) dinoCount += inventory[k]; });
+                let heartCount = 0;
+                ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'].forEach(k => { if (inventory[k]) heartCount += inventory[k]; });
+
+                if (dinoCount < 5 || heartCount < 5) {
+                    alert('합성 재료가 부족합니다! 공룡 화석 5개와 공룡 심장 화석 5개가 필요합니다.');
+                    return;
+                }
+
+                // 차감
+                let toDeductDino = 5;
+                ['공룡 화석', '공룡화석', '공룡 화석 바위', '태초의 공룡 화석'].forEach(k => {
+                    if (inventory[k] && inventory[k] > 0 && toDeductDino > 0) {
+                        let take = Math.min(inventory[k], toDeductDino);
+                        inventory[k] -= take;
+                        toDeductDino -= take;
+                    }
+                });
+                let toDeductHeart = 5;
+                ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'].forEach(k => {
+                    if (inventory[k] && inventory[k] > 0 && toDeductHeart > 0) {
+                        let take = Math.min(inventory[k], toDeductHeart);
+                        inventory[k] -= take;
+                        toDeductHeart -= take;
+                    }
+                });
+            }
+
+            if (!synthesizedPets.includes(recipe.id)) {
+                synthesizedPets.push(recipe.id);
+            }
+            try {
+                localStorage.setItem('synthesized_pets', JSON.stringify(synthesizedPets));
+            } catch(e) {}
+
+            adminActivePet = recipe.id;
+            adminPetFollowEnabled = true;
+            try {
+                localStorage.setItem('admin_active_pet', recipe.id);
+                localStorage.setItem('admin_pet_follow', 'true');
+            } catch(e) {}
+
+            saveGame();
+            updatePetMachineModalUI();
+
+            floatTexts.push({ x: player.x, y: player.y - 100, text: `✨ [펫 합성 대성공!] ${recipe.name}!`, color: recipe.tierColor, life: 130, size: 22 });
+            for (let i = 0; i < 40; i++) {
+                let a = Math.random() * Math.PI * 2;
+                let sp = Math.random() * 6 + 2;
+                labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#a855f7' : '#ec4899'), life: 40 });
+            }
+            alert(`🎉 [펫 머신 합성 대성공!]\n\n고대 융합 챔버의 에너지가 결집되어\n[${recipe.name}] ${recipe.icon}이(가) 탄생했습니다!\n\n현재 즉시 필드 동행 펫으로 장착되었습니다.`);
+        }
+
+        // ==========================================
+        // 🦮 [바위 2] 펫 목줄 교환 & 스킨 펫 컨트롤 함수들
+        // ==========================================
+        let currentActiveLeashRock = null;
+
+        function openPetLeashModal(rock) {
+            currentActiveLeashRock = rock;
+            currentActiveFossilRock = rock;
+            const modal = document.getElementById('pet-leash-modal');
+            if (!modal) return;
+            updatePetLeashModalUI();
+            modal.style.display = 'block';
+            if (typeof resetJoyMouse === 'function') resetJoyMouse();
+            if (typeof player !== 'undefined') player.targetTree = null;
+        }
+
+        function closePetLeashModal() {
+            const modal = document.getElementById('pet-leash-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function updatePetLeashModalUI() {
+            const heartCountEl = document.getElementById('leash-modal-heart-count');
+            const actionAreaEl = document.getElementById('leash-action-area');
+            const badgeEl = document.getElementById('leash-equipped-badge');
+            const listEl = document.getElementById('skin-pet-list-container');
+
+            let heartCount = 0;
+            ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'].forEach(k => {
+                if (inventory[k]) heartCount += inventory[k];
+            });
+
+            if (heartCountEl) heartCountEl.innerText = `${heartCount} / 10개`;
+
+            const hasLeash = hasPetLeash || (inventory['목줄'] || 0) > 0;
+
+            if (actionAreaEl) {
+                if (hasLeash) {
+                    actionAreaEl.innerHTML = `
+                        <div style="background: rgba(245, 158, 11, 0.15); border: 1.5px solid #f59e0b; border-radius: 8px; padding: 10px; color: #facc15; font-weight: bold; font-size: 13.5px;">
+                            ✨ 🦮 신비한 펫 목줄 보유 중! (스킨 펫 장착 가능)
+                        </div>
+                    `;
+                } else if (heartCount >= 10) {
+                    actionAreaEl.innerHTML = `
+                        <button onclick="buyPetLeash()" style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; padding: 11px 24px; border: none; border-radius: 8px; font-weight: bold; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.6);">
+                            🦮 목줄 교환하기 (공룡 심장 화석 10개 사용)
+                        </button>
+                    `;
+                } else {
+                    actionAreaEl.innerHTML = `
+                        <button disabled style="background: #475569; color: #94a3b8; padding: 9px 20px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px;">
+                            공룡 심장 화석 부족 (${heartCount}/10개 필요 - 상단 발굴 클릭!)
+                        </button>
+                    `;
+                }
+            }
+
+            if (badgeEl) {
+                if (hasLeash) {
+                    badgeEl.style.background = 'rgba(16, 185, 129, 0.2)';
+                    badgeEl.style.color = '#34d399';
+                    badgeEl.style.border = '1px solid #10b981';
+                    badgeEl.innerText = '목줄 활성화됨';
+                } else {
+                    badgeEl.style.background = 'rgba(239, 68, 68, 0.2)';
+                    badgeEl.style.color = '#f87171';
+                    badgeEl.style.border = '1px solid #ef4444';
+                    badgeEl.innerText = '목줄 필요';
+                }
+            }
+
+            if (listEl) {
+                if (!hasLeash) {
+                    listEl.innerHTML = `
+                        <div style="text-align: center; color: #94a3b8; padding: 22px 10px; font-size: 12px; background: rgba(0,0,0,0.25); border-radius: 8px; border: 1px dashed #475569;">
+                            🔒 상단에서 <b>공룡 심장 화석 10개</b>로 목줄을 획득하면<br>보유 중인 스킨을 자유롭게 펫으로 장착할 수 있습니다.
+                        </div>
+                    `;
+                } else {
+                    listEl.innerHTML = ownedSkins.map(skinId => {
+                        const skin = skinsData.find(s => s.id === skinId) || { id: skinId, name: skinId, icon: '✨' };
+                        const isEquippedAsPet = (activeSkinPet === skin.id);
+
+                        return `
+                            <div style="background: rgba(30, 41, 59, 0.75); border: 1.5px solid ${isEquippedAsPet ? '#38bdf8' : '#334155'}; border-radius: 10px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: ${isEquippedAsPet ? '0 0 12px rgba(56, 189, 248, 0.35)' : 'none'};">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 26px;">${skin.icon}</span>
+                                    <div>
+                                        <div style="font-size: 13.5px; font-weight: bold; color: #ffffff;">${skin.name}</div>
+                                        <div style="font-size: 10.5px; color: ${isEquippedAsPet ? '#38bdf8' : '#94a3b8'};">
+                                            ${isEquippedAsPet ? '🐾 현재 펫으로 장착 중 (동행)' : '보유 스킨 (인벤토리 보관됨)'}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    ${isEquippedAsPet 
+                                        ? `<button onclick="unequipSkinPet()" style="background: #e74c3c; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 11.5px; font-weight: bold; cursor: pointer;">해제</button>`
+                                        : `<button onclick="equipSkinPet('${skin.id}')" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 11.5px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);">🐾 펫으로 장착</button>`
+                                    }
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+        }
+
+        function buyPetLeash() {
+            let heartCount = 0;
+            const keys = ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'];
+            keys.forEach(k => {
+                if (inventory[k]) heartCount += inventory[k];
+            });
+
+            if (hasPetLeash || (inventory['목줄'] || 0) > 0) {
+                alert("✨ 이미 '신비한 목줄'을 보유하고 있습니다!\n하단에서 원하는 스킨을 골라 펫으로 장착하세요.");
+                return;
+            }
+
+            if (heartCount < 10) {
+                alert(`공룡 심장 화석이 부족합니다!\n\n현재 보유: ${heartCount}개 / 필요: 10개\n(상단의 '화석 발굴하기' 버튼으로 화석을 채굴하세요!)`);
+                return;
+            }
+
+            // 공룡 심장 화석 10개 차감
+            let toDeduct = 10;
+            for (let k of keys) {
+                if (inventory[k] && inventory[k] > 0) {
+                    let take = Math.min(inventory[k], toDeduct);
+                    inventory[k] -= take;
+                    toDeduct -= take;
+                    if (toDeduct <= 0) break;
+                }
+            }
+
+            hasPetLeash = true;
+            if (!inventory['목줄']) inventory['목줄'] = 0;
+            inventory['목줄']++;
+
+            try { localStorage.setItem('has_pet_leash', 'true'); } catch(e) {}
+            saveGame();
+            updatePetLeashModalUI();
+
+            floatTexts.push({ x: player.x, y: player.y - 90, text: `🦮 [신비한 목줄 획득!]`, color: '#f1c40f', life: 100, size: 22 });
+            for (let i = 0; i < 35; i++) {
+                let a = Math.random() * Math.PI * 2;
+                let sp = Math.random() * 5 + 2;
+                labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#f1c40f' : '#ff0055'), life: 35 });
+            }
+            alert("🎉 [🦮 신비한 펫 목줄 획득!]\n\n공룡 심장 화석 10개의 태고 생명력으로 빚어낸 [신비한 목줄]을 얻었습니다!\n\n이제 인벤토리에 보유한 스킨 중 하나를 선택해 당신의 충실한 동행 펫으로 장착할 수 있습니다.\n(💡 중요: 장착해도 인벤토리의 스킨은 삭제되지 않고 안전하게 보관됩니다!)");
+        }
+
+        function equipSkinPet(skinId) {
+            if (!hasPetLeash && (inventory['목줄'] || 0) <= 0) {
+                alert("🔒 먼저 공룡 심장 화석 10개로 '목줄'을 획득해야 합니다!");
+                return;
+            }
+            if (!ownedSkins.includes(skinId)) {
+                alert("🔒 보유 중인 스킨만 펫으로 장착할 수 있습니다!");
+                return;
+            }
+
+            activeSkinPet = skinId;
+            adminPetFollowEnabled = true;
+
+            try {
+                localStorage.setItem('active_skin_pet', skinId);
+                localStorage.setItem('admin_pet_follow', 'true');
+            } catch(e) {}
+
+            saveGame();
+            updatePetLeashModalUI();
+
+            const skin = skinsData.find(s => s.id === skinId);
+            const sName = skin ? skin.name : skinId;
+
+            floatTexts.push({ x: player.x, y: player.y - 80, text: `🐾 [스킨 펫 장착] ${sName}!`, color: '#f1c40f', life: 90, size: 20 });
+            alert(`🎉 [스킨 펫 장착 완료!]\n\n[${sName}] 스킨이 당신의 동행 펫으로 장착되었습니다!\n\n💡 중요: 인벤토리의 스킨은 삭제되지 않고 그대로 유지되므로,\n언제든지 캐릭터가 착용하거나 다른 스킨을 자유롭게 변경할 수 있습니다.`);
+        }
+
+        function unequipSkinPet() {
+            activeSkinPet = null;
+            try { localStorage.removeItem('active_skin_pet'); } catch(e) {}
+            saveGame();
+            updatePetLeashModalUI();
+            floatTexts.push({ x: player.x, y: player.y - 80, text: `🐾 스킨 펫 동행 해제`, color: '#94a3b8', life: 70, size: 18 });
+        }
+
+        function mineFromLeashRockModal() {
+            if (currentActiveLeashRock) {
+                currentActiveLeashRock.hitTimer = 15;
+            }
+            player.axeSwingTimer = 16;
+            let cx = currentActiveLeashRock ? currentActiveLeashRock.x : player.x;
+            let cy = currentActiveLeashRock ? currentActiveLeashRock.y : player.y;
+
+            for (let i = 0; i < 22; i++) {
+                let a = Math.random() * Math.PI * 2;
+                let sp = Math.random() * 5 + 2;
+                labSparks.push({ x: cx, y: cy, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#ff0055' : '#38bdf8'), life: 30 });
+            }
+
+            let r = Math.random();
+            let pickedItem = null;
+            if (r < 0.45) {
+                pickedItem = FOSSIL_ITEMS.find(f => f.name === '공룡 심장 화석') || { name: '공룡 심장 화석', color: '#ff0055', grade: '전설', icon: '💖' };
+            } else if (r < 0.70) {
+                pickedItem = FOSSIL_ITEMS.find(f => f.name === '공룡 화석') || { name: '공룡 화석', color: '#f1c40f', grade: '전설', icon: '🦖' };
+            } else {
+                let candidates = FOSSIL_ITEMS.filter(f => f.name !== '공룡 심장 화석');
+                pickedItem = candidates[Math.floor(Math.random() * candidates.length)];
+            }
+
+            if (!inventory[pickedItem.name]) inventory[pickedItem.name] = 0;
+            inventory[pickedItem.name]++;
+            if (!fossilCollection.includes(pickedItem.name)) {
+                fossilCollection.push(pickedItem.name);
+                try { localStorage.setItem('fossil_collection', JSON.stringify(fossilCollection)); } catch(e) {}
+            }
+            saveGame();
+            updatePetLeashModalUI();
+            if (typeof updateFossilRockModal === 'function') updateFossilRockModal();
+
+            floatTexts.push({ x: cx, y: cy - 60, text: `⛏️ [발굴 성공] ${pickedItem.icon || '🦴'} ${pickedItem.name} 획득!`, color: pickedItem.color || '#ff0055', life: 90, size: 18 });
         }
 
         function adminWarpToPetMachine() {
@@ -3786,69 +4304,66 @@
         // ❄️ [신규 지역 : 얼음의 협곡] 지형 렌더링 (레벨 125 진입 가능, Y: -9000 ~ -8000)
         function drawIceCanyonTerrain(ctx) {
             const now = Date.now();
-            // 1. 고산 설산 하늘 그라데이션 (-9000 ~ -8000)
-            let skyGrad = ctx.createLinearGradient(0, -9000, 0, -8000);
-            skyGrad.addColorStop(0, '#06101e');
-            skyGrad.addColorStop(0.3, '#102a45');
-            skyGrad.addColorStop(0.65, '#38bdf8');
-            skyGrad.addColorStop(0.9, '#bae6fd');
+            
+            // 1. 깔끔하고 쾌적한 맑은 하늘색 배경 (-9000 ~ -8000)
+            let skyGrad = ctx.createLinearGradient(0, -9000, 0, -8480);
+            skyGrad.addColorStop(0, '#56b4f7');
+            skyGrad.addColorStop(0.5, '#7dd3fc');
+            skyGrad.addColorStop(0.85, '#bae6fd');
             skyGrad.addColorStop(1, '#e0f2fe');
             ctx.fillStyle = skyGrad;
             ctx.fillRect(0, -9000, GAME_WIDTH, 1000);
 
-            // 2. 원경 거대 설산 능선 (-9000 ~ -8700 배경)
-            ctx.fillStyle = '#475569';
+            // 2. 부드럽고 몽실몽실한 맑은 구름 3개 (배경 감성)
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+            const clouds = [
+                { baseX: 70, y: -8820, w: 90, h: 26, speed: 0.008 },
+                { baseX: 280, y: -8900, w: 120, h: 32, speed: 0.005 },
+                { baseX: 460, y: -8780, w: 100, h: 28, speed: 0.007 }
+            ];
+            clouds.forEach((c, idx) => {
+                let cx = ((c.baseX + (now * c.speed)) % (GAME_WIDTH + 140)) - 70;
+                ctx.beginPath();
+                ctx.ellipse(cx, c.y, c.w * 0.45, c.h * 0.5, 0, 0, Math.PI * 2);
+                ctx.ellipse(cx - c.w * 0.22, c.y + 2, c.w * 0.28, c.h * 0.42, 0, 0, Math.PI * 2);
+                ctx.ellipse(cx + c.w * 0.22, c.y + 2, c.w * 0.32, c.h * 0.45, 0, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.restore();
+
+            // 3. 눈과 얼음의 깔끔한 평탄 지면 (-8510 ~ -8000)
+            // 지면 바닥 채우기
+            let groundGrad = ctx.createLinearGradient(0, -8510, 0, -8350);
+            groundGrad.addColorStop(0, '#f0f9ff');
+            groundGrad.addColorStop(0.1, '#e0f2fe');
+            groundGrad.addColorStop(1, '#bae6fd');
+            ctx.fillStyle = groundGrad;
+            ctx.fillRect(0, -8510, GAME_WIDTH, 510);
+
+            // 상단 눈 덮인 테두리 발광 라인
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 3.5;
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 10;
             ctx.beginPath();
-            ctx.moveTo(0, -8700);
-            ctx.lineTo(80, -8880); ctx.lineTo(140, -8780);
-            ctx.lineTo(240, -8950); ctx.lineTo(310, -8830);
-            ctx.lineTo(420, -8980); ctx.lineTo(510, -8820);
-            ctx.lineTo(GAME_WIDTH, -8900);
-            ctx.lineTo(GAME_WIDTH, -8000); ctx.lineTo(0, -8000);
+            ctx.moveTo(0, -8510);
+            ctx.lineTo(GAME_WIDTH, -8510);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // 지면 상단 부드러운 만년설 하이라이트 레이어
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.moveTo(0, -8510);
+            for (let x = 0; x <= GAME_WIDTH; x += 40) {
+                let waveY = -8510 + Math.sin((x * 0.04) + (now * 0.001)) * 2.5;
+                ctx.lineTo(x, waveY);
+            }
+            ctx.lineTo(GAME_WIDTH, -8495);
+            ctx.lineTo(0, -8495);
             ctx.closePath();
             ctx.fill();
-
-            // 설산 만년설 눈 덮개
-            ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.moveTo(80, -8880); ctx.lineTo(60, -8840); ctx.lineTo(75, -8850); ctx.lineTo(80, -8835); ctx.lineTo(95, -8855); ctx.lineTo(80, -8880);
-            ctx.moveTo(240, -8950); ctx.lineTo(210, -8900); ctx.lineTo(230, -8910); ctx.lineTo(240, -8895); ctx.lineTo(260, -8915); ctx.lineTo(240, -8950);
-            ctx.moveTo(420, -8980); ctx.lineTo(385, -8920); ctx.lineTo(405, -8930); ctx.lineTo(420, -8910); ctx.lineTo(445, -8935); ctx.lineTo(420, -8980);
-            ctx.fill();
-
-            // 3. 원경 설산 위 미니 침엽수들 (배경)
-            drawSnowPineTree(ctx, 60, -8870, 0.55);
-            drawSnowPineTree(ctx, 220, -8940, 0.5);
-            drawSnowPineTree(ctx, 440, -8960, 0.55);
-
-            // 4. 좌측 상단 부유섬 (x: 30, y: -8750, w: 150, h: 40)
-            drawFloatingIsland(ctx, 30, -8750, 150, 40);
-            drawSnowPineTree(ctx, 50, -8765, 0.7);
-
-            // 5. 우측 상단 부유섬 (x: 410, y: -8720, w: 160, h: 42 - 고대 화석 바위 2 받침 발판)
-            drawFloatingIsland(ctx, 410, -8720, 160, 42);
-            drawSnowPineTree(ctx, 550, -8735, 0.75);
-
-            // 6. 메인 하단 대형 부유섬 (x: 40, y: -8530, w: 520, h: 70 - 나무, 화석 바위 1, 텔레포터가 위치하는 메인 지형)
-            drawFloatingIsland(ctx, 40, -8530, 520, 70);
-
-            // 7. 빙하 폭포수 (부유섬 틈새로 쏟아져 내리는 빙하수 - 위치 분리 배치)
-            // 좌측 폭포: x: 150 (바위 1과 나무 사이)
-            drawGlacialWaterfall(ctx, 150, -8710, 14, 140);
-            // 우측 폭포: x: 390 (나무와 텔레포터 사이)
-            drawGlacialWaterfall(ctx, 390, -8710, 14, 140);
-
-            // 8. 흩날리는 눈보라 파티클
-            ctx.fillStyle = '#ffffff';
-            for (let i = 0; i < 45; i++) {
-                let sx = ((now * 0.04) + (i * 73)) % GAME_WIDTH;
-                let sy = -9000 + (((now * 0.08) + (i * 97)) % 1000);
-                let sSize = (i % 3 === 0) ? 2.5 : 1.5;
-                let alpha = 0.35 + 0.5 * Math.sin(now * 0.003 + i);
-                ctx.globalAlpha = Math.max(0.1, alpha);
-                ctx.beginPath(); ctx.arc(sx, sy, sSize, 0, Math.PI * 2); ctx.fill();
-            }
-            ctx.globalAlpha = 1.0;
         }
 
         // 부유섬 렌더링 함수
@@ -3963,8 +4478,8 @@
             ctx.restore();
         }
 
-        // 고대 화석 발굴 바위
-        function drawFossilRock(ctx, x, y, r, hitTimer = 0) {
+        // 고대 화석 발굴 바위 (바위 1: 케르베로스 제작, 바위 2: 펫 목줄 & 스킨 펫)
+        function drawFossilRock(ctx, x, y, r, hitTimer = 0, rock = null) {
             ctx.save();
             const now = Date.now();
             const pulse = Math.sin(now * 0.005) * 3;
@@ -3981,14 +4496,22 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
             ctx.beginPath(); ctx.ellipse(x, y + r * 0.8, r * 1.2, r * 0.45, 0, 0, Math.PI*2); ctx.fill();
 
+            const isLeashRock = (rock && rock.id === 'leash_rock') || (x > 350);
+
             // 얼어붙은 바위 덩어리
             let rGrad = ctx.createRadialGradient(x - 5, y - 5, 4, x, y, r);
-            rGrad.addColorStop(0, '#cbd5e1');
-            rGrad.addColorStop(0.5, '#64748b');
-            rGrad.addColorStop(1, '#334155');
+            if (isLeashRock) {
+                rGrad.addColorStop(0, '#e0f2fe');
+                rGrad.addColorStop(0.5, '#64748b');
+                rGrad.addColorStop(1, '#1e293b');
+            } else {
+                rGrad.addColorStop(0, '#fee2e2');
+                rGrad.addColorStop(0.5, '#7f1d1d');
+                rGrad.addColorStop(1, '#450a0a');
+            }
             ctx.fillStyle = rGrad;
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = isLeashRock ? '#38bdf8' : '#ef4444';
+            ctx.lineWidth = 2.2;
             ctx.beginPath();
             ctx.moveTo(x - r, y);
             ctx.lineTo(x - r * 0.7, y - r * 0.8);
@@ -4000,32 +4523,59 @@
             ctx.closePath();
             ctx.fill(); ctx.stroke();
 
-            // 바위 표면 얼음 속에 묻힌 황금빛 고대 화석 뼈다귀 모양
-            ctx.fillStyle = '#f1c40f';
-            ctx.shadowColor = '#f1c40f';
-            ctx.shadowBlur = 10 + pulse;
-            ctx.beginPath();
-            ctx.ellipse(x, y - 2, 8, 4, Math.PI / 4, 0, Math.PI*2);
-            ctx.fill();
-            ctx.shadowBlur = 0;
+            // 바위 내부 각인 심볼
+            if (isLeashRock) {
+                // 빛나는 목줄 & 심장 심볼
+                ctx.fillStyle = '#facc15';
+                ctx.shadowColor = '#facc15';
+                ctx.shadowBlur = 10 + pulse;
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("🦮", x, y - 2);
+                ctx.shadowBlur = 0;
+            } else {
+                // 빛나는 불타는 늑대 심볼
+                ctx.fillStyle = '#ef4444';
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 12 + pulse;
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("🐺🔥", x, y - 2);
+                ctx.shadowBlur = 0;
+            }
 
             // 상단 네온 라벨
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 1.2;
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+            ctx.strokeStyle = isLeashRock ? '#38bdf8' : '#ef4444';
+            ctx.lineWidth = 1.3;
             ctx.beginPath();
-            ctx.roundRect(x - 50, y - r - 32, 100, 26, 6);
+            let labelW = isLeashRock ? 116 : 110;
+            ctx.roundRect(x - labelW / 2, y - r - 34, labelW, 28, 6);
             ctx.fill(); ctx.stroke();
 
-            ctx.fillStyle = '#38bdf8';
-            ctx.font = 'bold 10px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText("⛏️ 고대 화석 바위", x, y - r - 22);
+            if (isLeashRock) {
+                ctx.fillStyle = '#38bdf8';
+                ctx.font = 'bold 9.5px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("🦮 펫 목줄 & 스킨 펫", x, y - r - 24);
 
-            ctx.fillStyle = '#f1c40f';
-            ctx.font = 'bold 9px Arial';
-            ctx.fillText("👆 클릭: 발굴 & 융합", x, y - r - 10);
+                ctx.fillStyle = '#facc15';
+                ctx.font = 'bold 8.5px Arial';
+                ctx.fillText("👆 클릭: 목줄 & 펫 장착", x, y - r - 12);
+            } else {
+                ctx.fillStyle = '#f87171';
+                ctx.font = 'bold 9.5px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("🐺🔥 케르베로스 바위", x, y - r - 24);
+
+                ctx.fillStyle = '#facc15';
+                ctx.font = 'bold 8.5px Arial';
+                ctx.fillText("👆 클릭: 발굴 & 제작", x, y - r - 12);
+            }
             ctx.restore();
         }
 
@@ -4214,23 +4764,40 @@
             ctx.font = 'bold 11px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText("👑 ADMIN 🐾 펫 머신", 0, -3);
+            ctx.fillText("👑 ADMIN 🐾 펫 상점 & 머신", 0, -3);
 
             ctx.fillStyle = '#38bdf8';
             ctx.font = 'bold 9px Arial';
-            ctx.fillText("✨ 클릭: 펫 시스템 랩", 0, 9);
+            ctx.fillText("✨ 클릭: 펫 관리 & 합성", 0, 9);
             ctx.restore();
 
             ctx.restore();
         }
 
-        // 🐾 [ADMIN] 플레이어 동행 펫 렌더링
+        // 🐾 플레이어 동행 펫 렌더링 (스킨 펫 & 관리자/합성 펫 완벽 지원)
         function drawFollowingPet(ctx, playerObj) {
-            if (!isAdmin() || !adminPetFollowEnabled) return;
-            const now = Date.now();
-            const petInfo = adminPetsData.find(p => p.id === adminActivePet) || adminPetsData[0];
+            let petName = '';
+            let petIcon = '';
+            let petColor = '#38bdf8';
+            let isSkinPet = false;
 
-            let targetX = playerObj.x + (playerObj.vx < 0 ? 36 : -36);
+            if (activeSkinPet && ownedSkins.includes(activeSkinPet)) {
+                const s = skinsData.find(skin => skin.id === activeSkinPet) || { name: activeSkinPet, icon: '✨' };
+                petName = s.name;
+                petIcon = s.icon;
+                petColor = '#f59e0b';
+                isSkinPet = true;
+            } else if (isAdmin() && adminPetFollowEnabled) {
+                const petInfo = adminPetsData.find(p => p.id === adminActivePet) || adminPetsData[0];
+                petName = petInfo.name;
+                petIcon = petInfo.icon.slice(0, 2);
+                petColor = petInfo.tierColor || '#38bdf8';
+            } else {
+                return;
+            }
+
+            const now = Date.now();
+            let targetX = playerObj.x + (playerObj.vx < 0 ? 38 : -38);
             let targetY = playerObj.y - 25;
             followPetPos.x += (targetX - followPetPos.x) * 0.12;
             followPetPos.y += (targetY - followPetPos.y) * 0.12;
@@ -4245,30 +4812,34 @@
             ctx.ellipse(px, playerObj.y + 12, 14, 5, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.shadowColor = petInfo.tierColor || '#38bdf8';
-            ctx.shadowBlur = 12;
-            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            // 펫 오라 발광
+            ctx.shadowColor = petColor;
+            ctx.shadowBlur = 14;
+            ctx.fillStyle = 'rgba(255,255,255,0.18)';
             ctx.beginPath();
-            ctx.arc(px, py, 18, 0, Math.PI * 2);
+            ctx.arc(px, py, 19, 0, Math.PI * 2);
             ctx.fill();
 
+            // 펫 아이콘
             ctx.font = '22px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(petInfo.icon.slice(0, 2), px, py);
+            ctx.fillText(petIcon, px, py);
             ctx.shadowBlur = 0;
 
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
-            ctx.strokeStyle = petInfo.tierColor;
-            ctx.lineWidth = 1;
+            // 상단 펫 뱃지 (스킨 펫인 경우 [🦮 스킨이름], 일반 펫인 경우 [🐾 펫이름])
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+            ctx.strokeStyle = petColor;
+            ctx.lineWidth = 1.2;
             ctx.beginPath();
-            ctx.roundRect(px - 32, py - 25, 64, 15, 4);
+            let badgeW = Math.max(68, petName.length * 9.5 + 24);
+            ctx.roundRect(px - badgeW / 2, py - 27, badgeW, 16, 5);
             ctx.fill();
             ctx.stroke();
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 8.5px Arial';
-            ctx.fillText(petInfo.name, px, py - 17);
+            ctx.fillText((isSkinPet ? '🦮 ' : '🐾 ') + petName, px, py - 18);
             ctx.restore();
         }
 
@@ -7602,13 +8173,17 @@
                 }
             }
 
-            // 🦴 고대 화석 발굴 바위 클릭 감지 (얼음의 협곡 부유섬: 발굴 및 케르베로스 융합)
+            // 🦴 얼음의 협곡 고대 바위 클릭 감지 (바위 1: 케르베로스 제작, 바위 2: 펫 목줄 & 스킨 펫)
             if (typeof iceCanyonFossilRocks !== 'undefined') {
                 for (let rock of iceCanyonFossilRocks) {
                     let rDist = Math.hypot(cx - rock.x, cy - rock.y);
                     let rPlayerDist = Math.hypot(player.x - rock.x, player.y - rock.y);
                     if (rDist < rock.radius + 35 || (isSpacebar && rPlayerDist < 90)) {
-                        openFossilRockModal(rock);
+                        if (rock.id === 'leash_rock') {
+                            openPetLeashModal(rock);
+                        } else {
+                            openFossilRockModal(rock);
+                        }
                         return;
                     }
                 }
@@ -9045,7 +9620,7 @@
                 unlocked: false, price: 0, reqLevel: 105, color1: '#000000', color2: '#2c003e', drops: [0, 0] 
             },
             {
-                id: 'ice_canyon', type: 'ice_canyon', x: GAME_WIDTH / 2, y: -8620, radius: 180, trunkRadius: 65,
+                id: 'ice_canyon', type: 'ice_canyon', x: 350, y: -8590, radius: 100, trunkRadius: 40,
                 progress: 0, maxProgress: 450, shakeAngle: 0,
                 unlocked: false, price: 30000000, reqLevel: 125, color1: '#e0f2fe', color2: '#38bdf8', drops: [16, 26] 
             },
@@ -11701,7 +12276,12 @@
                 alienQuestDone: isAlienEventStarted() ? (alienQuestDone || false) : false,
                 swordTier: (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0].tier : 0,
                 adminSwords: (typeof adminSwords !== 'undefined' && adminSwords[0]) ? [{ id: adminSwords[0].id, tier: adminSwords[0].tier }] : [],
-                adminSwordTier: (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0].tier : 0
+                adminSwordTier: (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0].tier : 0,
+                hasPetLeash: !!hasPetLeash,
+                activeSkinPet: activeSkinPet || null,
+                adminActivePet: adminActivePet || 'frost_wolf',
+                adminPetFollowEnabled: !!adminPetFollowEnabled,
+                synthesizedPets: Array.isArray(synthesizedPets) ? synthesizedPets : []
             };
         }
 
@@ -11794,6 +12374,31 @@
                 });
             } else {
                 trees.forEach((t, i) => { t.unlocked = (i === 0); });
+            }
+
+            // 🦮 펫 목줄, 스킨 펫 및 합성 펫 복원
+            if (data.hasPetLeash !== undefined) {
+                hasPetLeash = !!data.hasPetLeash;
+                try { localStorage.setItem('has_pet_leash', hasPetLeash ? 'true' : 'false'); } catch(e) {}
+            }
+            if (data.activeSkinPet !== undefined) {
+                activeSkinPet = data.activeSkinPet;
+                try {
+                    if (activeSkinPet) localStorage.setItem('active_skin_pet', activeSkinPet);
+                    else localStorage.removeItem('active_skin_pet');
+                } catch(e) {}
+            }
+            if (data.adminActivePet) {
+                adminActivePet = data.adminActivePet;
+                try { localStorage.setItem('admin_active_pet', adminActivePet); } catch(e) {}
+            }
+            if (data.adminPetFollowEnabled !== undefined) {
+                adminPetFollowEnabled = !!data.adminPetFollowEnabled;
+                try { localStorage.setItem('admin_pet_follow', adminPetFollowEnabled ? 'true' : 'false'); } catch(e) {}
+            }
+            if (Array.isArray(data.synthesizedPets)) {
+                synthesizedPets = [...data.synthesizedPets];
+                try { localStorage.setItem('synthesized_pets', JSON.stringify(synthesizedPets)); } catch(e) {}
             }
 
             // ⚔️ 전설의 검 강화 단계 복원 (모든 유저 공통)
@@ -17734,7 +18339,7 @@
                 } else if (item.type === 'teleporterIceDragon') {
                     drawTeleporter(ctx, item.obj.x, item.obj.y, 'ice_dragon');
                 } else if (item.type === 'fossilRock') {
-                    drawFossilRock(ctx, item.obj.x, item.obj.y, item.obj.radius, item.obj.hitTimer || 0);
+                    drawFossilRock(ctx, item.obj.x, item.obj.y, item.obj.radius, item.obj.hitTimer || 0, item.obj);
                     if (item.obj.hitTimer > 0) item.obj.hitTimer--;
                 } else if (item.type === 'petMachine') {
                     drawPetMachine(ctx, item.obj.x, item.obj.y);
