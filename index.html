@@ -509,7 +509,7 @@
                 <!-- 서브 섹션 A: 길드 목록 -->
                 <div id="guild-browse-list-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; color: #aaa;">
-                        <span>모집 중인 길드 목록 (정원: 5명)</span>
+                        <span>모집 중인 길드 목록 (정원: 3명)</span>
                         <button onclick="fetchGuildBrowseList()" style="background: none; border: 1px solid #334155; color: #38bdf8; padding: 3px 8px; border-radius: 5px; font-size: 11px; cursor: pointer;">🔄 새로고침</button>
                     </div>
                     <div id="guild-browse-cards-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; padding-right: 2px;">
@@ -523,7 +523,7 @@
                     <div style="font-size: 12px; color: #a0aec0; margin-bottom: 12px; line-height: 1.5;">
                         • <b>50레벨 이상</b>만 생성할 수 있습니다.<br>
                         • 생성자는 즉시 <b>길드장</b>이 되며, 가입 신청을 수락할 수 있습니다.<br>
-                        • 길드 정원은 <b>최대 5명</b>입니다.
+                        • 길드 정원은 <b>최대 3명</b>입니다.
                     </div>
                     <div style="margin-bottom: 10px; text-align: left;">
                         <label style="font-size: 12px; color: #cbd5e1; font-weight: bold; display: block; margin-bottom: 4px;">길드 이름 (2~12글자):</label>
@@ -545,7 +545,7 @@
                         <div style="font-size: 17px; font-weight: 900; color: #2ecc71; display: flex; align-items: center; gap: 6px;">
                             <span>🛡️</span> <span id="myguild-name">길드명</span>
                         </div>
-                        <span id="myguild-member-count" style="font-size: 12px; font-weight: bold; background: rgba(46, 204, 113, 0.2); color: #2ecc71; padding: 3px 8px; border-radius: 8px; border: 1px solid rgba(46, 204, 113, 0.4);">1 / 5명</span>
+                        <span id="myguild-member-count" style="font-size: 12px; font-weight: bold; background: rgba(46, 204, 113, 0.2); color: #2ecc71; padding: 3px 8px; border-radius: 8px; border: 1px solid rgba(46, 204, 113, 0.4);">1 / 3명</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; font-size: 12px; color: #cbd5e1;">
                         <div>👑 길드장: <b id="myguild-leader" style="color: #f1c40f;">-</b></div>
@@ -558,7 +558,7 @@
 
                 <!-- 길드 내부 탭 버튼 (멤버 / 채팅 / 퀘스트) -->
                 <div style="display: flex; gap: 6px; margin-bottom: 12px;">
-                    <button id="myguild-tab-btn-members" onclick="switchMyGuildTab('members')" style="flex: 1; padding: 8px 4px; background: #2ecc71; color: #111; border: none; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer;">👥 길드원 (<span id="myguild-tab-cnt">1</span>/5)</button>
+                    <button id="myguild-tab-btn-members" onclick="switchMyGuildTab('members')" style="flex: 1; padding: 8px 4px; background: #2ecc71; color: #111; border: none; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer;">👥 길드원 (<span id="myguild-tab-cnt">1</span>/3)</button>
                     <button id="myguild-tab-btn-chat" onclick="switchMyGuildTab('chat')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer;">💬 팀원 채팅</button>
                     <button id="myguild-tab-btn-quests" onclick="switchMyGuildTab('quests')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer;">🎯 팀 퀘스트</button>
                 </div>
@@ -576,10 +576,10 @@
                         </div>
                     </div>
 
-                    <!-- 길드원 5명 목록 (유저 업로드 스크린샷 스타일 완벽 구현) -->
+                    <!-- 길드원 3명 목록 (유저 업로드 스크린샷 스타일 완벽 구현) -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11.5px; color: #a0aec0;">
                         <span>길드원 목록 (클릭 시 승급/강등/추방)</span>
-                        <span style="color: #2ecc71;">● 정원 5명</span>
+                        <span style="color: #2ecc71;">● 정원 3명</span>
                     </div>
                     <div id="myguild-members-container" style="display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px;">
                         <!-- 멤버 목록 동적 렌더링 -->
@@ -4858,7 +4858,7 @@
                                     🛡️ ${escapeHtml(g.name)}${myTag}
                                 </div>
                                 <div style="font-size: 11px; color: #a0aec0; margin-top: 2px;">
-                                    👑 길드장: ${escapeHtml(g.leader)} · 👥 ${g.memberCount}/5명
+                                    👑 길드장: ${escapeHtml(g.leader)} · 👥 ${g.memberCount}/3명
                                 </div>
                             </div>
                         </div>
@@ -12912,12 +12912,12 @@
                 guilds.forEach(g => {
                     const members = Array.isArray(g.members) ? g.members : [];
                     const pending = Array.isArray(g.pendingRequests) ? g.pendingRequests : [];
-                    const isFull = (members.length >= 5);
+                    const isFull = (members.length >= 3);
                     const hasRequested = pending.some(p => p.username && currentUser && p.username.toLowerCase() === currentUser.toLowerCase());
 
                     let joinBtnHtml = '';
                     if (isFull) {
-                        joinBtnHtml = `<button disabled style="padding: 7px 12px; background: rgba(255,255,255,0.06); color: #777; border: 1px solid rgba(255,255,255,0.1); border-radius: 7px; font-size: 11.5px; font-weight: bold; cursor: not-allowed;">정원 마감 (5/5)</button>`;
+                        joinBtnHtml = `<button disabled style="padding: 7px 12px; background: rgba(255,255,255,0.06); color: #777; border: 1px solid rgba(255,255,255,0.1); border-radius: 7px; font-size: 11.5px; font-weight: bold; cursor: not-allowed;">정원 마감 (3/3)</button>`;
                     } else if (hasRequested) {
                         joinBtnHtml = `<button disabled style="padding: 7px 12px; background: rgba(241, 196, 15, 0.2); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.4); border-radius: 7px; font-size: 11.5px; font-weight: bold; cursor: not-allowed;">신청 대기중 ⏳</button>`;
                     } else {
@@ -12930,7 +12930,7 @@
                             <div style="display: flex; align-items: center; gap: 6px;">
                                 <span style="font-size: 15px;">🛡️</span>
                                 <strong style="font-size: 14px; color: #ffffff;">${escapeHtml(g.name)}</strong>
-                                <span style="font-size: 11px; color: #a0aec0; background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 4px;">👥 ${members.length}/5명</span>
+                                <span style="font-size: 11px; color: #a0aec0; background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 4px;">👥 ${members.length}/3명</span>
                             </div>
                             <div style="font-size: 11.5px; color: #94a3b8; margin-top: 3px;">
                                 👑 길드장: <span style="color: #f1c40f;">${escapeHtml(g.leader || '-')}</span> · ⭐ 총 레벨합: <span style="color: #38bdf8; font-weight: bold;">${g.totalLevel}</span>
@@ -13069,8 +13069,8 @@
                 }
                 const gData = snap.data();
                 const members = Array.isArray(gData.members) ? gData.members : [];
-                if (members.length >= 5) {
-                    alert('해당 길드의 정원(5명)이 이미 가득 찼습니다!');
+                if (members.length >= 3) {
+                    alert('해당 길드의 정원(3명)이 이미 가득 찼습니다!');
                     return;
                 }
                 const pending = Array.isArray(gData.pendingRequests) ? gData.pendingRequests : [];
@@ -13150,7 +13150,7 @@
             const tabCnt = document.getElementById('myguild-tab-cnt');
 
             if (nameEl) nameEl.innerText = g.name;
-            if (cntEl) cntEl.innerText = `${members.length} / 5명`;
+            if (cntEl) cntEl.innerText = `${members.length} / 3명`;
             if (leaderEl) leaderEl.innerText = g.leader || '-';
             if (totalLvEl) totalLvEl.innerText = totalLevel;
             if (noticeEl) noticeEl.innerText = g.notice || '서로 돕고 성장하는 활기찬 길드가 됩시다!';
@@ -13168,7 +13168,7 @@
                 if (pendingList) {
                     let phtml = '';
                     pending.forEach(p => {
-                        const isFull = (members.length >= 5);
+                        const isFull = (members.length >= 3);
                         phtml += `
                         <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.4); padding: 7px 10px; border-radius: 8px; border: 1px solid rgba(241, 196, 15, 0.25);">
                             <div style="font-size: 12px; color: #ecf0f1;">
@@ -13267,8 +13267,8 @@
                 if (!snap.exists) return;
                 const gData = snap.data();
                 const members = Array.isArray(gData.members) ? gData.members : [];
-                if (members.length >= 5) {
-                    alert('길드 정원(5명)이 꽉 찼습니다! 더 이상 가입시킬 수 없습니다.');
+                if (members.length >= 3) {
+                    alert('길드 정원(3명)이 꽉 찼습니다! 더 이상 가입시킬 수 없습니다.');
                     return;
                 }
                 const pending = Array.isArray(gData.pendingRequests) ? gData.pendingRequests : [];
