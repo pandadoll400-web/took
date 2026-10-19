@@ -420,6 +420,17 @@
                 </div>
                 <span class="hud-tile-label">거래</span>
             </button>
+            <button id="guild-btn" class="hud-tile-btn" onclick="openGuildModal()">
+                <div class="hud-tile-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <span class="hud-tile-label">길드</span>
+            </button>
             <button id="halloween-teleport-hud-btn" class="hud-tile-btn" onclick="teleportToHalloweenZone()" style="display: none; border-color: #a29bfe;">
                 <div class="hud-tile-icon-wrap">
                     <span style="font-size: 15px;">🔮</span>
@@ -457,71 +468,178 @@
                 <button onclick="adminStartGorillaStoryQuest()" style="padding: 10px; background: linear-gradient(135deg, #a29bfe, #6c5ce7); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(108, 92, 231, 0.45);">🦍🧪 [스토리] 고릴라&미친박사 퀘스트 시작</button>
                 <button onclick="adminToggleHalloweenTeleporter()" style="padding: 10px; background: linear-gradient(135deg, #8e44ad, #9b59b6); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🔮 [관리자] 할로윈 텔레포터 도구 즉시 획득</button>
                 <button onclick="adminResetAlienQuest()" style="padding: 10px; background: linear-gradient(135deg, #00cec9, #0984e3); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🧪 외계인 퀘스트 리셋 (재테스트)</button>
-                <button onclick="adminWarpToSwords()" style="padding: 10px; background: linear-gradient(135deg, #e17055, #d63031); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">⚔️ 전설의 검 2자루 위치로 이동</button>
                 <button onclick="adminRefillAll()" style="padding: 10px; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🎒 모든 과일/암석/물고기 999개 충전</button>
                 <button onclick="adminWarpToEarth()" style="padding: 10px; background: rgba(255,255,255,0.12); color: #ddd; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🌍 지상 마을(시작점)로 이동</button>
             </div>
         </div>
 
-        <!-- ⚔️ 어드민 전용 전설의 검 강화 & PVP 모달 (스크린샷 스타일 완벽 구현) -->
-        <div id="sword-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #151c28; color: white; padding: 22px 20px; border-radius: 24px; width: 92%; max-width: 370px; display: none; border: 2px solid #233554; z-index: 75; box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(43, 122, 240, 0.28); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <!-- 상단 닫기 버튼 -->
-            <div style="position: absolute; top: 16px; right: 18px;">
-                <button onclick="closeAdminSwordModal()" style="background: rgba(255,255,255,0.1); border: none; color: #aaa; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1;">✕</button>
+        <!-- 🛡️ 길드 / 클럽 시스템 모달 (거래 옆 버튼 클릭 시 실행) -->
+        <div id="guild-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #131722; color: white; padding: 20px 18px; border-radius: 20px; width: 92%; max-width: 420px; max-height: 88%; overflow-y: auto; display: none; border: 2px solid #2ecc71; z-index: 75; box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(46, 204, 113, 0.28); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <!-- 상단 헤더 -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(46, 204, 113, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
+                <h3 id="guild-modal-title" style="margin: 0; color: #2ecc71; font-size: 18px; display: flex; align-items: center; gap: 8px; font-weight: 800;">
+                    <span>🛡️</span> <span id="guild-title-text">길드 시스템</span>
+                </h3>
+                <button onclick="closeGuildModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
             </div>
 
-            <!-- 내부 카드 컨테이너 (스크린샷 그대로) -->
-            <div style="background: #111726; border: 1.5px solid #233554; border-radius: 18px; padding: 22px 16px 18px 16px; margin-bottom: 14px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);">
-                <!-- 검 이름 -->
-                <h2 id="sword-modal-title" style="margin: 0 0 12px 0; color: #ffffff; font-size: 26px; font-weight: 900; letter-spacing: -0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">초보자의 칼</h2>
-                
-                <!-- 데미지 & 강화 단계 -->
-                <div style="display: flex; justify-content: center; gap: 20px; font-size: 14px; color: #a0aec0; margin-bottom: 14px;">
-                    <div>데미지: <b id="sword-modal-dmg" style="color: #ffffff; font-size: 15px; font-weight: 800;">50.0</b></div>
-                    <div>강화 단계: <b id="sword-modal-tier" style="color: #ffffff; font-size: 15px; font-weight: 800;">[+0]</b></div>
-                </div>
-
-                <!-- 검 일러스트 캔버스 -->
-                <canvas id="sword-modal-canvas" width="100" height="150" style="display: block; margin: 0 auto; filter: drop-shadow(0 0 12px rgba(255,255,255,0.15));"></canvas>
+            <!-- 로딩 표시 -->
+            <div id="guild-loading" style="text-align: center; padding: 30px 0; color: #38bdf8; font-size: 14px; font-weight: bold; display: none;">
+                <div style="font-size: 28px; margin-bottom: 8px;">⏳</div>
+                길드 데이터 동기화 중...
             </div>
 
-            <!-- 버튼 영역: 검이름 / 강화하기 / 1:1 PVE 배틀 신청 / 최다 승리 랭킹 -->
-            <div style="display: flex; flex-direction: column; gap: 9px;">
-                <button id="sword-upgrade-btn" onclick="upgradeAdminSword()" style="width: 100%; padding: 13px; background: #2b7af0; color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(43, 122, 240, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>🔨</span> <span id="sword-upgrade-btn-text">강화하기 (비용: 100원)</span>
-                </button>
-
-                <!-- 🏠 크라켄 30회 처치 보상 안내 배너 -->
-                <div style="background: rgba(241, 196, 15, 0.12); border: 1.5px solid rgba(241, 196, 15, 0.4); border-radius: 12px; padding: 10px 12px; font-size: 13px; display: flex; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <span>🏠🦑</span>
-                        <span style="color: #f1c40f; font-weight: bold;">30회 처치 보상: 포지 하우스</span>
+            <!-- 1. 미가입 상태 뷰 (길드 목록 & 길드 생성) -->
+            <div id="guild-no-guild-view" style="display: none;">
+                <!-- 레벨 안내 배너 (50레벨 제한) -->
+                <div id="guild-level-banner" style="background: rgba(46, 204, 113, 0.12); border: 1px solid rgba(46, 204, 113, 0.35); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; font-size: 12.5px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="color: #bbb;">내 레벨:</span>
+                        <strong id="guild-my-level-display" style="color: #2ecc71; font-size: 14px; margin-left: 4px;">LV. 1</strong>
                     </div>
-                    <span id="sword-modal-wins-badge" style="color: #fff; font-size: 11px; background: rgba(0,0,0,0.5); padding: 3px 8px; border-radius: 6px; font-weight: bold;">0 / 30회</span>
+                    <span id="guild-level-req-status" style="font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: bold; background: #27ae60; color: white;">가입/생성 가능</span>
                 </div>
 
-                <!-- 🦑 PVE 크라켄 보스전 카드 -->
-                <div style="background: linear-gradient(135deg, rgba(13, 37, 63, 0.9), rgba(7, 24, 45, 0.95)); border: 1.5px solid #00cec9; border-radius: 14px; padding: 12px; text-align: left; box-shadow: 0 4px 15px rgba(0, 206, 201, 0.25);">
+                <!-- 탭: 길드 목록 vs 길드 생성 -->
+                <div style="display: flex; gap: 6px; margin-bottom: 12px;">
+                    <button id="guild-tab-btn-list" onclick="switchGuildBrowseTab('list')" style="flex: 1; padding: 9px; background: #2ecc71; color: #111; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer;">📜 길드 목록</button>
+                    <button id="guild-tab-btn-create" onclick="switchGuildBrowseTab('create')" style="flex: 1; padding: 9px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer;">➕ 길드 생성</button>
+                </div>
+
+                <!-- 서브 섹션 A: 길드 목록 -->
+                <div id="guild-browse-list-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; color: #aaa;">
+                        <span>모집 중인 길드 목록 (정원: 5명)</span>
+                        <button onclick="fetchGuildBrowseList()" style="background: none; border: 1px solid #334155; color: #38bdf8; padding: 3px 8px; border-radius: 5px; font-size: 11px; cursor: pointer;">🔄 새로고침</button>
+                    </div>
+                    <div id="guild-browse-cards-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; padding-right: 2px;">
+                        <!-- 길드 카드 동적 렌더링 -->
+                    </div>
+                </div>
+
+                <!-- 서브 섹션 B: 길드 생성 -->
+                <div id="guild-browse-create-section" style="display: none; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px;">
+                    <div style="font-size: 13px; font-weight: bold; color: #f1c40f; margin-bottom: 10px;">👑 새로운 길드 창설하기</div>
+                    <div style="font-size: 12px; color: #a0aec0; margin-bottom: 12px; line-height: 1.5;">
+                        • <b>50레벨 이상</b>만 생성할 수 있습니다.<br>
+                        • 생성자는 즉시 <b>길드장</b>이 되며, 가입 신청을 수락할 수 있습니다.<br>
+                        • 길드 정원은 <b>최대 5명</b>입니다.
+                    </div>
+                    <div style="margin-bottom: 10px; text-align: left;">
+                        <label style="font-size: 12px; color: #cbd5e1; font-weight: bold; display: block; margin-bottom: 4px;">길드 이름 (2~12글자):</label>
+                        <input id="guild-create-name-input" type="text" placeholder="예: 어둠의기사단, 과일마스터" maxlength="12" style="width: 100%; box-sizing: border-box; background: #0f141f; border: 1.5px solid #2e384d; border-radius: 8px; color: white; padding: 10px 12px; font-size: 14px; outline: none;">
+                    </div>
+                    <div style="margin-bottom: 14px; text-align: left;">
+                        <label style="font-size: 12px; color: #cbd5e1; font-weight: bold; display: block; margin-bottom: 4px;">길드 공지 / 소개글:</label>
+                        <input id="guild-create-notice-input" type="text" placeholder="예: 매일 함께 보스 잡고 나무 캐요!" maxlength="40" style="width: 100%; box-sizing: border-box; background: #0f141f; border: 1.5px solid #2e384d; border-radius: 8px; color: white; padding: 10px 12px; font-size: 13px; outline: none;">
+                    </div>
+                    <button id="guild-create-submit-btn" onclick="submitCreateGuild()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; border: none; border-radius: 10px; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);">🛡️ 길드 생성하기</button>
+                </div>
+            </div>
+
+            <!-- 2. 가입 상태 뷰 (내 길드 허브: 멤버 & 관리 / 팀원 채팅 / 팀 퀘스트) -->
+            <div id="guild-my-view" style="display: none;">
+                <!-- 길드 요약 상단 카드 -->
+                <div style="background: linear-gradient(135deg, rgba(20, 30, 48, 0.9), rgba(36, 59, 85, 0.9)); border: 1.5px solid #2ecc71; border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-size: 14px; color: #00cec9; font-weight: 900; display: flex; align-items: center; gap: 5px;">
-                            <span>🦑</span> 심연의 크라켄 보스전 (PVE)
-                        </span>
-                        <span style="font-size: 11px; color: #74b9ff; background: rgba(0,206,201,0.18); padding: 2px 7px; border-radius: 5px; font-weight: bold;">물공격 보스</span>
+                        <div style="font-size: 17px; font-weight: 900; color: #2ecc71; display: flex; align-items: center; gap: 6px;">
+                            <span>🛡️</span> <span id="myguild-name">길드명</span>
+                        </div>
+                        <span id="myguild-member-count" style="font-size: 12px; font-weight: bold; background: rgba(46, 204, 113, 0.2); color: #2ecc71; padding: 3px 8px; border-radius: 8px; border: 1px solid rgba(46, 204, 113, 0.4);">1 / 5명</span>
                     </div>
-                    <div style="font-size: 12px; color: #dfe6e9; margin-bottom: 10px; line-height: 1.6; background: rgba(0,0,0,0.35); padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(0,206,201,0.2);">
-                        <div>💧 <b>내 체력</b>: <span style="color: #2ecc71; font-weight: bold;">1000 HP</span></div>
-                        <div>💥 <b>보스 공격력</b>: <span style="color: #ff7675; font-weight: bold;">100 DMG</span> (물대포 / 물기둥 / 물보라)</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #cbd5e1;">
+                        <div>👑 길드장: <b id="myguild-leader" style="color: #f1c40f;">-</b></div>
+                        <div>⭐ 총 레벨합: <b id="myguild-total-level" style="color: #38bdf8;">0</b></div>
                     </div>
-                    <button id="kraken-boss-start-btn" onclick="startKrakenBossBattle()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #0984e3, #00cec9); color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(9, 132, 227, 0.5); display: flex; align-items: center; justify-content: center; gap: 6px;">
-                        <span>🌊</span> <span>심연의 크라켄 보스전 입장</span>
-                    </button>
+                    <div id="myguild-notice" style="margin-top: 8px; font-size: 11.5px; color: #a0aec0; background: rgba(0,0,0,0.3); padding: 6px 10px; border-radius: 6px; border-left: 3px solid #2ecc71;">
+                        서로 돕고 성장하는 활기찬 길드가 됩시다!
+                    </div>
                 </div>
 
-                <!-- 🏆 크라켄 처치 랭킹 보기 버튼 -->
-                <button onclick="openRankingModal('battle')" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(243, 156, 18, 0.35); display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>🏆</span> <span>크라켄 처치 랭킹 (TOP 10)</span>
+                <!-- 길드 내부 탭 버튼 (멤버 / 채팅 / 퀘스트) -->
+                <div style="display: flex; gap: 6px; margin-bottom: 12px;">
+                    <button id="myguild-tab-btn-members" onclick="switchMyGuildTab('members')" style="flex: 1; padding: 8px 4px; background: #2ecc71; color: #111; border: none; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer;">👥 길드원 (<span id="myguild-tab-cnt">1</span>/5)</button>
+                    <button id="myguild-tab-btn-chat" onclick="switchMyGuildTab('chat')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer;">💬 팀원 채팅</button>
+                    <button id="myguild-tab-btn-quests" onclick="switchMyGuildTab('quests')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer;">🎯 팀 퀘스트</button>
+                </div>
+
+                <!-- 탭 1: 멤버 목록 & 가입 신청 관리 -->
+                <div id="myguild-section-members">
+                    <!-- 📩 길드장 전용: 가입 신청 승인 박스 -->
+                    <div id="myguild-pending-box" style="display: none; background: rgba(241, 196, 15, 0.1); border: 1.5px solid rgba(241, 196, 15, 0.4); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px;">
+                        <div style="font-size: 12px; font-weight: bold; color: #f1c40f; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                            <span>📩 가입 신청 대기 (<span id="myguild-pending-count">0</span>명)</span>
+                            <span style="font-size: 10.5px; color: #aaa;">길드장 수락 시 가입됨</span>
+                        </div>
+                        <div id="myguild-pending-list" style="display: flex; flex-direction: column; gap: 6px;">
+                            <!-- 신청자 목록 동적 렌더링 -->
+                        </div>
+                    </div>
+
+                    <!-- 길드원 5명 목록 (유저 업로드 스크린샷 스타일 완벽 구현) -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11.5px; color: #a0aec0;">
+                        <span>길드원 목록 (클릭 시 승급/강등/추방)</span>
+                        <span style="color: #2ecc71;">● 정원 5명</span>
+                    </div>
+                    <div id="myguild-members-container" style="display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px;">
+                        <!-- 멤버 목록 동적 렌더링 -->
+                    </div>
+
+                    <!-- 하단 액션 버튼: 길드 탈퇴 / 해체 -->
+                    <div style="display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+                        <button id="myguild-leave-btn" onclick="handleGuildLeaveOrDisband()" style="padding: 8px 14px; background: rgba(231, 76, 60, 0.2); color: #ff7675; border: 1px solid rgba(231, 76, 60, 0.5); border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">🚪 길드 탈퇴</button>
+                    </div>
+                </div>
+
+                <!-- 탭 2: 팀원 채팅창 -->
+                <div id="myguild-section-chat" style="display: none;">
+                    <div id="myguild-chat-messages" style="height: 240px; overflow-y: auto; background: #0c1018; border: 1.5px solid #233554; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; box-sizing: border-box;">
+                        <!-- 실시간 채팅 메시지 -->
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <input id="myguild-chat-input" type="text" placeholder="팀원들에게 메시지 보내기..." maxlength="60" style="flex: 1; box-sizing: border-box; background: #0f141f; border: 1.5px solid #2e384d; border-radius: 8px; color: white; padding: 10px 12px; font-size: 13px; outline: none;" onkeydown="if(event.key==='Enter') sendGuildChatMessage()">
+                        <button onclick="sendGuildChatMessage()" style="padding: 0 16px; background: #2ecc71; color: #111; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer;">전송</button>
+                    </div>
+                </div>
+
+                <!-- 탭 3: 팀 퀘스트 창 -->
+                <div id="myguild-section-quests" style="display: none;">
+                    <div style="font-size: 12px; color: #a0aec0; margin-bottom: 10px; line-height: 1.4;">
+                        🤝 길드원 모두가 함께 달성하는 협동 퀘스트입니다! 목표를 달성하면 보상을 수령하세요.
+                    </div>
+                    <div id="myguild-quests-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto;">
+                        <!-- 팀 퀘스트 카드 동적 렌더링 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ⚙️ 길드 멤버 관리 팝업 (유저 클릭 시: 추방, 강등, 승급) -->
+        <div id="guild-member-action-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #161b26; color: white; padding: 22px 20px; border-radius: 18px; width: 85%; max-width: 340px; display: none; border: 2px solid #38bdf8; z-index: 85; box-shadow: 0 16px 50px rgba(0,0,0,0.9), 0 0 30px rgba(56, 189, 248, 0.35); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="font-size: 32px; margin-bottom: 6px;">👥</div>
+            <h3 id="gma-target-name" style="margin: 0 0 4px 0; color: #38bdf8; font-size: 19px; font-weight: bold;">플레이어</h3>
+            <div style="display: flex; justify-content: center; gap: 10px; font-size: 13px; color: #a0aec0; margin-bottom: 16px;">
+                <div>계급: <b id="gma-target-rank" style="color: #f1c40f;">시민</b></div>
+                <div>레벨: <b id="gma-target-level" style="color: #2ecc71;">LV. 50</b></div>
+            </div>
+
+            <!-- 관리 버튼들: 승급 / 강등 / 추방 -->
+            <div id="gma-actions-wrap" style="display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px;">
+                <button id="gma-promote-btn" onclick="executeMemberPromote()" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #0984e3, #74b9ff); color: white; border: none; border-radius: 9px; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span>⬆️</span> <span>승급</span>
+                </button>
+                <button id="gma-demote-btn" onclick="executeMemberDemote()" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #e67e22, #f39c12); color: white; border: none; border-radius: 9px; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span>⬇️</span> <span>강등</span>
+                </button>
+                <button id="gma-kick-btn" onclick="executeMemberKick()" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #d63031, #e17055); color: white; border: none; border-radius: 9px; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span>🚪</span> <span>추방</span>
                 </button>
             </div>
+            <div id="gma-no-perm-msg" style="display: none; color: #a0aec0; font-size: 12px; margin-bottom: 14px;">
+                🔒 길드장 또는 부길드장만 멤버를 관리할 수 있습니다.
+            </div>
+
+            <button onclick="closeGuildMemberActionModal()" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.12); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">닫기</button>
         </div>
 
         <!-- 1. 거래 신청 모달 (상대방 닉네임 입력) -->
@@ -577,7 +695,7 @@
             <div style="display: flex; gap: 6px; margin-bottom: 12px;">
                 <button id="rank-tab-level-btn" onclick="switchLeaderboardTab('level')" style="flex: 1; padding: 8px 4px; background: #f1c40f; color: #111; border: none; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">⭐ 레벨</button>
                 <button id="rank-tab-boss-btn" onclick="switchLeaderboardTab('boss')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">😈 보스 처치</button>
-                <button id="rank-tab-battle-btn" onclick="switchLeaderboardTab('battle')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">🦑 크라켄 처치</button>
+                <button id="rank-tab-guild-btn" onclick="switchLeaderboardTab('guild')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">🛡️ 팀 순위</button>
             </div>
 
             <!-- ⏱️ 10분 주기 자동 리롤 타이머 표시 -->
@@ -1921,6 +2039,9 @@
         }
 
         function trackQuestProgress(type, amount = 1, extraData = {}) {
+            if (typeof trackGuildQuestProgress === 'function') {
+                trackGuildQuestProgress(type, amount);
+            }
             checkQuestCycleRoll();
             if (!activeQuests || activeQuests.length === 0) return;
 
@@ -2335,9 +2456,7 @@
             savedAdminSwordTier = 0;
         }
 
-        let adminSwords = [
-            { id: 'admin_sword', namePrefix: '전설의 검', x: 300, y: 550, tier: Math.max(0, Math.min(5, savedAdminSwordTier)), type: 'light' }
-        ];
+        let adminSwords = [];
 
         const swordTiersData = {
             light: [
@@ -2704,6 +2823,7 @@
                     if (devilBoss.hp <= 0 && !devilBoss.defeated) {
                         devilBoss.defeated = true;
                         bossKills = (bossKills || 0) + 1;
+                        if (typeof trackGuildQuestProgress === 'function') trackGuildQuestProgress('boss', 1);
                         saveGame();
                         floatTexts.push({ x: 300, y: 350, text: `💥 악마 보스 격퇴 완료! (총 ${bossKills}회 처치)`, color: '#f1c40f', life: 90, size: 26 });
                         setTimeout(() => {
@@ -4599,10 +4719,10 @@
             currentLeaderboardTab = tab;
             const tabLevel = document.getElementById('rank-tab-level-btn');
             const tabBoss = document.getElementById('rank-tab-boss-btn');
-            const tabBattle = document.getElementById('rank-tab-battle-btn');
+            const tabGuild = document.getElementById('rank-tab-guild-btn') || document.getElementById('rank-tab-battle-btn');
             const modalTitle = document.getElementById('ranking-modal-title');
 
-            [tabLevel, tabBoss, tabBattle].forEach(b => {
+            [tabLevel, tabBoss, tabGuild].forEach(b => {
                 if (b) {
                     b.style.background = 'rgba(255,255,255,0.08)';
                     b.style.color = '#ecf0f1';
@@ -4617,13 +4737,13 @@
                     tabBoss.style.border = 'none';
                 }
                 if (modalTitle) modalTitle.innerHTML = '<span>😈</span> 악마 보스 최다 처치 TOP 10';
-            } else if (tab === 'battle') {
-                if (tabBattle) {
-                    tabBattle.style.background = '#f39c12';
-                    tabBattle.style.color = '#111';
-                    tabBattle.style.border = 'none';
+            } else if (tab === 'guild' || tab === 'battle') {
+                if (tabGuild) {
+                    tabGuild.style.background = '#2ecc71';
+                    tabGuild.style.color = '#111';
+                    tabGuild.style.border = 'none';
                 }
-                if (modalTitle) modalTitle.innerHTML = '<span>🦑</span> 심연의 크라켄 처치 TOP 10';
+                if (modalTitle) modalTitle.innerHTML = '<span>🛡️</span> 길드/팀 순위 (총 레벨합 TOP 10)';
             } else {
                 if (tabLevel) {
                     tabLevel.style.background = '#f1c40f';
@@ -4659,6 +4779,104 @@
 
             loadingEl.style.display = 'block';
             listEl.style.display = 'none';
+
+            // 🛡️ [팀 순위 탭]: 길드원 총 레벨합 기준 TOP 10 집계
+            if (currentLeaderboardTab === 'guild' || currentLeaderboardTab === 'battle') {
+                let guildsList = [];
+                if (typeof db !== 'undefined' && db) {
+                    try {
+                        const snap = await db.collection('guilds').get();
+                        snap.forEach(doc => {
+                            const d = doc.data();
+                            const gId = doc.id;
+                            const gName = d.name || '무명 길드';
+                            const gLeader = d.leader || '-';
+                            const members = Array.isArray(d.members) ? d.members : [];
+                            const memberCount = members.length;
+                            // 길드원들의 실제 레벨 총합 계산
+                            let sumLevel = members.reduce((acc, m) => acc + (Number(m.level) || 1), 0);
+                            if (sumLevel === 0 && d.totalLevel) sumLevel = Number(d.totalLevel) || 0;
+                            const isMyGuild = (currentGuildId && currentGuildId === gId) || members.some(m => m.username && currentUser && m.username.toLowerCase() === currentUser.toLowerCase());
+                            guildsList.push({
+                                id: gId,
+                                name: gName,
+                                leader: gLeader,
+                                memberCount: memberCount,
+                                totalLevel: sumLevel,
+                                isMyGuild: isMyGuild
+                            });
+                        });
+                    } catch (err) {
+                        console.warn('Guild leaderboard fetch warning:', err);
+                    }
+                }
+
+                // 총 레벨합 기준 내림차순 정렬!
+                guildsList.sort((a, b) => (b.totalLevel - a.totalLevel) || (b.memberCount - a.memberCount));
+
+                // 내 팀 순위 정보 갱신
+                const myGuildIdx = guildsList.findIndex(g => g.isMyGuild);
+                if (myRankVal) {
+                    if (myGuildIdx !== -1) {
+                        const mg = guildsList[myGuildIdx];
+                        myRankVal.innerHTML = `<span style="color:#2ecc71; font-weight:bold;">${myGuildIdx + 1}위</span> (${escapeHtml(mg.name)} / ⭐ 총 레벨합: ${mg.totalLevel})`;
+                    } else {
+                        myRankVal.innerHTML = `<span style="color:#888;">소속된 길드가 없습니다</span>`;
+                    }
+                }
+
+                const top10 = guildsList.slice(0, 10);
+                if (top10.length === 0) {
+                    listEl.innerHTML = `<div style="text-align: center; color: #888; padding: 25px 0; font-size: 13px;">아직 창설된 길드가 없습니다.<br><span style="color:#2ecc71; font-size:12px;">50레벨을 달성하고 첫 번째 길드를 만들어보세요!</span></div>`;
+                    loadingEl.style.display = 'none';
+                    listEl.style.display = 'flex';
+                    return;
+                }
+
+                let html = '';
+                const medals = ['🥇', '🥈', '🥉', '4위', '5위', '6위', '7위', '8위', '9위', '10위'];
+                const badgeColors = [
+                    'linear-gradient(135deg, rgba(241, 196, 15, 0.28), rgba(230, 126, 34, 0.18))',
+                    'linear-gradient(135deg, rgba(189, 195, 199, 0.25), rgba(127, 140, 141, 0.15))',
+                    'linear-gradient(135deg, rgba(211, 84, 0, 0.25), rgba(186, 74, 0, 0.15))'
+                ];
+                const borderColors = ['#f1c40f', '#bdc3c7', '#e67e22'];
+
+                top10.forEach((g, idx) => {
+                    const isMy = g.isMyGuild;
+                    const myTag = isMy ? ` <span style="background: #27ae60; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 4px;">MY TEAM</span>` : '';
+                    const rankBadge = (idx < 3) ? `<span style="font-size: 20px;">${medals[idx]}</span>` : `<span style="font-size: 13px; font-weight: bold; color: #888; width: 26px; text-align: center;">${medals[idx]}</span>`;
+                    const bg = isMy ? 'rgba(46, 204, 113, 0.15)' : (idx < 3 ? badgeColors[idx] : 'rgba(255, 255, 255, 0.04)');
+                    const border = isMy ? '#2ecc71' : (idx < 3 ? borderColors[idx] : 'rgba(255, 255, 255, 0.12)');
+
+                    html += `
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: ${bg}; border: 1.5px solid ${border}; border-radius: 12px; ${isMy ? 'box-shadow: 0 0 12px rgba(46, 204, 113, 0.35);' : ''}">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            ${rankBadge}
+                            <div>
+                                <div style="font-weight: bold; font-size: 14px; color: ${idx === 0 ? '#f1c40f' : '#ffffff'};">
+                                    🛡️ ${escapeHtml(g.name)}${myTag}
+                                </div>
+                                <div style="font-size: 11px; color: #a0aec0; margin-top: 2px;">
+                                    👑 길드장: ${escapeHtml(g.leader)} · 👥 ${g.memberCount}/5명
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 14px; font-weight: 800; color: #f1c40f; letter-spacing: -0.5px;">
+                                ⭐ 총 Lv.${g.totalLevel}
+                            </div>
+                            <div style="font-size: 10px; color: #718096;">총 레벨합</div>
+                        </div>
+                    </div>
+                    `;
+                });
+
+                listEl.innerHTML = html;
+                loadingEl.style.display = 'none';
+                listEl.style.display = 'flex';
+                return;
+            }
 
             let rankersMap = new Map();
             const isBattleTab = (currentLeaderboardTab === 'battle');
@@ -7453,17 +7671,6 @@
                 }
             }
 
-            // ⚔️ 전설의 검 클릭 감지 (나무 바로 밑 x: 300, y: 550)
-            if (typeof adminSwords !== 'undefined' && adminSwords[0]) {
-                const sw = adminSwords[0];
-                let swDist = Math.hypot(cx - sw.x, cy - sw.y);
-                let swPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - sw.x, player.y - sw.y) : 999;
-                if (swDist < 55 || (isSpacebar && swPlayerDist < 75)) {
-                    openAdminSwordModal(0);
-                    return;
-                }
-            }
-
             // 👽 우주 나무 외계 과학자 클릭 감지 (토요일 밤 10시 공개)
             if (isAlienEventStarted() && !alienQuestDone && typeof alienScientist !== 'undefined') {
                 let sciDist = Math.hypot(cx - alienScientist.x, cy - alienScientist.y);
@@ -9258,204 +9465,13 @@
         }
 
         // ==========================================
-        // ⚔️ 전설의 검 UI & 강화 & PVP 핸들러
+        // ⚔️ 검 강화 기능 비활성화 (삭제 완료)
         // ==========================================
-        function openAdminSwordModal(index = 0) {
-            activeSwordModalIndex = index || 0;
-            const modal = document.getElementById('sword-modal');
-            if (!modal) return;
-            modal.style.display = 'block';
-            resetJoyMouse();
-            player.targetTree = null;
-            updateAdminSwordModalUI();
-        }
-
-        function closeAdminSwordModal() {
-            const modal = document.getElementById('sword-modal');
-            if (modal) modal.style.display = 'none';
-        }
-
-        function drawSwordCanvas(canvasId, type, tier) {
-            const cvs = document.getElementById(canvasId);
-            if (!cvs) return;
-            const c = cvs.getContext('2d');
-            c.clearRect(0, 0, cvs.width, cvs.height);
-
-            const tiers = swordTiersData[type] || swordTiersData.light;
-            const data = tiers[tier] || tiers[0];
-            const cx = cvs.width / 2;
-            const cy = cvs.height / 2;
-
-            c.save();
-            c.translate(cx, cy + 4);
-
-            if (tier >= 3) {
-                c.shadowColor = data.bladeColor;
-                c.shadowBlur = (tier === 3) ? 12 : (tier === 4) ? 22 : 32;
-            }
-
-            // 1. Blade
-            c.fillStyle = data.bladeColor;
-            c.beginPath();
-            c.moveTo(0, -56);
-            c.lineTo(13, -38);
-            c.lineTo(13, 10);
-            c.lineTo(-13, 10);
-            c.lineTo(-13, -38);
-            c.closePath();
-            c.fill();
-
-            // Blade center highlight
-            c.fillStyle = 'rgba(255, 255, 255, 0.45)';
-            c.beginPath();
-            c.moveTo(0, -52);
-            c.lineTo(4, -36);
-            c.lineTo(4, 10);
-            c.lineTo(0, 10);
-            c.closePath();
-            c.fill();
-
-            c.strokeStyle = 'rgba(255,255,255,0.7)';
-            c.lineWidth = 1.5;
-            c.beginPath();
-            c.moveTo(0, -52);
-            c.lineTo(0, 10);
-            c.stroke();
-
-            // 2. Crossguard
-            c.shadowBlur = 0;
-            c.fillStyle = (type === 'light') ? ((tier >= 4) ? '#f1c40f' : '#4b6584') : ((tier >= 4) ? '#8e44ad' : '#2d3436');
-            c.strokeStyle = '#ffffff';
-            c.lineWidth = 1.2;
-            c.beginPath();
-            if (c.roundRect) {
-                c.roundRect(-24, 10, 48, 10, 4);
-            } else {
-                c.rect(-24, 10, 48, 10);
-            }
-            c.fill();
-            c.stroke();
-
-            if (tier >= 2) {
-                c.fillStyle = data.bladeColor;
-                c.beginPath();
-                c.arc(0, 15, 3.5, 0, Math.PI * 2);
-                c.fill();
-            }
-
-            // 3. Grip
-            c.fillStyle = (type === 'light') ? '#8d5524' : '#2f3542';
-            c.fillRect(-4.5, 20, 9, 24);
-
-            c.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-            c.lineWidth = 1;
-            for (let gy = 24; gy <= 40; gy += 4) {
-                c.beginPath();
-                c.moveTo(-4.5, gy);
-                c.lineTo(4.5, gy);
-                c.stroke();
-            }
-
-            // 4. Pommel
-            c.fillStyle = (tier >= 4) ? '#f1c40f' : '#95a5a6';
-            c.beginPath();
-            c.arc(0, 48, 6, 0, Math.PI * 2);
-            c.fill();
-            c.strokeStyle = '#fff';
-            c.lineWidth = 1;
-            c.stroke();
-
-            c.restore();
-        }
-
-        function updateAdminSwordModalUI() {
-            const sw = adminSwords[activeSwordModalIndex] || adminSwords[0];
-            const tiers = swordTiersData[sw.type] || swordTiersData.light;
-            const curTierData = tiers[sw.tier] || tiers[0];
-
-            const titleEl = document.getElementById('sword-modal-title');
-            const dmgEl = document.getElementById('sword-modal-dmg');
-            const tierEl = document.getElementById('sword-modal-tier');
-            const btnText = document.getElementById('sword-upgrade-btn-text');
-            const upgradeBtn = document.getElementById('sword-upgrade-btn');
-
-            if (titleEl) {
-                titleEl.innerText = curTierData.name;
-                titleEl.style.color = curTierData.titleColor;
-                titleEl.style.textShadow = curTierData.glow !== 'none' ? curTierData.glow : '0 2px 8px rgba(0,0,0,0.8)';
-            }
-            if (dmgEl) dmgEl.innerText = curTierData.damage.toFixed(1);
-            if (tierEl) tierEl.innerText = `[+${sw.tier}]`;
-
-            if (sw.tier >= 5) {
-                if (btnText) btnText.innerText = '✨ 최고 강화 단계 달성 [+5]';
-                if (upgradeBtn) {
-                    upgradeBtn.disabled = true;
-                    upgradeBtn.style.background = '#7f8c8d';
-                    upgradeBtn.style.cursor = 'default';
-                }
-            } else {
-                const nextTierData = tiers[sw.tier + 1];
-                if (btnText) btnText.innerText = `강화하기 (비용: ${nextTierData.cost.toLocaleString()}원)`;
-                if (upgradeBtn) {
-                    upgradeBtn.disabled = false;
-                    upgradeBtn.style.background = '#2b7af0';
-                    upgradeBtn.style.cursor = 'pointer';
-                }
-            }
-
-            const winsBadge = document.getElementById('sword-modal-wins-badge');
-            if (winsBadge) {
-                const currentWins = Number(battleWins || 0);
-                if (ownedSkins.includes('forge_house')) {
-                    winsBadge.innerText = `🎉 30회 달성 (보유중)`;
-                    winsBadge.style.background = '#27ae60';
-                    winsBadge.style.color = '#fff';
-                } else {
-                    winsBadge.innerText = `${currentWins} / 30회`;
-                    winsBadge.style.background = currentWins >= 30 ? '#27ae60' : 'rgba(0,0,0,0.5)';
-                    winsBadge.style.color = currentWins >= 30 ? '#fff' : '#f1c40f';
-                }
-            }
-
-            drawSwordCanvas('sword-modal-canvas', sw.type, sw.tier);
-        }
-
-        function upgradeAdminSword() {
-            const sw = (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0] : null;
-            if (!sw || sw.tier >= 5) return;
-
-            const tiers = swordTiersData[sw.type] || swordTiersData.light;
-            const nextTierData = tiers[sw.tier + 1];
-
-            // 일반 유저는 비용 확인 및 차감 (관리자는 무제한 골드)
-            if (!isAdmin()) {
-                if (money < nextTierData.cost) {
-                    alert(`돈이 부족합니다! (필요: ${nextTierData.cost.toLocaleString()}원, 보유: ${money.toLocaleString()}원)`);
-                    return;
-                }
-                money -= nextTierData.cost;
-                updateMoney();
-            }
-
-            sw.tier++;
-            const userKey = isAdmin() ? 'admin_sword_tier' : ('sword_tier_' + (currentUser || 'guest'));
-            try {
-                localStorage.setItem(userKey, String(sw.tier));
-                if (isAdmin()) localStorage.setItem('admin_sword_tier', String(sw.tier));
-            } catch(e) {}
-            saveGame();
-            updateAdminSwordModalUI();
-
-            floatTexts.push({
-                x: player.x,
-                y: player.y - 100,
-                text: `✨ 강화 성공! [${nextTierData.name} (+${sw.tier})]`,
-                color: nextTierData.titleColor,
-                life: 100,
-                size: 22
-            });
-        }
+        function openAdminSwordModal() {}
+        function closeAdminSwordModal() {}
+        function drawSwordCanvas() {}
+        function updateAdminSwordModalUI() {}
+        function upgradeAdminSword() {}
 
         function startKrakenBossBattle() {
             closeAdminSwordModal();
@@ -12689,6 +12705,1148 @@
             btn.addEventListener('touchcancel', endHold);
         }
 
+        // ==========================================
+        // 🛡️ 길드 / 클럽 시스템 (Guild / Club System)
+        // ==========================================
+        let currentGuildId = null;
+        let currentGuildData = null;
+        let unsubscribeGuildSnapshot = null;
+        let unsubscribeGuildChat = null;
+        let selectedGuildMember = null;
+        let currentGuildViewTab = 'members';
+        window._guildQuestBuffer = {};
+        window._guildQuestTimer = null;
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function formatLastSeen(ts) {
+            if (!ts) return '<span style="color:#64748b;">오프라인</span>';
+            const diff = Math.max(0, Date.now() - Number(ts));
+            if (diff < 120000) {
+                return '<span style="color:#2ecc71; font-weight:bold;">🟢 접속 중</span>';
+            }
+            const mins = Math.floor(diff / 60000);
+            if (mins < 60) {
+                return `마지막 접속: ${Math.max(1, mins)}분 전`;
+            }
+            const hours = Math.floor(diff / 3600000);
+            if (hours < 24) {
+                return `마지막 접속: ${hours}시간 전`;
+            }
+            const days = Math.floor(diff / 86400000);
+            return `마지막 접속: ${days}일 전`;
+        }
+
+        function getMyGuildRank() {
+            if (!currentGuildData || !currentUser) return '시민';
+            const members = Array.isArray(currentGuildData.members) ? currentGuildData.members : [];
+            const me = members.find(m => m.username && m.username.toLowerCase() === currentUser.toLowerCase());
+            return me ? (me.rank || '시민') : '시민';
+        }
+
+        async function openGuildModal() {
+            if (!currentUser) {
+                alert('길드 시스템은 로그인이 필요합니다! 먼저 로그인해주세요.');
+                if (typeof openLoginModal === 'function') openLoginModal();
+                return;
+            }
+            const modal = document.getElementById('guild-modal');
+            if (!modal) return;
+            modal.style.display = 'block';
+            resetJoyMouse();
+            player.targetTree = null;
+            await refreshGuildStatus();
+        }
+
+        function closeGuildModal() {
+            const modal = document.getElementById('guild-modal');
+            if (modal) modal.style.display = 'none';
+            closeGuildMemberActionModal();
+        }
+
+        async function refreshGuildStatus() {
+            const loading = document.getElementById('guild-loading');
+            const noView = document.getElementById('guild-no-guild-view');
+            const myView = document.getElementById('guild-my-view');
+            if (loading) loading.style.display = 'block';
+            if (noView) noView.style.display = 'none';
+            if (myView) myView.style.display = 'none';
+
+            if (!currentUser || !db) {
+                renderNoGuildView();
+                return;
+            }
+
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.toLowerCase()).get();
+                let gId = null;
+                if (userDoc.exists && userDoc.data().guildId) {
+                    gId = userDoc.data().guildId;
+                }
+
+                if (!gId) {
+                    const snap = await db.collection('guilds').get();
+                    snap.forEach(doc => {
+                        const data = doc.data();
+                        const members = Array.isArray(data.members) ? data.members : [];
+                        if (members.some(m => m.username && m.username.toLowerCase() === currentUser.toLowerCase())) {
+                            gId = doc.id;
+                        }
+                    });
+                }
+
+                if (gId) {
+                    currentGuildId = gId;
+                    const gDoc = await db.collection('guilds').doc(gId).get();
+                    if (gDoc.exists) {
+                        currentGuildData = gDoc.data();
+                        currentGuildData.id = gDoc.id;
+                        listenToCurrentGuild(gId);
+                        renderMyGuildView();
+                        return;
+                    }
+                }
+
+                currentGuildId = null;
+                currentGuildData = null;
+                renderNoGuildView();
+            } catch (err) {
+                console.error('Refresh guild status error:', err);
+                renderNoGuildView();
+            }
+        }
+
+        function renderNoGuildView() {
+            const loading = document.getElementById('guild-loading');
+            const noView = document.getElementById('guild-no-guild-view');
+            const myView = document.getElementById('guild-my-view');
+            if (loading) loading.style.display = 'none';
+            if (noView) noView.style.display = 'block';
+            if (myView) myView.style.display = 'none';
+
+            const titleText = document.getElementById('guild-title-text');
+            if (titleText) titleText.innerText = '길드 시스템';
+
+            const levelDisplay = document.getElementById('guild-my-level-display');
+            const reqStatus = document.getElementById('guild-level-req-status');
+            if (levelDisplay) levelDisplay.innerText = `LV. ${level}`;
+
+            if (reqStatus) {
+                if (level >= 50) {
+                    reqStatus.innerText = '가입/생성 가능 (50+ Lv)';
+                    reqStatus.style.background = '#27ae60';
+                    reqStatus.style.color = '#fff';
+                } else {
+                    reqStatus.innerText = `레벨 부족 (50Lv 필요, 현재 ${level}Lv)`;
+                    reqStatus.style.background = '#e74c3c';
+                    reqStatus.style.color = '#fff';
+                }
+            }
+
+            switchGuildBrowseTab('list');
+        }
+
+        function switchGuildBrowseTab(tab) {
+            const listTab = document.getElementById('guild-tab-btn-list');
+            const createTab = document.getElementById('guild-tab-btn-create');
+            const listSec = document.getElementById('guild-browse-list-section');
+            const createSec = document.getElementById('guild-browse-create-section');
+
+            if (tab === 'create') {
+                if (listTab) { listTab.style.background = 'rgba(255,255,255,0.08)'; listTab.style.color = '#ecf0f1'; listTab.style.border = '1px solid rgba(255,255,255,0.18)'; }
+                if (createTab) { createTab.style.background = '#2ecc71'; createTab.style.color = '#111'; createTab.style.border = 'none'; }
+                if (listSec) listSec.style.display = 'none';
+                if (createSec) createSec.style.display = 'block';
+            } else {
+                if (listTab) { listTab.style.background = '#2ecc71'; listTab.style.color = '#111'; listTab.style.border = 'none'; }
+                if (createTab) { createTab.style.background = 'rgba(255,255,255,0.08)'; createTab.style.color = '#ecf0f1'; createTab.style.border = '1px solid rgba(255,255,255,0.18)'; }
+                if (listSec) listSec.style.display = 'block';
+                if (createSec) createSec.style.display = 'none';
+                fetchGuildBrowseList();
+            }
+        }
+
+        async function fetchGuildBrowseList() {
+            const container = document.getElementById('guild-browse-cards-container');
+            if (!container) return;
+            container.innerHTML = '<div style="text-align: center; color: #38bdf8; padding: 25px 0; font-size: 13px;">길드 목록을 불러오는 중...</div>';
+
+            if (!db) {
+                container.innerHTML = '<div style="text-align: center; color: #ff7675; padding: 20px 0; font-size: 12px;">서버 연결을 확인할 수 없습니다.</div>';
+                return;
+            }
+
+            try {
+                const snap = await db.collection('guilds').get();
+                if (snap.empty) {
+                    container.innerHTML = `
+                    <div style="text-align: center; color: #a0aec0; padding: 30px 10px; font-size: 13px; line-height: 1.6;">
+                        아직 생성된 길드가 없습니다.<br>
+                        <b style="color: #2ecc71;">[➕ 길드 생성]</b> 탭에서 첫 번째 길드를 만들어보세요!
+                    </div>
+                    `;
+                    return;
+                }
+
+                let guilds = [];
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    d.id = doc.id;
+                    const members = Array.isArray(d.members) ? d.members : [];
+                    d.memberCount = members.length;
+                    d.totalLevel = members.reduce((sum, m) => sum + (Number(m.level) || 1), 0);
+                    guilds.push(d);
+                });
+
+                guilds.sort((a, b) => b.totalLevel - a.totalLevel);
+
+                let html = '';
+                guilds.forEach(g => {
+                    const members = Array.isArray(g.members) ? g.members : [];
+                    const pending = Array.isArray(g.pendingRequests) ? g.pendingRequests : [];
+                    const isFull = (members.length >= 5);
+                    const hasRequested = pending.some(p => p.username && currentUser && p.username.toLowerCase() === currentUser.toLowerCase());
+
+                    let joinBtnHtml = '';
+                    if (isFull) {
+                        joinBtnHtml = `<button disabled style="padding: 7px 12px; background: rgba(255,255,255,0.06); color: #777; border: 1px solid rgba(255,255,255,0.1); border-radius: 7px; font-size: 11.5px; font-weight: bold; cursor: not-allowed;">정원 마감 (5/5)</button>`;
+                    } else if (hasRequested) {
+                        joinBtnHtml = `<button disabled style="padding: 7px 12px; background: rgba(241, 196, 15, 0.2); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.4); border-radius: 7px; font-size: 11.5px; font-weight: bold; cursor: not-allowed;">신청 대기중 ⏳</button>`;
+                    } else {
+                        joinBtnHtml = `<button onclick="requestJoinGuild('${g.id}', '${escapeHtml(g.name)}')" style="padding: 7px 14px; background: #2ecc71; color: #111; border: none; border-radius: 7px; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 8px rgba(46, 204, 113, 0.35);">가입 신청</button>`;
+                    }
+
+                    html += `
+                    <div style="background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 11px 13px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s;" onmouseover="this.style.borderColor='rgba(46, 204, 113, 0.5)';" onmouseout="this.style.borderColor='rgba(255,255,255,0.12)';">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 15px;">🛡️</span>
+                                <strong style="font-size: 14px; color: #ffffff;">${escapeHtml(g.name)}</strong>
+                                <span style="font-size: 11px; color: #a0aec0; background: rgba(0,0,0,0.3); padding: 1px 6px; border-radius: 4px;">👥 ${members.length}/5명</span>
+                            </div>
+                            <div style="font-size: 11.5px; color: #94a3b8; margin-top: 3px;">
+                                👑 길드장: <span style="color: #f1c40f;">${escapeHtml(g.leader || '-')}</span> · ⭐ 총 레벨합: <span style="color: #38bdf8; font-weight: bold;">${g.totalLevel}</span>
+                            </div>
+                        </div>
+                        <div>
+                            ${joinBtnHtml}
+                        </div>
+                    </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            } catch (err) {
+                console.error('Fetch guild browse list error:', err);
+                container.innerHTML = '<div style="text-align: center; color: #ff7675; padding: 20px 0; font-size: 12px;">목록 로드 중 오류 발생</div>';
+            }
+        }
+
+        async function submitCreateGuild() {
+            if (!currentUser) {
+                alert('길드를 생성하려면 먼저 로그인해야 합니다!');
+                return;
+            }
+            if (level < 50) {
+                alert(`길드 창설은 50레벨 이상만 가능합니다!\n(현재 내 레벨: LV. ${level})`);
+                return;
+            }
+            if (currentGuildId) {
+                alert('이미 소속된 길드가 있습니다! 탈퇴 후 생성해주세요.');
+                return;
+            }
+
+            const nameInput = document.getElementById('guild-create-name-input');
+            const noticeInput = document.getElementById('guild-create-notice-input');
+            if (!nameInput) return;
+
+            const name = nameInput.value.trim();
+            const notice = (noticeInput ? noticeInput.value.trim() : '') || '서로 돕고 성장하는 활기찬 길드가 됩시다!';
+
+            if (!name || name.length < 2 || name.length > 12) {
+                alert('길드 이름은 2글자 이상 12글자 이하로 입력해주세요!');
+                nameInput.focus();
+                return;
+            }
+
+            const submitBtn = document.getElementById('guild-create-submit-btn');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerText = '창설 진행 중...';
+            }
+
+            try {
+                const existCheck = await db.collection('guilds').where('name', '==', name).get();
+                if (!existCheck.empty) {
+                    alert('이미 동일한 이름의 길드가 존재합니다! 다른 이름을 입력해주세요.');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = '🛡️ 길드 생성하기';
+                    }
+                    return;
+                }
+
+                const newGuildId = 'guild_' + Date.now();
+                const initialQuests = [
+                    { id: 'wood', title: '팀 벌목 500회', desc: '길드원 총 벌목 500회 달성', current: 0, target: 500, icon: '🪓', rewardGold: 500000, rewardXp: 100000, completed: false, claimedBy: [] },
+                    { id: 'fruit', title: '팀 채집 150개', desc: '길드원 총 열매 150개 채집', current: 0, target: 150, icon: '🍎', rewardGold: 300000, rewardXp: 60000, completed: false, claimedBy: [] },
+                    { id: 'boss', title: '팀 보스 5회 토벌', desc: '길드원 총 보스 5회 처치', current: 0, target: 5, icon: '😈', rewardGold: 1000000, rewardXp: 300000, completed: false, claimedBy: [] }
+                ];
+
+                const newGuild = {
+                    id: newGuildId,
+                    name: name,
+                    leader: currentUser,
+                    viceLeaders: [],
+                    members: [
+                        {
+                            username: currentUser,
+                            rank: '길드장',
+                            level: level,
+                            lastSaved: Date.now()
+                        }
+                    ],
+                    pendingRequests: [],
+                    totalLevel: level,
+                    notice: notice,
+                    quests: initialQuests,
+                    createdAt: Date.now()
+                };
+
+                await db.collection('guilds').doc(newGuildId).set(newGuild);
+                await db.collection('users').doc(currentUser.toLowerCase()).set({
+                    guildId: newGuildId,
+                    guildName: name
+                }, { merge: true });
+
+                currentGuildId = newGuildId;
+                currentGuildData = newGuild;
+
+                alert(`🎉 [${name}] 길드가 성공적으로 창설되었습니다!\n당신은 길드장입니다.`);
+                nameInput.value = '';
+                if (noticeInput) noticeInput.value = '';
+
+                listenToCurrentGuild(newGuildId);
+                renderMyGuildView();
+            } catch (err) {
+                console.error('Create guild error:', err);
+                alert('길드 생성 실패: ' + err.message);
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = '🛡️ 길드 생성하기';
+                }
+            }
+        }
+
+        async function requestJoinGuild(guildId, guildName) {
+            if (!currentUser) {
+                alert('로그인이 필요한 기능입니다!');
+                return;
+            }
+            if (level < 50) {
+                alert(`길드에 가입하려면 50레벨 이상이어야 합니다!\n(현재 내 레벨: LV. ${level})`);
+                return;
+            }
+            if (currentGuildId) {
+                alert('이미 소속된 길드가 있습니다! 탈퇴 후 신청해주세요.');
+                return;
+            }
+            try {
+                const guildRef = db.collection('guilds').doc(guildId);
+                const snap = await guildRef.get();
+                if (!snap.exists) {
+                    alert('존재하지 않는 길드입니다.');
+                    return;
+                }
+                const gData = snap.data();
+                const members = Array.isArray(gData.members) ? gData.members : [];
+                if (members.length >= 5) {
+                    alert('해당 길드의 정원(5명)이 이미 가득 찼습니다!');
+                    return;
+                }
+                const pending = Array.isArray(gData.pendingRequests) ? gData.pendingRequests : [];
+                if (pending.some(p => p.username && p.username.toLowerCase() === currentUser.toLowerCase())) {
+                    alert('이미 가입 신청을 보냈습니다. 길드장의 승인을 기다려주세요!');
+                    return;
+                }
+
+                pending.push({
+                    username: currentUser,
+                    level: level,
+                    requestedAt: Date.now()
+                });
+
+                await guildRef.update({ pendingRequests: pending });
+                alert(`[${guildName}] 길드에 가입 신청을 보냈습니다!\n길드장이 수락하면 정식 가입됩니다.`);
+                fetchGuildBrowseList();
+            } catch (err) {
+                console.error('Join guild request error:', err);
+                alert('가입 신청 실패: ' + err.message);
+            }
+        }
+
+        function listenToCurrentGuild(guildId) {
+            if (unsubscribeGuildSnapshot) {
+                unsubscribeGuildSnapshot();
+                unsubscribeGuildSnapshot = null;
+            }
+            if (!guildId || !db) return;
+
+            unsubscribeGuildSnapshot = db.collection('guilds').doc(guildId).onSnapshot(doc => {
+                if (!doc.exists) {
+                    currentGuildId = null;
+                    currentGuildData = null;
+                    renderNoGuildView();
+                    return;
+                }
+                currentGuildData = doc.data();
+                currentGuildData.id = doc.id;
+                
+                const members = Array.isArray(currentGuildData.members) ? currentGuildData.members : [];
+                const isStillMember = members.some(m => m.username && currentUser && m.username.toLowerCase() === currentUser.toLowerCase());
+                if (!isStillMember) {
+                    currentGuildId = null;
+                    currentGuildData = null;
+                    alert('길드에서 제외되었거나 길드가 해체되었습니다.');
+                    renderNoGuildView();
+                    return;
+                }
+
+                renderMyGuildView();
+            }, err => console.warn('Guild snapshot listen error:', err));
+        }
+
+        function renderMyGuildView() {
+            if (!currentGuildData) return;
+            const g = currentGuildData;
+            const loading = document.getElementById('guild-loading');
+            const noView = document.getElementById('guild-no-guild-view');
+            const myView = document.getElementById('guild-my-view');
+            if (loading) loading.style.display = 'none';
+            if (noView) noView.style.display = 'none';
+            if (myView) myView.style.display = 'block';
+
+            const titleText = document.getElementById('guild-title-text');
+            if (titleText) titleText.innerText = `길드: ${g.name}`;
+
+            const members = Array.isArray(g.members) ? g.members : [];
+            const pending = Array.isArray(g.pendingRequests) ? g.pendingRequests : [];
+            const totalLevel = members.reduce((sum, m) => sum + (Number(m.level) || 1), 0);
+
+            const nameEl = document.getElementById('myguild-name');
+            const cntEl = document.getElementById('myguild-member-count');
+            const leaderEl = document.getElementById('myguild-leader');
+            const totalLvEl = document.getElementById('myguild-total-level');
+            const noticeEl = document.getElementById('myguild-notice');
+            const tabCnt = document.getElementById('myguild-tab-cnt');
+
+            if (nameEl) nameEl.innerText = g.name;
+            if (cntEl) cntEl.innerText = `${members.length} / 5명`;
+            if (leaderEl) leaderEl.innerText = g.leader || '-';
+            if (totalLvEl) totalLvEl.innerText = totalLevel;
+            if (noticeEl) noticeEl.innerText = g.notice || '서로 돕고 성장하는 활기찬 길드가 됩시다!';
+            if (tabCnt) tabCnt.innerText = members.length;
+
+            const myRank = getMyGuildRank();
+            const isMasterOrVice = (myRank === '길드장' || myRank === '부길드장');
+            const pendingBox = document.getElementById('myguild-pending-box');
+            const pendingCount = document.getElementById('myguild-pending-count');
+            const pendingList = document.getElementById('myguild-pending-list');
+
+            if (isMasterOrVice && pending.length > 0) {
+                if (pendingBox) pendingBox.style.display = 'block';
+                if (pendingCount) pendingCount.innerText = pending.length;
+                if (pendingList) {
+                    let phtml = '';
+                    pending.forEach(p => {
+                        const isFull = (members.length >= 5);
+                        phtml += `
+                        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.4); padding: 7px 10px; border-radius: 8px; border: 1px solid rgba(241, 196, 15, 0.25);">
+                            <div style="font-size: 12px; color: #ecf0f1;">
+                                <b style="color: #38bdf8;">${escapeHtml(p.username)}</b> <span style="color: #2ecc71; font-weight: bold; margin-left: 3px;">LV. ${p.level}</span>
+                            </div>
+                            <div style="display: flex; gap: 6px;">
+                                <button onclick="acceptJoinRequest('${escapeHtml(p.username)}')" ${isFull ? 'disabled' : ''} style="padding: 4px 9px; background: ${isFull ? '#7f8c8d' : '#2ecc71'}; color: ${isFull ? '#bbb' : '#111'}; border: none; border-radius: 5px; font-size: 11px; font-weight: bold; cursor: ${isFull ? 'not-allowed' : 'pointer'};">
+                                    ${isFull ? '정원 마감' : '수락'}
+                                </button>
+                                <button onclick="rejectJoinRequest('${escapeHtml(p.username)}')" style="padding: 4px 9px; background: #e74c3c; color: white; border: none; border-radius: 5px; font-size: 11px; font-weight: bold; cursor: pointer;">거절</button>
+                            </div>
+                        </div>
+                        `;
+                    });
+                    pendingList.innerHTML = phtml;
+                }
+            } else {
+                if (pendingBox) pendingBox.style.display = 'none';
+            }
+
+            const membersContainer = document.getElementById('myguild-members-container');
+            if (membersContainer) {
+                let mhtml = '';
+                members.forEach((m, idx) => {
+                    const isMe = (currentUser && m.username && m.username.toLowerCase() === currentUser.toLowerCase());
+                    let rankBadgeHtml = '';
+                    let cardBorder = 'rgba(255, 255, 255, 0.12)';
+                    let cardBg = 'linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))';
+
+                    if (m.rank === '길드장') {
+                        rankBadgeHtml = `<span style="background: rgba(241, 196, 15, 0.25); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.6); padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 800;">👑 길드장</span>`;
+                        cardBorder = 'rgba(241, 196, 15, 0.35)';
+                    } else if (m.rank === '부길드장') {
+                        rankBadgeHtml = `<span style="background: rgba(56, 189, 248, 0.22); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.5); padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 800;">⭐ 부길드장</span>`;
+                        cardBorder = 'rgba(56, 189, 248, 0.3)';
+                    } else {
+                        rankBadgeHtml = `<span style="background: rgba(255, 255, 255, 0.08); color: #cbd5e1; padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: bold;">🛡️ 시민</span>`;
+                    }
+
+                    if (isMe) {
+                        cardBg = 'linear-gradient(135deg, rgba(46, 204, 113, 0.18), rgba(39, 174, 96, 0.08))';
+                        cardBorder = '#2ecc71';
+                    }
+
+                    const onlineStatusText = isMe ? '<span style="color: #2ecc71; font-weight: bold;">🟢 접속 중</span>' : formatLastSeen(m.lastSaved);
+
+                    mhtml += `
+                    <div onclick="openGuildMemberActionModal(${JSON.stringify(m).replace(/"/g, '&quot;')})" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: ${cardBg}; border: 1.5px solid ${cardBorder}; border-radius: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+                        <div style="display: flex; align-items: center; gap: 9px;">
+                            <span style="font-size: 13px; font-weight: 900; color: #888; width: 16px; text-align: center;">${idx + 1}</span>
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    ${rankBadgeHtml}
+                                    <span style="font-weight: 800; font-size: 13.5px; color: ${isMe ? '#2ecc71' : '#fff'};">${escapeHtml(m.username)}</span>
+                                    ${isMe ? '<span style="background: #27ae60; color: white; font-size: 9px; padding: 1px 5px; border-radius: 6px; font-weight: bold;">ME</span>' : ''}
+                                </div>
+                                <div style="font-size: 11px; color: #94a3b8; margin-top: 3px;">
+                                    ${onlineStatusText}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 7px;">
+                            <div style="text-align: right;">
+                                <span style="font-size: 13px; font-weight: 900; color: #f1c40f; letter-spacing: -0.5px;">LV. ${m.level || 1}</span>
+                            </div>
+                            <span style="font-size: 15px;">🏆</span>
+                        </div>
+                    </div>
+                    `;
+                });
+                membersContainer.innerHTML = mhtml;
+            }
+
+            renderGuildQuestsUI(g.quests);
+
+            const leaveBtn = document.getElementById('myguild-leave-btn');
+            if (leaveBtn) {
+                if (myRank === '길드장') {
+                    leaveBtn.innerText = (members.length === 1) ? '💥 길드 해체' : '🚪 길드장 양도 후 탈퇴';
+                } else {
+                    leaveBtn.innerText = '🚪 길드 탈퇴';
+                }
+            }
+        }
+
+        async function acceptJoinRequest(targetUsername) {
+            if (!currentGuildId || !db || !currentGuildData) return;
+            const myRank = getMyGuildRank();
+            if (myRank !== '길드장' && myRank !== '부길드장') {
+                alert('가입 승인은 길드장 또는 부길드장만 가능합니다!');
+                return;
+            }
+            try {
+                const guildRef = db.collection('guilds').doc(currentGuildId);
+                const snap = await guildRef.get();
+                if (!snap.exists) return;
+                const gData = snap.data();
+                const members = Array.isArray(gData.members) ? gData.members : [];
+                if (members.length >= 5) {
+                    alert('길드 정원(5명)이 꽉 찼습니다! 더 이상 가입시킬 수 없습니다.');
+                    return;
+                }
+                const pending = Array.isArray(gData.pendingRequests) ? gData.pendingRequests : [];
+                const reqIdx = pending.findIndex(p => p.username.toLowerCase() === targetUsername.toLowerCase());
+                const reqData = reqIdx !== -1 ? pending[reqIdx] : { level: 50 };
+
+                let targetLevel = reqData.level || 50;
+                try {
+                    const uSnap = await db.collection('users').doc(targetUsername.toLowerCase()).get();
+                    if (uSnap.exists && uSnap.data().level) targetLevel = Number(uSnap.data().level);
+                } catch(e) {}
+
+                members.push({
+                    username: targetUsername,
+                    rank: '시민',
+                    level: targetLevel,
+                    lastSaved: Date.now()
+                });
+
+                if (reqIdx !== -1) pending.splice(reqIdx, 1);
+
+                const newTotalLevel = members.reduce((sum, m) => sum + (Number(m.level) || 1), 0);
+
+                await guildRef.update({
+                    members: members,
+                    pendingRequests: pending,
+                    totalLevel: newTotalLevel
+                });
+
+                await db.collection('users').doc(targetUsername.toLowerCase()).set({
+                    guildId: currentGuildId,
+                    guildName: gData.name
+                }, { merge: true });
+
+                alert(`${targetUsername} 님의 가입 신청을 수락했습니다!`);
+            } catch (err) {
+                console.error('Accept join error:', err);
+                alert('가입 수락 중 오류: ' + err.message);
+            }
+        }
+
+        async function rejectJoinRequest(targetUsername) {
+            if (!currentGuildId || !db) return;
+            const myRank = getMyGuildRank();
+            if (myRank !== '길드장' && myRank !== '부길드장') {
+                alert('가입 거절은 길드장 또는 부길드장만 가능합니다!');
+                return;
+            }
+            try {
+                const guildRef = db.collection('guilds').doc(currentGuildId);
+                const snap = await guildRef.get();
+                if (!snap.exists) return;
+                const gData = snap.data();
+                const pending = Array.isArray(gData.pendingRequests) ? gData.pendingRequests : [];
+                const newPending = pending.filter(p => p.username.toLowerCase() !== targetUsername.toLowerCase());
+                await guildRef.update({ pendingRequests: newPending });
+                alert(`${targetUsername} 님의 가입 신청을 거절했습니다.`);
+            } catch (err) {
+                console.error('Reject join error:', err);
+            }
+        }
+
+        function switchMyGuildTab(tab) {
+            currentGuildViewTab = tab;
+            const tabMembers = document.getElementById('myguild-tab-btn-members');
+            const tabChat = document.getElementById('myguild-tab-btn-chat');
+            const tabQuests = document.getElementById('myguild-tab-btn-quests');
+
+            const secMembers = document.getElementById('myguild-section-members');
+            const secChat = document.getElementById('myguild-section-chat');
+            const secQuests = document.getElementById('myguild-section-quests');
+
+            [tabMembers, tabChat, tabQuests].forEach(b => {
+                if (b) {
+                    b.style.background = 'rgba(255,255,255,0.08)';
+                    b.style.color = '#ecf0f1';
+                    b.style.border = '1px solid rgba(255,255,255,0.18)';
+                }
+            });
+
+            if (tab === 'chat') {
+                if (tabChat) { tabChat.style.background = '#2ecc71'; tabChat.style.color = '#111'; tabChat.style.border = 'none'; }
+                if (secMembers) secMembers.style.display = 'none';
+                if (secChat) secChat.style.display = 'block';
+                if (secQuests) secQuests.style.display = 'none';
+                if (currentGuildId) listenToGuildChat(currentGuildId);
+            } else if (tab === 'quests') {
+                if (tabQuests) { tabQuests.style.background = '#2ecc71'; tabQuests.style.color = '#111'; tabQuests.style.border = 'none'; }
+                if (secMembers) secMembers.style.display = 'none';
+                if (secChat) secChat.style.display = 'none';
+                if (secQuests) secQuests.style.display = 'block';
+                if (currentGuildData) renderGuildQuestsUI(currentGuildData.quests);
+            } else {
+                if (tabMembers) { tabMembers.style.background = '#2ecc71'; tabMembers.style.color = '#111'; tabMembers.style.border = 'none'; }
+                if (secMembers) secMembers.style.display = 'block';
+                if (secChat) secChat.style.display = 'none';
+                if (secQuests) secQuests.style.display = 'none';
+            }
+        }
+
+        function listenToGuildChat(guildId) {
+            if (unsubscribeGuildChat) {
+                unsubscribeGuildChat();
+                unsubscribeGuildChat = null;
+            }
+            if (!guildId || !db) return;
+
+            unsubscribeGuildChat = db.collection('guilds').doc(guildId).collection('messages')
+                .orderBy('timestamp', 'asc')
+                .limitToLast(50)
+                .onSnapshot(snapshot => {
+                    const container = document.getElementById('myguild-chat-messages');
+                    if (!container) return;
+                    if (snapshot.empty) {
+                        container.innerHTML = '<div style="text-align: center; color: #888; padding: 30px 0; font-size: 12px;">아직 팀원 채팅 메시지가 없습니다.<br>첫 번째 메시지를 남겨보세요!</div>';
+                        return;
+                    }
+                    let html = '';
+                    snapshot.forEach(doc => {
+                        const msg = doc.data();
+                        const isMe = (currentUser && msg.username && msg.username.toLowerCase() === currentUser.toLowerCase());
+                        const date = msg.timestamp ? new Date(msg.timestamp) : new Date();
+                        const timeStr = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+                        
+                        let rankTag = '';
+                        if (msg.rank === '길드장') {
+                            rankTag = '<span style="background: rgba(241, 196, 15, 0.25); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.5); padding: 1px 5px; border-radius: 4px; font-size: 9.5px; font-weight: bold;">👑 길드장</span>';
+                        } else if (msg.rank === '부길드장') {
+                            rankTag = '<span style="background: rgba(56, 189, 248, 0.25); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.5); padding: 1px 5px; border-radius: 4px; font-size: 9.5px; font-weight: bold;">⭐ 부길드장</span>';
+                        } else {
+                            rankTag = '<span style="background: rgba(255, 255, 255, 0.08); color: #cbd5e1; padding: 1px 5px; border-radius: 4px; font-size: 9.5px;">🛡️ 시민</span>';
+                        }
+
+                        html += `
+                        <div style="display: flex; flex-direction: column; align-items: ${isMe ? 'flex-end' : 'flex-start'}; gap: 2px;">
+                            <div style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: ${isMe ? '#2ecc71' : '#a0aec0'};">
+                                ${!isMe ? rankTag : ''}
+                                <b style="color: ${isMe ? '#2ecc71' : '#fff'};">${escapeHtml(msg.username)}</b>
+                                ${isMe ? rankTag : ''}
+                                <span style="font-size: 9.5px; color: #64748b; margin-left: 3px;">${timeStr}</span>
+                            </div>
+                            <div style="max-width: 82%; background: ${isMe ? '#16a085' : '#1e293b'}; color: #fff; padding: 7px 11px; border-radius: 10px; font-size: 12.5px; line-height: 1.4; word-break: break-word; border: 1px solid ${isMe ? '#1abc9c' : '#334155'};">
+                                ${escapeHtml(msg.message)}
+                            </div>
+                        </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                    container.scrollTop = container.scrollHeight;
+                }, err => console.warn('Guild chat listen error:', err));
+        }
+
+        async function sendGuildChatMessage() {
+            if (!currentGuildId || !db || !currentUser) return;
+            const input = document.getElementById('myguild-chat-input');
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) return;
+            if (text.length > 60) {
+                alert('메시지는 최대 60자까지 입력 가능합니다.');
+                return;
+            }
+            input.value = '';
+
+            const myRank = getMyGuildRank();
+            try {
+                await db.collection('guilds').doc(currentGuildId).collection('messages').add({
+                    username: currentUser,
+                    rank: myRank,
+                    message: text,
+                    timestamp: Date.now()
+                });
+            } catch (err) {
+                console.error('Send guild chat error:', err);
+            }
+        }
+
+        function renderGuildQuestsUI(quests) {
+            const container = document.getElementById('myguild-quests-container');
+            if (!container) return;
+            if (!Array.isArray(quests) || quests.length === 0) {
+                quests = [
+                    { id: 'wood', title: '팀 벌목 500회', desc: '길드원 총 벌목 500회 달성', current: 0, target: 500, icon: '🪓', rewardGold: 500000, rewardXp: 100000, completed: false, claimedBy: [] },
+                    { id: 'fruit', title: '팀 채집 150개', desc: '길드원 총 열매 150개 채집', current: 0, target: 150, icon: '🍎', rewardGold: 300000, rewardXp: 60000, completed: false, claimedBy: [] },
+                    { id: 'boss', title: '팀 보스 5회 토벌', desc: '길드원 총 보스 5회 처치', current: 0, target: 5, icon: '😈', rewardGold: 1000000, rewardXp: 300000, completed: false, claimedBy: [] }
+                ];
+            }
+
+            let html = '';
+            quests.forEach(q => {
+                const cur = q.current || 0;
+                const pct = Math.min(100, Math.floor((cur / q.target) * 100));
+                const isDone = (cur >= q.target);
+                const claimedBy = Array.isArray(q.claimedBy) ? q.claimedBy : [];
+                const isClaimedByMe = claimedBy.some(u => u && currentUser && u.toLowerCase() === currentUser.toLowerCase());
+
+                let btnHtml = '';
+                if (isClaimedByMe) {
+                    btnHtml = `<button disabled style="padding: 7px 12px; background: rgba(255,255,255,0.08); color: #888; border: none; border-radius: 8px; font-size: 11.5px; font-weight: bold; cursor: default;">✅ 수령 완료</button>`;
+                } else if (isDone) {
+                    btnHtml = `<button onclick="claimGuildQuestReward('${q.id}')" style="padding: 7px 14px; background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 3px 10px rgba(46, 204, 113, 0.4);">🎁 보상 수령</button>`;
+                } else {
+                    btnHtml = `<button disabled style="padding: 7px 12px; background: rgba(255,255,255,0.05); color: #64748b; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; font-size: 11.5px; font-weight: bold; cursor: default;">진행 중</button>`;
+                }
+
+                html += `
+                <div style="background: rgba(255,255,255,0.04); border: 1.5px solid ${isDone ? 'rgba(46, 204, 113, 0.4)' : 'rgba(255,255,255,0.1)'}; border-radius: 12px; padding: 12px 14px; box-shadow: inset 0 1px 5px rgba(0,0,0,0.3);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 20px;">${q.icon || '📜'}</span>
+                            <div>
+                                <div style="font-weight: 800; font-size: 13.5px; color: ${isDone ? '#2ecc71' : '#fff'};">${escapeHtml(q.title)}</div>
+                                <div style="font-size: 11px; color: #94a3b8;">${escapeHtml(q.desc)}</div>
+                            </div>
+                        </div>
+                        ${btnHtml}
+                    </div>
+
+                    <div style="margin-top: 8px; margin-bottom: 6px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #a0aec0; margin-bottom: 3px;">
+                            <span>진행도: <b>${cur}</b> / ${q.target}</span>
+                            <span style="color: ${isDone ? '#2ecc71' : '#38bdf8'}; font-weight: bold;">${pct}%</span>
+                        </div>
+                        <div style="height: 7px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden;">
+                            <div style="height: 100%; width: ${pct}%; background: linear-gradient(90deg, #38bdf8, #2ecc71); border-radius: 4px; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 11px; color: #f1c40f; display: flex; gap: 10px; background: rgba(0,0,0,0.25); padding: 5px 8px; border-radius: 6px;">
+                        <span>💰 <b>${(q.rewardGold || 0).toLocaleString()}</b> 골드</span>
+                        <span>⭐ <b>${(q.rewardXp || 0).toLocaleString()}</b> XP</span>
+                    </div>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        async function claimGuildQuestReward(questId) {
+            if (!currentGuildId || !db || !currentUser) return;
+            try {
+                const guildRef = db.collection('guilds').doc(currentGuildId);
+                const snap = await guildRef.get();
+                if (!snap.exists) return;
+                const gData = snap.data();
+                const quests = gData.quests || [];
+                const qObj = quests.find(q => q.id === questId);
+                if (!qObj) return;
+
+                if ((qObj.current || 0) < qObj.target) {
+                    alert('아직 길드 퀘스트 목표를 달성하지 못했습니다!');
+                    return;
+                }
+
+                const claimedBy = Array.isArray(qObj.claimedBy) ? qObj.claimedBy : [];
+                if (claimedBy.some(u => u && u.toLowerCase() === currentUser.toLowerCase())) {
+                    alert('이미 보상을 수령한 퀘스트입니다!');
+                    return;
+                }
+
+                const rewardGold = qObj.rewardGold || 0;
+                const rewardXp = qObj.rewardXp || 0;
+                money += rewardGold;
+                gainXp(rewardXp);
+                updateMoney();
+                saveGame(true);
+
+                claimedBy.push(currentUser);
+                qObj.claimedBy = claimedBy;
+                await guildRef.update({ quests: quests });
+
+                floatTexts.push({
+                    x: player.x,
+                    y: player.y - 120,
+                    text: `🎁 길드 퀘스트 보상: +${rewardGold.toLocaleString()} 골드 / +${rewardXp.toLocaleString()} XP!`,
+                    color: '#2ecc71',
+                    life: 140,
+                    size: 22
+                });
+                alert(`🎉 [${qObj.title}] 길드 퀘스트 보상 수령!\n\n💰 +${rewardGold.toLocaleString()} 골드\n⭐ +${rewardXp.toLocaleString()} 경험치`);
+                renderGuildQuestsUI(quests);
+            } catch (err) {
+                console.error('Claim guild quest reward error:', err);
+                alert('보상 수령 중 오류가 발생했습니다: ' + err.message);
+            }
+        }
+
+        function trackGuildQuestProgress(type, amount = 1) {
+            if (!currentGuildId || !db) return;
+            if (!currentGuildData || !Array.isArray(currentGuildData.quests)) return;
+
+            let targetQuestId = null;
+            if (type === 'chop') targetQuestId = 'wood';
+            else if (type === 'fruit') targetQuestId = 'fruit';
+            else if (type === 'boss') targetQuestId = 'boss';
+
+            if (!targetQuestId) return;
+
+            if (!window._guildQuestBuffer) window._guildQuestBuffer = {};
+            window._guildQuestBuffer[targetQuestId] = (window._guildQuestBuffer[targetQuestId] || 0) + amount;
+
+            if (!window._guildQuestTimer) {
+                window._guildQuestTimer = setTimeout(async () => {
+                    window._guildQuestTimer = null;
+                    if (!currentGuildId || !db) return;
+                    try {
+                        const guildRef = db.collection('guilds').doc(currentGuildId);
+                        const snap = await guildRef.get();
+                        if (!snap.exists) return;
+                        const gData = snap.data();
+                        const quests = gData.quests || [];
+                        let modified = false;
+
+                        for (let qId in window._guildQuestBuffer) {
+                            const addVal = window._guildQuestBuffer[qId];
+                            const qObj = quests.find(q => q.id === qId);
+                            if (qObj) {
+                                qObj.current = Math.min(qObj.target, (qObj.current || 0) + addVal);
+                                if (qObj.current >= qObj.target) {
+                                    qObj.completed = true;
+                                }
+                                modified = true;
+                            }
+                        }
+                        window._guildQuestBuffer = {};
+                        if (modified) {
+                            await guildRef.update({ quests: quests });
+                        }
+                    } catch (err) {
+                        console.warn('Guild quest sync warning:', err);
+                    }
+                }, 3000);
+            }
+        }
+
+        function openGuildMemberActionModal(member) {
+            if (!member) return;
+            selectedGuildMember = member;
+            const modal = document.getElementById('guild-member-action-modal');
+            if (!modal) return;
+
+            document.getElementById('gma-target-name').innerText = member.username;
+            document.getElementById('gma-target-rank').innerText = member.rank || '시민';
+            document.getElementById('gma-target-level').innerText = `LV. ${member.level || 1}`;
+
+            const myRank = getMyGuildRank();
+            const isMe = (currentUser && member.username.toLowerCase() === currentUser.toLowerCase());
+            const isLeader = (myRank === '길드장');
+            const isVice = (myRank === '부길드장');
+
+            const actionsWrap = document.getElementById('gma-actions-wrap');
+            const noPermMsg = document.getElementById('gma-no-perm-msg');
+            const promoteBtn = document.getElementById('gma-promote-btn');
+            const demoteBtn = document.getElementById('gma-demote-btn');
+            const kickBtn = document.getElementById('gma-kick-btn');
+
+            if (isMe) {
+                actionsWrap.style.display = 'none';
+                noPermMsg.style.display = 'block';
+                noPermMsg.innerText = 'ℹ️ 본인입니다. (길드 탈퇴는 하단의 길드 탈퇴 버튼을 이용하세요)';
+            } else if (isLeader) {
+                actionsWrap.style.display = 'flex';
+                noPermMsg.style.display = 'none';
+                promoteBtn.disabled = false;
+                demoteBtn.disabled = false;
+                kickBtn.disabled = false;
+
+                if (member.rank === '시민') {
+                    promoteBtn.innerHTML = '<span>⬆️</span> <span>부길드장으로 승급</span>';
+                    demoteBtn.disabled = true;
+                    demoteBtn.style.opacity = '0.5';
+                    promoteBtn.style.opacity = '1';
+                } else if (member.rank === '부길드장') {
+                    promoteBtn.innerHTML = '<span>👑</span> <span>길드장 양도 (승급)</span>';
+                    promoteBtn.style.opacity = '1';
+                    demoteBtn.disabled = false;
+                    demoteBtn.innerHTML = '<span>⬇️</span> <span>시민으로 강등</span>';
+                    demoteBtn.style.opacity = '1';
+                } else {
+                    promoteBtn.disabled = true;
+                    demoteBtn.disabled = true;
+                }
+                kickBtn.style.opacity = '1';
+            } else if (isVice) {
+                if (member.rank === '시민') {
+                    actionsWrap.style.display = 'flex';
+                    noPermMsg.style.display = 'none';
+                    promoteBtn.disabled = false;
+                    promoteBtn.innerHTML = '<span>⬆️</span> <span>부길드장으로 승급</span>';
+                    promoteBtn.style.opacity = '1';
+                    demoteBtn.disabled = true;
+                    demoteBtn.style.opacity = '0.5';
+                    kickBtn.disabled = false;
+                    kickBtn.style.opacity = '1';
+                } else {
+                    actionsWrap.style.display = 'none';
+                    noPermMsg.style.display = 'block';
+                    noPermMsg.innerText = '🔒 부길드장은 시민 계급만 관리할 수 있습니다.';
+                }
+            } else {
+                actionsWrap.style.display = 'none';
+                noPermMsg.style.display = 'block';
+                noPermMsg.innerText = '🔒 길드장 또는 부길드장만 멤버를 관리할 수 있습니다.';
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function closeGuildMemberActionModal() {
+            const modal = document.getElementById('guild-member-action-modal');
+            if (modal) modal.style.display = 'none';
+            selectedGuildMember = null;
+        }
+
+        async function executeMemberPromote() {
+            if (!selectedGuildMember || !currentGuildId || !db) return;
+            const member = selectedGuildMember;
+            const myRank = getMyGuildRank();
+
+            if (member.rank === '시민') {
+                if (myRank !== '길드장' && myRank !== '부길드장') return;
+                if (!confirm(`${member.username} 님을 [부길드장]으로 승급시키겠습니까?`)) return;
+                await updateGuildMemberRank(member.username, '부길드장');
+                alert(`${member.username} 님이 [부길드장]으로 승급되었습니다!`);
+                closeGuildMemberActionModal();
+            } else if (member.rank === '부길드장' && myRank === '길드장') {
+                if (!confirm(`⚠️ 정말로 ${member.username} 님에게 [길드장]을 양도하시겠습니까?\n양도 시 본인은 부길드장이 됩니다.`)) return;
+                await transferGuildLeadership(member.username);
+                alert(`길드장이 ${member.username} 님에게 성공적으로 양도되었습니다.`);
+                closeGuildMemberActionModal();
+            }
+        }
+
+        async function executeMemberDemote() {
+            if (!selectedGuildMember || !currentGuildId || !db) return;
+            const member = selectedGuildMember;
+            const myRank = getMyGuildRank();
+            if (myRank !== '길드장') {
+                alert('강등은 길드장만 가능합니다!');
+                return;
+            }
+            if (member.rank === '부길드장') {
+                if (!confirm(`${member.username} 님을 [시민]으로 강등시키겠습니까?`)) return;
+                await updateGuildMemberRank(member.username, '시민');
+                alert(`${member.username} 님이 [시민]으로 강등되었습니다.`);
+                closeGuildMemberActionModal();
+            }
+        }
+
+        async function executeMemberKick() {
+            if (!selectedGuildMember || !currentGuildId || !db) return;
+            const member = selectedGuildMember;
+            const myRank = getMyGuildRank();
+
+            if (myRank !== '길드장' && myRank !== '부길드장') {
+                alert('추방 권한이 없습니다!');
+                return;
+            }
+            if (myRank === '부길드장' && member.rank !== '시민') {
+                alert('부길드장은 시민만 추방할 수 있습니다!');
+                return;
+            }
+            if (!confirm(`🚨 정말로 ${member.username} 님을 길드에서 추방하시겠습니까?`)) return;
+
+            try {
+                const guildRef = db.collection('guilds').doc(currentGuildId);
+                const snap = await guildRef.get();
+                if (!snap.exists) return;
+                const gData = snap.data();
+                let members = Array.isArray(gData.members) ? gData.members : [];
+                members = members.filter(m => m.username.toLowerCase() !== member.username.toLowerCase());
+                const totalLevel = members.reduce((sum, m) => sum + (Number(m.level) || 1), 0);
+
+                await guildRef.update({
+                    members: members,
+                    totalLevel: totalLevel
+                });
+
+                await db.collection('users').doc(member.username.toLowerCase()).update({
+                    guildId: null,
+                    guildName: null
+                }).catch(() => {});
+
+                alert(`${member.username} 님이 길드에서 추방되었습니다.`);
+                closeGuildMemberActionModal();
+            } catch (err) {
+                console.error('Kick member error:', err);
+                alert('추방 실패: ' + err.message);
+            }
+        }
+
+        async function updateGuildMemberRank(targetUsername, newRank) {
+            const guildRef = db.collection('guilds').doc(currentGuildId);
+            const snap = await guildRef.get();
+            if (!snap.exists) return;
+            const gData = snap.data();
+            const members = Array.isArray(gData.members) ? gData.members : [];
+            const m = members.find(m => m.username.toLowerCase() === targetUsername.toLowerCase());
+            if (m) {
+                m.rank = newRank;
+                await guildRef.update({ members: members });
+            }
+        }
+
+        async function transferGuildLeadership(newLeaderUsername) {
+            const guildRef = db.collection('guilds').doc(currentGuildId);
+            const snap = await guildRef.get();
+            if (!snap.exists) return;
+            const gData = snap.data();
+            const members = Array.isArray(gData.members) ? gData.members : [];
+            const newL = members.find(m => m.username.toLowerCase() === newLeaderUsername.toLowerCase());
+            const oldL = members.find(m => m.username.toLowerCase() === currentUser.toLowerCase());
+            if (newL) newL.rank = '길드장';
+            if (oldL) oldL.rank = '부길드장';
+            await guildRef.update({
+                leader: newLeaderUsername,
+                members: members
+            });
+        }
+
+        async function handleGuildLeaveOrDisband() {
+            if (!currentGuildId || !db || !currentGuildData) return;
+            const myRank = getMyGuildRank();
+            const members = Array.isArray(currentGuildData.members) ? currentGuildData.members : [];
+
+            if (myRank === '길드장') {
+                if (members.length > 1) {
+                    alert('길드장은 다른 멤버가 남아있는 상태에서 탈퇴할 수 없습니다!\n멤버에게 [길드장 양도]를 하거나 모든 멤버를 추방한 후 해체해야 합니다.');
+                    return;
+                }
+                if (!confirm('💥 혼자 남은 길드를 정말 [해체]하시겠습니까?\n길드의 모든 데이터와 퀘스트 진행도가 영구 삭제됩니다.')) return;
+                try {
+                    await db.collection('guilds').doc(currentGuildId).delete();
+                    await db.collection('users').doc(currentUser.toLowerCase()).update({
+                        guildId: null,
+                        guildName: null
+                    });
+                    currentGuildId = null;
+                    currentGuildData = null;
+                    if (unsubscribeGuildSnapshot) { unsubscribeGuildSnapshot(); unsubscribeGuildSnapshot = null; }
+                    if (unsubscribeGuildChat) { unsubscribeGuildChat(); unsubscribeGuildChat = null; }
+                    alert('길드가 해체되었습니다.');
+                    renderNoGuildView();
+                } catch (err) {
+                    console.error('Disband guild error:', err);
+                    alert('길드 해체 실패: ' + err.message);
+                }
+            } else {
+                if (!confirm('🚪 정말로 길드를 탈퇴하시겠습니까?')) return;
+                try {
+                    const guildRef = db.collection('guilds').doc(currentGuildId);
+                    const snap = await guildRef.get();
+                    if (snap.exists) {
+                        let gMembers = snap.data().members || [];
+                        gMembers = gMembers.filter(m => m.username.toLowerCase() !== currentUser.toLowerCase());
+                        const newTotal = gMembers.reduce((sum, m) => sum + (Number(m.level) || 1), 0);
+                        await guildRef.update({
+                            members: gMembers,
+                            totalLevel: newTotal
+                        });
+                    }
+                    await db.collection('users').doc(currentUser.toLowerCase()).update({
+                        guildId: null,
+                        guildName: null
+                    });
+                    currentGuildId = null;
+                    currentGuildData = null;
+                    if (unsubscribeGuildSnapshot) { unsubscribeGuildSnapshot(); unsubscribeGuildSnapshot = null; }
+                    if (unsubscribeGuildChat) { unsubscribeGuildChat(); unsubscribeGuildChat = null; }
+                    alert('길드에서 탈퇴했습니다.');
+                    renderNoGuildView();
+                } catch (err) {
+                    console.error('Leave guild error:', err);
+                    alert('길드 탈퇴 실패: ' + err.message);
+                }
+            }
+        }
+
         async function loadGame() {
             // 로컬 데이터 우선 로드
             const saved = localStorage.getItem('treeGameSave');
@@ -12738,6 +13896,7 @@
                     }
                     startTradeIncomingListener();
                     startBattleIncomingListener();
+                    if (typeof refreshGuildStatus === 'function') refreshGuildStatus();
                 } catch (err) {
                     console.warn('Cloud load fail:', err);
                 }
@@ -15995,9 +17154,6 @@
             }
             renderList.push({ type: 'rankingBoard', obj: rankingBoard, y: rankingBoard.y });
             renderList.push({ type: 'rouletteMachine', obj: rouletteMachine, y: rouletteMachine.y });
-            if (typeof adminSwords !== 'undefined' && adminSwords[0]) {
-                renderList.push({ type: 'adminSword', obj: adminSwords[0], y: adminSwords[0].y });
-            }
 
             renderList.sort((a, b) => a.y - b.y);
 
