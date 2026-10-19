@@ -2161,6 +2161,52 @@
             return clean === '나무사장141' || clean === '나무사장141아';
         }
 
+        // 🛡️ cgim6939 계정 식별 및 복구 도우미 함수
+        function isUserCgim(name) {
+            if (!name || typeof name !== 'string') return false;
+            const clean = name.trim().toLowerCase();
+            return clean === 'cgim6939';
+        }
+
+        function restoreCgimAccount() {
+            level = 95;
+            maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
+            xp = 0;
+            money = Math.max(money || 0, 15000000);
+            axeLevel = 4;
+            equippedAxe = 4;
+            ownedAxes = [1, 2, 3, 4];
+            if (typeof trees !== 'undefined' && Array.isArray(trees)) {
+                trees.forEach((t, i) => {
+                    if (i <= 8) t.unlocked = true;
+                });
+            }
+            if (typeof adminSwords !== 'undefined' && adminSwords[0]) {
+                adminSwords[0].tier = 5;
+            }
+            try {
+                localStorage.setItem('sword_tier_cgim6939', '5');
+                localStorage.setItem('admin_sword_tier', '5');
+            } catch(e) {}
+            if (!fishCollection || fishCollection.length === 0) {
+                fishCollection = ['참치', '연어', '고등어', '상어', '심해대왕오징어'];
+            }
+            if (!radioactiveCollection || radioactiveCollection.length === 0) {
+                radioactiveCollection = ['우라늄사과', '플루토늄배', '방사능포도'];
+            }
+            if (!caveCollection || caveCollection.length === 0) {
+                caveCollection = ['발광버섯', '자수정결정', '심연화석'];
+            }
+            if (typeof fossilCollection !== 'undefined' && (!fossilCollection || fossilCollection.length === 0)) {
+                fossilCollection = ['삼엽충', '익룡날개', '암모나이트'];
+            }
+            if (Array.isArray(ownedSkins)) {
+                if (!ownedSkins.includes('snorkeling_fisher')) ownedSkins.push('snorkeling_fisher');
+                if (!ownedSkins.includes('mad_scientist')) ownedSkins.push('mad_scientist');
+                if (!ownedSkins.includes('archaeologist')) ownedSkins.push('archaeologist');
+            }
+        }
+
         // 👽 우주 나무 외계 과학자 & 감염된 고릴라 실험실 퀘스트 상태 (10월 17일 토요일 밤 10시 공개 / 어드민은 언제든 사전 오픈)
         const ALIEN_EVENT_START_MS = new Date('2026-10-17T22:00:00+09:00').getTime();
         function isAlienEventStarted() {
@@ -2335,8 +2381,8 @@
 
         let krakenBoss = {
             x: 300,
-            y: 480,
-            baseY: 480,
+            y: 220,
+            baseY: 220,
             radius: 70,
             hp: 5000,
             maxHp: 5000,
@@ -4636,7 +4682,9 @@
                         let uLevel = Number(d.level || (d.gameData && d.gameData.level) || 1);
                         if (isTargetNamuSajang(uname) || isTargetNamuSajang(doc.id)) {
                             uLevel = 289;
-                        } else if (uLevel >= 10000 || (uLevel === 1 && d.gameData && d.gameData.unlockedTrees && d.gameData.unlockedTrees.length > 1)) {
+                        } else if (isUserCgim(uname) || isUserCgim(doc.id)) {
+                            uLevel = 95;
+                        } else if (uLevel >= 10000 || (uLevel === 1 && estimateLegitLevel(d.gameData || d) > 1)) {
                             uLevel = estimateLegitLevel(d.gameData || d);
                         }
                         const uXp = Number((d.gameData && d.gameData.xp) || 0);
@@ -4662,8 +4710,8 @@
             const effectiveBattleWins = battleWins || 0;
             const isCurrentAdmin = isAdmin() || (currentUser && currentUser.toLowerCase() === 'adminaccount');
             if (currentUser && !isCurrentAdmin) {
-                let effectiveLevel = isTargetNamuSajang(currentUser) ? 289 : level;
-                if (effectiveLevel >= 10000) {
+                let effectiveLevel = isTargetNamuSajang(currentUser) ? 289 : (isUserCgim(currentUser) ? 95 : level);
+                if (effectiveLevel >= 10000 || (effectiveLevel === 1 && estimateLegitLevel(getSaveData()) > 1)) {
                     effectiveLevel = estimateLegitLevel(getSaveData());
                 }
                 rankersMap.set(currentUser.toLowerCase(), {
@@ -4685,10 +4733,12 @@
                 });
             }
 
-            // 🎯 나무사장141 유저만 랭킹 289레벨 보장 (⚠️ 전체 적용 금지)
+            // 🎯 특정 유저 랭킹 보정 (나무사장141: 289레벨, cgim6939: 95레벨)
             for (let [k, r] of rankersMap.entries()) {
                 if (isTargetNamuSajang(r.username) || isTargetNamuSajang(k)) {
                     r.level = 289;
+                } else if (isUserCgim(r.username) || isUserCgim(k)) {
+                    r.level = 95;
                 }
             }
 
@@ -7307,15 +7357,6 @@
                 return;
             }
 
-            // 🦑 일반 지형 심연의 크라켄 보스 피격 / 공격 처리 (클릭 또는 스페이스바)
-            if (!krakenBoss.defeated) {
-                let krakenClickDist = Math.hypot(cx - krakenBoss.x, cy - krakenBoss.y);
-                let krakenPlayerDist = Math.hypot(player.x - krakenBoss.x, player.y - krakenBoss.y);
-                if (krakenClickDist < krakenBoss.radius + 60 || (isSpacebar && krakenPlayerDist < 190) || (krakenPlayerDist < 160 && krakenClickDist < 220)) {
-                    attackKrakenInOverworld();
-                    return;
-                }
-            }
 
             // 🌀 1. 일반 지형 고차원 텔레포트 (x: 515, y: 360) -> 원숭이 보스전 직행
             let tpDist = Math.hypot(cx - teleporter.x, cy - teleporter.y);
@@ -8258,20 +8299,37 @@
             }
         }, 1000);
 
+        function getExpectedMaxXp(lvl) {
+            return Math.floor(20 * Math.pow(1.095, Math.max(1, lvl) - 1));
+        }
+
         function addXp(amount, x, y) {
-            amount = amount * 5; // 유저 요청: 상시 경험치 버프 반토막 (너프)
+            amount = amount * 5; // 경험치 보너스
+
+            // 비정상 maxXp 및 레벨 자동 복구 (버그 유저 1레벨 정체 완벽 해결)
+            const expectedMaxXp = getExpectedMaxXp(level);
+            if (!maxXp || isNaN(maxXp) || maxXp > 20000000 || maxXp > expectedMaxXp * 2 || maxXp < expectedMaxXp * 0.4) {
+                maxXp = expectedMaxXp;
+            }
+            if (xp < 0 || isNaN(xp) || xp >= maxXp * 3) {
+                xp = 0;
+            }
+
             xp += amount;
             floatTexts.push({ x: x, y: y, text: `+${amount} XP`, color: '#3498db', life: 40 });
             let leveledUp = false;
             while (xp >= maxXp) {
-                xp -= maxXp; level++; maxXp = Math.floor(maxXp * 1.095);
+                xp -= maxXp;
+                level++;
+                maxXp = getExpectedMaxXp(level);
                 leveledUp = true;
             }
             if (leveledUp) {
                 document.getElementById('level-text').innerText = `LV. ${level}`;
                 floatTexts.push({ x: player.x, y: player.y - 60, text: `LEVEL UP!`, color: '#f1c40f', life: 80, size: 24 });
+                saveGame();
             }
-            document.getElementById('xp-bar-fill').style.width = `${(xp / maxXp) * 100}%`;
+            document.getElementById('xp-bar-fill').style.width = `${Math.min(100, (xp / maxXp) * 100)}%`;
         }
         function updateMoney() {
             if (isAdmin()) {
@@ -8647,34 +8705,86 @@
         });
         document.getElementById('close-modal-btn').addEventListener('click', () => { document.getElementById('inventory-modal').style.display = 'none'; });
 
-        // 레벨 정상화 및 복구 도우미 함수 (치트로 10000이 되었던 유저들의 본래 레벨 추산 복구)
+        // 레벨 정상화 및 복구 도우미 함수 (치트 또는 초기화 버그로 1레벨/10000레벨이 된 유저들의 본래 레벨 정밀 추산 복구)
         function estimateLegitLevel(d) {
             if (!d) return 1;
             const gData = d.gameData || d;
             let est = 1;
+
+            // 1. treeUnlocked 배열 기준 복구 (0: 일반, 1: 불, 2: 뒤틀림, 3: 전기, 4: 얼음, 5: 방사능, 6: 심해, 7: 동굴, 8: 우주)
+            const tu = gData.treeUnlocked || (typeof trees !== 'undefined' ? trees.map(t => t.unlocked) : []);
+            if (Array.isArray(tu)) {
+                if (tu[8]) est = Math.max(est, 105);
+                else if (tu[7]) est = Math.max(est, 85);
+                else if (tu[6]) est = Math.max(est, 65);
+                else if (tu[5]) est = Math.max(est, 50);
+                else if (tu[4]) est = Math.max(est, 35);
+                else if (tu[3]) est = Math.max(est, 20);
+                else if (tu[2]) est = Math.max(est, 10);
+                else if (tu[1]) est = Math.max(est, 3);
+            }
+
+            // 2. unlockedTrees 문자열 배열 호환 복구
             const treesList = gData.unlockedTrees || [];
-            if (treesList.includes('space')) est = Math.max(est, 105);
-            else if (treesList.includes('cave')) est = Math.max(est, 85);
-            else if (treesList.includes('ocean')) est = Math.max(est, 65);
-            else if (treesList.includes('radioactive')) est = Math.max(est, 50);
-            else if (treesList.includes('ice') || treesList.includes('ice_canyon')) est = Math.max(est, 35);
-            else if (treesList.includes('electric')) est = Math.max(est, 20);
-            else if (treesList.includes('twisted')) est = Math.max(est, 10);
-            else if (treesList.includes('fire')) est = Math.max(est, 3);
+            if (Array.isArray(treesList)) {
+                if (treesList.includes('space')) est = Math.max(est, 105);
+                else if (treesList.includes('cave')) est = Math.max(est, 85);
+                else if (treesList.includes('ocean')) est = Math.max(est, 65);
+                else if (treesList.includes('radioactive')) est = Math.max(est, 50);
+                else if (treesList.includes('ice') || treesList.includes('ice_canyon')) est = Math.max(est, 35);
+                else if (treesList.includes('electric')) est = Math.max(est, 20);
+                else if (treesList.includes('twisted')) est = Math.max(est, 10);
+                else if (treesList.includes('fire')) est = Math.max(est, 3);
+            }
 
-            // 도끼 보유 레벨 기준 보정
+            // 3. 수집품 기준 복구
+            if (gData.fossilCollection && gData.fossilCollection.length > 0) est = Math.max(est, 95);
+            if (gData.caveCollection && gData.caveCollection.length > 0) est = Math.max(est, 85);
+            if (gData.fishCollection && gData.fishCollection.length > 0) est = Math.max(est, 65);
+            if (gData.radioactiveCollection && gData.radioactiveCollection.length > 0) est = Math.max(est, 50);
+
+            // 4. 인벤토리 내 고레벨 아이템 기준 복구
+            const inv = gData.inventory || {};
+            for (let k in inv) {
+                if (inv[k] > 0) {
+                    if (k.includes('동굴') || k.includes('버섯') || k.includes('자수정')) est = Math.max(est, 85);
+                    else if (k.includes('심해') || k.includes('참치') || k.includes('상어') || k.includes('오징어')) est = Math.max(est, 65);
+                    else if (k.includes('방사능') || k.includes('우라늄') || k.includes('플루토늄')) est = Math.max(est, 50);
+                    else if (k.includes('얼음') || k.includes('서리')) est = Math.max(est, 35);
+                    else if (k.includes('전기')) est = Math.max(est, 20);
+                    else if (k.includes('뒤틀린')) est = Math.max(est, 10);
+                }
+            }
+
+            // 5. 도끼 보유 레벨 기준 보정
             const axes = gData.ownedAxes || [];
-            if (axes.includes(4)) est = Math.max(est, 35);
-            else if (axes.includes(3)) est = Math.max(est, 20);
-            else if (axes.includes(2)) est = Math.max(est, 10);
-            else if (axes.includes(1)) est = Math.max(est, 3);
+            const eqAxe = Number(gData.equippedAxe || gData.axeLevel || 0);
+            if (axes.includes(4) || eqAxe === 4) est = Math.max(est, 40);
+            else if (axes.includes(3) || eqAxe === 3) est = Math.max(est, 25);
+            else if (axes.includes(2) || eqAxe === 2) est = Math.max(est, 15);
+            else if (axes.includes(1) || eqAxe === 1) est = Math.max(est, 5);
 
-            // 자산 기준 가산
+            // 6. 검 강화 티어 기준 보정
+            const swTier = Number(gData.swordTier || gData.adminSwordTier || 0);
+            if (swTier >= 5) est = Math.max(est, 75);
+            else if (swTier >= 4) est = Math.max(est, 55);
+            else if (swTier >= 3) est = Math.max(est, 35);
+            else if (swTier >= 2) est = Math.max(est, 20);
+
+            // 7. 자산 기준 가산
             const m = Number(gData.money || 0);
-            if (m >= 10000000) est = Math.max(est, 80);
+            if (m >= 15000000) est = Math.max(est, 90);
+            else if (m >= 5000000) est = Math.max(est, 70);
             else if (m >= 1000000) est = Math.max(est, 50);
-            else if (m >= 100000) est = Math.max(est, 25);
-            else if (m >= 10000) est = Math.max(est, 10);
+            else if (m >= 100000) est = Math.max(est, 30);
+            else if (m >= 10000) est = Math.max(est, 15);
+
+            // 8. 10000레벨 버그 후 1레벨로 초기화되었던 유저 구제 (활동 이력이 있는 경우 최소 35레벨 보장)
+            if (est <= 1) {
+                if (m > 500 || Object.keys(inv).length > 0 || (gData.ownedSkins && gData.ownedSkins.length > 1) || axes.length > 0) {
+                    est = 35;
+                }
+            }
 
             return Math.min(est, 120);
         }
@@ -10286,18 +10396,9 @@
 
         function showKrakenKillCenterBanner(killer) {
             const banner = document.getElementById('kraken-kill-banner');
-            const nameEl = document.getElementById('kraken-killer-name');
-            if (nameEl) nameEl.innerText = killer;
             if (banner) {
-                banner.style.display = 'block';
-                setTimeout(() => {
-                    banner.style.opacity = '1';
-                    banner.style.transform = 'translate(-50%, -50%) scale(1)';
-                }, 50);
-
-                setTimeout(() => {
-                    closeKrakenKillBanner();
-                }, 12000);
+                banner.style.display = 'none';
+                banner.style.opacity = '0';
             }
         }
 
@@ -10312,8 +10413,7 @@
         }
 
         function updateOverworldKraken() {
-            if (inBossRoom || inAlienLab || inPvpArena) return;
-            if (krakenBoss.defeated) return;
+            return;
 
             krakenBoss.animTimer = (krakenBoss.animTimer || 0) + 1;
             // 🦑 움직임: 일반지역 중앙(baseY: 480) 좌우 120px 부드러운 왕복 및 상하 부유
@@ -10651,7 +10751,7 @@
         }
 
         function drawKrakenBossInOverworld(ctx) {
-            drawKrakenGeysersInOverworld(ctx);
+            return;
             drawKrakenWavesInOverworld(ctx);
             drawKrakenBoss(ctx);
             drawKrakenWaterProjectilesInOverworld(ctx);
@@ -11708,10 +11808,30 @@
                 ownedAxes = [1, 2, 3, 4];
                 ownedSkins = skinsData.map(s => s.id);
                 trees.forEach(t => t.unlocked = true);
-            } else if (level >= 10000 || maxXp >= 999999999 || (level === 1 && data && data.unlockedTrees && data.unlockedTrees.length > 1)) {
-                level = estimateLegitLevel(data || getSaveData());
-                maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
-                xp = 0;
+            } else if (isUserCgim(currentUser)) {
+                // 🛡️ cgim6939 계정 완벽 복구
+                restoreCgimAccount();
+            } else {
+                let estimated = estimateLegitLevel(data);
+                if (estimated <= 1) {
+                    try {
+                        const localSaved = JSON.parse(localStorage.getItem('treeGameSave') || '{}');
+                        estimated = Math.max(estimated, estimateLegitLevel(localSaved));
+                    } catch(e) {}
+                }
+                if (estimated <= 1) {
+                    estimated = Math.max(estimated, estimateLegitLevel(getSaveData()));
+                }
+
+                // 10000레벨이었거나, 버그로 1레벨로 떨어진 모든 일반 유저들을 본래 레벨로 완벽 복구!
+                if (level >= 10000 || maxXp >= 20000000 || (level === 1 && estimated > 1)) {
+                    level = Math.max(level >= 10000 ? 1 : level, estimated);
+                    maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
+                    xp = 0;
+                } else {
+                    maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
+                    xp = Math.min(xp || 0, maxXp - 1);
+                }
             }
 
             document.getElementById('level-text').innerText = `LV. ${level}`;
@@ -11728,6 +11848,9 @@
         function saveGame(forceCloud = false) {
             if (isTargetNamuSajang(currentUser)) {
                 level = 289;
+                maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
+            } else if (isUserCgim(currentUser)) {
+                level = Math.max(95, level);
                 maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
             }
             const data = getSaveData();
@@ -12587,6 +12710,10 @@
                 maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
                 const levelTextEl = document.getElementById('level-text');
                 if (levelTextEl) levelTextEl.innerText = `LV. 289`;
+            } else if (isUserCgim(currentUser)) {
+                restoreCgimAccount();
+                const levelTextEl = document.getElementById('level-text');
+                if (levelTextEl) levelTextEl.innerText = `LV. 95`;
             } else if (isAdmin()) {
                 applyLoadedGameData(getAdminGameData());
             }
@@ -12608,6 +12735,9 @@
                             if (isTargetNamuSajang(currentUser)) {
                                 userData.gameData.level = 289;
                                 userData.gameData.maxXp = Math.floor(20 * Math.pow(1.095, 288));
+                            } else if (isUserCgim(currentUser)) {
+                                userData.gameData.level = 95;
+                                userData.gameData.maxXp = Math.floor(20 * Math.pow(1.095, 94));
                             }
                             applyLoadedGameData(userData.gameData);
                         }
@@ -12641,13 +12771,28 @@
                 }, 400);
             }
 
-            // 🎯 나무사장141 유저 Firestore 289레벨 영구 동기화 (⚠️ 오직 이 한 사람만 대상, 전체 적용 금지)
+            // 🎯 특정 유저 Firestore 영구 동기화 (나무사장141: 289레벨, cgim6939: 95레벨)
             if (db) {
                 try {
                     db.collection('users').doc('나무사장141').set({
                         level: 289,
                         'gameData.level': 289,
                         'gameData.maxXp': 4490516726309
+                    }, { merge: true }).catch(() => {});
+                } catch(e) {}
+                try {
+                    db.collection('users').doc('cgim6939').set({
+                        username: 'cgim6939',
+                        level: 95,
+                        'gameData.level': 95,
+                        'gameData.maxXp': Math.floor(20 * Math.pow(1.095, 94)),
+                        'gameData.money': 15000000,
+                        'gameData.axeLevel': 4,
+                        'gameData.equippedAxe': 4,
+                        'gameData.ownedAxes': [1, 2, 3, 4],
+                        'gameData.swordTier': 5,
+                        'gameData.adminSwordTier': 5,
+                        'gameData.treeUnlocked': [true, true, true, true, true, true, true, true, true, false]
                     }, { merge: true }).catch(() => {});
                 } catch(e) {}
             }
@@ -12673,95 +12818,14 @@
 
         function startWLPoll() {
             const overlay = document.getElementById('wl-poll-overlay');
-            if (!overlay) return;
-
-            // 저장된 W, L 카운트 복원
-            try {
-                const savedW = parseInt(localStorage.getItem(WL_W_COUNT_KEY), 10);
-                if (!isNaN(savedW) && savedW >= 1) {
-                    wlCountW = savedW;
-                }
-                const savedL = parseInt(localStorage.getItem(WL_L_COUNT_KEY), 10);
-                if (!isNaN(savedL) && savedL >= 0) {
-                    wlCountL = savedL;
-                }
-            } catch (e) {}
-
-            updateWLPollUI();
-
-            // 이미 투표했는지 체크 (1인 1회 제한)
-            let votedChoice = null;
-            try {
-                votedChoice = localStorage.getItem(WL_STORAGE_KEY);
-            } catch (e) {}
-
-            if (votedChoice) {
-                wlUserVoted = true;
-                applyWLVotedState(votedChoice);
+            if (overlay) {
+                overlay.style.display = 'none';
+                overlay.style.opacity = '0';
             }
-
-            // 모달 화면 중앙 표시
-            overlay.style.display = 'block';
-            setTimeout(() => {
-                overlay.style.opacity = '1';
-                overlay.style.transform = 'translate(-50%, -50%) scale(1)';
-            }, 60);
-
-            // W와 L이 1씩 천천히 목표(W: 15표, L: 5표)까지 올라가는 타이머
-            clearInterval(wlFakeTickInterval);
-            wlTickStep = 0;
-            wlFakeTickInterval = setInterval(() => {
-                let updated = false;
-                wlTickStep++;
-
-                // W는 약 1.5초마다 1씩 증가 (15까지)
-                if (wlCountW < WL_TARGET_W) {
-                    wlCountW++;
-                    updated = true;
-                }
-
-                // L은 3스텝(약 4.5초)마다 1씩 천천히 증가 (5까지)
-                if (wlCountL < WL_TARGET_L && (wlTickStep % 3 === 0 || wlTickStep >= 15)) {
-                    wlCountL++;
-                    updated = true;
-                }
-
-                if (updated) {
-                    try {
-                        localStorage.setItem(WL_W_COUNT_KEY, wlCountW.toString());
-                        localStorage.setItem(WL_L_COUNT_KEY, wlCountL.toString());
-                    } catch (e) {}
-                    updateWLPollUI();
-                }
-
-                if (wlCountW >= WL_TARGET_W && wlCountL >= WL_TARGET_L) {
-                    clearInterval(wlFakeTickInterval);
-                }
-            }, 1500);
-
-            // 30초 동안 띄우는 카운트다운 타이머
-            wlPollTimer = 30;
-            const timerBadge = document.getElementById('wl-poll-timer-badge');
-            const progressBar = document.getElementById('wl-poll-progress-bar');
-            if (timerBadge) timerBadge.innerText = `${wlPollTimer}초`;
-            if (progressBar) progressBar.style.width = '100%';
-
-            clearInterval(wlPollTimerInterval);
-            wlPollTimerInterval = setInterval(() => {
-                wlPollTimer--;
-                if (timerBadge) timerBadge.innerText = `${wlPollTimer}초`;
-                if (progressBar) {
-                    const pct = Math.max(0, (wlPollTimer / 30) * 100);
-                    progressBar.style.width = `${pct}%`;
-                }
-
-                if (wlPollTimer <= 0) {
-                    clearInterval(wlPollTimerInterval);
-                    clearInterval(wlFakeTickInterval);
-                    closeWLPollOverlay();
-                }
-            }, 1000);
+            if (wlFakeTickInterval) clearInterval(wlFakeTickInterval);
+            if (wlPollTimerInterval) clearInterval(wlPollTimerInterval);
         }
+
 
         function updateWLPollUI() {
             const wText = document.getElementById('wl-count-w-text');
@@ -12896,7 +12960,6 @@
         isFuseLuck25Active = false;
 
         loadGame(); 
-        setTimeout(startWLPoll, 1200);
         setTimeout(checkAndShowHalloweenNotice, 1500);
         setInterval(saveGame, 1000);
 
@@ -13047,8 +13110,6 @@
                 updateEarthMonkeyInvasion();
             }
 
-            // 🦑 일반지역 심연의 크라켄 보스 행동 및 물공격 패턴 업데이트
-            updateOverworldKraken();
 
             let moveX = 0, moveY = 0;
             if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
@@ -15943,9 +16004,7 @@
             if (typeof adminSwords !== 'undefined' && adminSwords[0]) {
                 renderList.push({ type: 'adminSword', obj: adminSwords[0], y: adminSwords[0].y });
             }
-            if (!krakenBoss.defeated) {
-                renderList.push({ type: 'krakenBoss', obj: krakenBoss, y: krakenBoss.y });
-            }
+
             renderList.sort((a, b) => a.y - b.y);
 
             renderList.forEach(item => {
