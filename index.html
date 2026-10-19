@@ -8534,7 +8534,8 @@
             if (leveledUp) {
                 document.getElementById('level-text').innerText = `LV. ${level}`;
                 floatTexts.push({ x: player.x, y: player.y - 60, text: `LEVEL UP!`, color: '#f1c40f', life: 80, size: 24 });
-                saveGame();
+                saveGame(true);
+                if (typeof syncMyGuildMemberLevel === 'function') syncMyGuildMemberLevel();
             }
             document.getElementById('xp-bar-fill').style.width = `${Math.min(100, (xp / maxXp) * 100)}%`;
         }
@@ -9106,6 +9107,9 @@
             if (typeof firebase !== 'undefined') {
                 fbApp = firebase.initializeApp(firebaseConfig);
                 db = firebase.firestore();
+                try {
+                    db.settings({ ignoreUndefinedProperties: true });
+                } catch (err) {}
             }
         } catch (e) {
             console.warn('Firebase 초기화 상태:', e);
@@ -11465,6 +11469,8 @@
             if (db) {
                 try {
                     await db.collection('users').doc(oldUser.toLowerCase()).set({
+                        username: oldUser,
+                        level: level,
                         gameData: getSaveData(),
                         lastSaved: Date.now()
                     }, { merge: true });
@@ -11613,9 +11619,14 @@
                         currentUser = username;
                         localStorage.setItem('treegame_user', currentUser);
                         if (userData.gameData) {
+                            if (userData.level && Number(userData.level) > Number(userData.gameData.level || 0)) {
+                                userData.gameData.level = Number(userData.level);
+                            }
                             applyLoadedGameData(userData.gameData);
                         } else {
-                            applyLoadedGameData(getDefaultGameData());
+                            const def = getDefaultGameData();
+                            if (userData.level) def.level = Number(userData.level);
+                            applyLoadedGameData(def);
                         }
                         closeLoginModal();
                         updateUserBadgeUI();
@@ -11689,7 +11700,7 @@
                 lastRouletteSpinTime: lastRouletteSpinTime || 0,
                 alienQuestDone: isAlienEventStarted() ? (alienQuestDone || false) : false,
                 swordTier: (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0].tier : 0,
-                adminSwords: (typeof adminSwords !== 'undefined' && adminSwords[0]) ? [{ id: adminSwords[0].id, tier: adminSwords[0].tier }] : undefined,
+                adminSwords: (typeof adminSwords !== 'undefined' && adminSwords[0]) ? [{ id: adminSwords[0].id, tier: adminSwords[0].tier }] : [],
                 adminSwordTier: (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0].tier : 0
             };
         }
@@ -12790,6 +12801,35 @@
             currentGuildData = null;
         }
 
+        async function syncMyGuildMemberLevel() {
+            if (!currentGuildId || !db || !currentUser || !level) return;
+            try {
+                const guildRef = db.collection('guilds').doc(currentGuildId);
+                const snap = await guildRef.get();
+                if (!snap.exists) return;
+                const gData = snap.data();
+                const members = Array.isArray(gData.members) ? gData.members : [];
+                const cleanUser = currentUser.trim().toLowerCase();
+                const me = members.find(m => m.username && m.username.trim().toLowerCase() === cleanUser);
+                if (me && (Number(me.level) !== Number(level))) {
+                    me.level = level;
+                    me.lastSaved = Date.now();
+                    const newTotalLevel = members.reduce((sum, m) => sum + (Number(m.level) || 1), 0);
+                    await guildRef.update({
+                        members: members,
+                        totalLevel: newTotalLevel
+                    });
+                    if (currentGuildData && currentGuildData.id === currentGuildId) {
+                        currentGuildData.members = members;
+                        currentGuildData.totalLevel = newTotalLevel;
+                        renderMyGuildView();
+                    }
+                }
+            } catch (err) {
+                console.warn('Sync guild level fail:', err);
+            }
+        }
+
         async function refreshGuildStatus() {
             const loading = document.getElementById('guild-loading');
             const noView = document.getElementById('guild-no-guild-view');
@@ -12852,6 +12892,7 @@
 
                     listenToCurrentGuild(validGuildDoc.id);
                     renderMyGuildView();
+                    syncMyGuildMemberLevel();
                     return;
                 }
 
@@ -13074,6 +13115,7 @@
                     guildId: newGuildId,
                     guildName: name
                 }, { merge: true });
+                saveGame(true);
 
                 currentGuildId = newGuildId;
                 currentGuildData = newGuild;
@@ -13921,8 +13963,14 @@
         }
 
         async function loadGame() {
-            // 로컬 데이터 우선 로드
-            const saved = localStorage.getItem('treeGameSave');
+            // 로컬 데이터 우선 로드 (현재 유저 전용 세이브 우선)
+            let saved = null;
+            if (currentUser) {
+                saved = localStorage.getItem('treeGameSave_' + currentUser.toLowerCase());
+            }
+            if (!saved) {
+                saved = localStorage.getItem('treeGameSave');
+            }
             if (saved) {
                 try {
                     const data = JSON.parse(saved);
@@ -13963,6 +14011,9 @@
                             } else if (isUserCgim(currentUser)) {
                                 userData.gameData.level = 95;
                                 userData.gameData.maxXp = Math.floor(20 * Math.pow(1.095, 94));
+                            }
+                            if (userData.level && Number(userData.level) > Number(userData.gameData.level || 0)) {
+                                userData.gameData.level = Number(userData.level);
                             }
                             applyLoadedGameData(userData.gameData);
                         }
