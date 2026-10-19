@@ -4684,7 +4684,7 @@
                             uLevel = 289;
                         } else if (isUserCgim(uname) || isUserCgim(doc.id)) {
                             uLevel = 95;
-                        } else if (uLevel >= 10000 || (uLevel === 1 && estimateLegitLevel(d.gameData || d) > 1)) {
+                        } else if (uLevel >= 10000) {
                             uLevel = estimateLegitLevel(d.gameData || d);
                         }
                         const uXp = Number((d.gameData && d.gameData.xp) || 0);
@@ -4711,7 +4711,7 @@
             const isCurrentAdmin = isAdmin() || (currentUser && currentUser.toLowerCase() === 'adminaccount');
             if (currentUser && !isCurrentAdmin) {
                 let effectiveLevel = isTargetNamuSajang(currentUser) ? 289 : (isUserCgim(currentUser) ? 95 : level);
-                if (effectiveLevel >= 10000 || (effectiveLevel === 1 && estimateLegitLevel(getSaveData()) > 1)) {
+                if (effectiveLevel >= 10000) {
                     effectiveLevel = estimateLegitLevel(getSaveData());
                 }
                 rankersMap.set(currentUser.toLowerCase(), {
@@ -8737,8 +8737,7 @@
                 else if (treesList.includes('fire')) est = Math.max(est, 3);
             }
 
-            // 3. 수집품 기준 복구
-            if (gData.fossilCollection && gData.fossilCollection.length > 0) est = Math.max(est, 95);
+            // 3. 수집품 기준 보정
             if (gData.caveCollection && gData.caveCollection.length > 0) est = Math.max(est, 85);
             if (gData.fishCollection && gData.fishCollection.length > 0) est = Math.max(est, 65);
             if (gData.radioactiveCollection && gData.radioactiveCollection.length > 0) est = Math.max(est, 50);
@@ -8759,10 +8758,10 @@
             // 5. 도끼 보유 레벨 기준 보정
             const axes = gData.ownedAxes || [];
             const eqAxe = Number(gData.equippedAxe || gData.axeLevel || 0);
-            if (axes.includes(4) || eqAxe === 4) est = Math.max(est, 40);
-            else if (axes.includes(3) || eqAxe === 3) est = Math.max(est, 25);
-            else if (axes.includes(2) || eqAxe === 2) est = Math.max(est, 15);
-            else if (axes.includes(1) || eqAxe === 1) est = Math.max(est, 5);
+            if (axes.includes(4) || eqAxe === 4) est = Math.max(est, 35);
+            else if (axes.includes(3) || eqAxe === 3) est = Math.max(est, 20);
+            else if (axes.includes(2) || eqAxe === 2) est = Math.max(est, 10);
+            else if (axes.includes(1) || eqAxe === 1) est = Math.max(est, 3);
 
             // 6. 검 강화 티어 기준 보정
             const swTier = Number(gData.swordTier || gData.adminSwordTier || 0);
@@ -8773,18 +8772,13 @@
 
             // 7. 자산 기준 가산
             const m = Number(gData.money || 0);
-            if (m >= 15000000) est = Math.max(est, 90);
-            else if (m >= 5000000) est = Math.max(est, 70);
+            if (m >= 15000000) est = Math.max(est, 85);
+            else if (m >= 5000000) est = Math.max(est, 65);
             else if (m >= 1000000) est = Math.max(est, 50);
-            else if (m >= 100000) est = Math.max(est, 30);
-            else if (m >= 10000) est = Math.max(est, 15);
-
-            // 8. 10000레벨 버그 후 1레벨로 초기화되었던 유저 구제 (활동 이력이 있는 경우 최소 35레벨 보장)
-            if (est <= 1) {
-                if (m > 500 || Object.keys(inv).length > 0 || (gData.ownedSkins && gData.ownedSkins.length > 1) || axes.length > 0) {
-                    est = 35;
-                }
-            }
+            else if (m >= 500000) est = Math.max(est, 35);
+            else if (m >= 50000) est = Math.max(est, 20);
+            else if (m >= 3000) est = Math.max(est, 10);
+            else if (m >= 500) est = Math.max(est, 3);
 
             return Math.min(est, 120);
         }
