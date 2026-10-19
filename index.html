@@ -11479,6 +11479,7 @@
             resetGameToDefault();
             stopTradeIncomingListener();
             stopBattleIncomingListener();
+            if (typeof stopGuildListeners === 'function') stopGuildListeners();
             if (inPvpArena) exitPvpArena();
             closeAdminSwordModal();
             closeAdminPanelModal();
@@ -11620,6 +11621,8 @@
                         updateUserBadgeUI();
                         startTradeIncomingListener();
                         startBattleIncomingListener();
+                        if (typeof stopGuildListeners === 'function') stopGuildListeners();
+                        if (typeof refreshGuildStatus === 'function') refreshGuildStatus();
                         saveGame();
                         floatTexts.push({ x: player.x, y: player.y - 100, text: `✨ [${username}] 로그인 성공!`, color: '#2ecc71', life: 100, size: 20 });
                     } else {
@@ -11642,6 +11645,8 @@
                     updateUserBadgeUI();
                     startTradeIncomingListener();
                     startBattleIncomingListener();
+                    if (typeof stopGuildListeners === 'function') stopGuildListeners();
+                    if (typeof refreshGuildStatus === 'function') refreshGuildStatus();
                     saveGame();
                     floatTexts.push({ x: player.x, y: player.y - 100, text: `🎉 [${username}] 신규 계정 생성 완료! (LV. 1)`, color: '#38bdf8', life: 100, size: 20 });
                 }
@@ -12772,6 +12777,19 @@
             closeGuildMemberActionModal();
         }
 
+        function stopGuildListeners() {
+            if (unsubscribeGuildSnapshot) {
+                unsubscribeGuildSnapshot();
+                unsubscribeGuildSnapshot = null;
+            }
+            if (unsubscribeGuildChat) {
+                unsubscribeGuildChat();
+                unsubscribeGuildChat = null;
+            }
+            currentGuildId = null;
+            currentGuildData = null;
+        }
+
         async function refreshGuildStatus() {
             const loading = document.getElementById('guild-loading');
             const noView = document.getElementById('guild-no-guild-view');
@@ -12781,45 +12799,75 @@
             if (myView) myView.style.display = 'none';
 
             if (!currentUser || !db) {
+                stopGuildListeners();
                 renderNoGuildView();
                 return;
             }
 
+            const cleanUser = currentUser.trim().toLowerCase();
+
             try {
-                const userDoc = await db.collection('users').doc(currentUser.toLowerCase()).get();
-                let gId = null;
-                if (userDoc.exists && userDoc.data().guildId) {
-                    gId = userDoc.data().guildId;
+                // 1. 유저 문서의 guildId 확인
+                const userDoc = await db.collection('users').doc(cleanUser).get();
+                let candidateGuildId = (userDoc.exists && userDoc.data().guildId) ? userDoc.data().guildId : null;
+
+                let validGuildDoc = null;
+
+                // 2. 만약 guildId가 있다면 실제 존재하는 길드이며 currentUser가 members에 포함되어 있는지 엄격히 검증
+                if (candidateGuildId) {
+                    const checkDoc = await db.collection('guilds').doc(candidateGuildId).get();
+                    if (checkDoc.exists) {
+                        const members = Array.isArray(checkDoc.data().members) ? checkDoc.data().members : [];
+                        const isMember = members.some(m => m.username && m.username.trim().toLowerCase() === cleanUser);
+                        if (isMember) {
+                            validGuildDoc = checkDoc;
+                        }
+                    }
                 }
 
-                if (!gId) {
+                // 3. 만약 검증되지 않았다면 전체 길드를 스캔하여 currentUser가 멤버로 등록된 길드가 있는지 탐색
+                if (!validGuildDoc) {
                     const snap = await db.collection('guilds').get();
                     snap.forEach(doc => {
                         const data = doc.data();
                         const members = Array.isArray(data.members) ? data.members : [];
-                        if (members.some(m => m.username && m.username.toLowerCase() === currentUser.toLowerCase())) {
-                            gId = doc.id;
+                        if (members.some(m => m.username && m.username.trim().toLowerCase() === cleanUser)) {
+                            validGuildDoc = doc;
                         }
                     });
                 }
 
-                if (gId) {
-                    currentGuildId = gId;
-                    const gDoc = await db.collection('guilds').doc(gId).get();
-                    if (gDoc.exists) {
-                        currentGuildData = gDoc.data();
-                        currentGuildData.id = gDoc.id;
-                        listenToCurrentGuild(gId);
-                        renderMyGuildView();
-                        return;
-                    }
+                // 4. 유효한 소속 길드가 확인된 경우
+                if (validGuildDoc && validGuildDoc.exists) {
+                    const gData = validGuildDoc.data();
+                    gData.id = validGuildDoc.id;
+                    currentGuildId = validGuildDoc.id;
+                    currentGuildData = gData;
+
+                    // 유저 문서 최신화 (동기화)
+                    await db.collection('users').doc(cleanUser).set({
+                        guildId: validGuildDoc.id,
+                        guildName: gData.name
+                    }, { merge: true }).catch(() => {});
+
+                    listenToCurrentGuild(validGuildDoc.id);
+                    renderMyGuildView();
+                    return;
                 }
 
-                currentGuildId = null;
-                currentGuildData = null;
+                // 5. 소속된 길드가 없는 경우: 유저 문서에 남아있던 잘못된/만료된 guildId 정리
+                if (candidateGuildId) {
+                    await db.collection('users').doc(cleanUser).update({
+                        guildId: null,
+                        guildName: null
+                    }).catch(() => {});
+                }
+
+                stopGuildListeners();
                 renderNoGuildView();
             } catch (err) {
                 console.error('Refresh guild status error:', err);
+                stopGuildListeners();
                 renderNoGuildView();
             }
         }
@@ -13056,9 +13104,13 @@
                 alert(`길드에 가입하려면 50레벨 이상이어야 합니다!\n(현재 내 레벨: LV. ${level})`);
                 return;
             }
-            if (currentGuildId) {
-                alert('이미 소속된 길드가 있습니다! 탈퇴 후 신청해주세요.');
-                return;
+            if (currentGuildId && currentGuildData) {
+                const curMembers = Array.isArray(currentGuildData.members) ? currentGuildData.members : [];
+                const isMember = curMembers.some(m => m.username && m.username.trim().toLowerCase() === currentUser.trim().toLowerCase());
+                if (isMember) {
+                    alert('이미 소속된 길드가 있습니다! 탈퇴 후 신청해주세요.');
+                    return;
+                }
             }
             try {
                 const guildRef = db.collection('guilds').doc(guildId);
@@ -13099,28 +13151,49 @@
                 unsubscribeGuildSnapshot();
                 unsubscribeGuildSnapshot = null;
             }
-            if (!guildId || !db) return;
+            if (!guildId || !db || !currentUser) return;
 
-            unsubscribeGuildSnapshot = db.collection('guilds').doc(guildId).onSnapshot(doc => {
+            let isInitialSnapshot = true;
+            const listenerUser = currentUser.trim().toLowerCase();
+
+            unsubscribeGuildSnapshot = db.collection('guilds').doc(guildId).onSnapshot(async doc => {
                 if (!doc.exists) {
-                    currentGuildId = null;
-                    currentGuildData = null;
-                    renderNoGuildView();
-                    return;
-                }
-                currentGuildData = doc.data();
-                currentGuildData.id = doc.id;
-                
-                const members = Array.isArray(currentGuildData.members) ? currentGuildData.members : [];
-                const isStillMember = members.some(m => m.username && currentUser && m.username.toLowerCase() === currentUser.toLowerCase());
-                if (!isStillMember) {
-                    currentGuildId = null;
-                    currentGuildData = null;
-                    alert('길드에서 제외되었거나 길드가 해체되었습니다.');
+                    stopGuildListeners();
+                    if (currentUser) {
+                        await db.collection('users').doc(listenerUser).update({
+                            guildId: null,
+                            guildName: null
+                        }).catch(() => {});
+                    }
+                    if (!isInitialSnapshot) {
+                        alert('소속된 길드가 해체되었습니다.');
+                    }
                     renderNoGuildView();
                     return;
                 }
 
+                const gData = doc.data();
+                gData.id = doc.id;
+                const members = Array.isArray(gData.members) ? gData.members : [];
+                const isStillMember = members.some(m => m.username && m.username.trim().toLowerCase() === listenerUser);
+
+                if (!isStillMember) {
+                    stopGuildListeners();
+                    if (currentUser) {
+                        await db.collection('users').doc(listenerUser).update({
+                            guildId: null,
+                            guildName: null
+                        }).catch(() => {});
+                    }
+                    if (!isInitialSnapshot) {
+                        alert('길드에서 제외(추방)되었습니다.');
+                    }
+                    renderNoGuildView();
+                    return;
+                }
+
+                currentGuildData = gData;
+                isInitialSnapshot = false;
                 renderMyGuildView();
             }, err => console.warn('Guild snapshot listen error:', err));
         }
@@ -13801,15 +13874,15 @@
                 }
                 if (!confirm('💥 혼자 남은 길드를 정말 [해체]하시겠습니까?\n길드의 모든 데이터와 퀘스트 진행도가 영구 삭제됩니다.')) return;
                 try {
-                    await db.collection('guilds').doc(currentGuildId).delete();
+                    const targetGuildId = currentGuildId;
+                    stopGuildListeners();
+
+                    await db.collection('guilds').doc(targetGuildId).delete();
                     await db.collection('users').doc(currentUser.toLowerCase()).update({
                         guildId: null,
                         guildName: null
-                    });
-                    currentGuildId = null;
-                    currentGuildData = null;
-                    if (unsubscribeGuildSnapshot) { unsubscribeGuildSnapshot(); unsubscribeGuildSnapshot = null; }
-                    if (unsubscribeGuildChat) { unsubscribeGuildChat(); unsubscribeGuildChat = null; }
+                    }).catch(() => {});
+
                     alert('길드가 해체되었습니다.');
                     renderNoGuildView();
                 } catch (err) {
@@ -13819,7 +13892,10 @@
             } else {
                 if (!confirm('🚪 정말로 길드를 탈퇴하시겠습니까?')) return;
                 try {
-                    const guildRef = db.collection('guilds').doc(currentGuildId);
+                    const targetGuildId = currentGuildId;
+                    stopGuildListeners();
+
+                    const guildRef = db.collection('guilds').doc(targetGuildId);
                     const snap = await guildRef.get();
                     if (snap.exists) {
                         let gMembers = snap.data().members || [];
@@ -13833,11 +13909,8 @@
                     await db.collection('users').doc(currentUser.toLowerCase()).update({
                         guildId: null,
                         guildName: null
-                    });
-                    currentGuildId = null;
-                    currentGuildData = null;
-                    if (unsubscribeGuildSnapshot) { unsubscribeGuildSnapshot(); unsubscribeGuildSnapshot = null; }
-                    if (unsubscribeGuildChat) { unsubscribeGuildChat(); unsubscribeGuildChat = null; }
+                    }).catch(() => {});
+
                     alert('길드에서 탈퇴했습니다.');
                     renderNoGuildView();
                 } catch (err) {
