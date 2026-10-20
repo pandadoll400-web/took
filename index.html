@@ -1052,6 +1052,37 @@
             <button class="close-btn" onclick="document.getElementById('halloween-modal').style.display='none'" style="background: #4a235a; border: 1px solid #8e44ad;">닫기</button>
         </div>
 
+        <!-- 🚀🌌 우주 도감 모달 (외계인 부품 & 우주비행사 스킨) -->
+        <div id="space-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #0f172a, #050510); color: white; padding: 22px 18px; border-radius: 18px; width: 88%; max-width: 440px; max-height: 82%; overflow-y: auto; display: none; border: 2px solid #00f2fe; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(0, 242, 254, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(0, 242, 254, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 26px;">🚀🌌</span>
+                    <div>
+                        <h2 style="margin: 0; color: #00f2fe; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">우주 도감</h2>
+                        <span style="font-size: 11px; color: #94a3b8;">우주 나무에서 외계인 부품을 모아 우주비행사 스킨 해금</span>
+                    </div>
+                </div>
+                <button onclick="closeSpaceIndex()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
+            </div>
+            <p style="text-align: center; font-size: 13px; color: #cbd5e1; margin-bottom: 12px; line-height: 1.45;">
+                우주 나무에서 나오는 6종의 외계인 부품을 모두 수집하면<br>
+                <b style="color: #00f2fe;">[👨‍🚀 우주비행사] 스킨</b>을 드립니다!
+            </p>
+            <div id="space-progress" style="text-align: center; margin-bottom: 14px; font-weight: bold; color: #f1c40f; font-size: 15px;">진행도: 0 / 6</div>
+            <div class="grid" id="space-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;"></div>
+
+            <!-- 다른 도감 바로가기 -->
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 12px;">
+                <button onclick="closeSpaceIndex(); document.getElementById('radioactive-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; color: #2ecc71; border-radius: 5px; cursor: pointer;">🍏 과일 도감</button>
+                <button onclick="closeSpaceIndex(); document.getElementById('ocean-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(9, 132, 227, 0.2); border: 1px solid #0984e3; color: #74b9ff; border-radius: 5px; cursor: pointer;">🐟 해양 도감</button>
+                <button onclick="closeSpaceIndex(); document.getElementById('cave-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(178, 190, 195, 0.2); border: 1px solid #b2bec3; color: #dfe6e9; border-radius: 5px; cursor: pointer;">🪨 암석 도감</button>
+                <button onclick="closeSpaceIndex(); document.getElementById('halloween-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(243, 156, 18, 0.2); border: 1px solid #f39c12; color: #f1c40f; border-radius: 5px; cursor: pointer;">🎃 할로윈 도감</button>
+                <button onclick="closeSpaceIndex(); openFossilCodexModal();" style="padding: 4px 8px; font-size: 10px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 5px; cursor: pointer;">🦴 화석 도감</button>
+            </div>
+
+            <button class="close-btn" onclick="closeSpaceIndex()" style="background: linear-gradient(135deg, #0984e3, #00cec9); border: none; padding: 11px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 14px; color: white; cursor: pointer; box-shadow: 0 4px 14px rgba(0, 206, 201, 0.4);">닫기</button>
+        </div>
+
         <!-- 🐾 [ADMIN] 얼음 지형 고급 펫 머신 / 상점 모달 (Pet System Lab & Synthesis) -->
         <!-- 🐾 [ADMIN] 얼음 지형 스킨 펫 융합 머신 (상점) -->
         <div id="pet-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #0f172a, #090d16); color: white; padding: 22px 20px; border-radius: 20px; width: 94%; max-width: 480px; max-height: 88%; overflow-y: auto; display: none; border: 2px solid #f1c40f; z-index: 60; box-shadow: 0 16px 50px rgba(0,0,0,0.95), 0 0 35px rgba(241, 196, 15, 0.35); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
@@ -1255,6 +1286,7 @@
                 <button onclick="closeFossilCodexModal(); document.getElementById('ocean-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(9, 132, 227, 0.2); border: 1px solid #0984e3; color: #74b9ff; border-radius: 5px; cursor: pointer;">🐟 해양 도감</button>
                 <button onclick="closeFossilCodexModal(); document.getElementById('cave-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(178, 190, 195, 0.2); border: 1px solid #b2bec3; color: #dfe6e9; border-radius: 5px; cursor: pointer;">🪨 암석 도감</button>
                 <button onclick="closeFossilCodexModal(); document.getElementById('halloween-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(243, 156, 18, 0.2); border: 1px solid #f39c12; color: #f1c40f; border-radius: 5px; cursor: pointer;">🎃 할로윈 도감</button>
+                <button onclick="closeFossilCodexModal(); openSpaceIndex();" style="padding: 4px 8px; font-size: 10px; background: rgba(0, 242, 254, 0.2); border: 1px solid #00f2fe; color: #00f2fe; border-radius: 5px; cursor: pointer;">🚀 우주 도감</button>
             </div>
         </div>
 
@@ -8107,6 +8139,9 @@
                         } else if (shop.type === 'halloween') {
                             openHalloweenIndex();
                             return;
+                        } else if (shop.type === 'space') {
+                            openSpaceIndex();
+                            return;
                         }
                     }
                 }
@@ -8133,11 +8168,6 @@
             });
 
             if (target) {
-                if (target.type === 'space') {
-                    const text = isAlienEventStarted() ? `🌌 다음 업데이트때 공개!` : `🔒 오늘 10시 공개!`;
-                    floatTexts.push({ x: target.x, y: target.y - 120, text: text, color: '#a29bfe', life: 70, size: 22 });
-                    return;
-                }
                 if (target.id === 'ice_canyon' && !isAdmin()) {
                     floatTexts.push({ x: target.x, y: target.y - 100, text: `🔒 관리자(ADMIN) 전용 나무입니다!`, color: '#38bdf8', life: 70 });
                     return;
@@ -8293,6 +8323,19 @@
             { chance: 0.30, name: '일반', price: 2000, xp: 50, color: '#ecf0f1', items: ['하얀호박'] },
             { chance: 0.09, name: '전설', price: 15000, xp: 300, color: '#f1c40f', items: ['잭오랜턴'] },
             { chance: 0.01, name: '불멸', price: 300000, xp: 5000, color: '#95a5a6', items: ['깨진호박'] }
+        ];
+
+        // 🌌 우주 지형 드롭 테이블 (외계인 부품 6종: 60%, 15%, 10%, 9%, 3%, 3% = 100%)
+        const spaceAlienItemNames = ['외계인 팔', '외계인 다리', '외계인 손', '외계인의 몸체', '외계인의 머리', '외계인의 봉'];
+        let spaceCollection = [];
+
+        const spaceDropTables = [
+            { chance: 0.60, name: '일반', price: 10000, xp: 200, color: '#00cec9', items: ['외계인 팔'] },
+            { chance: 0.15, name: '희귀', price: 30000, xp: 500, color: '#0984e3', items: ['외계인 다리'] },
+            { chance: 0.10, name: '에픽', price: 60000, xp: 1000, color: '#a29bfe', items: ['외계인 손'] },
+            { chance: 0.09, name: '전설', price: 100000, xp: 2000, color: '#fdcb6e', items: ['외계인의 몸체'] },
+            { chance: 0.03, name: '신화', price: 250000, xp: 5000, color: '#ff7675', items: ['외계인의 머리'] },
+            { chance: 0.03, name: '초월', price: 500000, xp: 10000, color: '#e84393', items: ['외계인의 봉'] }
         ];
 
 
@@ -8487,6 +8530,75 @@
                 updateShopSkinUI();
                 updateInvSkinUI();
                 openHalloweenIndex();
+                saveGame();
+            }
+        }
+
+        // 🚀🌌 우주 도감 모달 컨트롤 함수들
+        function openSpaceIndex() {
+            const modal = document.getElementById('space-modal');
+            if (!modal) return;
+            modal.style.display = 'block';
+            resetJoyMouse();
+            player.targetTree = null;
+
+            const grid = document.getElementById('space-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            let count = 0;
+            const itemIcons = {
+                '외계인 팔': '🦾',
+                '외계인 다리': '🦵',
+                '외계인 손': '🖐️',
+                '외계인의 몸체': '🫀',
+                '외계인의 머리': '👽',
+                '외계인의 봉': '🪄'
+            };
+
+            spaceAlienItemNames.forEach(item => {
+                const collected = (inventory[item] > 0);
+                if (collected) count++;
+                const color = collected ? '#00f2fe' : '#555';
+                const name = collected ? item : '???';
+                const icon = collected ? (itemIcons[item] || '✨') : '❓';
+                const countText = collected ? `보유: ${inventory[item]}개` : '미보유';
+
+                grid.innerHTML += `
+                    <div class="grid-item" style="border: 2px solid ${color}; color: ${collected ? '#fff' : '#777'}; background: rgba(15, 23, 42, 0.7); border-radius: 10px; padding: 10px 4px; text-align: center;">
+                        <div style="font-size: 22px; margin-bottom: 4px;">${icon}</div>
+                        <strong style="color:${color}; font-size: 11.5px;">${name}</strong><br>
+                        <span style="font-size: 10px; color: ${collected ? '#4ade80' : '#64748b'};">${countText}</span>
+                    </div>
+                `;
+            });
+
+            const progressHtml = `진행도: ${count} / 6`;
+            let extraBtn = '';
+
+            if (count >= 6 && !ownedSkins.includes('astronaut')) {
+                extraBtn = `<br><button onclick="claimSpaceSkin()" style="margin-top:12px; background: linear-gradient(135deg, #00f2fe, #0984e3); color:white; padding:10px 20px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:14px; box-shadow: 0 4px 14px rgba(0, 242, 254, 0.5);">👨‍🚀 우주비행사 스킨 획득하기!</button>`;
+            } else if (ownedSkins.includes('astronaut')) {
+                extraBtn = `<br><div style="margin-top:10px; color:#4ade80; font-weight:bold; font-size: 12.5px;">✨ [우주비행사] 스킨 보유 중!</div>`;
+            }
+            document.getElementById('space-progress').innerHTML = progressHtml + extraBtn;
+        }
+
+        function closeSpaceIndex() {
+            const modal = document.getElementById('space-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function claimSpaceSkin() {
+            let count = 0;
+            spaceAlienItemNames.forEach(item => { if (inventory[item] > 0) count++; });
+            if (count >= 6 && !ownedSkins.includes('astronaut')) {
+                ownedSkins.push('astronaut');
+                floatTexts.push({ x: player.x, y: player.y - 100, text: `👨‍🚀 [우주비행사] 스킨 획득!`, color: '#00f2fe', life: 110, size: 22 });
+                alert("🎉 [우주 도감 올클리어!]\n\n우주 지형의 6종 외계인 부품/봉을 모두 수집하여\n전설의 [👨‍🚀 우주비행사] 스킨을 획득했습니다!\n\n인벤토리 스킨 탭 및 펫 머신에서 착용/융합해보세요!");
+                updateShopSkinUI();
+                updateInvSkinUI();
+                openSpaceIndex();
                 saveGame();
             }
         }
@@ -8942,7 +9054,7 @@
                 if (fossil) return fossil.color;
             }
             let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '').replace('동굴 ', '').replace('할로윈 ', '');
-            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables];
+            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables, ...spaceDropTables];
             for (let t of tables) {
                 if (t.items.includes(baseName)) return t.color;
             }
@@ -9137,7 +9249,8 @@
             { id: 'penguin', name: '꼬마 펭귄', price: 15000, icon: '🐧', adminOnly: true },
             { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, adminOnly: true },
             { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true },
-            { id: 'cerberus', name: '케르베로스', price: 0, icon: '🐺🔥', isReward: true }
+            { id: 'cerberus', name: '케르베로스', price: 0, icon: '🐺🔥', isReward: true },
+            { id: 'astronaut', name: '우주비행사', price: 0, icon: '👨‍🚀', isReward: true }
         ];
 
         function updateShopSkinUI() {
@@ -9421,7 +9534,7 @@
             {
                 id: 'space', type: 'space', x: GAME_WIDTH / 2, y: -7650, radius: 200, trunkRadius: 75,
                 progress: 0, maxProgress: 500, shakeAngle: 0,
-                unlocked: false, price: 0, reqLevel: 105, color1: '#000000', color2: '#2c003e', drops: [0, 0] 
+                unlocked: true, price: 0, reqLevel: 105, color1: '#000000', color2: '#2c003e', drops: [10, 16] 
             },
             {
                 id: 'ice_canyon', type: 'ice_canyon', x: 350, y: -8590, radius: 100, trunkRadius: 40,
@@ -9446,7 +9559,8 @@
             { type: 'radioactive', name: '방사능 상점', x: 420, y: -4300, frontX: shopFrontX, queueY: -4150, queue: [] },
             { type: 'ocean', name: '바다 상점', x: 420, y: -5300, frontX: shopFrontX, queueY: -5150, queue: [] },
             { type: 'cave', name: '동굴 상점', x: 420, y: -6300, frontX: shopFrontX, queueY: -6150, queue: [] },
-            { type: 'halloween', name: '할로윈 상점', x: 420, y: 1680, frontX: shopFrontX, queueY: 1820, queue: [] }
+            { type: 'halloween', name: '할로윈 상점', x: 420, y: 1680, frontX: shopFrontX, queueY: 1820, queue: [] },
+            { type: 'space', name: '우주 상점', x: 420, y: -7300, frontX: shopFrontX, queueY: -7150, queue: [] }
         ];
 
         // 호박 융합 (퓨즈) 건물 (할로윈 맵 하단 Y: 2050에 살짝 가로로 넓게 배치)
@@ -9468,6 +9582,7 @@
         shops[6].roofColor = '#00cec9'; shops[6].wallColor = '#0984e3';
         shops[7].roofColor = '#636e72'; shops[7].wallColor = '#2d3436';
         shops[8].roofColor = '#8e44ad'; shops[8].wallColor = '#e67e22';
+        shops[9].roofColor = '#00f2fe'; shops[9].wallColor = '#1e272e';
 
         // Firebase 연동 및 계정 관리
         const firebaseConfig = {
@@ -9620,6 +9735,13 @@
                 });
             }
 
+            // 우주 외계인 부품 6종 각 99개 충전
+            if (typeof spaceAlienItemNames !== 'undefined') {
+                spaceAlienItemNames.forEach(name => {
+                    adminInventory[name] = 99;
+                });
+            }
+
             const allSkinIds = skinsData.map(s => s.id);
 
             return {
@@ -9635,6 +9757,7 @@
                 fishCollection: [...oceanFishNames],
                 radioactiveCollection: [...baseFruitNames],
                 caveCollection: [...caveStoneNames],
+                spaceCollection: (typeof spaceAlienItemNames !== 'undefined') ? [...spaceAlienItemNames] : [],
                 fossilCollection: (typeof FOSSIL_ITEMS !== 'undefined') ? FOSSIL_ITEMS.map(f => f.name) : [],
                 rocketLaunched: true,
                 fuseSlots: [null, null, null],
@@ -9712,6 +9835,10 @@
             fishCollection = [...data.fishCollection];
             radioactiveCollection = [...data.radioactiveCollection];
             caveCollection = [...data.caveCollection];
+            if (typeof spaceAlienItemNames !== 'undefined') {
+                spaceCollection = [...spaceAlienItemNames];
+                try { localStorage.setItem('space_collection', JSON.stringify(spaceCollection)); } catch(e) {}
+            }
             if (typeof FOSSIL_ITEMS !== 'undefined') {
                 fossilCollection = FOSSIL_ITEMS.map(f => f.name);
                 try { localStorage.setItem('fossil_collection', JSON.stringify(fossilCollection)); } catch(e) {}
@@ -12065,6 +12192,7 @@
                 fishCollection: fishCollection,
                 radioactiveCollection: radioactiveCollection,
                 caveCollection: caveCollection,
+                spaceCollection: (typeof spaceCollection !== 'undefined') ? spaceCollection : [],
                 fossilCollection: (typeof fossilCollection !== 'undefined') ? fossilCollection : [],
                 hasHalloweenTeleporter: !!hasHalloweenTeleporter,
                 rocketLaunched: rocket.launched,
@@ -12121,6 +12249,7 @@
             fishCollection = data.fishCollection ? [...data.fishCollection] : [];
             radioactiveCollection = data.radioactiveCollection ? [...data.radioactiveCollection] : [];
             caveCollection = data.caveCollection ? [...data.caveCollection] : [];
+            spaceCollection = data.spaceCollection ? [...data.spaceCollection] : [];
             if (data.fossilCollection) {
                 fossilCollection = [...data.fossilCollection];
             }
@@ -14650,6 +14779,7 @@
         setInterval(saveGame, 1000);
 
         function getTables(type) {
+            if (type === 'space') return spaceDropTables;
             if (type === 'halloween') return halloweenDropTables;
             if (type === 'ocean') return oceanDropTables;
             if (type === 'radioactive') return radioactiveDropTables;
@@ -14688,7 +14818,15 @@
             let fruit, amount, reward;
             let customerSkin = null;
 
-            if (type === 'halloween') {
+            if (type === 'space') {
+                let tables = spaceDropTables;
+                let r = Math.random(), cum = 0, tier = tables[0];
+                for (let t of tables) { cum += t.chance; if (r <= cum) { tier = t; break; } }
+                fruit = tier.items[0];
+                amount = Math.floor(Math.random() * 2) + 1; // 1~2개 구매
+                reward = tier.price * amount;
+                customerSkin = 'astronaut'; // "상점 주민들은 우주복 입고"
+            } else if (type === 'halloween') {
                 const pumpkinChoices = [
                     { item: '주황호박', price: 2000 },
                     { item: '초록호박', price: 2000 },
@@ -14740,8 +14878,8 @@
             if(data) {
                 let trait = '';
                 let traitType = null;
-                // 일반 및 할로윈 지형 빼고 나무에서 떨어질 때 35% 확률로 특성 부여
-                if (type !== 'normal' && type !== 'halloween' && Math.random() < 0.35) {
+                // 일반, 할로윈, 우주 지형 빼고 나무에서 떨어질 때 35% 확률로 특성 부여
+                if (type !== 'normal' && type !== 'halloween' && type !== 'space' && Math.random() < 0.35) {
                     traitType = type;
                     if (type === 'fire') trait = '불꽃 ';
                     else if (type === 'twisted') trait = '뒤틀린 ';
@@ -14790,6 +14928,7 @@
             if (document.getElementById('sword-modal') && document.getElementById('sword-modal').style.display === 'block') return;
             if (document.getElementById('fossil-rock-modal') && document.getElementById('fossil-rock-modal').style.display === 'block') return;
             if (document.getElementById('pet-machine-modal') && document.getElementById('pet-machine-modal').style.display === 'block') return;
+            if (document.getElementById('space-modal') && document.getElementById('space-modal').style.display === 'block') return;
 
             // 👑 어드민 스토리 퀘스트: 할로윈 지형 원숭이 10마리 침공 & 미친 박사 난입 업데이트
             if (isAdmin() && (adminGorillaStoryStage === 'earth_monkeys_invading' || adminGorillaStoryStage === 'earth_mad_doctor_rescues')) {
@@ -14988,6 +15127,11 @@
                         if (baseName === '깨진호박') {
                             floatTexts.push({ x: player.x, y: player.y - 80, text: `🎃 불멸: 깨진호박 획득! (사신 스킨 해금 가능)`, color: '#8e44ad', life: 90 });
                         }
+                        if (spaceAlienItemNames.includes(baseName) && !spaceCollection.includes(baseName)) {
+                            spaceCollection.push(baseName);
+                            try { localStorage.setItem('space_collection', JSON.stringify(spaceCollection)); } catch(e) {}
+                            floatTexts.push({ x: player.x, y: player.y - 80, text: `🚀 우주 도감 등록: ${baseName}!`, color: '#00f2fe', life: 70 });
+                        }
                         floatTexts.push({ x: player.x, y: player.y - 40, text: `+${f.fruit}`, color: f.color, life: 40 });
                         addXp(f.xp, player.x + 20, player.y - 60);
                         fruitsOnGround.splice(i, 1); continue;
@@ -15053,7 +15197,7 @@
                             
                             // 주울 때와 완전히 동일한 XP 지급!
                             let baseItemXp = 2; // 기본값
-                            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables];
+                            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables, ...spaceDropTables];
                             for (let t of tables) { if (t.items.includes(baseName)) { baseItemXp = t.xp; break; } }
                             let earnedXp = firstC.amount * baseItemXp;
                             
@@ -15244,6 +15388,173 @@
                 // 후드 옷깃 장식
                 ctx.fillStyle = '#1e1e24';
                 ctx.beginPath(); ctx.ellipse(0, -8, 14, 5, 0, 0, Math.PI*2); ctx.fill();
+
+            } else if (useSkin === 'astronaut') {
+                // 👨‍🚀 우주비행사 스킨: 정밀 여압 우주복, 골드 미러 헬멧 바이저, 백팩 산소통, 미션 패치, 우주 부츠
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(0, 24, 18, 6, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 무중력 부유 / 걸음 보빙
+                let zeroGBob = Math.sin((walkTimer || 0) * 0.1) * 2;
+                ctx.translate(0, -bobbing + zeroGBob);
+
+                let legAngle = (walkAngle * Math.PI) / 180;
+
+                // 1. 등 뒤 생명유지장치 백팩 (Life Support System)
+                ctx.fillStyle = '#b2bec3';
+                ctx.beginPath();
+                ctx.roundRect(-15, -14, 30, 28, 4);
+                ctx.fill();
+                ctx.fillStyle = '#dfe6e9';
+                ctx.beginPath();
+                ctx.roundRect(-13, -12, 26, 24, 3);
+                ctx.fill();
+                // 백팩 산소통 2개 (Cyan / Blue)
+                ctx.fillStyle = '#0984e3';
+                ctx.beginPath();
+                ctx.roundRect(-10, -8, 8, 18, 2);
+                ctx.roundRect(2, -8, 8, 18, 2);
+                ctx.fill();
+                // 산소통 상단 금속 밸브
+                ctx.fillStyle = '#636e72';
+                ctx.fillRect(-8, -11, 4, 3);
+                ctx.fillRect(4, -11, 4, 3);
+
+                // 2. 우주복 다리 & 월면 부츠 (Thick Moon Boots)
+                // 왼다리
+                ctx.save();
+                ctx.translate(-7, 12);
+                ctx.rotate(legAngle);
+                ctx.fillStyle = '#f5f6fa';
+                ctx.fillRect(-5, 0, 10, 12);
+                ctx.fillStyle = '#00cec9';
+                ctx.fillRect(-5, 4, 10, 2.5);
+                ctx.fillStyle = '#2d3436';
+                ctx.fillRect(-6, 10, 12, 5);
+                ctx.fillStyle = '#636e72';
+                ctx.fillRect(-6, 14, 12, 2);
+                ctx.restore();
+
+                // 오른다리
+                ctx.save();
+                ctx.translate(7, 12);
+                ctx.rotate(-legAngle);
+                ctx.fillStyle = '#f5f6fa';
+                ctx.fillRect(-5, 0, 10, 12);
+                ctx.fillStyle = '#00cec9';
+                ctx.fillRect(-5, 4, 10, 2.5);
+                ctx.fillStyle = '#2d3436';
+                ctx.fillRect(-6, 10, 12, 5);
+                ctx.fillStyle = '#636e72';
+                ctx.fillRect(-6, 14, 12, 2);
+                ctx.restore();
+
+                // 3. 우주복 몸통 (Pressurized Torso)
+                let suitGrad = ctx.createLinearGradient(0, -12, 0, 14);
+                suitGrad.addColorStop(0, '#ffffff');
+                suitGrad.addColorStop(1, '#dfe6e9');
+                ctx.fillStyle = suitGrad;
+                ctx.beginPath();
+                ctx.roundRect(-16, -10, 32, 24, 6);
+                ctx.fill();
+                ctx.strokeStyle = '#b2bec3';
+                ctx.lineWidth = 1.2;
+                ctx.stroke();
+
+                // 가슴 생명유지 컨트롤 패널 & 계기판
+                ctx.fillStyle = '#2d3436';
+                ctx.beginPath();
+                ctx.roundRect(-9, -5, 18, 12, 3);
+                ctx.fill();
+                // 계기판 인디케이터 LED
+                ctx.fillStyle = '#ff4757';
+                ctx.beginPath(); ctx.arc(-5, -1, 1.8, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#2ed573';
+                ctx.beginPath(); ctx.arc(0, -1, 1.8, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#1e90ff';
+                ctx.beginPath(); ctx.arc(5, -1, 1.8, 0, Math.PI*2); ctx.fill();
+                // 게이지 바
+                ctx.fillStyle = '#00cec9';
+                ctx.fillRect(-6, 3, 12, 2);
+
+                // 어깨 미션 스트랩
+                ctx.fillStyle = '#0984e3';
+                ctx.fillRect(-15, -8, 3, 14);
+                ctx.fillRect(12, -8, 3, 14);
+
+                // 4. 양 팔과 두툼한 우주 장갑
+                let armSwing = Math.sin((walkTimer || 0) * 0.15) * 12;
+                // 왼팔
+                ctx.save();
+                ctx.translate(-15 * facing, -4);
+                ctx.rotate((armSwing * Math.PI / 180) * facing);
+                ctx.fillStyle = '#f5f6fa';
+                ctx.beginPath(); ctx.roundRect(-4, 0, 8, 16, 3); ctx.fill();
+                ctx.fillStyle = '#00cec9'; ctx.fillRect(-4, 10, 8, 2);
+                ctx.fillStyle = '#636e72'; ctx.beginPath(); ctx.arc(0, 14, 4.5, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+                // 오른팔
+                ctx.save();
+                ctx.translate(15 * facing, -4);
+                ctx.rotate((-armSwing * Math.PI / 180) * facing);
+                ctx.fillStyle = '#f5f6fa';
+                ctx.beginPath(); ctx.roundRect(-4, 0, 8, 16, 3); ctx.fill();
+                ctx.fillStyle = '#00cec9'; ctx.fillRect(-4, 10, 8, 2);
+                ctx.fillStyle = '#636e72'; ctx.beginPath(); ctx.arc(0, 14, 4.5, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+                // 5. 우주 헬멧 (Spherical Helmet)
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(0, -20, 18, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#b2bec3';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // 목 밀폐 칼라 (Collar Ring)
+                ctx.fillStyle = '#636e72';
+                ctx.beginPath();
+                ctx.ellipse(0, -6, 13, 3.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 헬멧 안테나 (좌측 상단)
+                ctx.strokeStyle = '#747d8c';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-12, -30);
+                ctx.lineTo(-17, -40);
+                ctx.stroke();
+                let antBlink = Math.sin(Date.now() * 0.008) > 0 ? '#00cec9' : '#0984e3';
+                ctx.fillStyle = antBlink;
+                ctx.shadowColor = '#00cec9'; ctx.shadowBlur = 6;
+                ctx.beginPath(); ctx.arc(-17, -40, 2.5, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // 6. 골드 미러 헬멧 바이저 (Reflective Gold Visor)
+                let visorGrad = ctx.createLinearGradient(0, -28, 0, -12);
+                visorGrad.addColorStop(0, '#f6e58d');
+                visorGrad.addColorStop(0.3, '#f9ca24');
+                visorGrad.addColorStop(0.7, '#f0932b');
+                visorGrad.addColorStop(1, '#eb4d4b');
+                ctx.fillStyle = visorGrad;
+                ctx.beginPath();
+                ctx.ellipse(2 * facing, -20, 12, 10, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#2d3436';
+                ctx.lineWidth = 1.2;
+                ctx.stroke();
+
+                // 바이저 3D 글라스 하이라이트 (Glossy Shine Arc)
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.arc(-2 + (facing * 2), -22, 7, -Math.PI * 0.7, -Math.PI * 0.1);
+                ctx.stroke();
 
             } else if (useSkin === 'penguin') {
                 // 🐧 꼬마 펭귄 스킨: 귀여운 아기 펭귄 (통통한 몸매, 배 하얀 털, 주황 부리와 발, 빨간 목도리)
@@ -18056,7 +18367,7 @@
                         ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(t.x - 55, t.y - t.radius - 80, 110, 30, 5); ctx.fill();
                         ctx.fillStyle = 'black'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center';
                         let label = t.unlocked ? "👆 클릭!" : "👆 잠금 해제";
-                        if (t.type === 'space') label = isAlienEventStarted() ? "🔒 업데이트 예정" : "🔒 오늘 10시 공개!";
+                        if (t.type === 'space') label = t.unlocked ? "👆 벌목하기 (클릭)" : "👆 잠금 해제";
                         if (t.id === 'ice_canyon' && !isAdmin()) label = "🔒 관리자 전용";
                         ctx.fillText(label, t.x, t.y - t.radius - 60);
                     }
