@@ -1053,69 +1053,60 @@
         </div>
 
         <!-- 🐾 [ADMIN] 얼음 지형 고급 펫 머신 / 상점 모달 (Pet System Lab & Synthesis) -->
+        <!-- 🐾 [ADMIN] 얼음 지형 스킨 펫 융합 머신 (상점) -->
         <div id="pet-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #0f172a, #090d16); color: white; padding: 22px 20px; border-radius: 20px; width: 94%; max-width: 480px; max-height: 88%; overflow-y: auto; display: none; border: 2px solid #f1c40f; z-index: 60; box-shadow: 0 16px 50px rgba(0,0,0,0.95), 0 0 35px rgba(241, 196, 15, 0.35); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(241, 196, 15, 0.35); padding-bottom: 12px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(241, 196, 15, 0.35); padding-bottom: 12px; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 28px; filter: drop-shadow(0 0 10px #f1c40f);">🐾</span>
+                    <span style="font-size: 28px; filter: drop-shadow(0 0 10px #f1c40f);">🦮</span>
                     <div>
                         <div style="display: flex; align-items: center; gap: 6px;">
-                            <h2 style="margin: 0; color: #f1c40f; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">고대 크리스탈 펫 상점 & 머신</h2>
-                            <span style="background: rgba(241, 196, 15, 0.2); color: #f1c40f; border: 1px solid #f1c40f; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">ADMIN ONLY</span>
+                            <h2 style="margin: 0; color: #f1c40f; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">스킨 펫 융합 머신</h2>
+                            <span style="background: rgba(241, 196, 15, 0.2); color: #f1c40f; border: 1px solid #f1c40f; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">ADMIN SHOP</span>
                         </div>
-                        <span style="font-size: 11px; color: #94a3b8;">얼음 지형 비밀 연구소 · 펫 시스템 & 합성 연구실</span>
+                        <span style="font-size: 11px; color: #94a3b8;">신비한 목줄과 인벤토리 스킨을 융합하여 미니 펫으로 장착</span>
                     </div>
                 </div>
                 <button onclick="closePetMachineModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
             </div>
 
-            <!-- 상단 탭 전환 바 (펫 관리 / 펫 합성) -->
-            <div style="display: flex; gap: 8px; margin-bottom: 14px; background: rgba(30, 41, 59, 0.6); padding: 4px; border-radius: 10px; border: 1px solid rgba(241, 196, 15, 0.3);">
-                <button id="pet-tab-btn-list" onclick="switchPetMachineTab('list')" style="flex: 1; padding: 8px 12px; font-size: 13px; font-weight: bold; border-radius: 8px; border: none; background: #f1c40f; color: #0f172a; cursor: pointer; transition: all 0.2s;">
-                    🐾 펫 도감 & 선택
-                </button>
-                <button id="pet-tab-btn-synth" onclick="switchPetMachineTab('synth')" style="flex: 1; padding: 8px 12px; font-size: 13px; font-weight: bold; border-radius: 8px; border: none; background: transparent; color: #94a3b8; cursor: pointer; transition: all 0.2s;">
-                    ✨ 펫 합성 연구실
-                </button>
-            </div>
-
-            <!-- TAB 1: 펫 도감 & 선택 패널 -->
-            <div id="pet-panel-list">
-                <!-- 활성화된 펫 & 동행 ON/OFF 컨트롤 -->
-                <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(241, 196, 15, 0.5); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
-                    <div style="font-size: 11px; color: #94a3b8; margin-bottom: 4px;">현재 동행 선택 펫</div>
-                    <div id="pet-modal-active-name" style="font-size: 17px; font-weight: 900; color: #f1c40f; margin-bottom: 8px;">🐺❄️ [신화] 칠흑의 눈꽃 늑대</div>
-                    <div id="pet-modal-active-buff" style="font-size: 12px; color: #38bdf8; margin-bottom: 12px; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 6px;">과일 수확량 +50% / 이동속도 +20% / 빙결 오라</div>
-                    <button id="pet-follow-toggle-btn" onclick="toggleAdminPetFollow()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span>🐾</span> <span id="pet-follow-toggle-text">필드 동행 소환 활성화 (ON)</span>
-                    </button>
+            <!-- 목줄 보유 상태 & 안내 배너 -->
+            <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 1px solid #38bdf8; border-radius: 12px; padding: 12px; margin-bottom: 14px; text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 12.5px; font-weight: bold; color: #38bdf8;">🦮 목줄 보유 현황</span>
+                    <span id="pet-machine-leash-badge" style="font-size: 10.5px; padding: 2px 8px; border-radius: 6px; font-weight: bold; background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8;">확인 중...</span>
                 </div>
-
-                <!-- 펫 도감/프리뷰 카드 목록 -->
-                <div style="font-size: 13px; font-weight: bold; color: #e2e8f0; margin-bottom: 8px; text-align: left; display: flex; align-items: center; gap: 6px;">
-                    <span>✨</span> <span>신비로운 펫 라인업 & 합성된 펫</span>
-                </div>
-                <div id="pet-cards-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
-                    <!-- Dynamically rendered by updatePetMachineModalUI() -->
+                <div style="font-size: 11px; color: #cbd5e1; line-height: 1.4;">
+                    얼음 협곡 [바위 2]에서 공룡 심장 화석 10개로 <b>목줄</b>을 획득하면,<br>
+                    인벤토리에 있는 스킨 중 1개를 골라 <b>미니 펫</b>으로 융합 및 동행할 수 있습니다.
                 </div>
             </div>
 
-            <!-- TAB 2: ✨ 펫 합성 연구실 패널 -->
-            <div id="pet-panel-synth" style="display: none;">
-                <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 1.5px solid #a855f7; border-radius: 12px; padding: 12px; margin-bottom: 14px; text-align: left;">
-                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                        <span style="font-size: 14px;">✨</span>
-                        <span style="font-size: 13px; font-weight: bold; color: #c084fc;">고대 펫 융합 & 합성 챔버</span>
-                    </div>
-                    <div style="font-size: 11px; color: #cbd5e1; line-height: 1.4;">
-                        머신의 강력한 융합 에너지로 펫과 고대 화석을 합성하여<br>
-                        차원을 초월하는 <b>상위 신화/태고 펫</b>을 탄생시킵니다!
-                    </div>
+            <!-- 현재 동행 스킨 펫 정보 & 효과 -->
+            <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(241, 196, 15, 0.5); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+                <div style="font-size: 11px; color: #94a3b8; margin-bottom: 4px;">현재 동행 스킨 펫</div>
+                <div id="pet-modal-active-name" style="font-size: 17px; font-weight: 900; color: #f1c40f; margin-bottom: 6px;">동행 중인 펫 없음</div>
+                <div id="pet-modal-active-buff" style="font-size: 12px; color: #4ade80; margin-bottom: 10px; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 6px; font-weight: bold;">
+                    🌲 펫 효과: 나무 캐는 속도 20% 감소 (벌목 시간 20% 단축!)
                 </div>
+                <div id="pet-modal-active-btn-area">
+                    <!-- Dynamic button inserted by updatePetMachineModalUI() -->
+                </div>
+            </div>
 
-                <!-- 합성 레시피 목록 -->
-                <div id="pet-synth-recipes-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
-                    <!-- Dynamically rendered by updatePetMachineModalUI() -->
+            <!-- 인벤토리 스킨 목록 (스킨을 펫으로 융합) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <div style="font-size: 13.5px; font-weight: bold; color: #e2e8f0; display: flex; align-items: center; gap: 6px;">
+                    <span>🎒</span> <span>인벤토리 스킨 융합실</span>
                 </div>
+                <span style="font-size: 10px; color: #4ade80; font-weight: bold;">💡 인벤토리 스킨 보존됨</span>
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 12px; line-height: 1.35; text-align: left;">
+                보유한 스킨 중 하나를 펫으로 융합하세요. (모습: 살짝 작아진 스킨 캐릭터)<br>
+                <b style="color: #4ade80;">※ 펫으로 융합/장착해도 인벤토리의 스킨은 삭제되지 않고 그대로 유지됩니다!</b>
+            </div>
+
+            <div id="pet-machine-skins-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 4px; margin-bottom: 14px;">
+                <!-- Dynamically rendered by updatePetMachineModalUI() -->
             </div>
 
             <div style="text-align: center;">
@@ -1176,64 +1167,45 @@
             </div>
         </div>
 
-        <!-- 🦮 [바위 2] 펫 목줄 교환 & 스킨 펫 장착 제단 모달 -->
-        <div id="pet-leash-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 460px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <!-- 🦮 [바위 2] 펫 목줄 교환 제단 모달 -->
+        <div id="pet-leash-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 440px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 26px;">🦮</span>
                     <div>
-                        <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold;">펫 목줄 & 스킨 펫 바위</h2>
-                        <span style="font-size: 11px; color: #94a3b8;">공룡 심장 화석 10개로 목줄 획득 · 보유 스킨을 펫으로 장착</span>
+                        <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold;">펫 목줄 바위</h2>
+                        <span style="font-size: 11px; color: #94a3b8;">얼음 협곡 고대 지층 발굴 · 공룡 심장 화석 10개로 목줄 획득</span>
                     </div>
                 </div>
                 <button onclick="closePetLeashModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
             </div>
 
             <!-- 화석 채굴 섹션 -->
-            <div style="background: rgba(30, 41, 59, 0.7); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; border: 1px solid #334155; text-align: center;">
+            <div style="background: rgba(30, 41, 59, 0.7); border-radius: 12px; padding: 10px 12px; margin-bottom: 14px; border: 1px solid #334155; text-align: center;">
+                <div style="font-size: 12px; color: #94a3b8; margin-bottom: 8px;">빙하 암석을 도끼로 타격하여 공룡 심장 화석을 채굴합니다.</div>
                 <button onclick="mineFromLeashRockModal()" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 8px; padding: 9px 20px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);">⛏️ 화석 발굴하기 (클릭)</button>
             </div>
 
-            <!-- 1. 목줄 획득 섹션 -->
-            <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95)); border: 1.5px solid #f59e0b; border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+            <!-- 목줄 획득 섹션 -->
+            <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95)); border: 1.5px solid #f59e0b; border-radius: 14px; padding: 16px; margin-bottom: 14px; text-align: center;">
                 <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px;">
-                    <span style="font-size: 22px;">🦮💖</span>
-                    <span style="font-weight: bold; font-size: 15px; color: #facc15;">신비한 펫 목줄 교환</span>
+                    <span style="font-size: 24px;">🦮💖</span>
+                    <span style="font-weight: bold; font-size: 16px; color: #facc15;">신비한 펫 목줄 교환</span>
                 </div>
-                <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 10px; line-height: 1.4;">
+                <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 12px; line-height: 1.4;">
                     [공룡 심장 화석] 10개를 바치면<br>
-                    스킨을 펫으로 길들일 수 있는 <strong>'신비한 목줄'</strong>을 획득합니다!
+                    인벤토리 스킨을 펫으로 융합할 수 있는 <strong>'신비한 목줄'</strong>을 획득합니다!
                 </div>
-                <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 12px;">
                     <span style="font-size: 13px; color: #94a3b8;">현재 공룡 심장 화석:</span>
-                    <span id="leash-modal-heart-count" style="font-size: 15px; font-weight: bold; color: #fb7185;">0 / 10개</span>
+                    <span id="leash-modal-heart-count" style="font-size: 16px; font-weight: bold; color: #fb7185;">0 / 10개</span>
                 </div>
                 <div id="leash-action-area">
                     <!-- Dynamic button inserted by updatePetLeashModalUI() -->
                 </div>
             </div>
 
-            <!-- 2. 스킨 펫 장착 섹션 -->
-            <div style="background: rgba(15, 23, 42, 0.9); border: 1.5px solid #38bdf8; border-radius: 14px; padding: 14px; text-align: left;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <div style="font-weight: bold; font-size: 14px; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
-                        <span>🐾</span> <span>스킨 펫 장착실</span>
-                    </div>
-                    <span id="leash-equipped-badge" style="font-size: 10.5px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 2px 7px; border-radius: 4px; font-weight: bold;">
-                        목줄 필요
-                    </span>
-                </div>
-                <div style="font-size: 11px; color: #94a3b8; margin-bottom: 12px; line-height: 1.4;">
-                    보유한 스킨 중 1개를 골라 당신을 따라다니는 펫으로 장착하세요.<br>
-                    <b style="color: #4ade80;">💡 중요: 펫으로 장착해도 인벤토리의 스킨은 삭제되지 않고 그대로 유지됩니다!</b>
-                </div>
-
-                <div id="skin-pet-list-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto; padding-right: 4px;">
-                    <!-- Dynamically rendered by updatePetLeashModalUI() -->
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 14px;">
+            <div style="text-align: center;">
                 <button onclick="closePetLeashModal()" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.1); color: #cbd5e1; border: 1px solid #475569; border-radius: 8px; font-size: 13px; cursor: pointer;">
                     닫기
                 </button>
@@ -1725,277 +1697,153 @@
             if (modal) modal.style.display = 'none';
         }
 
-        function selectAdminPet(petId) {
-            adminActivePet = petId;
-            try { localStorage.setItem('admin_active_pet', petId); } catch(e) {}
-            const pet = adminPetsData.find(p => p.id === petId);
-            floatTexts.push({ x: player.x, y: player.y - 80, text: `🐾 [펫 선택] ${pet ? pet.name : petId}!`, color: '#38bdf8', life: 80, size: 18 });
-            updatePetMachineModalUI();
-        }
-
-        function toggleAdminPetFollow() {
-            adminPetFollowEnabled = !adminPetFollowEnabled;
-            try { localStorage.setItem('admin_pet_follow', adminPetFollowEnabled ? 'true' : 'false'); } catch(e) {}
-            const pet = adminPetsData.find(p => p.id === adminActivePet);
-            floatTexts.push({
-                x: player.x,
-                y: player.y - 80,
-                text: adminPetFollowEnabled ? `🐾 ${pet ? pet.name : '펫'} 필드 동행 활성화!` : `🐾 펫 동행 해제`,
-                color: adminPetFollowEnabled ? '#2ecc71' : '#94a3b8',
-                life: 90,
-                size: 19
-            });
-            updatePetMachineModalUI();
-        }
-
-        function switchPetMachineTab(tab) {
-            petMachineTab = tab;
-            const btnList = document.getElementById('pet-tab-btn-list');
-            const btnSynth = document.getElementById('pet-tab-btn-synth');
-            const panelList = document.getElementById('pet-panel-list');
-            const panelSynth = document.getElementById('pet-panel-synth');
-
-            if (btnList && btnSynth && panelList && panelSynth) {
-                if (tab === 'synth') {
-                    btnList.style.background = 'transparent';
-                    btnList.style.color = '#94a3b8';
-                    btnSynth.style.background = '#a855f7';
-                    btnSynth.style.color = '#ffffff';
-                    panelList.style.display = 'none';
-                    panelSynth.style.display = 'block';
-                } else {
-                    btnList.style.background = '#f1c40f';
-                    btnList.style.color = '#0f172a';
-                    btnSynth.style.background = 'transparent';
-                    btnSynth.style.color = '#94a3b8';
-                    panelList.style.display = 'block';
-                    panelSynth.style.display = 'none';
-                }
-            }
-            updatePetMachineModalUI();
-        }
-
-        const PET_SYNTH_RECIPES = [
-            {
-                id: 'synth_frost_drake_wolf',
-                name: '태고 서리늑대룡 (빙랑룡)',
-                icon: '👑🐺❄️',
-                tier: 'MYTHIC EX',
-                tierColor: '#ff0055',
-                desc: '눈꽃 늑대와 빙룡 베이비의 고대 영혼이 융합된 절대 빙하의 군주.',
-                buff: '과일 수확량 +100% / 이동속도 +30% / 서리 브레스 & 빙결 오라',
-                materials: [
-                    { type: 'pet', id: 'frost_wolf', name: '칠흑의 눈꽃 늑대' },
-                    { type: 'pet', id: 'baby_ice_dragon', name: '빙룡 베이비' }
-                ]
-            },
-            {
-                id: 'synth_golden_aurora_spirit',
-                name: '황금 극광 수호령',
-                icon: '🦊✨👑',
-                tier: 'ANCIENT EX',
-                tierColor: '#f59e0b',
-                desc: '구미호의 극광 마력과 황제 펭귄의 풍요의 비술이 결합된 부와 행운의 화신.',
-                buff: '상점 정산 시 골드 2배 (+100%) / 10초마다 황금 과일 자동 드랍',
-                materials: [
-                    { type: 'pet', id: 'aurora_fox', name: '오로라 구미호' },
-                    { type: 'pet', id: 'penguin_butler', name: '황제 펭귄 집사' }
-                ]
-            },
-            {
-                id: 'synth_primal_tyranno',
-                name: '원초의 공룡 심장 군주',
-                icon: '🦖💖🔥',
-                tier: 'DIVINE',
-                tierColor: '#e11d48',
-                desc: '공룡 화석과 공룡 심장 화석의 태고 생명력 융합으로 부활한 백악기의 지배자.',
-                buff: '나무 타격 데미지 +150% / 보스전 데미지 +50% / 화석 발굴 2배',
-                materials: [
-                    { type: 'item', key: '공룡 화석', name: '공룡 화석', count: 5 },
-                    { type: 'item', key: '공룡 심장 화석', name: '공룡 심장 화석', count: 5 }
-                ]
-            }
-        ];
-
         function updatePetMachineModalUI() {
+            const leashBadgeEl = document.getElementById('pet-machine-leash-badge');
             const nameEl = document.getElementById('pet-modal-active-name');
             const buffEl = document.getElementById('pet-modal-active-buff');
-            const toggleBtn = document.getElementById('pet-follow-toggle-btn');
-            const toggleText = document.getElementById('pet-follow-toggle-text');
-            const container = document.getElementById('pet-cards-container');
-            const synthContainer = document.getElementById('pet-synth-recipes-container');
+            const activeBtnArea = document.getElementById('pet-modal-active-btn-area');
+            const skinsContainer = document.getElementById('pet-machine-skins-container');
 
-            // 동적으로 합성된 펫들을 adminPetsData에 등록
-            PET_SYNTH_RECIPES.forEach(rec => {
-                if (synthesizedPets.includes(rec.id) && !adminPetsData.some(p => p.id === rec.id)) {
-                    adminPetsData.push({
-                        id: rec.id,
-                        name: rec.name,
-                        icon: rec.icon,
-                        tier: rec.tier,
-                        tierColor: rec.tierColor,
-                        desc: rec.desc,
-                        buff: rec.buff
-                    });
-                }
-            });
+            const hasLeash = hasPetLeash || (inventory['목줄'] || 0) > 0;
 
-            const activePet = adminPetsData.find(p => p.id === adminActivePet) || adminPetsData[0];
-            if (nameEl) nameEl.innerHTML = `${activePet.icon} <span style="color: ${activePet.tierColor};">[${activePet.tier}]</span> ${activePet.name}`;
-            if (buffEl) buffEl.innerText = activePet.buff;
-
-            if (toggleBtn && toggleText) {
-                if (adminPetFollowEnabled) {
-                    toggleBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                    toggleText.innerText = '🐾 필드 동행 소환 중 (클릭 시 소환 해제)';
+            // 목줄 뱃지 업데이트
+            if (leashBadgeEl) {
+                if (hasLeash) {
+                    leashBadgeEl.style.background = 'rgba(16, 185, 129, 0.2)';
+                    leashBadgeEl.style.color = '#34d399';
+                    leashBadgeEl.style.border = '1px solid #10b981';
+                    leashBadgeEl.innerText = '✨ 신비한 목줄 보유 중';
                 } else {
-                    toggleBtn.style.background = 'linear-gradient(135deg, #0284c7, #38bdf8)';
-                    toggleText.innerText = '🐾 필드 동행 소환 활성화 (ON)';
+                    leashBadgeEl.style.background = 'rgba(239, 68, 68, 0.2)';
+                    leashBadgeEl.style.color = '#f87171';
+                    leashBadgeEl.style.border = '1px solid #ef4444';
+                    leashBadgeEl.innerText = '🔒 목줄 필요 (바위 2에서 획득)';
                 }
             }
 
-            if (container) {
-                container.innerHTML = adminPetsData.map(pet => {
-                    const isSelected = pet.id === adminActivePet;
-                    return `
-                        <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid ${isSelected ? '#f1c40f' : '#334155'}; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: ${isSelected ? '0 0 15px rgba(241, 196, 15, 0.3)' : 'none'};">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <div style="font-size: 28px; background: rgba(0,0,0,0.3); width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid ${pet.tierColor};">
-                                    ${pet.icon.slice(0, 2)}
-                                </div>
-                                <div style="text-align: left;">
-                                    <div style="display: flex; align-items: center; gap: 6px;">
-                                        <span style="font-size: 13.5px; font-weight: bold; color: #fff;">${pet.name}</span>
-                                        <span style="font-size: 9.5px; font-weight: bold; color: ${pet.tierColor}; background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 4px; border: 1px solid ${pet.tierColor};">${pet.tier}</span>
-                                    </div>
-                                    <div style="font-size: 11px; color: #94a3b8; margin: 2px 0;">${pet.desc}</div>
-                                    <div style="font-size: 10.5px; color: #38bdf8; font-weight: bold;">⚡ ${pet.buff}</div>
-                                </div>
-                            </div>
-                            <div>
-                                ${isSelected 
-                                    ? `<button disabled style="background: rgba(241, 196, 15, 0.2); color: #f1c40f; border: 1px solid #f1c40f; padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">선택됨</button>`
-                                    : `<button onclick="selectAdminPet('${pet.id}')" style="background: linear-gradient(135deg, #0ea5e9, #38bdf8); color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px rgba(14, 165, 233, 0.4);">선택</button>`
-                                }
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+            // 현재 동행 펫 현황
+            const isPetActive = activeSkinPet && ownedSkins.includes(activeSkinPet);
+            if (nameEl) {
+                if (isPetActive) {
+                    const skin = skinsData.find(s => s.id === activeSkinPet) || { name: activeSkinPet, icon: '✨' };
+                    nameEl.innerHTML = `${skin.icon || '✨'} <span style="color: #f1c40f;">[미니 펫] ${skin.name}</span>`;
+                } else {
+                    nameEl.innerHTML = `<span style="color: #94a3b8;">동행 중인 펫 없음</span>`;
+                }
             }
 
-            if (synthContainer) {
-                let dinoCount = 0;
-                ['공룡 화석', '공룡화석', '공룡 화석 바위', '태초의 공룡 화석'].forEach(k => { if (inventory[k]) dinoCount += inventory[k]; });
-                let heartCount = 0;
-                ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'].forEach(k => { if (inventory[k]) heartCount += inventory[k]; });
+            if (buffEl) {
+                buffEl.innerHTML = `🌲 펫 효과: 나무 캐는 속도 20% 감소 (벌목 시간 20% 단축!)`;
+            }
 
-                synthContainer.innerHTML = PET_SYNTH_RECIPES.map(rec => {
-                    const isAlreadyCrafted = synthesizedPets.includes(rec.id);
-                    let canCraft = true;
-                    let matStatus = '';
+            if (activeBtnArea) {
+                if (isPetActive) {
+                    activeBtnArea.innerHTML = `
+                        <button onclick="unequipSkinPet()" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; padding: 6px 18px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">
+                            🐾 동행 해제
+                        </button>
+                    `;
+                } else {
+                    activeBtnArea.innerHTML = `
+                        <span style="font-size: 11px; color: #94a3b8;">하단 인벤토리 스킨 중 하나를 골라 목줄과 융합하세요.</span>
+                    `;
+                }
+            }
 
-                    if (rec.id === 'synth_primal_tyranno') {
-                        let okDino = dinoCount >= 5;
-                        let okHeart = heartCount >= 5;
-                        canCraft = okDino && okHeart;
-                        matStatus = `[공룡화석 ${dinoCount}/5개] · [심장화석 ${heartCount}/5개]`;
-                    } else {
-                        canCraft = true; // 기본 관리자 펫 기반 합성은 즉시 가능
-                        matStatus = rec.materials.map(m => m.name).join(' + ');
-                    }
-
-                    return `
-                        <div style="background: rgba(15, 23, 42, 0.8); border: 1.5px solid ${isAlreadyCrafted ? '#10b981' : '#a855f7'}; border-radius: 12px; padding: 12px; text-align: left;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 24px;">${rec.icon}</span>
-                                    <div>
-                                        <div style="font-size: 13.5px; font-weight: bold; color: #fff;">${rec.name}</div>
-                                        <div style="font-size: 10px; color: ${rec.tierColor}; font-weight: bold;">[${rec.tier}]</div>
-                                    </div>
-                                </div>
-                                <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7;">
-                                    ${matStatus}
-                                </span>
+            // 인벤토리 스킨 목록
+            if (skinsContainer) {
+                if (!hasLeash) {
+                    skinsContainer.innerHTML = `
+                        <div style="text-align: center; color: #94a3b8; padding: 22px 14px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1.5px dashed #475569;">
+                            <div style="font-size: 28px; margin-bottom: 6px;">🔒🦮</div>
+                            <div style="font-size: 13.5px; font-weight: bold; color: #e2e8f0; margin-bottom: 4px;">신비한 펫 목줄이 필요합니다</div>
+                            <div style="font-size: 11px; color: #94a3b8; line-height: 1.45; margin-bottom: 12px;">
+                                얼음 협곡 우측 [바위 2]에서 공룡 심장 화석 10개로 목줄을 획득하면<br>
+                                인벤토리에 보관된 스킨을 자유롭게 펫으로 융합할 수 있습니다.
                             </div>
-                            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 4px;">${rec.desc}</div>
-                            <div style="font-size: 10.5px; color: #facc15; font-weight: bold; margin-bottom: 8px;">⚡ ${rec.buff}</div>
-                            <div style="text-align: right;">
-                                ${isAlreadyCrafted 
-                                    ? `<button onclick="selectAdminPet('${rec.id}'); switchPetMachineTab('list');" style="background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">✨ 합성 완료 (동행 선택)</button>`
-                                    : (canCraft 
-                                        ? `<button onclick="synthesizePet('${rec.id}')" style="background: linear-gradient(135deg, #a855f7, #ec4899); color: white; border: none; padding: 7px 16px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 12px rgba(168, 85, 247, 0.5);">✨ 융합 합성하기</button>`
-                                        : `<button disabled style="background: #475569; color: #94a3b8; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px;">재료 부족</button>`
-                                      )
-                                }
-                            </div>
+                            <button onclick="closePetMachineModal(); openPetLeashModal();" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);">
+                                🦮 [바위 2] 목줄 교환하러 가기
+                            </button>
                         </div>
                     `;
-                }).join('');
+                } else if (!ownedSkins || ownedSkins.length === 0) {
+                    skinsContainer.innerHTML = `
+                        <div style="text-align: center; color: #94a3b8; padding: 22px 14px; background: rgba(0,0,0,0.3); border-radius: 12px;">
+                            인벤토리에 보유 중인 스킨이 없습니다.<br>
+                            스킨 상점이나 퀘스트/합성으로 스킨을 먼저 획득하세요!
+                        </div>
+                    `;
+                } else {
+                    skinsContainer.innerHTML = ownedSkins.map(skinId => {
+                        const skin = skinsData.find(s => s.id === skinId) || { id: skinId, name: skinId, icon: '✨' };
+                        const isEquippedAsPet = (activeSkinPet === skin.id);
+
+                        return `
+                            <div style="background: rgba(30, 41, 59, 0.75); border: 1.5px solid ${isEquippedAsPet ? '#f1c40f' : '#334155'}; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: ${isEquippedAsPet ? '0 0 14px rgba(241, 196, 15, 0.35)' : 'none'};">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <span style="font-size: 26px;">${skin.icon}</span>
+                                    <div style="text-align: left;">
+                                        <div style="font-size: 13.5px; font-weight: bold; color: #fff;">${skin.name}</div>
+                                        <div style="font-size: 10.5px; color: ${isEquippedAsPet ? '#f1c40f' : '#94a3b8'};">
+                                            ${isEquippedAsPet ? '🐾 융합 동행 중 (벌목 속도 20% 감소)' : '보유 스킨 (인벤토리 영구 보존)'}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    ${isEquippedAsPet 
+                                        ? `<button onclick="unequipSkinPet()" style="background: #ef4444; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">융합 해제</button>`
+                                        : `<button onclick="fuseSkinWithLeash('${skin.id}')" style="background: linear-gradient(135deg, #f59e0b, #eab308); color: #0f172a; border: none; padding: 7px 15px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 10px rgba(245, 158, 11, 0.4);">✨ 융합 장착</button>`
+                                    }
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
             }
         }
 
-        function synthesizePet(recipeId) {
-            const recipe = PET_SYNTH_RECIPES.find(r => r.id === recipeId);
-            if (!recipe) return;
-
-            if (recipe.id === 'synth_primal_tyranno') {
-                let dinoKey = getDinoFossilKey();
-                let heartKey = getHeartFossilKey();
-                let dinoCount = 0;
-                ['공룡 화석', '공룡화석', '공룡 화석 바위', '태초의 공룡 화석'].forEach(k => { if (inventory[k]) dinoCount += inventory[k]; });
-                let heartCount = 0;
-                ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'].forEach(k => { if (inventory[k]) heartCount += inventory[k]; });
-
-                if (dinoCount < 5 || heartCount < 5) {
-                    alert('합성 재료가 부족합니다! 공룡 화석 5개와 공룡 심장 화석 5개가 필요합니다.');
-                    return;
-                }
-
-                // 차감
-                let toDeductDino = 5;
-                ['공룡 화석', '공룡화석', '공룡 화석 바위', '태초의 공룡 화석'].forEach(k => {
-                    if (inventory[k] && inventory[k] > 0 && toDeductDino > 0) {
-                        let take = Math.min(inventory[k], toDeductDino);
-                        inventory[k] -= take;
-                        toDeductDino -= take;
-                    }
-                });
-                let toDeductHeart = 5;
-                ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'].forEach(k => {
-                    if (inventory[k] && inventory[k] > 0 && toDeductHeart > 0) {
-                        let take = Math.min(inventory[k], toDeductHeart);
-                        inventory[k] -= take;
-                        toDeductHeart -= take;
-                    }
-                });
+        function fuseSkinWithLeash(skinId) {
+            const hasLeash = hasPetLeash || (inventory['목줄'] || 0) > 0;
+            if (!hasLeash) {
+                alert("🔒 먼저 얼음 협곡 우측 [바위 2]에서 공룡 심장 화석 10개로 '신비한 목줄'을 획득해야 융합할 수 있습니다!");
+                return;
+            }
+            if (!ownedSkins.includes(skinId)) {
+                alert("🔒 보유 중인 스킨만 펫으로 융합할 수 있습니다!");
+                return;
             }
 
-            if (!synthesizedPets.includes(recipe.id)) {
-                synthesizedPets.push(recipe.id);
-            }
-            try {
-                localStorage.setItem('synthesized_pets', JSON.stringify(synthesizedPets));
-            } catch(e) {}
-
-            adminActivePet = recipe.id;
+            activeSkinPet = skinId;
             adminPetFollowEnabled = true;
+
             try {
-                localStorage.setItem('admin_active_pet', recipe.id);
+                localStorage.setItem('active_skin_pet', skinId);
                 localStorage.setItem('admin_pet_follow', 'true');
             } catch(e) {}
 
             saveGame();
             updatePetMachineModalUI();
+            if (typeof updatePetLeashModalUI === 'function') updatePetLeashModalUI();
 
-            floatTexts.push({ x: player.x, y: player.y - 100, text: `✨ [펫 합성 대성공!] ${recipe.name}!`, color: recipe.tierColor, life: 130, size: 22 });
-            for (let i = 0; i < 40; i++) {
+            const skin = skinsData.find(s => s.id === skinId);
+            const sName = skin ? skin.name : skinId;
+
+            floatTexts.push({ x: player.x, y: player.y - 80, text: `✨ [스킨 펫 융합] ${sName}!`, color: '#f1c40f', life: 100, size: 20 });
+            for (let i = 0; i < 30; i++) {
                 let a = Math.random() * Math.PI * 2;
-                let sp = Math.random() * 6 + 2;
-                labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#a855f7' : '#ec4899'), life: 40 });
+                let sp = Math.random() * 5 + 2;
+                labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#f1c40f' : '#38bdf8'), life: 35 });
             }
-            alert(`🎉 [펫 머신 합성 대성공!]\n\n고대 융합 챔버의 에너지가 결집되어\n[${recipe.name}] ${recipe.icon}이(가) 탄생했습니다!\n\n현재 즉시 필드 동행 펫으로 장착되었습니다.`);
+
+            alert(`🎉 [스킨 펫 융합 대성공!]\n\n[신비한 목줄]과 [${sName}] 스킨이 결합되어 미니 동행 펫으로 장착되었습니다!\n\n🌲 펫 효과: 나무 캐는 속도 20% 감소!\n💡 중요: 인벤토리의 스킨은 절대 삭제되지 않고 영구 보존됩니다.`);
         }
+
+        // 구버전 및 펫 바위 호환용 별칭
+        const equipSkinPet = fuseSkinWithLeash;
+        const selectAdminPet = function(id) {};
+        const toggleAdminPetFollow = function() {};
+        const switchPetMachineTab = function(tab) {};
+        const synthesizePet = function(id) {};
 
         // ==========================================
         // 🦮 [바위 2] 펫 목줄 교환 & 스킨 펫 컨트롤 함수들
@@ -2021,8 +1869,6 @@
         function updatePetLeashModalUI() {
             const heartCountEl = document.getElementById('leash-modal-heart-count');
             const actionAreaEl = document.getElementById('leash-action-area');
-            const badgeEl = document.getElementById('leash-equipped-badge');
-            const listEl = document.getElementById('skin-pet-list-container');
 
             let heartCount = 0;
             ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'].forEach(k => {
@@ -2036,9 +1882,12 @@
             if (actionAreaEl) {
                 if (hasLeash) {
                     actionAreaEl.innerHTML = `
-                        <div style="background: rgba(245, 158, 11, 0.15); border: 1.5px solid #f59e0b; border-radius: 8px; padding: 10px; color: #facc15; font-weight: bold; font-size: 13.5px;">
-                            ✨ 🦮 신비한 펫 목줄 보유 중! (스킨 펫 장착 가능)
+                        <div style="background: rgba(245, 158, 11, 0.15); border: 1.5px solid #f59e0b; border-radius: 8px; padding: 12px; color: #facc15; font-weight: bold; font-size: 13.5px; margin-bottom: 12px;">
+                            ✨ 🦮 신비한 펫 목줄 보유 중!
                         </div>
+                        <button onclick="closePetLeashModal(); openPetMachineModal();" style="background: linear-gradient(135deg, #f59e0b, #eab308); color: #0f172a; padding: 10px 22px; border: none; border-radius: 8px; font-weight: bold; font-size: 13.5px; cursor: pointer; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);">
+                            🏬 펫 머신으로 이동하여 스킨 융합하기 ➔
+                        </button>
                     `;
                 } else if (heartCount >= 10) {
                     actionAreaEl.innerHTML = `
@@ -2054,55 +1903,6 @@
                     `;
                 }
             }
-
-            if (badgeEl) {
-                if (hasLeash) {
-                    badgeEl.style.background = 'rgba(16, 185, 129, 0.2)';
-                    badgeEl.style.color = '#34d399';
-                    badgeEl.style.border = '1px solid #10b981';
-                    badgeEl.innerText = '목줄 활성화됨';
-                } else {
-                    badgeEl.style.background = 'rgba(239, 68, 68, 0.2)';
-                    badgeEl.style.color = '#f87171';
-                    badgeEl.style.border = '1px solid #ef4444';
-                    badgeEl.innerText = '목줄 필요';
-                }
-            }
-
-            if (listEl) {
-                if (!hasLeash) {
-                    listEl.innerHTML = `
-                        <div style="text-align: center; color: #94a3b8; padding: 22px 10px; font-size: 12px; background: rgba(0,0,0,0.25); border-radius: 8px; border: 1px dashed #475569;">
-                            🔒 상단에서 <b>공룡 심장 화석 10개</b>로 목줄을 획득하면<br>보유 중인 스킨을 자유롭게 펫으로 장착할 수 있습니다.
-                        </div>
-                    `;
-                } else {
-                    listEl.innerHTML = ownedSkins.map(skinId => {
-                        const skin = skinsData.find(s => s.id === skinId) || { id: skinId, name: skinId, icon: '✨' };
-                        const isEquippedAsPet = (activeSkinPet === skin.id);
-
-                        return `
-                            <div style="background: rgba(30, 41, 59, 0.75); border: 1.5px solid ${isEquippedAsPet ? '#38bdf8' : '#334155'}; border-radius: 10px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: ${isEquippedAsPet ? '0 0 12px rgba(56, 189, 248, 0.35)' : 'none'};">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-size: 26px;">${skin.icon}</span>
-                                    <div>
-                                        <div style="font-size: 13.5px; font-weight: bold; color: #ffffff;">${skin.name}</div>
-                                        <div style="font-size: 10.5px; color: ${isEquippedAsPet ? '#38bdf8' : '#94a3b8'};">
-                                            ${isEquippedAsPet ? '🐾 현재 펫으로 장착 중 (동행)' : '보유 스킨 (인벤토리 보관됨)'}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    ${isEquippedAsPet 
-                                        ? `<button onclick="unequipSkinPet()" style="background: #e74c3c; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 11.5px; font-weight: bold; cursor: pointer;">해제</button>`
-                                        : `<button onclick="equipSkinPet('${skin.id}')" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 11.5px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);">🐾 펫으로 장착</button>`
-                                    }
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                }
-            }
         }
 
         function buyPetLeash() {
@@ -2113,7 +1913,7 @@
             });
 
             if (hasPetLeash || (inventory['목줄'] || 0) > 0) {
-                alert("✨ 이미 '신비한 목줄'을 보유하고 있습니다!\n하단에서 원하는 스킨을 골라 펫으로 장착하세요.");
+                alert("✨ 이미 '신비한 목줄'을 보유하고 있습니다!\n좌측 [펫 머신(상점)]에서 원하는 스킨과 융합하세요.");
                 return;
             }
 
@@ -2140,6 +1940,7 @@
             try { localStorage.setItem('has_pet_leash', 'true'); } catch(e) {}
             saveGame();
             updatePetLeashModalUI();
+            if (typeof updatePetMachineModalUI === 'function') updatePetMachineModalUI();
 
             floatTexts.push({ x: player.x, y: player.y - 90, text: `🦮 [신비한 목줄 획득!]`, color: '#f1c40f', life: 100, size: 22 });
             for (let i = 0; i < 35; i++) {
@@ -2147,42 +1948,15 @@
                 let sp = Math.random() * 5 + 2;
                 labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#f1c40f' : '#ff0055'), life: 35 });
             }
-            alert("🎉 [🦮 신비한 펫 목줄 획득!]\n\n공룡 심장 화석 10개의 태고 생명력으로 빚어낸 [신비한 목줄]을 얻었습니다!\n\n이제 인벤토리에 보유한 스킨 중 하나를 선택해 당신의 충실한 동행 펫으로 장착할 수 있습니다.\n(💡 중요: 장착해도 인벤토리의 스킨은 삭제되지 않고 안전하게 보관됩니다!)");
-        }
-
-        function equipSkinPet(skinId) {
-            if (!hasPetLeash && (inventory['목줄'] || 0) <= 0) {
-                alert("🔒 먼저 공룡 심장 화석 10개로 '목줄'을 획득해야 합니다!");
-                return;
-            }
-            if (!ownedSkins.includes(skinId)) {
-                alert("🔒 보유 중인 스킨만 펫으로 장착할 수 있습니다!");
-                return;
-            }
-
-            activeSkinPet = skinId;
-            adminPetFollowEnabled = true;
-
-            try {
-                localStorage.setItem('active_skin_pet', skinId);
-                localStorage.setItem('admin_pet_follow', 'true');
-            } catch(e) {}
-
-            saveGame();
-            updatePetLeashModalUI();
-
-            const skin = skinsData.find(s => s.id === skinId);
-            const sName = skin ? skin.name : skinId;
-
-            floatTexts.push({ x: player.x, y: player.y - 80, text: `🐾 [스킨 펫 장착] ${sName}!`, color: '#f1c40f', life: 90, size: 20 });
-            alert(`🎉 [스킨 펫 장착 완료!]\n\n[${sName}] 스킨이 당신의 동행 펫으로 장착되었습니다!\n\n💡 중요: 인벤토리의 스킨은 삭제되지 않고 그대로 유지되므로,\n언제든지 캐릭터가 착용하거나 다른 스킨을 자유롭게 변경할 수 있습니다.`);
+            alert("🎉 [🦮 신비한 펫 목줄 획득!]\n\n공룡 심장 화석 10개의 태고 생명력으로 빚어낸 [신비한 목줄]을 얻었습니다!\n\n이제 좌측 [펫 머신(상점)]에서 인벤토리에 보유한 스킨 중 하나를 융합하여 미니 펫으로 장착할 수 있습니다.\n\n🌲 펫 효과: 나무 캐는 속도 20% 감소!\n💡 중요: 융합해도 인벤토리의 스킨은 삭제되지 않고 안전하게 보관됩니다!");
         }
 
         function unequipSkinPet() {
             activeSkinPet = null;
             try { localStorage.removeItem('active_skin_pet'); } catch(e) {}
             saveGame();
-            updatePetLeashModalUI();
+            if (typeof updatePetMachineModalUI === 'function') updatePetMachineModalUI();
+            if (typeof updatePetLeashModalUI === 'function') updatePetLeashModalUI();
             floatTexts.push({ x: player.x, y: player.y - 80, text: `🐾 스킨 펫 동행 해제`, color: '#94a3b8', life: 70, size: 18 });
         }
 
@@ -4774,72 +4548,102 @@
             ctx.restore();
         }
 
-        // 🐾 플레이어 동행 펫 렌더링 (스킨 펫 & 관리자/합성 펫 완벽 지원)
+        // 🐾 플레이어 동행 펫 렌더링 (스킨 미니 캐릭터 & 목줄 연결 완벽 지원)
         function drawFollowingPet(ctx, playerObj) {
             let petName = '';
-            let petIcon = '';
-            let petColor = '#38bdf8';
+            let petColor = '#f59e0b';
             let isSkinPet = false;
 
             if (activeSkinPet && ownedSkins.includes(activeSkinPet)) {
                 const s = skinsData.find(skin => skin.id === activeSkinPet) || { name: activeSkinPet, icon: '✨' };
                 petName = s.name;
-                petIcon = s.icon;
                 petColor = '#f59e0b';
                 isSkinPet = true;
             } else if (isAdmin() && adminPetFollowEnabled) {
                 const petInfo = adminPetsData.find(p => p.id === adminActivePet) || adminPetsData[0];
                 petName = petInfo.name;
-                petIcon = petInfo.icon.slice(0, 2);
                 petColor = petInfo.tierColor || '#38bdf8';
             } else {
                 return;
             }
 
-            const now = Date.now();
-            let targetX = playerObj.x + (playerObj.vx < 0 ? 38 : -38);
-            let targetY = playerObj.y - 25;
+            let targetX = playerObj.x + (playerObj.vx < 0 ? 36 : -36);
+            let targetY = playerObj.y - 12;
             followPetPos.x += (targetX - followPetPos.x) * 0.12;
             followPetPos.y += (targetY - followPetPos.y) * 0.12;
             followPetPos.floatTimer += 0.05;
 
             let px = followPetPos.x;
-            let py = followPetPos.y + Math.sin(followPetPos.floatTimer) * 5;
+            let py = followPetPos.y + Math.sin(followPetPos.floatTimer) * 3;
 
             ctx.save();
-            ctx.fillStyle = 'rgba(0,0,0,0.25)';
+
+            // 1. 황금 목줄 끈 렌더링 (플레이어 허리 -> 미니 스킨 펫)
+            if (isSkinPet) {
+                ctx.save();
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 1.6;
+                ctx.setLineDash([3, 2]);
+                ctx.beginPath();
+                ctx.moveTo(playerObj.x, playerObj.y + 4);
+                let midX = (playerObj.x + px) / 2;
+                let midY = Math.max(playerObj.y, py) + 12;
+                ctx.quadraticCurveTo(midX, midY, px, py + 4);
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // 2. 바닥 그림자
+            ctx.fillStyle = 'rgba(0,0,0,0.28)';
             ctx.beginPath();
-            ctx.ellipse(px, playerObj.y + 12, 14, 5, 0, 0, Math.PI * 2);
+            ctx.ellipse(px, py + 16, 13, 5, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // 펫 오라 발광
-            ctx.shadowColor = petColor;
-            ctx.shadowBlur = 14;
-            ctx.fillStyle = 'rgba(255,255,255,0.18)';
-            ctx.beginPath();
-            ctx.arc(px, py, 19, 0, Math.PI * 2);
-            ctx.fill();
+            // 3. 펫 본체 렌더링
+            if (isSkinPet) {
+                // "모습은 스킨이 살짝 작아진 게 펫 모습" - 실제 스킨 캐릭터를 0.56 배율로 축소하여 렌더링
+                ctx.save();
+                ctx.translate(px, py);
+                ctx.scale(0.56, 0.56);
+                let petFacing = playerObj.vx < 0 ? -1 : (playerObj.vx > 0 ? 1 : (playerObj.facing || 1));
+                let petChar = {
+                    facing: petFacing,
+                    colors: playerObj.colors || { skin: '#ffeaa7', shirt: '#0984e3', hat: '#e17055' },
+                    shopType: null
+                };
+                drawCharacter(ctx, petChar, 0, 0, false, playerObj.walkTimer || 0, activeSkinPet);
+                ctx.restore();
+            } else {
+                // 이전 관리자 펫 호환 (아이콘)
+                ctx.shadowColor = petColor;
+                ctx.shadowBlur = 12;
+                ctx.fillStyle = 'rgba(255,255,255,0.18)';
+                ctx.beginPath();
+                ctx.arc(px, py, 18, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🐾', px, py);
+                ctx.shadowBlur = 0;
+            }
 
-            // 펫 아이콘
-            ctx.font = '22px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(petIcon, px, py);
-            ctx.shadowBlur = 0;
-
-            // 상단 펫 뱃지 (스킨 펫인 경우 [🦮 스킨이름], 일반 펫인 경우 [🐾 펫이름])
+            // 4. 상단 펫 뱃지
             ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
             ctx.strokeStyle = petColor;
             ctx.lineWidth = 1.2;
             ctx.beginPath();
             let badgeW = Math.max(68, petName.length * 9.5 + 24);
-            ctx.roundRect(px - badgeW / 2, py - 27, badgeW, 16, 5);
+            ctx.roundRect(px - badgeW / 2, py - 32, badgeW, 16, 5);
             ctx.fill();
             ctx.stroke();
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 8.5px Arial';
-            ctx.fillText((isSkinPet ? '🦮 ' : '🐾 ') + petName, px, py - 18);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText((isSkinPet ? '🦮 [PET] ' : '🐾 ') + petName, px, py - 23);
+
             ctx.restore();
         }
 
@@ -15101,6 +14905,9 @@
                         else if (equippedAxe === 2) maxP = Math.floor(tree.maxProgress * (3.5 / 5.0)); // 3.5초
                         else if (equippedAxe === 3) maxP = Math.floor(tree.maxProgress * (3.2 / 5.0)); // 3.2초
                         else if (equippedAxe === 4) maxP = Math.floor(tree.maxProgress * (2.7 / 5.0)); // 2.7초 (고대 도끼)
+                        if (activeSkinPet && ownedSkins.includes(activeSkinPet)) {
+                            maxP = Math.floor(maxP * 0.8); // 🌲 미니 스킨 펫 효과: 나무 캐는 속도 20% 감소 (벌목 시간 20% 단축)
+                        }
 
                         if (tree.progress >= maxP) {
                             tree.progress = 0;
@@ -17985,6 +17792,9 @@
                         else if (equippedAxe === 2) maxP = Math.floor(t.maxProgress * (3.5 / 5.0));
                         else if (equippedAxe === 3) maxP = Math.floor(t.maxProgress * (3.2 / 5.0));
                         else if (equippedAxe === 4) maxP = Math.floor(t.maxProgress * (2.7 / 5.0));
+                        if (activeSkinPet && ownedSkins.includes(activeSkinPet)) {
+                            maxP = Math.floor(maxP * 0.8); // 🌲 미니 스킨 펫 효과
+                        }
                         ctx.fillStyle = '#3498db'; ctx.fillRect(-38, -143, 76 * (t.progress / maxP), 8);
                         ctx.fillStyle = 'white'; ctx.font = '10px Arial'; ctx.textAlign = 'center'; ctx.fillText("흔드는 중...", 0, -150);
                     }
