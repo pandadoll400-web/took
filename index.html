@@ -254,32 +254,96 @@
         .tb-logo-container {
             position: absolute;
             top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.6);
+            transform: translate(-50%, -50%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
             z-index: 20;
-            opacity: 0;
             pointer-events: none;
-            transition: transform 0.55s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.4s ease;
-        }
-        .tb-logo-container.active {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-            pointer-events: auto;
         }
 
-        .tb-official-logo {
+        .tb-logo-stack {
+            position: relative;
             width: 285px;
             max-width: 82vw;
-            height: auto;
-            display: block;
+            height: 298.8px;
+            max-height: calc(82vw * 650 / 620);
             border-radius: 46px;
             box-shadow: 0 18px 48px rgba(0, 0, 0, 0.9), 0 0 35px rgba(245, 158, 11, 0.35);
+        }
+        .tb-logo-stack.floating {
             animation: tbLogoFloat 3.6s infinite ease-in-out;
         }
+
+        /* 1단계: 뒤에 그림(배경/문장) 쾅! 박히는 애니메이션 */
+        .tb-logo-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border-radius: 46px;
+            object-fit: cover;
+            opacity: 0;
+            transform: scale(2.4);
+            pointer-events: none;
+        }
+        .tb-logo-bg.slam {
+            opacity: 1;
+            animation: tbBgSlam 0.28s cubic-bezier(0.15, 0.9, 0.25, 1.25) forwards;
+        }
+        @keyframes tbBgSlam {
+            0% {
+                opacity: 0;
+                transform: scale(2.5) rotate(-2deg);
+                filter: blur(4px) brightness(1.6);
+            }
+            65% {
+                opacity: 1;
+                transform: scale(0.95) rotate(0.5deg);
+                filter: blur(0px) brightness(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+                filter: blur(0px) brightness(1);
+            }
+        }
+
+        /* 2단계: 로고 안의 글씨 쾅! 박히는 애니메이션 */
+        .tb-logo-text {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border-radius: 46px;
+            object-fit: cover;
+            opacity: 0;
+            transform: scale(3.0);
+            filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.85));
+            pointer-events: none;
+        }
+        .tb-logo-text.slam {
+            opacity: 1;
+            animation: tbTextSlam 0.26s cubic-bezier(0.2, 0.95, 0.3, 1.28) forwards;
+        }
+        @keyframes tbTextSlam {
+            0% {
+                opacity: 0;
+                transform: scale(3.2) translateY(-40px);
+                filter: drop-shadow(0 25px 35px rgba(0, 0, 0, 0.95)) brightness(2.2);
+            }
+            70% {
+                opacity: 1;
+                transform: scale(0.92) translateY(3px);
+                filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.8)) brightness(1.3);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.85)) brightness(1);
+            }
+        }
+
         @keyframes tbLogoFloat {
             0%, 100% {
                 transform: translateY(0);
@@ -1594,6 +1658,19 @@
 
         <!-- 🌳⚡ 트리버스터 (TREE BUSTER) 오프닝 인트로 애니메이션 -->
         <div id="tree-buster-intro" onclick="handleTbIntroClick(event)">
+            <script>
+                (function() {
+                    try {
+                        var nav = performance.getEntriesByType('navigation');
+                        var isReload = (nav && nav.length > 0 && nav[0].type === 'reload') ||
+                                       (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
+                        if (isReload || sessionStorage.getItem('tb_intro_shown') === 'true') {
+                            var el = document.getElementById('tree-buster-intro');
+                            if (el) el.style.display = 'none';
+                        }
+                    } catch(e) {}
+                })();
+            </script>
             <!-- 배경 파티클 캔버스 -->
             <canvas id="tb-intro-canvas"></canvas>
 
@@ -1697,7 +1774,10 @@
             <!-- 중앙 타이틀 & 탭하여 시작하기 -->
             <!-- 나무 부서진 뒤 등장하는 앱 사진 로고 & 밑에 흐릿하고 작은 '탭하여 시작' -->
             <div class="tb-logo-container" id="tb-logo-container">
-                <img src="tree_buster_logo.png" alt="트리버스터" class="tb-official-logo" id="tb-official-logo">
+                <div class="tb-logo-stack" id="tb-logo-stack">
+                    <img src="tree_buster_bg.png" alt="트리버스터 배경" class="tb-logo-bg" id="tb-logo-bg">
+                    <img src="tree_buster_text.png" alt="트리버스터 타이틀" class="tb-logo-text" id="tb-logo-text">
+                </div>
                 <div class="tb-faint-prompt" id="tb-faint-prompt">탭하여 시작</div>
             </div>
 
@@ -15388,7 +15468,7 @@
             } else if (!currentUser) {
                 // 인트로가 이미 시청된 세션에서만 초기 400ms 로그인 팝업 띄우기 (첫 접속 인트로 중에는 인트로 완료 후 뜸)
                 let introShown = false;
-                try { introShown = (sessionStorage.getItem('tb_intro_shown') === 'true'); } catch(e) {}
+                let isRel = false; try { const nav = performance.getEntriesByType('navigation'); isRel = (nav && nav[0] && nav[0].type === 'reload') || (window.performance && window.performance.navigation && window.performance.navigation.type === 1); } catch(e) {} try { introShown = (sessionStorage.getItem('tb_intro_shown') === 'true') || isRel; } catch(e) {}
                 if (introShown) {
                     setTimeout(() => {
                         openLoginModal();
@@ -19626,7 +19706,59 @@
             } catch(e) {}
         }
 
-        // 3. 타이틀 등장 차임음
+        // 3-A. 뒤에 그림(배경) 쾅 박히는 중저음 타격음
+        function playIntroGroundThudSound() {
+            try {
+                const actx = getTbAudioCtx();
+                if (!actx) return;
+                const osc = actx.createOscillator();
+                const gain = actx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(130, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(32, actx.currentTime + 0.28);
+                gain.gain.setValueAtTime(0.75, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.28);
+                osc.connect(gain);
+                gain.connect(actx.destination);
+                osc.start();
+                osc.stop(actx.currentTime + 0.29);
+            } catch(e) {}
+        }
+
+        // 3-B. 로고 안의 글씨 쾅 박히는 메탈릭 & 우드 임팩트 타격음
+        function playIntroTextStrikeSound() {
+            try {
+                const actx = getTbAudioCtx();
+                if (!actx) return;
+                // 베이스 임팩트
+                const osc1 = actx.createOscillator();
+                const gain1 = actx.createGain();
+                osc1.type = 'sawtooth';
+                osc1.frequency.setValueAtTime(260, actx.currentTime);
+                osc1.frequency.exponentialRampToValueAtTime(55, actx.currentTime + 0.22);
+                gain1.gain.setValueAtTime(0.55, actx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.22);
+                osc1.connect(gain1);
+                gain1.connect(actx.destination);
+                osc1.start();
+                osc1.stop(actx.currentTime + 0.23);
+
+                // 고음 메탈릭 쇳소리/차임 핑
+                const osc2 = actx.createOscillator();
+                const gain2 = actx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(1046.50, actx.currentTime);
+                osc2.frequency.exponentialRampToValueAtTime(880, actx.currentTime + 0.35);
+                gain2.gain.setValueAtTime(0.35, actx.currentTime);
+                gain2.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.35);
+                osc2.connect(gain2);
+                gain2.connect(actx.destination);
+                osc2.start();
+                osc2.stop(actx.currentTime + 0.36);
+            } catch(e) {}
+        }
+
+        // 3-C. 타이틀 등장 차임음
         function playIntroTitleRevealSound() {
             try {
                 const actx = getTbAudioCtx();
@@ -19720,6 +19852,30 @@
             if (!tbAnimFrameId) tbFxLoop();
         }
 
+        // 로고 글씨 쾅 박힐 때 사방으로 튀는 황금빛 스파크 폭발
+        function spawnLogoImpactSparks() {
+            if (!tbFxCanvas || !tbFxCtx) return;
+            const cx = tbFxCanvas.width / 2;
+            const cy = tbFxCanvas.height * 0.46;
+
+            const sparkColors = ['#fde68a', '#fbbf24', '#ffffff', '#f59e0b', '#f43f5e'];
+            for (let i = 0; i < 36; i++) {
+                const ang = Math.random() * Math.PI * 2;
+                const spd = 3 + Math.random() * 9;
+                tbParticles.push({
+                    type: 'spark',
+                    x: cx + (Math.random() - 0.5) * 160,
+                    y: cy + (Math.random() - 0.5) * 40,
+                    vx: Math.cos(ang) * spd,
+                    vy: Math.sin(ang) * spd - 1.5,
+                    size: 2.5 + Math.random() * 3.5,
+                    alpha: 1,
+                    color: sparkColors[Math.floor(Math.random() * sparkColors.length)]
+                });
+            }
+            if (!tbAnimFrameId) tbFxLoop();
+        }
+
         function tbFxLoop() {
             if (!tbFxCtx || !tbFxCanvas || !tbIntroActive) {
                 tbAnimFrameId = null;
@@ -19746,6 +19902,14 @@
                     tbFxCtx.globalAlpha = Math.max(0, p.alpha);
                     tbFxCtx.beginPath();
                     tbFxCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    tbFxCtx.fill();
+                } else if (p.type === 'spark') {
+                    p.vy += 0.22;
+                    p.vx *= 0.93;
+                    tbFxCtx.fillStyle = p.color;
+                    tbFxCtx.globalAlpha = Math.max(0, p.alpha);
+                    tbFxCtx.beginPath();
+                    tbFxCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                     tbFxCtx.fill();
                 }
 
@@ -19800,14 +19964,18 @@
             const stage = document.getElementById('tb-tree-stage');
             const leftTree = document.getElementById('tb-tree-left');
             const rightTree = document.getElementById('tb-tree-right');
-            const logo = document.getElementById('tb-logo-container');
+            const bg = document.getElementById('tb-logo-bg');
+            const text = document.getElementById('tb-logo-text');
+            const stack = document.getElementById('tb-logo-stack');
             const prompt = document.getElementById('tb-faint-prompt');
 
             if (beam) beam.classList.remove('flash');
             if (stage) stage.classList.remove('shake');
             if (leftTree) leftTree.classList.add('split-left');
             if (rightTree) rightTree.classList.add('split-right');
-            if (logo) logo.classList.add('active');
+            if (bg) { bg.classList.remove('slam'); bg.style.opacity = '1'; bg.style.transform = 'scale(1)'; }
+            if (text) { text.classList.remove('slam'); text.style.opacity = '1'; text.style.transform = 'scale(1)'; }
+            if (stack) stack.classList.add('floating');
             if (prompt) prompt.classList.add('active');
         }
 
@@ -19865,7 +20033,7 @@
             }, 350);
         }
 
-        // 오프닝 애니메이션 시퀀스 실행 (나무가 있다가 2초 후 부서지며 앱 사진 로고 등장)
+        // 오프닝 애니메이션 시퀀스 실행 (나무가 있다가 2초 후 쪼개지며 뒤에 그림 쾅! 그 위에 글씨 쾅!)
         function runTreeBusterIntroSequence() {
             clearTbTimers();
             tbIntroState = 'init';
@@ -19899,22 +20067,46 @@
                 spawnTreeSplitParticles();
             }, 2150));
 
-            // T=2400ms: 공식 앱 사진 로고 등장 & 차임 사운드
+            // T=2380ms: 1단계 - 뒤에 그림(배경/문장) 쾅! 박힘 & 묵직한 중저음 타격음
             tbTimers.push(setTimeout(() => {
                 if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
-                tbIntroState = 'revealed';
-                const logo = document.getElementById('tb-logo-container');
-                if (logo) logo.classList.add('active');
-                playIntroTitleRevealSound();
-            }, 2400));
+                tbIntroState = 'bg_slammed';
+                const bg = document.getElementById('tb-logo-bg');
+                const stage = document.getElementById('tb-tree-stage');
+                if (bg) bg.classList.add('slam');
+                if (stage) {
+                    stage.classList.remove('shake');
+                    void stage.offsetWidth;
+                    stage.classList.add('shake');
+                }
+                playIntroGroundThudSound();
+            }, 2380));
 
-            // T=2650ms: 하단 흐릿하고 작은 '탭하여 시작' 활성화
+            // T=2620ms: 2단계 - 로고 안의 글씨 쾅! 박힘 & 메탈릭 임팩트 & 황금빛 스파크 폭발
+            tbTimers.push(setTimeout(() => {
+                if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
+                tbIntroState = 'text_slammed';
+                const text = document.getElementById('tb-logo-text');
+                const stage = document.getElementById('tb-tree-stage');
+                if (text) text.classList.add('slam');
+                if (stage) {
+                    stage.classList.remove('shake');
+                    void stage.offsetWidth;
+                    stage.classList.add('shake');
+                }
+                playIntroTextStrikeSound();
+                spawnLogoImpactSparks();
+            }, 2620));
+
+            // T=2880ms: 완성된 로고 플로팅 & 하단 흐릿하고 작은 '탭하여 시작' 활성화
             tbTimers.push(setTimeout(() => {
                 if (tbIntroState === 'exited') return;
                 tbIntroState = 'ready';
+                const stack = document.getElementById('tb-logo-stack');
                 const prompt = document.getElementById('tb-faint-prompt');
+                if (stack) stack.classList.add('floating');
                 if (prompt) prompt.classList.add('active');
-            }, 2650));
+            }, 2880));
 
             // 안전장치: 3.5초 후 강제 ready 보장
             tbTimers.push(setTimeout(() => {
@@ -19925,10 +20117,44 @@
         }
 
         // 페이지 진입 및 다시보기 시 인트로 초기화 & 가동
-        function checkAndInitTreeBusterIntro() {
+        function checkAndInitTreeBusterIntro(forceReplay = false) {
             const introEl = document.getElementById('tree-buster-intro');
             if (!introEl) {
                 startGameLoop();
+                return;
+            }
+
+            let isReload = false;
+            try {
+                const navEntries = performance.getEntriesByType('navigation');
+                if (navEntries && navEntries.length > 0 && navEntries[0].type === 'reload') {
+                    isReload = true;
+                } else if (window.performance && window.performance.navigation && window.performance.navigation.type === 1) {
+                    isReload = true;
+                }
+            } catch(e) {}
+
+            let alreadyShown = false;
+            try {
+                alreadyShown = (sessionStorage.getItem('tb_intro_shown') === 'true');
+            } catch(e) {}
+
+            // 새로고침(reload) 또는 이번 세션에서 이미 인트로를 본 경우 (forceReplay가 아닐 때) 바로 게임 시작
+            if (!forceReplay && (isReload || alreadyShown)) {
+                introEl.style.display = 'none';
+                introEl.classList.add('tb-exit');
+                tbIntroActive = false;
+                tbIntroState = 'exited';
+                clearTbTimers();
+                startGameLoop();
+
+                if (!currentUser) {
+                    if (typeof openLoginModal === 'function') openLoginModal();
+                } else {
+                    if (typeof checkAndShowFrostCanyonNotice === 'function') {
+                        setTimeout(checkAndShowFrostCanyonNotice, 500);
+                    }
+                }
                 return;
             }
 
@@ -19937,14 +20163,18 @@
             const stage = document.getElementById('tb-tree-stage');
             const leftTree = document.getElementById('tb-tree-left');
             const rightTree = document.getElementById('tb-tree-right');
-            const logo = document.getElementById('tb-logo-container');
+            const bg = document.getElementById('tb-logo-bg');
+            const text = document.getElementById('tb-logo-text');
+            const stack = document.getElementById('tb-logo-stack');
             const prompt = document.getElementById('tb-faint-prompt');
 
             if (beam) beam.classList.remove('flash');
             if (stage) stage.classList.remove('shake');
             if (leftTree) leftTree.classList.remove('split-left');
             if (rightTree) rightTree.classList.remove('split-right');
-            if (logo) logo.classList.remove('active');
+            if (bg) { bg.classList.remove('slam'); bg.style.opacity = ''; bg.style.transform = ''; }
+            if (text) { text.classList.remove('slam'); text.style.opacity = ''; text.style.transform = ''; }
+            if (stack) stack.classList.remove('floating');
             if (prompt) prompt.classList.remove('active');
 
             introEl.style.display = 'flex';
@@ -19953,7 +20183,7 @@
 
         // 인트로 다시보기 테스트 함수
         window.replayTreeBusterIntro = function() {
-            checkAndInitTreeBusterIntro();
+            checkAndInitTreeBusterIntro(true);
         };
 
         // 메인 게임 루프 (인트로 종료 후 또는 인트로 생략 시 가동)
