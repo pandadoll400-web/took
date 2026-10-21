@@ -572,35 +572,47 @@
             </div>
         </div>
 
-        <!-- 🎃 할로윈 보스 & 오메가 액스 사전 공지 팝업 (1회 한정 표시) -->
-        <div id="halloween-event-notice-overlay" onclick="if(event.target === this) closeHalloweenNoticeModal()" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 120;">
-            <div style="position: relative; background: linear-gradient(180deg, #1d122b 0%, #100b1a 100%); border: 2.5px solid #f39c12; border-radius: 22px; padding: 26px 20px 20px 20px; width: 90%; max-width: 370px; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(243, 156, 18, 0.45); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <!-- ❄️ 얼음의 협곡 & 불사조 피닉스 대규모 업데이트 공지 팝업 (새로고침 제외, 재방문/오랜만 접속 시 표시) -->
+        <div id="frost-canyon-notice-overlay" onclick="if(event.target === this) closeFrostCanyonNoticeModal()" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.88); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 120;">
+            <div style="position: relative; background: linear-gradient(180deg, #0b1e36 0%, #030a16 100%); border: 2.5px solid #38bdf8; border-radius: 24px; padding: 24px 20px 20px 20px; width: 92%; max-width: 390px; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(56, 189, 248, 0.45); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
                 <!-- 우측 상단 닫기 X 버튼 -->
-                <button onclick="closeHalloweenNoticeModal()" style="position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #ecf0f1; width: 32px; height: 32px; border-radius: 50%; font-size: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="닫기">✕</button>
+                <button onclick="closeFrostCanyonNoticeModal()" style="position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #ecf0f1; width: 32px; height: 32px; border-radius: 50%; font-size: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="닫기">✕</button>
 
                 <!-- 상단 헤더 뱃지 -->
-                <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(230, 126, 34, 0.2); border: 1px solid #e67e22; border-radius: 20px; padding: 5px 14px; margin-bottom: 14px;">
-                    <span style="font-size: 14px;">🎃</span>
-                    <span style="color: #f39c12; font-size: 12px; font-weight: 800; letter-spacing: 0.5px;">HALLOWEEN SPECIAL EVENT</span>
+                <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(14, 165, 233, 0.2); border: 1px solid #38bdf8; border-radius: 20px; padding: 5px 14px; margin-bottom: 12px;">
+                    <span style="font-size: 14px;">❄️</span>
+                    <span style="color: #38bdf8; font-size: 12px; font-weight: 800; letter-spacing: 0.5px;">NEW UPDATE : FROST CANYON</span>
                 </div>
 
-                <!-- 사진 (Halloween Omega Axe) -->
-                <div style="display: flex; justify-content: center; margin-bottom: 16px;">
-                    <img src="halloween_omega_axe.png" alt="Halloween Omega Axe" style="width: 100%; max-width: 240px; height: auto; border-radius: 14px; border: 2px solid #f1c40f; box-shadow: 0 6px 25px rgba(241, 196, 15, 0.4); object-fit: contain; display: block;">
+                <!-- 사진 (Frost Canyon & Phoenix Banner) -->
+                <div style="display: flex; justify-content: center; margin-bottom: 14px;">
+                    <img src="frost_canyon_phoenix.jpg" alt="Frost Canyon Phoenix" style="width: 100%; max-width: 290px; height: auto; max-height: 220px; border-radius: 14px; border: 2px solid #38bdf8; box-shadow: 0 6px 25px rgba(56, 189, 248, 0.45), 0 0 15px rgba(249, 115, 22, 0.35); object-fit: cover; display: block;">
                 </div>
 
-                <!-- 텍스트 안내 영역 -->
-                <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(243, 156, 18, 0.3); border-radius: 12px; padding: 14px 10px; margin-bottom: 16px;">
-                    <div style="color: #ff9f43; font-size: 15px; font-weight: 800; margin-bottom: 7px; line-height: 1.45; word-break: keep-all;">
-                        🎃Halloween boss가 우릴 찾으러 나섭니다!
+                <!-- 텍스트 안내 영역 (유저 필수 3문구) -->
+                <div style="background: rgba(4, 14, 28, 0.85); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 13px 14px; margin-bottom: 14px; text-align: left; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="color: #e0f2fe; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 16px;">🦴</span> <span>신규 지역에서 뼈를 발굴하세요!</span>
                     </div>
-                    <div style="color: #f1c40f; font-size: 13.5px; font-weight: 700; margin-bottom: 8px; line-height: 1.45; word-break: keep-all;">
-                        Halloween omega ax 로 보스를 무찔러 주세요!
+                    <div style="color: #fbc531; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 16px;">🐾</span> <span>얻은 뼈들로 펫을 길들이세요!</span>
                     </div>
-                    <div style="color: #ff6b6b; font-size: 14px; font-weight: 800; line-height: 1.45; text-shadow: 0 0 10px rgba(255, 107, 107, 0.6); word-break: keep-all;">
-                        10월 17일 토 밤10시에 꼭 찾아오세요!
+                    <div style="color: #ff7675; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 8px rgba(255, 118, 117, 0.5);">
+                        <span style="font-size: 16px;">🦅</span> <span>서리룡의 습격으로 부터 피닉스를 지켜 내세요</span>
                     </div>
                 </div>
+
+                <!-- 보너스 안내 문구 -->
+                <div style="font-size: 12px; color: #f97316; font-weight: bold; margin-bottom: 13px; text-shadow: 0 0 10px rgba(249, 115, 22, 0.4);">
+                    🔥 서리룡 30회 토벌 완료 시 전설 [피닉스] 스킨 100% 지급!
+                </div>
+
+                <!-- 하단 확인 버튼 -->
+                <button onclick="closeFrostCanyonNoticeModal()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.5);">
+                    탐험 시작하기
+                </button>
+            </div>
+        </div>
 
                 <!-- 하단 확인 버튼 -->
                 <button onclick="closeHalloweenNoticeModal()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #e67e22, #d35400); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.45);">
@@ -931,9 +943,10 @@
 
             <!-- 랭킹 탭 선택: 레벨 TOP 10 vs 보스 처치 TOP 10 vs 크라켄 처치 TOP 10 -->
             <div style="display: flex; gap: 6px; margin-bottom: 12px;">
-                <button id="rank-tab-level-btn" onclick="switchLeaderboardTab('level')" style="flex: 1; padding: 8px 4px; background: #f1c40f; color: #111; border: none; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">⭐ 레벨</button>
-                <button id="rank-tab-boss-btn" onclick="switchLeaderboardTab('boss')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">😈 보스 처치</button>
-                <button id="rank-tab-guild-btn" onclick="switchLeaderboardTab('guild')" style="flex: 1; padding: 8px 4px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: all 0.2s;">🛡️ 팀 순위</button>
+                <button id="rank-tab-level-btn" onclick="switchLeaderboardTab('level')" style="flex: 1; padding: 8px 2px; background: #f1c40f; color: #111; border: none; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; transition: all 0.2s;">⭐ 레벨</button>
+                <button id="rank-tab-boss-btn" onclick="switchLeaderboardTab('boss')" style="flex: 1; padding: 8px 2px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; transition: all 0.2s;">😈 악마</button>
+                <button id="rank-tab-frost-btn" onclick="switchLeaderboardTab('frost_dragon')" style="flex: 1; padding: 8px 2px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; transition: all 0.2s;">🐉 서리룡</button>
+                <button id="rank-tab-guild-btn" onclick="switchLeaderboardTab('guild')" style="flex: 1; padding: 8px 2px; background: rgba(255,255,255,0.08); color: #ecf0f1; border: 1px solid rgba(255,255,255,0.18); border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; transition: all 0.2s;">🛡️ 팀 순위</button>
             </div>
 
             <!-- ⏱️ 10분 주기 자동 리롤 타이머 표시 -->
@@ -1000,6 +1013,48 @@
                 <div style="display: flex; gap: 8px;">
                     <button onclick="openRankingModal('boss'); closeBossPortalModal();" style="flex: 1; padding: 10px; background: #8e44ad; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🏆 최다 처치 랭킹</button>
                     <button onclick="closeBossPortalModal()" style="flex: 1; padding: 10px; background: rgba(255,255,255,0.12); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">닫기</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🐉 얼음의 협곡 고대 서리룡 보스 차원문 모달 -->
+        <div id="ice-dragon-portal-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(8, 20, 36, 0.98); color: white; padding: 22px 20px; border-radius: 20px; width: 88%; max-width: 380px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 30px rgba(56, 189, 248, 0.45); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
+                <h3 style="margin: 0; color: #38bdf8; font-size: 18px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);">
+                    <span>❄️</span> 고대 서리룡 결투장
+                </h3>
+                <button onclick="closeIceDragonPortalModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
+            </div>
+
+            <!-- 보스 프로필 카드 -->
+            <div style="background: rgba(14, 165, 233, 0.12); border: 1.5px solid #0284c7; border-radius: 12px; padding: 14px; margin-bottom: 14px; text-align: center;">
+                <div style="font-size: 42px; margin-bottom: 4px;">🐉❄️</div>
+                <div style="font-size: 18px; font-weight: bold; color: #7dd3fc; margin-bottom: 6px;">[얼음의 협곡 수호룡] 고대 서리룡</div>
+                <div style="font-size: 12px; color: #e0f2fe; line-height: 1.6; text-align: left; background: rgba(0,0,0,0.3); padding: 10px 12px; border-radius: 8px;">
+                    🐉 <strong>서리룡 체력:</strong> 7,000 HP<br>
+                    ❤️ <strong>내 체력:</strong> 1,000 HP | 💥 <strong>타격 데미지:</strong> 500 DMG<br>
+                    ❄️ <strong>일반 패턴 (100 DMG):</strong> 서리 브레스 / 고드름 폭풍 / 서리 충격파<br>
+                    ⚠️ <strong>특수 각성 패턴:</strong> 체력 10% 돌파 시 하늘로 비상 후 급강하 폭격 (300 DMG)!
+                </div>
+            </div>
+
+            <!-- 내 서리룡 처치 수 & 피닉스 스킨 보상 안내 -->
+            <div style="background: rgba(249, 115, 22, 0.1); border: 1.5px dashed rgba(249, 115, 22, 0.7); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 13px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="color: #cbd5e1;">🏆 내 서리룡 처치:</span>
+                    <span id="my-ice-dragon-kills-display" style="color: #38bdf8; font-weight: 800; font-size: 15px;">0회</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #cbd5e1;">🔥 피닉스 스킨 해금:</span>
+                    <span id="my-phoenix-unlock-status" style="color: #f97316; font-weight: 800; font-size: 13px;">30회 토벌 시 획득</span>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button onclick="enterBossDimension('ice_dragon'); closeIceDragonPortalModal();" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.5);">⚔️ 서리룡 보스전 입장</button>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="openRankingModal('frost_dragon'); closeIceDragonPortalModal();" style="flex: 1; padding: 10px; background: #0284c7; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🏆 서리룡 최다 처치 랭킹</button>
+                    <button onclick="closeIceDragonPortalModal()" style="flex: 1; padding: 10px; background: rgba(255,255,255,0.12); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">닫기</button>
                 </div>
             </div>
         </div>
@@ -3126,6 +3181,10 @@
         }
         let lastBossFightTime = 0;
         let bossKills = 0;
+        let frostDragonKills = 0;
+        try {
+            frostDragonKills = Number(localStorage.getItem('frost_dragon_kills') || 0);
+        } catch(e) {}
 
         // 플레이어 보스전 체력 (100 HP, 악마 보스 공격 시 -10 HP)
         let playerBossHp = 100;
@@ -3412,23 +3471,24 @@
 
                 floatTexts.push({ x: 300, y: 280, text: `😈 어둠의 악마 보스 출현!`, color: '#e74c3c', life: 100, size: 24 });
             } else if (bossType === 'ice_dragon') {
-                if (!isAdmin()) {
-                    alert("🔒 [얼음의 협곡 보스전]\n\n고대 서리룡 보스전은 최고 관리자(ADMIN) 전용 선행 테스트 중입니다!");
-                    return;
-                }
                 // 🐉 얼음의 협곡 보스전 초기화 (고대 서리룡)
-                playerBossHp = 100;
-                iceDragonBoss.hp = 10000;
-                iceDragonBoss.maxHp = 10000;
+                // 유저 요구: 내 체력 1000, 서리룡 7000
+                playerBossHp = 1000;
+                iceDragonBoss.hp = 7000;
+                iceDragonBoss.maxHp = 7000;
                 iceDragonBoss.x = 300;
                 iceDragonBoss.y = 280;
+                iceDragonBoss.baseY = 280;
                 iceDragonBoss.flinchTimer = 0;
                 iceDragonBoss.defeated = false;
                 iceDragonBoss.state = 'idle';
                 iceDragonBoss.stateTimer = 0;
                 iceDragonBoss.icicles = [];
+                iceDragonBoss.frostWaves = [];
+                iceDragonBoss.hasUsedTenPercentDive = false;
+                iceDragonBoss.diveTarget = { x: 300, y: 650 };
                 setBossRoomHUDVisible(false);
-                floatTexts.push({ x: 300, y: 280, text: `❄️ [얼음의 협곡 수호룡] 고대 서리룡 출현!`, color: '#38bdf8', life: 100, size: 24 });
+                floatTexts.push({ x: 300, y: 280, text: `❄️ [얼음의 협곡 수호룡] 고대 서리룡 출현! (7,000 HP)`, color: '#38bdf8', life: 100, size: 24 });
             } else {
                 // 원숭이 보스전 초기화 (일반 지형)
                 monkeyBoss.hp = 100;
@@ -3557,7 +3617,7 @@
                     }
                 }
             } else if (currentBossType === 'ice_dragon') {
-                // 🐉 얼음의 협곡 고대 서리룡 공격 (Image 2 구현)
+                // 🐉 얼음의 협곡 고대 서리룡 공격
                 if (iceDragonBoss.defeated || playerBossHp <= 0) return;
                 if (player.axeSwingTimer > 8) return;
 
@@ -3565,9 +3625,8 @@
                 let dx = iceDragonBoss.x - player.x;
                 player.facing = dx >= 0 ? 1 : -1;
 
-                let dragonDmg = 300;
-                if (equippedAxe === 3) dragonDmg = 450;
-                else if (equippedAxe === 2) dragonDmg = 350;
+                // [유저 요구] 타격 데미지 500
+                let dragonDmg = 500;
 
                 let hitTarget = (Math.hypot(player.x - iceDragonBoss.x, player.y - iceDragonBoss.y) < 220) ||
                                 (Math.hypot(player.x - (iceDragonBoss.x - 140), player.y - 480) < 130) ||
@@ -3589,10 +3648,23 @@
                     const roar = dragonRoars[Math.floor(Math.random() * dragonRoars.length)];
                     floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 80, text: `-${dragonDmg} (${roar})`, color: '#38bdf8', life: 45, size: 20 });
 
+                    // ⚠️ [유저 요구] 체력이 10%가 되면 (<= 700 HP) 그 즉시 하늘로 날아가서 300 데미지 꽂기
+                    if (iceDragonBoss.hp > 0 && iceDragonBoss.hp <= 700 && !iceDragonBoss.hasUsedTenPercentDive) {
+                        iceDragonBoss.hasUsedTenPercentDive = true;
+                        iceDragonBoss.state = 'sky_dive_takeoff';
+                        iceDragonBoss.stateTimer = 40;
+                        iceDragonBoss.diveTarget = { x: player.x, y: player.y };
+                        floatTexts.push({ x: 300, y: 220, text: `⚠️ [각성] 체력 10% 돌파! 서리룡이 하늘로 비상합니다!`, color: '#38bdf8', life: 80, size: 24 });
+                    }
+
                     if (iceDragonBoss.hp <= 0 && !iceDragonBoss.defeated) {
                         iceDragonBoss.defeated = true;
                         money += 100000;
                         updateMoney();
+
+                        // 🐉 서리룡 처치 카운트 누적
+                        frostDragonKills = (frostDragonKills || 0) + 1;
+                        try { localStorage.setItem('frost_dragon_kills', frostDragonKills.toString()); } catch(e) {}
 
                         // 🏆 고대 화석 드롭 (신화/전설 1종 보장 + 추가 3종 지급!)
                         let dropFossils = [];
@@ -3611,13 +3683,38 @@
                             if (!fossilCollection.includes(item.name)) fossilCollection.push(item.name);
                         });
                         try { localStorage.setItem('fossil_collection', JSON.stringify(fossilCollection)); } catch(e) {}
+
+                        // 🔥 [유저 요구] 서리룡 30회 처치 시 피닉스 스킨 자동 지급!
+                        let unlockedPhoenix = false;
+                        if (frostDragonKills >= 30 && !ownedSkins.includes('phoenix')) {
+                            ownedSkins.push('phoenix');
+                            unlockedPhoenix = true;
+                        }
+
                         saveGame();
 
-                        floatTexts.push({ x: 300, y: 350, text: `💥 [승리] 고대 서리룡 격퇴 성공!`, color: '#38bdf8', life: 100, size: 28 });
+                        // Firestore 동기화
+                        if (typeof db !== 'undefined' && db && currentUser) {
+                            try {
+                                db.collection('users').doc(currentUser.toLowerCase()).set({
+                                    frostDragonKills: frostDragonKills,
+                                    'gameData.frostDragonKills': frostDragonKills,
+                                    ownedSkins: ownedSkins,
+                                    'gameData.ownedSkins': ownedSkins
+                                }, { merge: true });
+                            } catch (e) {}
+                        }
+
+                        floatTexts.push({ x: 300, y: 350, text: `💥 [승리] 고대 서리룡 격퇴 성공! (총 ${frostDragonKills}회)`, color: '#38bdf8', life: 100, size: 28 });
                         setTimeout(() => {
                             exitBossDimension();
                             let namesStr = dropFossils.map(d => `[${d.grade}] ${d.name}`).join(', ');
-                            alert(`🎉 [보스 격퇴 완료!] 얼음의 협곡 수호룡 '고대 서리룡'을 처치했습니다!\n\n💰 보상: 100,000 골드\n🦴 발굴된 고대 화석: ${namesStr}\n\n화석 도감에 등록되었습니다! 하단 [도감] 버튼에서 확인하세요.`);
+                            if (unlockedPhoenix) {
+                                alert(`🎉 [신화 달성!] 고대 서리룡 30회 토벌 완료!!\n\n🔥🦅 불사조의 화염이 깃든 전설 [피닉스] 스킨을 획득하였습니다!\n(인벤토리 및 스킨 탭에서 즉시 착용할 수 있습니다!)\n\n💰 보상: 100,000 골드\n🦴 발굴된 고대 화석: ${namesStr}`);
+                            } else {
+                                let remainNotice = (frostDragonKills < 30) ? `\n🔥 [피닉스 스킨]: 앞으로 ${30 - frostDragonKills}번 더 처치하면 획득!` : `\n🔥 [피닉스 스킨 보유 중]`;
+                                alert(`🎉 [보스 격퇴 완료!] 얼음의 협곡 수호룡 '고대 서리룡'을 처치했습니다! (총 ${frostDragonKills}회 처치)\n\n💰 보상: 100,000 골드\n🦴 발굴된 고대 화석: ${namesStr}${remainNotice}\n\n화석 도감에 등록되었습니다! 하단 [도감] 버튼에서 확인하세요.`);
+                            }
                         }, 1200);
                     }
                 }
@@ -3780,34 +3877,52 @@
                     }
                 }
             } else if (currentBossType === 'ice_dragon') {
-                // 🐉 고대 서리룡 보스 AI (Image 2 구현)
+                // 🐉 고대 서리룡 보스 AI (공격 패턴 3개 - 크라켄과 비슷한 100 DMG + 체력 10% 비상 급강하 300 DMG)
                 if (!iceDragonBoss.defeated && playerBossHp > 0) {
                     iceDragonBoss.stateTimer++;
                     iceDragonBoss.wingsAngle = Math.sin(Date.now() * 0.003) * 0.15;
                     if (iceDragonBoss.flinchTimer > 0) iceDragonBoss.flinchTimer--;
 
-                    // 공격 패턴 상태머신
+                    // ⚠️ [유저 요구] 체력 10% 돌파 즉시 감지 (<= 700 HP) -> 하늘로 날아가서 300 데미지 강타
+                    if (iceDragonBoss.hp > 0 && iceDragonBoss.hp <= 700 && !iceDragonBoss.hasUsedTenPercentDive && iceDragonBoss.state !== 'sky_dive_takeoff' && iceDragonBoss.state !== 'sky_dive_hover' && iceDragonBoss.state !== 'sky_dive_slam') {
+                        iceDragonBoss.hasUsedTenPercentDive = true;
+                        iceDragonBoss.state = 'sky_dive_takeoff';
+                        iceDragonBoss.stateTimer = 40;
+                        iceDragonBoss.diveTarget = { x: player.x, y: player.y };
+                        floatTexts.push({ x: 300, y: 220, text: `⚠️ [각성] 체력 10% 돌파! 서리룡이 하늘로 비상합니다!`, color: '#38bdf8', life: 75, size: 24 });
+                    }
+
                     if (iceDragonBoss.state === 'idle') {
-                        if (iceDragonBoss.stateTimer > 90) {
+                        iceDragonBoss.y = 280;
+                        // 85프레임마다 3대 공격 패턴 중 하나 발동
+                        if (iceDragonBoss.stateTimer > 85) {
                             iceDragonBoss.stateTimer = 0;
                             let p = Math.random();
-                            if (p < 0.5) {
+                            if (p < 0.35) {
+                                // 패턴 1: 절대영도 서리 브레스 (100 DMG)
                                 iceDragonBoss.state = 'breath_charge';
-                                iceDragonBoss.stateTimer = 50; // 차징 50프레임
-                                floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 60, text: `❄️ 서리룡이 냉기 숨결을 모읍니다!`, color: '#38bdf8', life: 50, size: 18 });
-                            } else {
+                                iceDragonBoss.stateTimer = 45;
+                                floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 60, text: `❄️ [패턴 1] 혹한의 서리 브레스 준비!`, color: '#38bdf8', life: 50, size: 18 });
+                            } else if (p < 0.70) {
+                                // 패턴 2: 낙하 고드름 폭풍 (100 DMG)
                                 iceDragonBoss.state = 'icicle_storm';
-                                iceDragonBoss.stateTimer = 85;
+                                iceDragonBoss.stateTimer = 90;
                                 iceDragonBoss.icicles = [];
-                                for (let k = 0; k < 6; k++) {
+                                for (let k = 0; k < 7; k++) {
                                     iceDragonBoss.icicles.push({
                                         x: 80 + Math.random() * (GAME_WIDTH - 160),
-                                        y: -50 - (k * 60),
-                                        groundY: 620 + (Math.random() * 180),
-                                        vy: 5 + Math.random() * 3
+                                        y: -50 - (k * 45),
+                                        groundY: 520 + (Math.random() * 260),
+                                        vy: 6 + Math.random() * 3,
+                                        hit: false
                                     });
                                 }
-                                floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 60, text: `🌨️ 날카로운 고드름 폭풍 소환!!`, color: '#0284c7', life: 60, size: 18 });
+                                floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 60, text: `🌨️ [패턴 2] 날카로운 고드름 폭풍 소환!`, color: '#0284c7', life: 50, size: 18 });
+                            } else {
+                                // 패턴 3: 혹한의 서리 충격파 파동 (100 DMG)
+                                iceDragonBoss.state = 'frost_nova_charge';
+                                iceDragonBoss.stateTimer = 35;
+                                floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 60, text: `🌊 [패턴 3] 서리 충격파 방출 준비!`, color: '#00cec9', life: 45, size: 18 });
                             }
                         }
                     } else if (iceDragonBoss.state === 'breath_charge') {
@@ -3815,17 +3930,17 @@
                             let a = Math.random() * Math.PI * 2;
                             labSparks.push({ x: iceDragonBoss.x + Math.cos(a)*30, y: iceDragonBoss.y + 40 + Math.sin(a)*30, vx: -Math.cos(a)*3, vy: -Math.sin(a)*3, color: '#38bdf8', life: 15 });
                         }
-                        if (iceDragonBoss.stateTimer >= 50) {
+                        if (iceDragonBoss.stateTimer >= 45) {
                             iceDragonBoss.state = 'breath_attack';
-                            iceDragonBoss.stateTimer = 65;
+                            iceDragonBoss.stateTimer = 55;
                         }
                     } else if (iceDragonBoss.state === 'breath_attack') {
                         iceDragonBoss.stateTimer--;
                         if (iceDragonBoss.stateTimer % 20 === 0) {
-                            if (player.x > 120 && player.x < GAME_WIDTH - 120 && player.y > 550) {
-                                playerBossHp = Math.max(0, playerBossHp - 15);
+                            if (player.x > 110 && player.x < GAME_WIDTH - 110 && player.y > 500) {
+                                playerBossHp = Math.max(0, playerBossHp - 100);
                                 slashEffects.push({ x: player.x, y: player.y, life: 16 });
-                                floatTexts.push({ x: player.x, y: player.y - 60, text: `❄️ -15 HP (절대영도 브레스!)`, color: '#38bdf8', life: 40, size: 18 });
+                                floatTexts.push({ x: player.x, y: player.y - 60, text: `-100 HP! ❄️ (절대영도 브레스!)`, color: '#38bdf8', life: 45, size: 22 });
                                 if (playerBossHp <= 0) {
                                     handlePlayerBossDefeat();
                                     return;
@@ -3847,9 +3962,9 @@
                                         let a = Math.random() * Math.PI * 2;
                                         labSparks.push({ x: ic.x, y: ic.groundY, vx: Math.cos(a)*4, vy: Math.sin(a)*4, color: '#e0f2fe', life: 20 });
                                     }
-                                    if (Math.hypot(player.x - ic.x, player.y - ic.groundY) < 45) {
-                                        playerBossHp = Math.max(0, playerBossHp - 12);
-                                        floatTexts.push({ x: player.x, y: player.y - 60, text: `💥 -12 HP (고드름 충돌!)`, color: '#0284c7', life: 40, size: 18 });
+                                    if (Math.hypot(player.x - ic.x, player.y - ic.groundY) < 50) {
+                                        playerBossHp = Math.max(0, playerBossHp - 100);
+                                        floatTexts.push({ x: player.x, y: player.y - 60, text: `-100 HP! 💥 (낙하 고드름 충돌!)`, color: '#0284c7', life: 45, size: 22 });
                                         if (playerBossHp <= 0) {
                                             handlePlayerBossDefeat();
                                             return;
@@ -3862,6 +3977,88 @@
                             iceDragonBoss.state = 'idle';
                             iceDragonBoss.stateTimer = 0;
                             iceDragonBoss.icicles = [];
+                        }
+                    } else if (iceDragonBoss.state === 'frost_nova_charge') {
+                        iceDragonBoss.stateTimer--;
+                        if (iceDragonBoss.stateTimer <= 0) {
+                            iceDragonBoss.state = 'frost_nova_active';
+                            iceDragonBoss.stateTimer = 70;
+                            iceDragonBoss.frostWaves = [
+                                { x: iceDragonBoss.x, y: iceDragonBoss.y + 40, radius: 10, maxRadius: 550, speed: 7, hit: false }
+                            ];
+                            floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 60, text: `❄️ 서리 충격파 방출!!`, color: '#00cec9', life: 40, size: 22 });
+                        }
+                    } else if (iceDragonBoss.state === 'frost_nova_active') {
+                        iceDragonBoss.stateTimer--;
+                        if (iceDragonBoss.frostWaves) {
+                            iceDragonBoss.frostWaves.forEach(w => {
+                                w.radius += w.speed;
+                                let pDist = Math.hypot(player.x - w.x, player.y - w.y);
+                                if (!w.hit && Math.abs(pDist - w.radius) < 26) {
+                                    w.hit = true;
+                                    playerBossHp = Math.max(0, playerBossHp - 100);
+                                    floatTexts.push({ x: player.x, y: player.y - 60, text: `-100 HP! 🌊 (혹한의 서리 파동!)`, color: '#00cec9', life: 45, size: 22 });
+                                    if (playerBossHp <= 0) {
+                                        handlePlayerBossDefeat();
+                                        return;
+                                    }
+                                }
+                            });
+                        }
+                        if (iceDragonBoss.stateTimer <= 0) {
+                            iceDragonBoss.state = 'idle';
+                            iceDragonBoss.stateTimer = 0;
+                            iceDragonBoss.frostWaves = [];
+                        }
+                    } else if (iceDragonBoss.state === 'sky_dive_takeoff') {
+                        // 🐉 체력 10% 돌파: 하늘로 날아오름
+                        iceDragonBoss.y -= 8;
+                        iceDragonBoss.stateTimer--;
+                        if (iceDragonBoss.stateTimer <= 0) {
+                            iceDragonBoss.state = 'sky_dive_hover';
+                            iceDragonBoss.stateTimer = 65; // 체공 및 플레이어 위치 조준
+                            iceDragonBoss.diveTarget = { x: player.x, y: player.y };
+                        }
+                    } else if (iceDragonBoss.state === 'sky_dive_hover') {
+                        if (iceDragonBoss.stateTimer > 20) {
+                            iceDragonBoss.diveTarget.x += (player.x - iceDragonBoss.diveTarget.x) * 0.12;
+                            iceDragonBoss.diveTarget.y += (player.y - iceDragonBoss.diveTarget.y) * 0.12;
+                        }
+                        iceDragonBoss.stateTimer--;
+                        if (iceDragonBoss.stateTimer <= 0) {
+                            iceDragonBoss.state = 'sky_dive_slam';
+                            iceDragonBoss.stateTimer = 20;
+                            iceDragonBoss.x = iceDragonBoss.diveTarget.x;
+                            iceDragonBoss.y = -100;
+                        }
+                    } else if (iceDragonBoss.state === 'sky_dive_slam') {
+                        let ty = iceDragonBoss.diveTarget.y - 30;
+                        iceDragonBoss.y += (ty - iceDragonBoss.y) * 0.35 + 15;
+                        if (iceDragonBoss.y >= ty - 10) {
+                            // [유저 요구] 300 데미지 꽂기
+                            playerBossHp = Math.max(0, playerBossHp - 300);
+                            floatTexts.push({ x: player.x, y: player.y - 70, text: `-300 HP!! 💥 (서리룡 비상 강타!)`, color: '#38bdf8', life: 60, size: 26 });
+                            for (let k = 0; k < 25; k++) {
+                                let a = Math.random() * Math.PI * 2;
+                                let spd = 4 + Math.random() * 8;
+                                labSparks.push({ x: iceDragonBoss.diveTarget.x, y: iceDragonBoss.diveTarget.y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd, color: '#38bdf8', life: 35 });
+                            }
+                            if (playerBossHp <= 0) {
+                                handlePlayerBossDefeat();
+                                return;
+                            }
+                            iceDragonBoss.state = 'sky_dive_recover';
+                            iceDragonBoss.stateTimer = 40;
+                        }
+                    } else if (iceDragonBoss.state === 'sky_dive_recover') {
+                        iceDragonBoss.x += (300 - iceDragonBoss.x) * 0.08;
+                        iceDragonBoss.y += (280 - iceDragonBoss.y) * 0.08;
+                        iceDragonBoss.stateTimer--;
+                        if (iceDragonBoss.stateTimer <= 0) {
+                            iceDragonBoss.x = 300;
+                            iceDragonBoss.y = 280;
+                            iceDragonBoss.state = 'idle';
+                            iceDragonBoss.stateTimer = 0;
                         }
                     }
                 }
@@ -4106,20 +4303,61 @@
                 ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12.5px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                 ctx.fillText(`🐉 [얼음의 협곡 수호룡] 고대 서리룡  ${iceDragonBoss.hp} / ${iceDragonBoss.maxHp} HP`, GAME_WIDTH / 2, bBarY + 11);
 
-                let pRatio = Math.max(0, playerBossHp / 100);
+                // 서리 충격파 (패턴 3) 렌더링
+                if (iceDragonBoss.frostWaves && iceDragonBoss.frostWaves.length > 0) {
+                    iceDragonBoss.frostWaves.forEach(w => {
+                        ctx.save();
+                        ctx.strokeStyle = '#38bdf8';
+                        ctx.lineWidth = 6;
+                        ctx.shadowColor = '#00cec9'; ctx.shadowBlur = 14;
+                        ctx.beginPath();
+                        ctx.arc(w.x, w.y, w.radius, 0, Math.PI * 2);
+                        ctx.stroke();
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 2.5;
+                        ctx.beginPath();
+                        ctx.arc(w.x, w.y, Math.max(0, w.radius - 3), 0, Math.PI * 2);
+                        ctx.stroke();
+                        ctx.restore();
+                    });
+                }
+
+                // 10% 비상 급강하 조준점 렌더링
+                if (iceDragonBoss.state === 'sky_dive_hover' || iceDragonBoss.state === 'sky_dive_slam') {
+                    ctx.save();
+                    let dt = iceDragonBoss.diveTarget;
+                    let rot = (Date.now() * 0.005) % (Math.PI * 2);
+                    ctx.translate(dt.x, dt.y);
+                    ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([12, 8]);
+                    ctx.rotate(rot);
+                    ctx.beginPath(); ctx.arc(0, 0, 55, 0, Math.PI * 2); ctx.stroke();
+                    ctx.rotate(-rot * 2);
+                    ctx.strokeStyle = '#ff4757';
+                    ctx.beginPath(); ctx.arc(0, 0, 35, 0, Math.PI * 2); ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.strokeStyle = '#e0f2fe'; ctx.lineWidth = 2;
+                    ctx.beginPath(); ctx.moveTo(-65, 0); ctx.lineTo(65, 0); ctx.moveTo(0, -65); ctx.lineTo(0, 65); ctx.stroke();
+                    ctx.fillStyle = '#ff4757';
+                    ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.fillText('⚠️ 300 DMG 낙하 지점!', 0, -42);
+                    ctx.restore();
+                }
+
+                let pRatio = Math.max(0, playerBossHp / 1000);
                 let pBarY = 50;
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
                 ctx.beginPath(); ctx.roundRect(barX, pBarY, barW, barH, 11); ctx.fill();
-                ctx.strokeStyle = playerBossHp <= 30 ? '#ff4757' : '#2ecc71'; ctx.lineWidth = 2.5; ctx.stroke();
+                ctx.strokeStyle = playerBossHp <= 300 ? '#ff4757' : '#2ecc71'; ctx.lineWidth = 2.5; ctx.stroke();
 
                 let pGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
-                if (playerBossHp <= 30) { pGrad.addColorStop(0, '#c0392b'); pGrad.addColorStop(1, '#ff4757'); }
+                if (playerBossHp <= 300) { pGrad.addColorStop(0, '#c0392b'); pGrad.addColorStop(1, '#ff4757'); }
                 else { pGrad.addColorStop(0, '#27ae60'); pGrad.addColorStop(1, '#2ecc71'); }
                 ctx.fillStyle = pGrad;
                 ctx.beginPath(); ctx.roundRect(barX + 2, pBarY + 2, Math.max(0, (barW - 4) * pRatio), barH - 4, 9); ctx.fill();
 
                 ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12.5px Arial'; ctx.textAlign = 'center';
-                ctx.fillText(`❤️ [내 체력]  ${playerBossHp} / 100 HP`, GAME_WIDTH / 2, pBarY + 11);
+                ctx.fillText(`❤️ [내 체력]  ${playerBossHp} / 1000 HP`, GAME_WIDTH / 2, pBarY + 11);
 
             } else {
                 // 👑 원숭이 보스전: 고차원 시공간 배경
@@ -5499,6 +5737,13 @@
                 }
             });
 
+            const tabFrost = document.getElementById('rank-tab-frost-btn');
+            if (tabFrost) {
+                tabFrost.style.background = 'rgba(255,255,255,0.08)';
+                tabFrost.style.color = '#ecf0f1';
+                tabFrost.style.border = '1px solid rgba(255,255,255,0.18)';
+            }
+
             if (tab === 'boss') {
                 if (tabBoss) {
                     tabBoss.style.background = '#e74c3c';
@@ -5506,6 +5751,13 @@
                     tabBoss.style.border = 'none';
                 }
                 if (modalTitle) modalTitle.innerHTML = '<span>😈</span> 악마 보스 최다 처치 TOP 10';
+            } else if (tab === 'frost_dragon') {
+                if (tabFrost) {
+                    tabFrost.style.background = '#0284c7';
+                    tabFrost.style.color = '#ffffff';
+                    tabFrost.style.border = 'none';
+                }
+                if (modalTitle) modalTitle.innerHTML = '<span>🐉</span> 고대 서리룡 최다 처치 TOP 10';
             } else if (tab === 'guild' || tab === 'battle') {
                 if (tabGuild) {
                     tabGuild.style.background = '#2ecc71';
@@ -5650,6 +5902,7 @@
             let rankersMap = new Map();
             const isBattleTab = (currentLeaderboardTab === 'battle');
             const isBossTab = (currentLeaderboardTab === 'boss');
+            const isFrostTab = (currentLeaderboardTab === 'frost_dragon');
 
             // 1. Firestore에서 실제 회원가입된 실제 유저들 불러오기
             if (typeof db !== 'undefined' && db) {
@@ -5677,13 +5930,15 @@
                         const uXp = Number((d.gameData && d.gameData.xp) || 0);
                         const uBossKills = isBossEventStarted() ? Number(d.bossKills || (d.gameData && d.gameData.bossKills) || 0) : 0;
                         const uBattleWins = Number(d.battleWins || (d.gameData && d.gameData.battleWins) || 0);
+                        const uFrostDragonKills = Number(d.frostDragonKills || (d.gameData && d.gameData.frostDragonKills) || 0);
                         if (uname && !isNaN(uLevel)) {
                             rankersMap.set(uname.toLowerCase(), {
                                 username: uname,
                                 level: uLevel,
                                 xp: uXp,
                                 bossKills: uBossKills,
-                                battleWins: uBattleWins
+                                battleWins: uBattleWins,
+                                frostDragonKills: uFrostDragonKills
                             });
                         }
                     });
@@ -5707,6 +5962,7 @@
                     xp: xp,
                     bossKills: effectiveBossKills,
                     battleWins: effectiveBattleWins,
+                    frostDragonKills: frostDragonKills || 0,
                     isMe: true
                 });
             } else if (!currentUser && rankersMap.size === 0) {
@@ -5716,6 +5972,7 @@
                     xp: xp,
                     bossKills: effectiveBossKills,
                     battleWins: effectiveBattleWins,
+                    frostDragonKills: frostDragonKills || 0,
                     isMe: true
                 });
             }
@@ -5732,7 +5989,10 @@
             let sortedRankers = Array.from(rankersMap.values());
 
             // 3. 탭 모드에 따른 정렬
-            if (isBattleTab) {
+            if (isFrostTab) {
+                // 서리룡 최다 처치 순 내림차순, 같으면 레벨 순
+                sortedRankers.sort((a, b) => ((b.frostDragonKills || 0) - (a.frostDragonKills || 0)) || (b.level - a.level));
+            } else if (isBattleTab) {
                 // 배틀 최다 승리 순 내림차순, 같으면 레벨 순
                 sortedRankers.sort((a, b) => (b.battleWins - a.battleWins) || (b.level - a.level));
             } else if (isBossTab) {
@@ -5751,6 +6011,10 @@
                     myRankVal.innerHTML = `<span style="color:#f1c40f; font-weight:bold;">👑 관리자 계정 (모든 랭킹 집계 제외됨)</span>`;
                 } else if (isBattleTab) {
                     myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🦑 ${effectiveBattleWins}회 처치)` : `크라켄 ${effectiveBattleWins}회 처치`;
+                } else if (isFrostTab) {
+                    let k = frostDragonKills || 0;
+                    let pTag = (k >= 30) ? ' [🔥 피닉스 보유]' : ` (해금까지 ${30 - k}회 남음)`;
+                    myRankVal.innerHTML = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🐉 ${k}회 처치)<span style="color:#f97316;">${pTag}</span>` : `서리룡 ${k}회 처치`;
                 } else if (isBossTab) {
                     myRankVal.innerText = (myIdx !== -1) ? `${myIdx + 1}위 (${activeUser} / 🗡️ ${effectiveBossKills}회 처치)` : `처치 ${effectiveBossKills}회`;
                 } else {
@@ -5785,7 +6049,10 @@
                 const border = idx < 3 ? borderColors[idx] : 'rgba(255, 255, 255, 0.12)';
                 
                 let valueText = '';
-                if (isBattleTab) {
+                if (isFrostTab) {
+                    let pBadge = ((r.frostDragonKills || 0) >= 30) ? ` <span style="background: linear-gradient(135deg, #f97316, #ef4444); color: white; font-size: 10px; padding: 2px 5px; border-radius: 6px;">🔥 피닉스</span>` : '';
+                    valueText = `<span style="font-size: 14px; font-weight: 800; color: #38bdf8; letter-spacing: -0.5px;">🐉 ${r.frostDragonKills || 0}회 처치</span>${pBadge}`;
+                } else if (isBattleTab) {
                     valueText = `<span style="font-size: 14px; font-weight: 800; color: #00cec9; letter-spacing: -0.5px;">🦑 ${r.battleWins || 0}회 처치</span>`;
                 } else if (isBossTab) {
                     valueText = `<span style="font-size: 14px; font-weight: 800; color: #ff7675; letter-spacing: -0.5px;">🗡️ ${r.bossKills}회 처치</span>`;
@@ -8361,12 +8628,12 @@
                 return;
             }
 
-            // 🐉 3. 얼음의 협곡 고차원 텔레포트 (x: 505, y: -8540) -> 고대 서리룡 보스전 직행
+            // 🐉 3. 얼음의 협곡 고차원 텔레포트 (x: 565, y: -8410) -> 고대 서리룡 보스전 포탈 모달
             if (typeof teleporterIceDragon !== 'undefined') {
                 let tpIceDist = Math.hypot(cx - teleporterIceDragon.x, cy - teleporterIceDragon.y);
                 let tpIcePlayerDist = Math.hypot(player.x - teleporterIceDragon.x, player.y - teleporterIceDragon.y);
                 if (tpIceDist < 75 || (isSpacebar && tpIcePlayerDist < 90)) {
-                    enterBossDimension('ice_dragon');
+                    openIceDragonPortalModal();
                     return;
                 }
             }
@@ -9612,7 +9879,8 @@
             { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, adminOnly: true },
             { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true },
             { id: 'cerberus', name: '케르베로스', price: 0, icon: '🐺🔥', isReward: true },
-            { id: 'astronaut', name: '우주비행사', price: 0, icon: '👨‍🚀', isReward: true }
+            { id: 'astronaut', name: '우주비행사', price: 0, icon: '👨‍🚀', isReward: true },
+            { id: 'phoenix', name: '피닉스', price: 0, icon: '🔥🦅', isReward: true, desc: '서리룡 30회 처치 보상' }
         ];
 
         function updateShopSkinUI() {
@@ -10001,36 +10269,108 @@
 
         function closeLoginModal() {
             document.getElementById('login-modal-overlay').style.display = 'none';
-            setTimeout(checkAndShowHalloweenNotice, 300);
+            setTimeout(checkAndShowFrostCanyonNotice, 300);
         }
 
-        // 🎃 할로윈 보스 & 오메가 액스 사전 공지 팝업 제어 (딱 1번만 표시)
-        function checkAndShowHalloweenNotice() {
+        function isPageReload() {
             try {
-                if (localStorage.getItem('halloween_boss_event_notice_seen_v1')) {
+                const nav = performance.getEntriesByType('navigation');
+                if (nav && nav.length > 0) {
+                    return nav[0].type === 'reload';
+                }
+                if (performance.navigation) {
+                    return performance.navigation.type === 1;
+                }
+            } catch (e) {}
+            return false;
+        }
+
+        // ❄️ 얼음의 협곡 & 피닉스 신규 업데이트 공지 제어
+        // [유저 요구] "할로윈 이벤트 공지 이제 아무도 못보게 하고, 새로고침 빼고 오랜만에 왔거나 나갔다가 다시오면 뜨게"
+        function checkAndShowFrostCanyonNotice() {
+            try {
+                // 1. 새로고침 시에는 절대 띄우지 않음!
+                if (isPageReload()) {
                     return;
                 }
+
+                // 2. 로그인 창이 아직 열려있으면 로그인 후나 창 닫은 후 띄움
                 const loginOverlay = document.getElementById('login-modal-overlay');
                 if (loginOverlay && loginOverlay.style.display !== 'none' && loginOverlay.style.display !== '') {
-                    return; // 로그인 창이 떠 있는 동안에는 로그인 후 또는 닫은 후 띄움
+                    return;
                 }
-                const noticeOverlay = document.getElementById('halloween-event-notice-overlay');
-                if (noticeOverlay) {
-                    noticeOverlay.style.display = 'flex';
+
+                // 3. 나갔다가 다시오면 (세션 스토리지 비어있음) OR 오랜만에 왔거나 (마지막 확인 후 30분 경과)
+                let sessionSeen = false;
+                try {
+                    sessionSeen = (sessionStorage.getItem('frost_canyon_notice_seen_session') === 'true');
+                } catch(e) {}
+
+                let lastSeenTime = 0;
+                try {
+                    lastSeenTime = Number(localStorage.getItem('frost_canyon_notice_last_time') || 0);
+                } catch(e) {}
+
+                const now = Date.now();
+                const isLongTimeSince = (!lastSeenTime || (now - lastSeenTime > 30 * 60 * 1000));
+
+                if (!sessionSeen || isLongTimeSince) {
+                    const noticeOverlay = document.getElementById('frost-canyon-notice-overlay');
+                    if (noticeOverlay) {
+                        noticeOverlay.style.display = 'flex';
+                        try {
+                            sessionStorage.setItem('frost_canyon_notice_seen_session', 'true');
+                            localStorage.setItem('frost_canyon_notice_last_time', now.toString());
+                        } catch(e) {}
+                    }
                 }
             } catch (e) {
-                console.warn('Halloween notice error:', e);
+                console.warn('Frost Canyon notice error:', e);
             }
         }
 
-        function closeHalloweenNoticeModal() {
+        function closeFrostCanyonNoticeModal() {
             try {
-                localStorage.setItem('halloween_boss_event_notice_seen_v1', 'true');
+                sessionStorage.setItem('frost_canyon_notice_seen_session', 'true');
+                localStorage.setItem('frost_canyon_notice_last_time', Date.now().toString());
             } catch (e) {}
-            const noticeOverlay = document.getElementById('halloween-event-notice-overlay');
+            const noticeOverlay = document.getElementById('frost-canyon-notice-overlay');
             if (noticeOverlay) {
                 noticeOverlay.style.display = 'none';
             }
+        }
+
+        // 할로윈 공지 완전 무효화 (아무도 못 봄)
+        function checkAndShowHalloweenNotice() {
+            return;
+        }
+
+        function closeHalloweenNoticeModal() {
+            const el = document.getElementById('halloween-event-notice-overlay');
+            if (el) el.style.display = 'none';
+        }
+
+        function openIceDragonPortalModal() {
+            const modal = document.getElementById('ice-dragon-portal-modal');
+            if (modal) {
+                modal.style.display = 'block';
+                const killsEl = document.getElementById('my-ice-dragon-kills-display');
+                const phoenixStatusEl = document.getElementById('my-phoenix-unlock-status');
+                const k = frostDragonKills || 0;
+                if (killsEl) killsEl.innerText = `${k}회`;
+                if (phoenixStatusEl) {
+                    if (ownedSkins.includes('phoenix') || k >= 30) {
+                        phoenixStatusEl.innerHTML = `<span style="color:#2ecc71;">🎉 획득 완료!</span>`;
+                    } else {
+                        phoenixStatusEl.innerHTML = `<span style="color:#f97316;">${30 - k}회 남음 (총 30회)</span>`;
+                    }
+                }
+            }
+        }
+
+        function closeIceDragonPortalModal() {
+            const modal = document.getElementById('ice-dragon-portal-modal');
+            if (modal) modal.style.display = 'none';
         }
 
         function getDefaultGameData() {
@@ -12564,6 +12904,7 @@
                 noteEmbedded: noteEmbedded,
                 noteTreeHits: noteTreeHits,
                 bossKills: isBossEventStarted() ? (bossKills || 0) : 0,
+                frostDragonKills: frostDragonKills || 0,
                 battleWins: battleWins || 0,
                 lastBossFightTime: lastBossFightTime || 0,
                 lastRouletteSpinTime: lastRouletteSpinTime || 0,
@@ -12643,6 +12984,7 @@
             } else {
                 bossKills = Number(data.bossKills || 0);
             }
+            frostDragonKills = (data.frostDragonKills !== undefined) ? Number(data.frostDragonKills) : Number(localStorage.getItem('frost_dragon_kills') || 0);
             battleWins = (data.battleWins !== undefined) ? Number(data.battleWins) : Number(localStorage.getItem('battle_wins_' + (currentUser || 'guest')) || 0);
             pvpWins = battleWins;
             checkAndAwardForgeHouseSkin();
@@ -14940,7 +15282,7 @@
                         });
                     } catch (e) {}
                 }
-                setTimeout(checkAndShowHalloweenNotice, 600);
+                setTimeout(checkAndShowFrostCanyonNotice, 600);
             } else if (!currentUser) {
                 // 인트로가 이미 시청된 세션에서만 초기 400ms 로그인 팝업 띄우기 (첫 접속 인트로 중에는 인트로 완료 후 뜸)
                 let introShown = false;
@@ -15141,7 +15483,7 @@
         isFuseLuck25Active = false;
 
         loadGame(); 
-        setTimeout(checkAndShowHalloweenNotice, 1500);
+        setTimeout(checkAndShowFrostCanyonNotice, 1500);
         setInterval(saveGame, 1000);
 
         function getTables(type) {
@@ -15324,10 +15666,10 @@
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
             player.y = Math.max(-8950, Math.min(2600 - player.radius, player.y));
             
-            // 🔒 맨 마지막 지역: 얼음의 협곡(Y: -8000 이하) 비관리자 침입 강제 넉백 방어
-            if (!isAdmin() && player.y <= -7970 && player.y >= -9000) {
+            // 🔒 맨 마지막 지역: 얼음의 협곡(Y: -8000 이하) 레벨 125 미만 비관리자 침입 방어
+            if (!isAdmin() && level < 125 && player.y <= -7970 && player.y >= -9000) {
                 player.y = -7960;
-                if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음의 협곡은 관리자(ADMIN) 전용입니다!`, color: '#38bdf8', life: 50 });
+                if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음의 협곡: 레벨 125 달성 시 입장 가능!`, color: '#38bdf8', life: 50 });
             }
 
             if (level < 3 && player.y < 30 && player.y > -500) {
@@ -15354,9 +15696,9 @@
             } else if (level < 105 && player.y < -6970 && player.y > -7500) {
                 player.y = -6970;
                 if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 105 달성 시 통과 가능!`, color: '#a29bfe', life: 40 });
-            } else if (!isAdmin() && player.y < -7970 && player.y > -8500) {
+            } else if (!isAdmin() && level < 125 && player.y < -7970 && player.y > -8500) {
                 player.y = -7970;
-                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음의 협곡은 관리자(ADMIN) 전용입니다!`, color: '#38bdf8', life: 40 });
+                if (Math.random() < 0.05) floatTexts.push({ x: player.x, y: player.y - 40, text: `레벨 125 달성 시 통과 가능!`, color: '#38bdf8', life: 40 });
             }
 
             shops.forEach(shop => {
@@ -16127,6 +16469,179 @@
                 ctx.beginPath(); ctx.moveTo(-4, 5); ctx.lineTo(-3, 8); ctx.lineTo(-2, 5); ctx.closePath(); ctx.fill();
                 ctx.beginPath(); ctx.moveTo(4, 5); ctx.lineTo(3, 8); ctx.lineTo(2, 5); ctx.closePath(); ctx.fill();
                 ctx.restore();
+
+            } else if (useSkin === 'phoenix') {
+                // 🔥🦅 불사조 피닉스 스킨: 타오르는 화염의 날개, 불꽃 깃털, 황금 관, 작열하는 화염 오라
+                let pTime = Date.now() * 0.005;
+                let wingFlap = Math.sin(pTime * 2.5) * 0.22;
+                let floatHover = Math.sin(pTime * 1.5) * 4;
+
+                // 바닥 타오르는 그림자 & 화염 링
+                ctx.fillStyle = 'rgba(234, 88, 12, 0.3)';
+                ctx.beginPath(); ctx.ellipse(0, 22, 24, 7, 0, 0, Math.PI*2); ctx.fill();
+
+                ctx.translate(0, -bobbing + floatHover);
+
+                // 1. 화염 아우라 글로우 (Pulsing Radiant Fire Aura)
+                let auraGrad = ctx.createRadialGradient(0, 0, 8, 0, 0, 36);
+                auraGrad.addColorStop(0, 'rgba(254, 240, 138, 0.45)');
+                auraGrad.addColorStop(0.5, 'rgba(249, 115, 22, 0.25)');
+                auraGrad.addColorStop(1, 'rgba(220, 38, 38, 0)');
+                ctx.fillStyle = auraGrad;
+                ctx.beginPath(); ctx.arc(0, 0, 36, 0, Math.PI*2); ctx.fill();
+
+                // 2. 불타는 3갈래 꼬리 깃털 (Flaming Tail Plumage)
+                [-0.3, 0, 0.3].forEach((ang, idx) => {
+                    let tWiggle = Math.sin(pTime * 2 + idx) * 0.15;
+                    ctx.save();
+                    ctx.translate(0, 10);
+                    ctx.rotate(ang + tWiggle);
+                    let tailGrad = ctx.createLinearGradient(0, 0, 0, 26);
+                    tailGrad.addColorStop(0, '#dc2626');
+                    tailGrad.addColorStop(0.5, '#f97316');
+                    tailGrad.addColorStop(1, '#fef08a');
+                    ctx.fillStyle = tailGrad;
+                    ctx.shadowColor = '#f97316'; ctx.shadowBlur = 8;
+                    ctx.beginPath();
+                    ctx.moveTo(-3, 0);
+                    ctx.quadraticCurveTo(-5, 14, 0, 26);
+                    ctx.quadraticCurveTo(5, 14, 3, 0);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                });
+                ctx.shadowBlur = 0;
+
+                // 3. 거대한 불사조의 화염 날개 (좌/우 날개 - 펄럭임 애니메이션)
+                // 좌측 날개
+                ctx.save();
+                ctx.translate(-10, -2);
+                ctx.rotate(-0.25 + wingFlap);
+                let wingGradL = ctx.createLinearGradient(0, 0, -28, -10);
+                wingGradL.addColorStop(0, '#991b1b');
+                wingGradL.addColorStop(0.4, '#ea580c');
+                wingGradL.addColorStop(0.8, '#f59e0b');
+                wingGradL.addColorStop(1, '#fef08a');
+                ctx.fillStyle = wingGradL;
+                ctx.shadowColor = '#ea580c'; ctx.shadowBlur = 12;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.quadraticCurveTo(-14, -18, -32, -12);
+                ctx.quadraticCurveTo(-26, 4, -20, 14);
+                ctx.quadraticCurveTo(-10, 8, 0, 8);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath();
+                ctx.moveTo(-4, 0); ctx.quadraticCurveTo(-12, -10, -22, -8); ctx.quadraticCurveTo(-16, 2, -10, 6); ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+
+                // 우측 날개
+                ctx.save();
+                ctx.translate(10, -2);
+                ctx.rotate(0.25 - wingFlap);
+                let wingGradR = ctx.createLinearGradient(0, 0, 28, -10);
+                wingGradR.addColorStop(0, '#991b1b');
+                wingGradR.addColorStop(0.4, '#ea580c');
+                wingGradR.addColorStop(0.8, '#f59e0b');
+                wingGradR.addColorStop(1, '#fef08a');
+                ctx.fillStyle = wingGradR;
+                ctx.shadowColor = '#ea580c'; ctx.shadowBlur = 12;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.quadraticCurveTo(14, -18, 32, -12);
+                ctx.quadraticCurveTo(26, 4, 20, 14);
+                ctx.quadraticCurveTo(10, 8, 0, 8);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath();
+                ctx.moveTo(4, 0); ctx.quadraticCurveTo(12, -10, 22, -8); ctx.quadraticCurveTo(16, 2, 10, 6); ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+                ctx.shadowBlur = 0;
+
+                // 4. 불사조의 유려한 몸통 (Crimson Body & Golden Chest)
+                let bodyGrad = ctx.createLinearGradient(0, -10, 0, 14);
+                bodyGrad.addColorStop(0, '#b91c1c');
+                bodyGrad.addColorStop(0.6, '#ea580c');
+                bodyGrad.addColorStop(1, '#c2410c');
+                ctx.fillStyle = bodyGrad;
+                ctx.beginPath(); ctx.ellipse(0, 2, 11, 14, 0, 0, Math.PI*2); ctx.fill();
+
+                // 가슴 깃털 (Golden Crest on Chest)
+                let chestGrad = ctx.createLinearGradient(0, -6, 0, 10);
+                chestGrad.addColorStop(0, '#fde047');
+                chestGrad.addColorStop(1, '#ea580c');
+                ctx.fillStyle = chestGrad;
+                ctx.beginPath();
+                ctx.moveTo(0, -6);
+                ctx.quadraticCurveTo(-7, 2, 0, 10);
+                ctx.quadraticCurveTo(7, 2, 0, -6);
+                ctx.closePath();
+                ctx.fill();
+
+                // 5. 머리, 관(Crown), 황금 부리, 타오르는 눈
+                ctx.save();
+                ctx.translate(0, -14);
+
+                // 머리 위 불꽃 벼슬 (3 Flaming Crest Feathers)
+                let crestWiggle = Math.sin(pTime * 3) * 0.1;
+                ctx.save();
+                ctx.rotate(crestWiggle);
+                ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 8;
+                ctx.fillStyle = '#f59e0b';
+                ctx.beginPath();
+                ctx.moveTo(-3, -4); ctx.lineTo(-7, -18); ctx.lineTo(-1, -8); ctx.closePath();
+                ctx.moveTo(3, -4); ctx.lineTo(7, -18); ctx.lineTo(1, -8); ctx.closePath();
+                ctx.moveTo(0, -5); ctx.lineTo(0, -22); ctx.lineTo(3, -9); ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath();
+                ctx.moveTo(0, -5); ctx.lineTo(0, -16); ctx.lineTo(1.5, -7); ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+                ctx.shadowBlur = 0;
+
+                // 머리 구형
+                let headGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 9);
+                headGrad.addColorStop(0, '#f97316');
+                headGrad.addColorStop(0.7, '#dc2626');
+                headGrad.addColorStop(1, '#991b1b');
+                ctx.fillStyle = headGrad;
+                ctx.beginPath(); ctx.arc(0, 0, 8.5, 0, Math.PI*2); ctx.fill();
+
+                // 황금 부리 (Golden Sharp Beak)
+                ctx.fillStyle = '#f59e0b';
+                ctx.strokeStyle = '#b45309'; ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(0, -1);
+                ctx.lineTo(8 * facing, 2);
+                ctx.lineTo(0, 5);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // 작열하는 눈 (Fiery Glowing Eye)
+                ctx.shadowColor = '#fef08a'; ctx.shadowBlur = 6;
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath(); ctx.arc(2 * facing, 0, 2.5, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#1e1b4b';
+                ctx.beginPath(); ctx.arc(2.3 * facing, 0, 1.2, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(2.6 * facing, -0.6, 0.6, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+                ctx.shadowBlur = 0;
+
+                // 6. 비산하는 미세 불씨 파티클 (Ambient Flame Embers)
+                for (let emb = 0; emb < 3; emb++) {
+                    let ep = (pTime * 2 + emb * 1.8) % 1;
+                    let ex = Math.sin(emb * 4 + pTime) * 16;
+                    let ey = 14 - ep * 34;
+                    let er = (1 - ep) * 2;
+                    ctx.fillStyle = 'rgba(254, 240, 138, ' + (1 - ep) + ')';
+                    ctx.beginPath(); ctx.arc(ex, ey, er, 0, Math.PI*2); ctx.fill();
+                }
 
             } else if (useSkin.startsWith('ghost')) {
                 let floatOffset = Math.sin(Date.now() * 0.005) * 5 - bobbing;
@@ -19213,6 +19728,8 @@
                 // 🔑 [유저 요청] 로그인 되어있으면 바로 게임 진입, 안되어있으면 로그인 모달 오픈!
                 if (!currentUser) {
                     if (typeof openLoginModal === 'function') openLoginModal();
+                } else {
+                    setTimeout(checkAndShowFrostCanyonNotice, 500);
                 }
             }, 350);
         }
