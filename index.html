@@ -162,7 +162,7 @@
             background: radial-gradient(circle at 50% 38%, #0d1e16 0%, #07120c 60%, #020604 100%);
             z-index: 99999;
             overflow: hidden;
-            display: flex;
+            display: none; /* 새로고침 플래시 및 반복 방지를 위해 기본 none, 인트로 가동 시에만 flex */
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -1658,19 +1658,6 @@
 
         <!-- 🌳⚡ 트리버스터 (TREE BUSTER) 오프닝 인트로 애니메이션 -->
         <div id="tree-buster-intro" onclick="handleTbIntroClick(event)">
-            <script>
-                (function() {
-                    try {
-                        var nav = performance.getEntriesByType('navigation');
-                        var isReload = (nav && nav.length > 0 && nav[0].type === 'reload') ||
-                                       (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
-                        if (isReload || sessionStorage.getItem('tb_intro_shown') === 'true') {
-                            var el = document.getElementById('tree-buster-intro');
-                            if (el) el.style.display = 'none';
-                        }
-                    } catch(e) {}
-                })();
-            </script>
             <!-- 배경 파티클 캔버스 -->
             <canvas id="tb-intro-canvas"></canvas>
 
@@ -20033,11 +20020,49 @@
             }, 350);
         }
 
+        // 새로고침(reload) 및 탭 닫기 감지 이벤트 등록
+        window.addEventListener('beforeunload', function() {
+            try {
+                sessionStorage.setItem('tb_is_reloading', 'true');
+                sessionStorage.setItem('tb_intro_shown', 'true');
+                localStorage.setItem('tb_last_unload', String(Date.now()));
+            } catch(e) {}
+        });
+        window.addEventListener('pagehide', function() {
+            try {
+                sessionStorage.setItem('tb_is_reloading', 'true');
+                sessionStorage.setItem('tb_intro_shown', 'true');
+                localStorage.setItem('tb_last_unload', String(Date.now()));
+            } catch(e) {}
+        });
+
+        // 인트로 요소 원상복구 헬퍼 함수
+        function resetIntroElements() {
+            const beam = document.getElementById('tb-slash-beam');
+            const stage = document.getElementById('tb-tree-stage');
+            const leftTree = document.getElementById('tb-tree-left');
+            const rightTree = document.getElementById('tb-tree-right');
+            const bg = document.getElementById('tb-logo-bg');
+            const text = document.getElementById('tb-logo-text');
+            const stack = document.getElementById('tb-logo-stack');
+            const prompt = document.getElementById('tb-faint-prompt');
+
+            if (beam) beam.classList.remove('flash');
+            if (stage) stage.classList.remove('shake');
+            if (leftTree) leftTree.classList.remove('split-left');
+            if (rightTree) rightTree.classList.remove('split-right');
+            if (bg) { bg.classList.remove('slam'); bg.style.opacity = ''; bg.style.transform = ''; }
+            if (text) { text.classList.remove('slam'); text.style.opacity = ''; text.style.transform = ''; }
+            if (stack) stack.classList.remove('floating');
+            if (prompt) prompt.classList.remove('active');
+        }
+
         // 오프닝 애니메이션 시퀀스 실행 (나무가 있다가 2초 후 쪼개지며 뒤에 그림 쾅! 그 위에 글씨 쾅!)
         function runTreeBusterIntroSequence() {
             clearTbTimers();
             tbIntroState = 'init';
             tbIntroActive = true;
+            try { sessionStorage.setItem('tb_intro_shown', 'true'); } catch(e) {}
             initTbFxCanvas();
 
             // T=2000ms (2초 후): 도끼 베기 광선 번쩍 & 사운드 & 흔들림
@@ -20116,7 +20141,7 @@
             }, 3500));
         }
 
-        // 페이지 진입 및 다시보기 시 인트로 초기화 & 가동
+        // 페이지 진입 및 다시보기 시 인트로 판별 & 가동
         function checkAndInitTreeBusterIntro(forceReplay = false) {
             const introEl = document.getElementById('tree-buster-intro');
             if (!introEl) {
@@ -20124,23 +20149,62 @@
                 return;
             }
 
-            let isReload = false;
+            // [다시보기] 사용자가 replayTreeBusterIntro()를 호출한 경우 즉시 강제 재생
+            if (forceReplay) {
+                introEl.classList.remove('tb-exit');
+                resetIntroElements();
+                introEl.style.display = 'flex';
+                runTreeBusterIntroSequence();
+                return;
+            }
+
+            // 1. 브라우저 성능 API 새로고침 판별
+            let isNavReload = false;
             try {
-                const navEntries = performance.getEntriesByType('navigation');
-                if (navEntries && navEntries.length > 0 && navEntries[0].type === 'reload') {
-                    isReload = true;
-                } else if (window.performance && window.performance.navigation && window.performance.navigation.type === 1) {
-                    isReload = true;
+                const nav = performance.getEntriesByType('navigation');
+                if (nav && nav.length > 0 && nav[0].type === 'reload') isNavReload = true;
+                else if (window.performance && window.performance.navigation && window.performance.navigation.type === 1) isNavReload = true;
+            } catch(e) {}
+
+            // 2. beforeunload / pagehide 시 설정된 새로고침 플래그 판별
+            let isReloadFlag = false;
+            try {
+                if (sessionStorage.getItem('tb_is_reloading') === 'true') isReloadFlag = true;
+                sessionStorage.removeItem('tb_is_reloading'); // 1회성 소모
+            } catch(e) {}
+
+            // 3. 언로드 직후 시간차 검사 (12초 이내 페이지 재로드는 100% 새로고침)
+            let isRecentUnload = false;
+            try {
+                const lastUnload = parseInt(localStorage.getItem('tb_last_unload') || '0', 10);
+                if (lastUnload > 0 && (Date.now() - lastUnload < 12000)) {
+                    isRecentUnload = true;
                 }
             } catch(e) {}
 
-            let alreadyShown = false;
+            // 4. 이번 세션 접속 여부 검사
+            let alreadyShownInSession = false;
             try {
-                alreadyShown = (sessionStorage.getItem('tb_intro_shown') === 'true');
+                alreadyShownInSession = (sessionStorage.getItem('tb_intro_shown') === 'true');
             } catch(e) {}
 
-            // 새로고침(reload) 또는 이번 세션에서 이미 인트로를 본 경우 (forceReplay가 아닐 때) 바로 게임 시작
-            if (!forceReplay && (isReload || alreadyShown)) {
+            // 5. 오랜만에 방문한 경우 체크 (30분 이상 공백 시에만 다시 허용)
+            let isLongAbsence = false;
+            try {
+                const lastActive = parseInt(localStorage.getItem('tb_last_active_time') || '0', 10);
+                const now = Date.now();
+                if (lastActive > 0 && (now - lastActive > 30 * 60 * 1000)) {
+                    isLongAbsence = true;
+                }
+                localStorage.setItem('tb_last_active_time', String(now));
+            } catch(e) {}
+
+            // 새로고침 여부 종합 판단: API, 플래그, 시간차 중 하나라도 만족하면 확실한 새로고침
+            const isAnyReload = (isNavReload || isReloadFlag || isRecentUnload);
+
+            // 새로고침이거나, 이번 세션에서 이미 페이지에 들어왔던 경우(오랜만 방문이 아니면) -> 인트로 절대 금지! 즉시 본 게임 시작
+            if (isAnyReload || (alreadyShownInSession && !isLongAbsence)) {
+                try { sessionStorage.setItem('tb_intro_shown', 'true'); } catch(e) {}
                 introEl.style.display = 'none';
                 introEl.classList.add('tb-exit');
                 tbIntroActive = false;
@@ -20158,25 +20222,10 @@
                 return;
             }
 
+            // 🌟 첫 방문 또는 오랜만의 복귀인 경우: 인트로 재생 시작!
+            try { sessionStorage.setItem('tb_intro_shown', 'true'); } catch(e) {}
             introEl.classList.remove('tb-exit');
-            const beam = document.getElementById('tb-slash-beam');
-            const stage = document.getElementById('tb-tree-stage');
-            const leftTree = document.getElementById('tb-tree-left');
-            const rightTree = document.getElementById('tb-tree-right');
-            const bg = document.getElementById('tb-logo-bg');
-            const text = document.getElementById('tb-logo-text');
-            const stack = document.getElementById('tb-logo-stack');
-            const prompt = document.getElementById('tb-faint-prompt');
-
-            if (beam) beam.classList.remove('flash');
-            if (stage) stage.classList.remove('shake');
-            if (leftTree) leftTree.classList.remove('split-left');
-            if (rightTree) rightTree.classList.remove('split-right');
-            if (bg) { bg.classList.remove('slam'); bg.style.opacity = ''; bg.style.transform = ''; }
-            if (text) { text.classList.remove('slam'); text.style.opacity = ''; text.style.transform = ''; }
-            if (stack) stack.classList.remove('floating');
-            if (prompt) prompt.classList.remove('active');
-
+            resetIntroElements();
             introEl.style.display = 'flex';
             runTreeBusterIntroSequence();
         }
