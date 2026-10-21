@@ -185,39 +185,94 @@
             z-index: 2;
         }
 
-        /* 트리버스터 공식 로고 & 탭 안내 스타일 */
-        .tb-clean-intro-content {
-            position: relative;
-            z-index: 20;
+        /* 중앙 번쩍이는 베기 광선 */
+        .tb-slash-beam {
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%) scaleY(0);
+            width: 6px; height: 100%;
+            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #ffffff 30%, #ffeaa7 60%, #00f2fe 90%, rgba(255,255,255,0) 100%);
+            box-shadow: 0 0 15px #ffffff, 0 0 35px #ffeaa7;
+            z-index: 25;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.1s ease-in, opacity 0.1s ease-in;
+        }
+        .tb-slash-beam.flash {
+            opacity: 1;
+            transform: translateX(-50%) scaleY(1);
+        }
+
+        /* 반으로 쪼개지는 나무 스테이지 */
+        .tb-tree-stage {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px; height: 320px;
+            z-index: 10;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .tb-tree-stage.shake {
+            animation: tbStageRumble 0.25s ease-out;
+        }
+        @keyframes tbStageRumble {
+            0%, 100% { transform: translate(-50%, -50%); }
+            25% { transform: translate(calc(-50% - 6px), calc(-50% + 4px)); }
+            50% { transform: translate(calc(-50% + 6px), calc(-50% - 4px)); }
+            75% { transform: translate(calc(-50% - 3px), calc(-50% + 2px)); }
+        }
+
+        .tb-tree-half {
+            position: absolute;
+            top: 0; width: 140px; height: 320px;
+            transition: transform 0.65s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.55s ease-out;
+        }
+        .tb-tree-left {
+            right: 50%;
+            transform-origin: bottom right;
+        }
+        .tb-tree-right {
+            left: 50%;
+            transform-origin: bottom left;
+        }
+        .tb-tree-svg {
+            width: 100%; height: 100%;
+            display: block;
+        }
+
+        .tb-tree-left.split-left {
+            transform: translate(-140px, 35px) rotate(-24deg) scale(0.85);
+            opacity: 0;
+        }
+        .tb-tree-right.split-right {
+            transform: translate(140px, 35px) rotate(24deg) scale(0.85);
+            opacity: 0;
+        }
+
+        /* 나무 부서진 뒤 등장하는 앱 사진 로고 & 밑에 흐릿하고 작은 '탭하여 시작' */
+        .tb-logo-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.6);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.55s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.4s ease;
+        }
+        .tb-logo-container.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
             pointer-events: auto;
-            animation: tbContentFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @keyframes tbContentFadeIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.92) translateY(12px);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        .tb-logo-image-wrap {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .tb-official-logo {
-            width: 290px;
+            width: 285px;
             max-width: 82vw;
             height: auto;
             display: block;
@@ -225,7 +280,6 @@
             box-shadow: 0 18px 48px rgba(0, 0, 0, 0.9), 0 0 35px rgba(245, 158, 11, 0.35);
             animation: tbLogoFloat 3.6s infinite ease-in-out;
         }
-
         @keyframes tbLogoFloat {
             0%, 100% {
                 transform: translateY(0);
@@ -239,15 +293,19 @@
 
         /* 밑에 흐릿하고 작게 탭하여 시작 */
         .tb-faint-prompt {
-            margin-top: 26px;
+            margin-top: 24px;
             font-size: 13px;
             font-weight: 500;
             color: rgba(255, 255, 255, 0.42);
             letter-spacing: 2px;
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .tb-faint-prompt.active {
+            opacity: 1;
             animation: tbFaintBreathe 2.4s infinite ease-in-out;
         }
-
         @keyframes tbFaintBreathe {
             0%, 100% {
                 opacity: 0.32;
@@ -19650,54 +19708,128 @@
             }, 350);
         }
 
-        // 공식 트리버스터 인트로 초기화 (은은한 불씨 파티클 가동 및 즉시 탭 대기)
-        function runTreeBusterIntroSequence() {
-            tbIntroState = 'ready';
-            tbIntroActive = true;
-            initTbFxCanvas();
-            spawnAmbientEmbers();
-        }
+        // 🌲 나무 쪼개짐 파편 파티클 분출
+        function spawnTreeSplitParticles() {
+            if (!tbFxCanvas) return;
+            const cx = tbFxCanvas.width / 2;
+            const cy = tbFxCanvas.height * 0.5;
 
-        // 은은하게 피어오르는 황금빛 불씨 파티클
-        function spawnAmbientEmbers() {
-            if (!tbIntroActive || !tbFxCanvas) return;
-            for (let i = 0; i < 24; i++) {
+            const woodColors = ['#b45309', '#d97706', '#fde68a', '#78350f'];
+            for (let i = 0; i < 28; i++) {
+                const ang = Math.random() * Math.PI * 2;
+                const spd = 2 + Math.random() * 8;
+                tbParticles.push({
+                    type: 'wood',
+                    x: cx + (Math.random() - 0.5) * 40,
+                    y: cy + (Math.random() - 0.5) * 80,
+                    vx: Math.cos(ang) * spd,
+                    vy: Math.sin(ang) * spd - 3,
+                    w: 4 + Math.random() * 7,
+                    h: 3 + Math.random() * 5,
+                    alpha: 1,
+                    color: woodColors[Math.floor(Math.random() * woodColors.length)]
+                });
+            }
+
+            const leafColors = ['#16a34a', '#4ade80', '#22c55e', '#86efac', '#facc15'];
+            for (let i = 0; i < 30; i++) {
+                const ang = Math.random() * Math.PI * 2;
+                const spd = 1.5 + Math.random() * 6;
                 tbParticles.push({
                     type: 'leaf',
-                    x: Math.random() * tbFxCanvas.width,
-                    y: Math.random() * tbFxCanvas.height,
-                    vx: (Math.random() - 0.5) * 0.8,
-                    vy: -0.6 - Math.random() * 1.2,
-                    r: 1 + Math.random() * 2,
-                    alpha: 0.2 + Math.random() * 0.6,
-                    color: Math.random() < 0.6 ? '#f59e0b' : (Math.random() < 0.5 ? '#ef4444' : '#fde047')
+                    x: cx + (Math.random() - 0.5) * 80,
+                    y: cy - 40 + (Math.random() - 0.5) * 90,
+                    vx: Math.cos(ang) * spd,
+                    vy: Math.sin(ang) * spd - 2,
+                    r: 3 + Math.random() * 4,
+                    alpha: 1,
+                    color: leafColors[Math.floor(Math.random() * leafColors.length)]
                 });
             }
             if (!tbAnimFrameId) tbFxLoop();
         }
 
-        // 진입 시 1회만 표시 (새 계정 로그인 시는 재표시 안 됨)
-        function checkAndInitTreeBusterIntro() {
-            const introEl = document.getElementById('tree-buster-intro');
-            if (!introEl) {
-                startGameLoop();
+        // 도중 탭 시 즉시 나무 쪼개지고 앱 사진 로고 등장
+        function fastForwardTbIntro() {
+            tbIntroState = 'ready';
+            const beam = document.getElementById('tb-slash-beam');
+            const leftTree = document.getElementById('tb-tree-left');
+            const rightTree = document.getElementById('tb-tree-right');
+            const logo = document.getElementById('tb-logo-container');
+            const prompt = document.getElementById('tb-faint-prompt');
+
+            if (beam) beam.classList.remove('flash');
+            if (leftTree) leftTree.classList.add('split-left');
+            if (rightTree) rightTree.classList.add('split-right');
+            if (logo) logo.classList.add('active');
+            if (prompt) prompt.classList.add('active');
+        }
+
+        // 탭 이벤트 핸들러
+        function handleTbIntroClick(e) {
+            if (tbIntroState === 'exited') return;
+            if (tbIntroState !== 'ready') {
+                fastForwardTbIntro();
                 return;
             }
+            finishTreeBusterIntro(e);
+        }
 
-            let alreadyShown = false;
-            try {
-                alreadyShown = (sessionStorage.getItem('tb_intro_shown') === 'true');
-            } catch(e) {}
+        // 오프닝 애니메이션 시퀀스 실행 (나무가 있다가 2초 후 부서지며 앱 사진 로고 등장)
+        function runTreeBusterIntroSequence() {
+            tbIntroState = 'init';
+            tbIntroActive = true;
+            initTbFxCanvas();
 
-            if (alreadyShown) {
-                introEl.style.display = 'none';
-                tbIntroActive = false;
-                tbIntroState = 'exited';
-                startGameLoop();
-            } else {
-                introEl.style.display = 'flex';
-                runTreeBusterIntroSequence();
-            }
+            // T=2000ms (2초 후): 도끼 베기 광선 번쩍 & 사운드
+            setTimeout(() => {
+                if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
+                const beam = document.getElementById('tb-slash-beam');
+                const stage = document.getElementById('tb-tree-stage');
+                if (beam) beam.classList.add('flash');
+                if (stage) stage.classList.add('shake');
+                playIntroSlashSound();
+            }, 2000);
+
+            // T=2150ms: 나무가 반으로 쪼개짐 (좌/우 분리) & 파편 폭발
+            setTimeout(() => {
+                if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
+                tbIntroState = 'splitting';
+                const beam = document.getElementById('tb-slash-beam');
+                const leftTree = document.getElementById('tb-tree-left');
+                const rightTree = document.getElementById('tb-tree-right');
+
+                if (beam) beam.classList.remove('flash');
+                if (leftTree) leftTree.classList.add('split-left');
+                if (rightTree) rightTree.classList.add('split-right');
+
+                playIntroWoodCrackSound();
+                spawnTreeSplitParticles();
+            }, 2150);
+
+            // T=2400ms: 앱 사진 로고 등장 & 차임 사운드
+            setTimeout(() => {
+                if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
+                tbIntroState = 'revealed';
+                const logo = document.getElementById('tb-logo-container');
+                if (logo) logo.classList.add('active');
+                playIntroTitleRevealSound();
+            }, 2400);
+
+            // T=2650ms: 하단 흐릿하고 작은 '탭하여 시작' 활성화
+            setTimeout(() => {
+                if (tbIntroState === 'exited') return;
+                tbIntroState = 'ready';
+                const prompt = document.getElementById('tb-faint-prompt');
+                if (prompt) prompt.classList.add('active');
+            }, 2650);
+
+            // 안전장치: 3.5초 후 강제 ready 보장
+            setTimeout(() => {
+                if (tbIntroState !== 'exited') {
+                    fastForwardTbIntro();
+                }
+            }, 3500);
         }
 
         // 인트로 다시보기 테스트 함수
@@ -19705,6 +19837,14 @@
             const introEl = document.getElementById('tree-buster-intro');
             if (!introEl) return;
             introEl.classList.remove('tb-exit');
+            const leftTree = document.getElementById('tb-tree-left');
+            const rightTree = document.getElementById('tb-tree-right');
+            const logo = document.getElementById('tb-logo-container');
+            const prompt = document.getElementById('tb-faint-prompt');
+            if (leftTree) leftTree.classList.remove('split-left');
+            if (rightTree) rightTree.classList.remove('split-right');
+            if (logo) logo.classList.remove('active');
+            if (prompt) prompt.classList.remove('active');
             introEl.style.display = 'flex';
             runTreeBusterIntroSequence();
         };
