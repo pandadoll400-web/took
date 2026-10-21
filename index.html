@@ -155,11 +155,11 @@
             50% { transform: translateY(-4px); filter: drop-shadow(0 0 18px #a8ff78); }
         }
 
-        /* 🌳⚡ [TREE BUSTER] 프리미엄 오프닝 인트로 애니메이션 스타일 */
+        /* 🌳⚡ [TREE BUSTER] 가볍고 부드러운 프리미엄 오프닝 인트로 */
         #tree-buster-intro {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 36%, #0b1d14 0%, #06110b 45%, #020604 100%);
+            background: radial-gradient(circle at 50% 38%, #0d1e16 0%, #07120c 60%, #020604 100%);
             z-index: 99999;
             overflow: hidden;
             display: flex;
@@ -169,12 +169,12 @@
             user-select: none;
             -webkit-user-select: none;
             cursor: pointer;
-            transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.35s ease, transform 0.35s ease;
         }
 
         #tree-buster-intro.tb-exit {
             opacity: 0 !important;
-            transform: scale(1.08) !important;
+            transform: scale(1.06) !important;
             pointer-events: none !important;
         }
 
@@ -182,150 +182,78 @@
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
-            z-index: 1;
-        }
-
-        .tb-vignette {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(ellipse at 50% 50%, rgba(46, 204, 113, 0.1) 0%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.92) 100%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* 중앙 회전 빛줄기 (God Rays) */
-        .tb-god-rays {
-            position: absolute;
-            top: 42%; left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            width: 750px; height: 750px;
-            background: conic-gradient(
-                from 0deg,
-                rgba(255, 215, 0, 0.14) 0deg 20deg,
-                transparent 20deg 40deg,
-                rgba(46, 204, 113, 0.16) 40deg 60deg,
-                transparent 60deg 80deg,
-                rgba(255, 215, 0, 0.14) 80deg 100deg,
-                transparent 100deg 120deg,
-                rgba(0, 242, 254, 0.14) 120deg 140deg,
-                transparent 140deg 160deg,
-                rgba(255, 215, 0, 0.14) 160deg 180deg,
-                transparent 180deg 200deg,
-                rgba(46, 204, 113, 0.16) 200deg 220deg,
-                transparent 220deg 240deg,
-                rgba(255, 215, 0, 0.14) 240deg 260deg,
-                transparent 260deg 280deg,
-                rgba(0, 242, 254, 0.14) 280deg 300deg,
-                transparent 300deg 320deg,
-                rgba(255, 215, 0, 0.14) 320deg 340deg,
-                transparent 340deg 360deg
-            );
-            border-radius: 50%;
-            filter: blur(8px);
-            opacity: 0;
-            pointer-events: none;
             z-index: 2;
-            transition: transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s ease;
         }
 
-        .tb-god-rays.active {
-            opacity: 0.85;
-            transform: translate(-50%, -50%) scale(1);
-            animation: tbRaysSpin 25s linear infinite;
-        }
-
-        @keyframes tbRaysSpin {
-            0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
-            100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
-        }
-
-        /* 베기 광선 (Slash beam) */
+        /* 중앙 번쩍이는 베기 광선 */
         .tb-slash-beam {
             position: absolute;
             top: 0; left: 50%;
             transform: translateX(-50%) scaleY(0);
-            transform-origin: top center;
-            width: 5px; height: 100%;
+            width: 6px; height: 100%;
             background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #ffffff 30%, #ffeaa7 60%, #00f2fe 90%, rgba(255,255,255,0) 100%);
-            box-shadow: 0 0 20px #ffffff, 0 0 45px #ffeaa7, 0 0 80px #00f2fe;
+            box-shadow: 0 0 15px #ffffff, 0 0 35px #ffeaa7;
             z-index: 25;
             opacity: 0;
             pointer-events: none;
-            transition: transform 0.12s ease-in, opacity 0.12s ease-in;
+            transition: transform 0.1s ease-in, opacity 0.1s ease-in;
         }
-
         .tb-slash-beam.flash {
             opacity: 1;
             transform: translateX(-50%) scaleY(1);
         }
 
-        /* 나무 스테이지 */
+        /* 반으로 쪼개지는 나무 스테이지 */
         .tb-tree-stage {
             position: absolute;
-            top: 26%; left: 50%;
+            top: 32%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 320px; height: 380px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 280px; height: 320px;
             z-index: 10;
             pointer-events: none;
         }
-
         .tb-tree-stage.shake {
-            animation: tbStageShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+            animation: tbStageRumble 0.25s ease-out;
         }
-
-        @keyframes tbStageShake {
+        @keyframes tbStageRumble {
             0%, 100% { transform: translate(-50%, -50%); }
-            20% { transform: translate(calc(-50% - 7px), calc(-50% + 4px)); }
-            40% { transform: translate(calc(-50% + 7px), calc(-50% - 4px)); }
-            60% { transform: translate(calc(-50% - 4px), calc(-50% - 3px)); }
-            80% { transform: translate(calc(-50% + 4px), calc(-50% + 3px)); }
+            25% { transform: translate(calc(-50% - 6px), calc(-50% + 4px)); }
+            50% { transform: translate(calc(-50% + 6px), calc(-50% - 4px)); }
+            75% { transform: translate(calc(-50% - 3px), calc(-50% + 2px)); }
         }
 
         .tb-tree-half {
             position: absolute;
-            top: 0;
-            width: 160px; height: 380px;
-            overflow: visible;
-            transition: transform 0.9s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.75s ease-out, filter 0.75s ease;
+            top: 0; width: 140px; height: 320px;
+            transition: transform 0.65s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.55s ease-out;
         }
-
         .tb-tree-left {
             right: 50%;
             transform-origin: bottom right;
         }
-
         .tb-tree-right {
             left: 50%;
             transform-origin: bottom left;
         }
-
         .tb-tree-svg {
             width: 100%; height: 100%;
             display: block;
-            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.7));
         }
 
-        /* 쪼개짐 애니메이션 */
         .tb-tree-left.split-left {
-            transform: translate(-140px, 35px) rotate(-22deg) scale(0.92);
+            transform: translate(-120px, 30px) rotate(-20deg) scale(0.9);
             opacity: 0;
-            filter: blur(3px) drop-shadow(0 0 15px #f39c12);
         }
-
         .tb-tree-right.split-right {
-            transform: translate(140px, 35px) rotate(22deg) scale(0.92);
+            transform: translate(120px, 30px) rotate(20deg) scale(0.9);
             opacity: 0;
-            filter: blur(3px) drop-shadow(0 0 15px #f39c12);
         }
 
-        /* 타이틀 & 탭 컨테이너 */
+        /* 타이틀 & 버튼 컨테이너 */
         .tb-title-container {
             position: absolute;
-            top: 42%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.35);
+            top: 48%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.6);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -334,11 +262,10 @@
             z-index: 30;
             opacity: 0;
             width: 90%;
-            max-width: 520px;
+            max-width: 480px;
             pointer-events: none;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+            transition: transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.35s ease;
         }
-
         .tb-title-container.active {
             opacity: 1;
             transform: translate(-50%, -50%) scale(1);
@@ -346,216 +273,131 @@
         }
 
         .tb-title-kicker {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-            opacity: 0.95;
-        }
-
-        .tb-kicker-line {
-            width: 32px; height: 1.5px;
-            background: linear-gradient(90deg, transparent, #ffeaa7);
-        }
-        .tb-title-kicker .tb-kicker-line:last-child {
-            background: linear-gradient(90deg, #ffeaa7, transparent);
-        }
-
-        .tb-kicker-text {
             font-size: 11px;
             font-weight: 800;
-            letter-spacing: 5px;
+            letter-spacing: 4px;
             color: #ffeaa7;
-            text-transform: uppercase;
-            text-shadow: 0 0 8px rgba(255, 234, 167, 0.6);
+            margin-bottom: 6px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
 
         .tb-logo-wrapper {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            position: relative;
+            gap: 10px;
         }
-
         .tb-axe-icon {
-            font-size: 34px;
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8)) drop-shadow(0 0 15px #f39c12);
-            animation: tbAxeFloat 2.2s infinite ease-in-out;
+            font-size: 32px;
+            animation: tbAxeWiggle 2s infinite ease-in-out;
         }
-        .tb-axe-left { animation-delay: 0s; transform: rotate(-15deg); }
-        .tb-axe-right { animation-delay: 1.1s; transform: scaleX(-1) rotate(-15deg); }
-
-        @keyframes tbAxeFloat {
-            0%, 100% { transform: translateY(0) rotate(-15deg); }
-            50% { transform: translateY(-6px) rotate(-10deg); }
+        .tb-axe-right {
+            transform: scaleX(-1);
+        }
+        @keyframes tbAxeWiggle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
-        /* 3D 엠보싱 메탈릭 골드 메인 타이틀 */
         .tb-main-title {
-            margin: 0;
-            padding: 0;
-            font-size: 58px;
+            margin: 0; padding: 0;
+            font-size: 56px;
             font-weight: 900;
-            letter-spacing: -2px;
+            letter-spacing: -1.5px;
             font-family: -apple-system, BlinkMacSystemFont, 'Black Han Sans', 'Impact', 'Noto Sans KR', sans-serif;
-            background: linear-gradient(180deg, #ffffff 0%, #fff3b0 24%, #f1c40f 46%, #e67e22 75%, #d35400 100%);
+            background: linear-gradient(180deg, #ffffff 0%, #fff3b0 30%, #f1c40f 55%, #e67e22 80%, #d35400 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 2px 0 #7b241c)
-                    drop-shadow(0 4px 0 #511a14)
-                    drop-shadow(0 7px 14px rgba(0,0,0,0.95))
-                    drop-shadow(0 0 25px rgba(241, 196, 15, 0.75));
-            position: relative;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.9);
+            filter: drop-shadow(0 2px 0 #7b241c) drop-shadow(0 4px 0 #4a110a);
             line-height: 1.1;
         }
 
-        .tb-main-title::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 60%; height: 100%;
-            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.75) 50%, transparent 100%);
-            transform: skewX(-25deg);
-            pointer-events: none;
-            animation: tbShineSweep 3.5s infinite ease-in-out 1.2s;
-        }
-
-        @keyframes tbShineSweep {
-            0% { left: -100%; }
-            35%, 100% { left: 160%; }
-        }
-
         .tb-sub-logo {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 900;
-            letter-spacing: 10px;
+            letter-spacing: 8px;
             color: #55efc4;
-            text-shadow: 0 0 14px rgba(85, 239, 196, 0.8), 0 2px 4px rgba(0,0,0,0.8);
-            margin-top: 4px;
-            margin-bottom: 14px;
-            margin-left: 10px;
+            margin-top: 2px;
+            margin-bottom: 12px;
+            margin-left: 8px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
         }
 
         .tb-slogan-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(241, 196, 15, 0.4);
-            border-radius: 30px;
+            border-radius: 20px;
             padding: 5px 16px;
-            margin-bottom: 28px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.2);
-        }
-
-        .tb-slogan-text {
-            font-size: 12.5px;
-            font-weight: 700;
+            margin-bottom: 24px;
             color: #fce77d;
-            letter-spacing: 0.5px;
+            font-size: 13px;
+            font-weight: bold;
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
 
-        /* 탭하여 시작하기 버튼 프롬프트 */
+        /* 탭하여 시작하기 프롬프트 */
         .tb-tap-prompt {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             cursor: pointer;
-            position: relative;
-            margin-top: 8px;
             opacity: 0;
-            transition: opacity 0.6s ease, transform 0.3s ease;
+            transition: opacity 0.4s ease;
         }
-
         .tb-tap-prompt.active {
             opacity: 1;
-            animation: tbTapBreathe 2s infinite ease-in-out;
+            animation: tbTapPulse 1.8s infinite ease-in-out;
         }
-
-        @keyframes tbTapBreathe {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.4)); }
-            50% { transform: scale(1.04); filter: drop-shadow(0 0 25px rgba(46, 204, 113, 0.7)); }
+        @keyframes tbTapPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
         }
 
         .tb-tap-glow-box {
             display: flex;
             align-items: center;
             gap: 10px;
-            background: linear-gradient(135deg, rgba(30, 144, 255, 0.3) 0%, rgba(46, 204, 113, 0.4) 100%);
-            border: 1.8px solid #55efc4;
-            border-radius: 40px;
-            padding: 12px 32px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.6), inset 0 1px 4px rgba(255,255,255,0.4);
-            backdrop-filter: blur(8px);
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: 2px solid #a7f3d0;
+            border-radius: 35px;
+            padding: 13px 36px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(16, 185, 129, 0.5);
         }
-
-        .tb-tap-glow-box::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: skewX(-20deg);
-            animation: tbPromptShimmer 2.5s infinite;
-        }
-
-        @keyframes tbPromptShimmer {
-            0% { left: -100%; }
-            40%, 100% { left: 160%; }
-        }
-
         .tb-tap-hand {
-            font-size: 20px;
-            animation: tbHandTap 1.2s infinite ease-in-out;
+            font-size: 22px;
         }
-
-        @keyframes tbHandTap {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px) scale(1.1); }
-        }
-
         .tb-tap-main {
-            font-size: 19px;
+            font-size: 20px;
             font-weight: 900;
             color: #ffffff;
             letter-spacing: -0.5px;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.8), 0 0 12px rgba(85, 239, 196, 0.8);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
         }
-
         .tb-tap-sub {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
-            letter-spacing: 2.5px;
+            letter-spacing: 2px;
             color: #94a3b8;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
         }
 
         .tb-skip-btn {
             position: absolute;
-            top: 18px; right: 18px;
-            background: rgba(0, 0, 0, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            color: #cbd5e1;
+            top: 16px; right: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
             padding: 6px 14px;
-            border-radius: 16px;
-            font-size: 11px;
+            border-radius: 14px;
+            font-size: 12px;
             font-weight: bold;
             cursor: pointer;
-            z-index: 40;
-            transition: all 0.2s;
-            backdrop-filter: blur(5px);
+            z-index: 50;
+            transition: transform 0.15s;
         }
-        .tb-skip-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            border-color: #38bdf8;
-            transform: scale(1.05);
+        .tb-skip-btn:active {
+            transform: scale(0.95);
         }
 
         .tb-flash-layer {
@@ -565,12 +407,13 @@
             opacity: 0;
             pointer-events: none;
             z-index: 100;
-            transition: opacity 0.3s ease-out;
+            transition: opacity 0.15s ease-out;
         }
         .tb-flash-layer.flash {
-            opacity: 0.85;
-            transition: opacity 0.05s ease-in;
+            opacity: 0.7;
+            transition: opacity 0.04s ease-in;
         }
+    </style>
 </head>
 <body>
     <div id="game-container">
@@ -1787,12 +1630,6 @@
             <!-- 배경 파티클 캔버스 -->
             <canvas id="tb-intro-canvas"></canvas>
 
-            <!-- 비네트 & 스포트라이트 -->
-            <div class="tb-vignette"></div>
-
-            <!-- 신성한 회전 빛줄기 (God Rays) -->
-            <div class="tb-god-rays" id="tb-god-rays"></div>
-
             <!-- 중앙 베기 광선 (Slash Beam) -->
             <div class="tb-slash-beam" id="tb-slash-beam"></div>
 
@@ -1803,126 +1640,96 @@
             <div class="tb-tree-stage" id="tb-tree-stage">
                 <!-- 왼쪽 나무 절반 -->
                 <div class="tb-tree-half tb-tree-left" id="tb-tree-left">
-                    <svg class="tb-tree-svg" viewBox="0 0 160 380">
+                    <svg class="tb-tree-svg" viewBox="0 0 140 320">
                         <defs>
                             <linearGradient id="tbTrunkGradL" x1="100%" y1="0%" x2="0%" y2="0%">
-                                <stop offset="0%" stop-color="#4a2c11"/>
-                                <stop offset="35%" stop-color="#73431d"/>
-                                <stop offset="80%" stop-color="#8c5325"/>
-                                <stop offset="100%" stop-color="#5a3314"/>
+                                <stop offset="0%" stop-color="#5d4037"/>
+                                <stop offset="50%" stop-color="#795548"/>
+                                <stop offset="100%" stop-color="#8d6e63"/>
                             </linearGradient>
                             <linearGradient id="tbFoliageGradL1" x1="100%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#2ecc71"/>
-                                <stop offset="60%" stop-color="#27ae60"/>
-                                <stop offset="100%" stop-color="#1b7a43"/>
+                                <stop offset="0%" stop-color="#16a34a"/>
+                                <stop offset="100%" stop-color="#15803d"/>
                             </linearGradient>
                             <linearGradient id="tbFoliageGradL2" x1="100%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#a8e063"/>
-                                <stop offset="60%" stop-color="#56ab2f"/>
-                                <stop offset="100%" stop-color="#2d6a22"/>
+                                <stop offset="0%" stop-color="#4ade80"/>
+                                <stop offset="100%" stop-color="#16a34a"/>
                             </linearGradient>
                             <linearGradient id="tbFoliageGradL3" x1="100%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#d4fc79"/>
-                                <stop offset="70%" stop-color="#96e6a1"/>
-                                <stop offset="100%" stop-color="#27ae60"/>
-                            </linearGradient>
-                            <linearGradient id="tbCoreSplitGradL" x1="100%" y1="0%" x2="60%" y2="0%">
-                                <stop offset="0%" stop-color="#fff3b0"/>
-                                <stop offset="40%" stop-color="#f39c12"/>
-                                <stop offset="100%" stop-color="#73431d"/>
+                                <stop offset="0%" stop-color="#86efac"/>
+                                <stop offset="100%" stop-color="#22c55e"/>
                             </linearGradient>
                         </defs>
                         <!-- 왼쪽 가지 -->
-                        <path d="M160,220 C125,212 95,190 70,172 C62,166 68,156 80,164 C105,178 138,202 160,208 Z" fill="#5a3314"/>
-                        <path d="M160,175 C130,165 105,140 90,120 C84,114 90,105 100,112 C120,128 145,152 160,160 Z" fill="#4a2c11"/>
+                        <path d="M140,180 C110,172 85,150 60,135 C52,130 58,122 70,128 C90,140 120,160 140,168 Z" fill="#4e342e"/>
+                        <path d="M140,140 C115,130 95,110 80,95 C74,90 80,82 90,88 C105,98 125,120 140,128 Z" fill="#3e2723"/>
                         <!-- 왼쪽 기둥 -->
-                        <path d="M160,110 L160,360 C140,360 115,362 80,368 C65,371 52,374 35,378 C30,368 42,364 65,360 C105,352 135,338 138,300 C141,265 144,195 143,150 C143,130 150,118 160,110 Z" fill="url(#tbTrunkGradL)"/>
-                        <!-- 쪼개진 단면 빛나는 코어 스트라이프 -->
-                        <rect x="154" y="110" width="6" height="250" fill="url(#tbCoreSplitGradL)"/>
-                        <!-- 나이테 아크 -->
-                        <path d="M160,180 A20,20 0 0,0 156,195" stroke="#ffeaa7" stroke-width="1.2" fill="none" opacity="0.8"/>
-                        <path d="M160,240 A35,35 0 0,0 155,265" stroke="#ffeaa7" stroke-width="1.2" fill="none" opacity="0.8"/>
-                        <path d="M160,300 A40,40 0 0,0 154,330" stroke="#ffeaa7" stroke-width="1.2" fill="none" opacity="0.8"/>
-                        <!-- 왼쪽 풍성한 캐노피 (다층 원형 잎사귀 군집) -->
-                        <circle cx="110" cy="190" r="52" fill="url(#tbFoliageGradL1)" filter="drop-shadow(-4px 6px 8px rgba(0,0,0,0.35))"/>
-                        <circle cx="65" cy="150" r="48" fill="url(#tbFoliageGradL2)" filter="drop-shadow(-4px 6px 8px rgba(0,0,0,0.4))"/>
-                        <circle cx="120" cy="130" r="62" fill="url(#tbFoliageGradL1)" filter="drop-shadow(-4px 6px 8px rgba(0,0,0,0.35))"/>
-                        <circle cx="75" cy="95" r="48" fill="url(#tbFoliageGradL2)" filter="drop-shadow(-4px 6px 8px rgba(0,0,0,0.35))"/>
-                        <circle cx="140" cy="65" r="54" fill="url(#tbFoliageGradL3)"/>
-                        <circle cx="160" cy="110" r="58" fill="url(#tbFoliageGradL1)"/>
-                        <!-- 황금 열매 & 보석 잎사귀 -->
-                        <circle cx="85" cy="130" r="12" fill="#f1c40f" opacity="0.9" filter="drop-shadow(0 0 8px #f39c12)"/>
-                        <circle cx="125" cy="80" r="10" fill="#e74c3c" opacity="0.9"/>
-                        <circle cx="60" cy="165" r="9" fill="#f39c12" opacity="0.9"/>
-                        <circle cx="145" cy="150" r="11" fill="#2ed573" opacity="0.95"/>
+                        <path d="M140,80 L140,300 C125,300 100,302 70,308 C55,311 45,314 30,318 C25,310 35,305 55,300 C90,292 118,280 120,250 C122,220 125,160 124,120 C124,100 130,90 140,80 Z" fill="url(#tbTrunkGradL)"/>
+                        <!-- 쪼개진 단면 빛나는 황금빛 목질 코어 -->
+                        <rect x="135" y="80" width="5" height="220" fill="#fde68a"/>
+                        <!-- 왼쪽 풍성한 잎사귀 군집 -->
+                        <circle cx="95" cy="150" r="45" fill="url(#tbFoliageGradL1)"/>
+                        <circle cx="55" cy="120" r="42" fill="url(#tbFoliageGradL2)"/>
+                        <circle cx="105" cy="100" r="52" fill="url(#tbFoliageGradL1)"/>
+                        <circle cx="65" cy="70" r="40" fill="url(#tbFoliageGradL2)"/>
+                        <circle cx="120" cy="50" r="46" fill="url(#tbFoliageGradL3)"/>
+                        <circle cx="140" cy="90" r="48" fill="url(#tbFoliageGradL1)"/>
+                        <!-- 황금빛 열매 & 보석 사과 -->
+                        <circle cx="75" cy="100" r="10" fill="#facc15"/>
+                        <circle cx="110" cy="65" r="9" fill="#ef4444"/>
+                        <circle cx="50" cy="130" r="8" fill="#f59e0b"/>
+                        <circle cx="125" cy="120" r="9" fill="#22c55e"/>
                     </svg>
                 </div>
 
                 <!-- 오른쪽 나무 절반 -->
                 <div class="tb-tree-half tb-tree-right" id="tb-tree-right">
-                    <svg class="tb-tree-svg" viewBox="0 0 160 380">
+                    <svg class="tb-tree-svg" viewBox="0 0 140 320">
                         <defs>
                             <linearGradient id="tbTrunkGradR" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#4a2c11"/>
-                                <stop offset="35%" stop-color="#73431d"/>
-                                <stop offset="80%" stop-color="#8c5325"/>
-                                <stop offset="100%" stop-color="#5a3314"/>
+                                <stop offset="0%" stop-color="#5d4037"/>
+                                <stop offset="50%" stop-color="#795548"/>
+                                <stop offset="100%" stop-color="#8d6e63"/>
                             </linearGradient>
                             <linearGradient id="tbFoliageGradR1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#2ecc71"/>
-                                <stop offset="60%" stop-color="#27ae60"/>
-                                <stop offset="100%" stop-color="#1b7a43"/>
+                                <stop offset="0%" stop-color="#16a34a"/>
+                                <stop offset="100%" stop-color="#15803d"/>
                             </linearGradient>
                             <linearGradient id="tbFoliageGradR2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#a8e063"/>
-                                <stop offset="60%" stop-color="#56ab2f"/>
-                                <stop offset="100%" stop-color="#2d6a22"/>
+                                <stop offset="0%" stop-color="#4ade80"/>
+                                <stop offset="100%" stop-color="#16a34a"/>
                             </linearGradient>
                             <linearGradient id="tbFoliageGradR3" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#d4fc79"/>
-                                <stop offset="70%" stop-color="#96e6a1"/>
-                                <stop offset="100%" stop-color="#27ae60"/>
-                            </linearGradient>
-                            <linearGradient id="tbCoreSplitGradR" x1="0%" y1="0%" x2="40%" y2="0%">
-                                <stop offset="0%" stop-color="#fff3b0"/>
-                                <stop offset="40%" stop-color="#f39c12"/>
-                                <stop offset="100%" stop-color="#73431d"/>
+                                <stop offset="0%" stop-color="#86efac"/>
+                                <stop offset="100%" stop-color="#22c55e"/>
                             </linearGradient>
                         </defs>
                         <!-- 오른쪽 가지 -->
-                        <path d="M0,220 C35,212 65,190 90,172 C98,166 92,156 80,164 C55,178 22,202 0,208 Z" fill="#5a3314"/>
-                        <path d="M0,175 C30,165 55,140 70,120 C76,114 70,105 60,112 C40,128 15,152 0,160 Z" fill="#4a2c11"/>
+                        <path d="M0,180 C30,172 55,150 80,135 C88,130 82,122 70,128 C50,140 20,160 0,168 Z" fill="#4e342e"/>
+                        <path d="M0,140 C25,130 45,110 60,95 C66,90 60,82 50,88 C35,98 15,120 0,128 Z" fill="#3e2723"/>
                         <!-- 오른쪽 기둥 -->
-                        <path d="M0,110 L0,360 C20,360 45,362 80,368 C95,371 108,374 125,378 C130,368 118,364 95,360 C55,352 25,338 22,300 C19,265 16,195 17,150 C17,130 10,118 0,110 Z" fill="url(#tbTrunkGradR)"/>
-                        <!-- 쪼개진 단면 빛나는 코어 스트라이프 -->
-                        <rect x="0" y="110" width="6" height="250" fill="url(#tbCoreSplitGradR)"/>
-                        <!-- 나이테 아크 -->
-                        <path d="M0,180 A20,20 0 0,1 4,195" stroke="#ffeaa7" stroke-width="1.2" fill="none" opacity="0.8"/>
-                        <path d="M0,240 A35,35 0 0,1 5,265" stroke="#ffeaa7" stroke-width="1.2" fill="none" opacity="0.8"/>
-                        <path d="M0,300 A40,40 0 0,1 6,330" stroke="#ffeaa7" stroke-width="1.2" fill="none" opacity="0.8"/>
-                        <!-- 오른쪽 풍성한 캐노피 (다층 원형 잎사귀 군집) -->
-                        <circle cx="50" cy="190" r="52" fill="url(#tbFoliageGradR1)" filter="drop-shadow(4px 6px 8px rgba(0,0,0,0.35))"/>
-                        <circle cx="95" cy="150" r="48" fill="url(#tbFoliageGradR2)" filter="drop-shadow(4px 6px 8px rgba(0,0,0,0.4))"/>
-                        <circle cx="40" cy="130" r="62" fill="url(#tbFoliageGradR1)" filter="drop-shadow(4px 6px 8px rgba(0,0,0,0.35))"/>
-                        <circle cx="85" cy="95" r="48" fill="url(#tbFoliageGradR2)" filter="drop-shadow(4px 6px 8px rgba(0,0,0,0.35))"/>
-                        <circle cx="20" cy="65" r="54" fill="url(#tbFoliageGradR3)"/>
-                        <circle cx="0" cy="110" r="58" fill="url(#tbFoliageGradR1)"/>
-                        <!-- 황금 열매 & 보석 잎사귀 -->
-                        <circle cx="75" cy="130" r="12" fill="#f1c40f" opacity="0.9" filter="drop-shadow(0 0 8px #f39c12)"/>
-                        <circle cx="35" cy="80" r="10" fill="#e74c3c" opacity="0.9"/>
-                        <circle cx="100" cy="165" r="9" fill="#f39c12" opacity="0.9"/>
-                        <circle cx="15" cy="150" r="11" fill="#2ed573" opacity="0.95"/>
+                        <path d="M0,80 L0,300 C15,300 40,302 70,308 C85,311 95,314 110,318 C115,310 105,305 85,300 C50,292 22,280 20,250 C18,220 15,160 16,120 C16,100 10,90 0,80 Z" fill="url(#tbTrunkGradR)"/>
+                        <!-- 쪼개진 단면 빛나는 황금빛 목질 코어 -->
+                        <rect x="0" y="80" width="5" height="220" fill="#fde68a"/>
+                        <!-- 오른쪽 풍성한 잎사귀 군집 -->
+                        <circle cx="45" cy="150" r="45" fill="url(#tbFoliageGradR1)"/>
+                        <circle cx="85" cy="120" r="42" fill="url(#tbFoliageGradR2)"/>
+                        <circle cx="35" cy="100" r="52" fill="url(#tbFoliageGradR1)"/>
+                        <circle cx="75" cy="70" r="40" fill="url(#tbFoliageGradR2)"/>
+                        <circle cx="20" cy="50" r="46" fill="url(#tbFoliageGradR3)"/>
+                        <circle cx="0" cy="90" r="48" fill="url(#tbFoliageGradR1)"/>
+                        <!-- 황금빛 열매 & 보석 사과 -->
+                        <circle cx="65" cy="100" r="10" fill="#facc15"/>
+                        <circle cx="30" cy="65" r="9" fill="#ef4444"/>
+                        <circle cx="90" cy="130" r="8" fill="#f59e0b"/>
+                        <circle cx="15" cy="120" r="9" fill="#22c55e"/>
                     </svg>
                 </div>
             </div>
 
             <!-- 중앙 타이틀 & 탭하여 시작하기 -->
             <div class="tb-title-container" id="tb-title-container">
-                <div class="tb-title-kicker">
-                    <span class="tb-kicker-line"></span>
-                    <span class="tb-kicker-text">ULTIMATE ACTION ADVENTURE</span>
-                    <span class="tb-kicker-line"></span>
-                </div>
+                <div class="tb-title-kicker">ULTIMATE ACTION ADVENTURE</div>
 
                 <div class="tb-logo-wrapper">
                     <div class="tb-axe-icon tb-axe-left">🪓</div>
@@ -19142,17 +18949,16 @@
         }
 
         // ============================================================
-        // 🌳⚡ [트리버스터 (TREE BUSTER)] 프리미엄 오프닝 인트로 애니메이션 엔진
+        // 🌳⚡ [트리버스터 (TREE BUSTER)] 초경량 & 고성능 오프닝 인트로 엔진
         // ============================================================
         let tbIntroState = 'init'; // 'init' -> 'slashed' -> 'splitting' -> 'revealed' -> 'ready' -> 'exited'
         let tbIntroActive = false;
         let tbFxCanvas = null;
         let tbFxCtx = null;
         let tbParticles = [];
-        let tbAmbientParticles = [];
-        let tbShockwaves = [];
         let tbAnimFrameId = null;
         let tbAudioCtx = null;
+        let isGameLoopRunning = false;
 
         function getTbAudioCtx() {
             try {
@@ -19169,57 +18975,12 @@
             }
         }
 
-        // 1. 도끼 베기 사운드 (공기 가르는 날카로운 도끼 휘두름)
+        // 1. 도끼 베기 사운드
         function playIntroSlashSound() {
             try {
                 const actx = getTbAudioCtx();
                 if (!actx) return;
-                const bufferSize = Math.floor(actx.sampleRate * 0.22);
-                const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
-                }
-                const noise = actx.createBufferSource();
-                noise.buffer = buffer;
-
-                const filter = actx.createBiquadFilter();
-                filter.type = 'bandpass';
-                filter.frequency.setValueAtTime(3200, actx.currentTime);
-                filter.frequency.exponentialRampToValueAtTime(600, actx.currentTime + 0.2);
-                filter.Q.setValueAtTime(3.5, actx.currentTime);
-
-                const gain = actx.createGain();
-                gain.gain.setValueAtTime(0.7, actx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.22);
-
-                noise.connect(filter);
-                filter.connect(gain);
-                gain.connect(actx.destination);
-                noise.start();
-            } catch(e) {}
-        }
-
-        // 2. 나무 쪼개짐 사운드 (묵직한 저음 타격 + 나무 파열 크랙음)
-        function playIntroWoodCrackSound() {
-            try {
-                const actx = getTbAudioCtx();
-                if (!actx) return;
-                // 베이스 타격음
-                const osc = actx.createOscillator();
-                const oscGain = actx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(170, actx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(38, actx.currentTime + 0.38);
-                oscGain.gain.setValueAtTime(0.85, actx.currentTime);
-                oscGain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.38);
-                osc.connect(oscGain);
-                oscGain.connect(actx.destination);
-                osc.start();
-                osc.stop(actx.currentTime + 0.4);
-
-                // 나무 섬유 쪼개지는 파열음
-                const bufferSize = Math.floor(actx.sampleRate * 0.25);
+                const bufferSize = Math.floor(actx.sampleRate * 0.15);
                 const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
                 const data = buffer.getChannelData(0);
                 for (let i = 0; i < bufferSize; i++) {
@@ -19228,62 +18989,79 @@
                 const noise = actx.createBufferSource();
                 noise.buffer = buffer;
                 const filter = actx.createBiquadFilter();
-                filter.type = 'highpass';
-                filter.frequency.setValueAtTime(1200, actx.currentTime);
-                const crackGain = actx.createGain();
-                crackGain.gain.setValueAtTime(0.6, actx.currentTime);
-                crackGain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.25);
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(2500, actx.currentTime);
+                filter.Q.setValueAtTime(2, actx.currentTime);
+                const gain = actx.createGain();
+                gain.gain.setValueAtTime(0.6, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.15);
                 noise.connect(filter);
-                filter.connect(crackGain);
-                crackGain.connect(actx.destination);
+                filter.connect(gain);
+                gain.connect(actx.destination);
                 noise.start();
             } catch(e) {}
         }
 
-        // 3. 타이틀 등장 사운드 (찬란한 C-Major 차임 아르페지오)
+        // 2. 나무 쪼개짐 타격음
+        function playIntroWoodCrackSound() {
+            try {
+                const actx = getTbAudioCtx();
+                if (!actx) return;
+                const osc = actx.createOscillator();
+                const gain = actx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(160, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, actx.currentTime + 0.25);
+                gain.gain.setValueAtTime(0.7, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.25);
+                osc.connect(gain);
+                gain.connect(actx.destination);
+                osc.start();
+                osc.stop(actx.currentTime + 0.26);
+            } catch(e) {}
+        }
+
+        // 3. 타이틀 등장 차임음
         function playIntroTitleRevealSound() {
             try {
                 const actx = getTbAudioCtx();
                 if (!actx) return;
-                const freqs = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-                freqs.forEach((freq, idx) => {
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
                     const osc = actx.createOscillator();
                     const gain = actx.createGain();
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, actx.currentTime + (idx * 0.05));
-                    gain.gain.setValueAtTime(0, actx.currentTime);
-                    gain.gain.setValueAtTime(0.28, actx.currentTime + (idx * 0.05));
-                    gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + (idx * 0.05) + 0.55);
+                    osc.frequency.setValueAtTime(freq, actx.currentTime + idx * 0.04);
+                    gain.gain.setValueAtTime(0.2, actx.currentTime + idx * 0.04);
+                    gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + idx * 0.04 + 0.35);
                     osc.connect(gain);
                     gain.connect(actx.destination);
-                    osc.start(actx.currentTime + (idx * 0.05));
-                    osc.stop(actx.currentTime + (idx * 0.05) + 0.6);
+                    osc.start(actx.currentTime + idx * 0.04);
+                    osc.stop(actx.currentTime + idx * 0.04 + 0.4);
                 });
             } catch(e) {}
         }
 
-        // 4. 게임 시작 탭 사운드 (풍성한 스타트 팡파레)
+        // 4. 게임 시작 탭 사운드
         function playIntroStartSound() {
             try {
                 const actx = getTbAudioCtx();
                 if (!actx) return;
-                const notes = [440, 554.37, 659.25, 880]; // A4, C#5, E5, A5
-                notes.forEach((freq, idx) => {
+                [523.25, 783.99, 1046.50].forEach((freq, idx) => {
                     const osc = actx.createOscillator();
                     const gain = actx.createGain();
                     osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(freq, actx.currentTime + (idx * 0.04));
-                    gain.gain.setValueAtTime(0.35, actx.currentTime + (idx * 0.04));
-                    gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + (idx * 0.04) + 0.45);
+                    osc.frequency.setValueAtTime(freq, actx.currentTime + idx * 0.03);
+                    gain.gain.setValueAtTime(0.3, actx.currentTime + idx * 0.03);
+                    gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + idx * 0.03 + 0.3);
                     osc.connect(gain);
                     gain.connect(actx.destination);
-                    osc.start(actx.currentTime + (idx * 0.04));
-                    osc.stop(actx.currentTime + (idx * 0.04) + 0.5);
+                    osc.start(actx.currentTime + idx * 0.03);
+                    osc.stop(actx.currentTime + idx * 0.03 + 0.35);
                 });
             } catch(e) {}
         }
 
-        // 파티클 캔버스 초기화
+        // 초경량 파티클 캔버스 초기화
         function initTbFxCanvas() {
             tbFxCanvas = document.getElementById('tb-intro-canvas');
             if (!tbFxCanvas) return;
@@ -19293,184 +19071,74 @@
             tbFxCanvas.width = w;
             tbFxCanvas.height = h;
             tbFxCtx = tbFxCanvas.getContext('2d');
+            tbParticles = [];
+        }
 
-            tbAmbientParticles = [];
-            for (let i = 0; i < 28; i++) {
-                tbAmbientParticles.push({
-                    x: Math.random() * w,
-                    y: Math.random() * h,
-                    vx: (Math.random() - 0.5) * 0.6,
-                    vy: -0.4 - Math.random() * 0.8,
-                    size: 1.5 + Math.random() * 2.5,
-                    alpha: 0.2 + Math.random() * 0.6,
-                    glow: Math.random() * Math.PI * 2,
-                    color: Math.random() > 0.4 ? '#f1c40f' : '#2ecc71'
+        // 나무 파편 & 잎사귀 폭발 (GPU 부담 없는 초경량 드로우)
+        function spawnTreeSplitParticles() {
+            if (!tbFxCanvas) return;
+            const cx = tbFxCanvas.width / 2;
+            const cy = tbFxCanvas.height * 0.32;
+
+            const woodColors = ['#b45309', '#d97706', '#fde68a', '#78350f'];
+            for (let i = 0; i < 24; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 4 + Math.random() * 10;
+                tbParticles.push({
+                    type: 'wood',
+                    x: cx + (Math.random() - 0.5) * 20,
+                    y: cy + (Math.random() - 0.5) * 80,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 2,
+                    w: 4 + Math.random() * 5,
+                    h: 8 + Math.random() * 12,
+                    color: woodColors[Math.floor(Math.random() * woodColors.length)],
+                    alpha: 1.0
+                });
+            }
+
+            const leafColors = ['#22c55e', '#16a34a', '#86efac', '#4ade80'];
+            for (let i = 0; i < 20; i++) {
+                const dir = (Math.random() > 0.5 ? 1 : -1);
+                tbParticles.push({
+                    type: 'leaf',
+                    x: cx + dir * (10 + Math.random() * 40),
+                    y: cy - 20 + (Math.random() - 0.5) * 80,
+                    vx: dir * (2 + Math.random() * 6),
+                    vy: -2 - Math.random() * 4,
+                    r: 4 + Math.random() * 4,
+                    color: leafColors[Math.floor(Math.random() * leafColors.length)],
+                    alpha: 1.0
                 });
             }
 
             tbFxLoop();
         }
 
-        // 나무 폭발 파티클 (나뭇조각, 잎사귀, 스파크, 충격파 링)
-        function spawnTreeSplitParticles() {
-            if (!tbFxCanvas) return;
-            const cx = tbFxCanvas.width / 2;
-            const cy = tbFxCanvas.height * 0.28;
-
-            tbShockwaves.push({ x: cx, y: cy, radius: 10, maxRadius: 280, alpha: 1.0, color: '#00f2fe' });
-            tbShockwaves.push({ x: cx, y: cy, radius: 5, maxRadius: 360, alpha: 1.0, color: '#f1c40f' });
-
-            const woodColors = ['#8c5325', '#f39c12', '#d35400', '#ffeaa7', '#5a3314'];
-            for (let i = 0; i < 42; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = 4 + Math.random() * 12;
-                tbParticles.push({
-                    type: 'wood',
-                    x: cx + (Math.random() - 0.5) * 20,
-                    y: cy + (Math.random() - 0.5) * 120,
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed - 3,
-                    rot: Math.random() * Math.PI * 2,
-                    vrot: (Math.random() - 0.5) * 0.35,
-                    width: 4 + Math.random() * 6,
-                    height: 10 + Math.random() * 18,
-                    color: woodColors[Math.floor(Math.random() * woodColors.length)],
-                    alpha: 1.0,
-                    decay: 0.012 + Math.random() * 0.01
-                });
-            }
-
-            const leafColors = ['#2ecc71', '#27ae60', '#a8e063', '#1abc9c'];
-            for (let i = 0; i < 32; i++) {
-                const dir = (Math.random() > 0.5 ? 1 : -1);
-                tbParticles.push({
-                    type: 'leaf',
-                    x: cx + dir * (10 + Math.random() * 50),
-                    y: cy - 40 + (Math.random() - 0.5) * 100,
-                    vx: dir * (2 + Math.random() * 8),
-                    vy: -2 - Math.random() * 6,
-                    rot: Math.random() * Math.PI * 2,
-                    vrot: (Math.random() - 0.5) * 0.2,
-                    swingTimer: Math.random() * 10,
-                    size: 6 + Math.random() * 8,
-                    color: leafColors[Math.floor(Math.random() * leafColors.length)],
-                    alpha: 1.0,
-                    decay: 0.008 + Math.random() * 0.008
-                });
-            }
-
-            for (let i = 0; i < 55; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = 3 + Math.random() * 14;
-                tbParticles.push({
-                    type: 'spark',
-                    x: cx,
-                    y: cy + (Math.random() - 0.5) * 100,
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed,
-                    size: 1.8 + Math.random() * 3.5,
-                    color: Math.random() > 0.3 ? '#ffeaa7' : '#00f2fe',
-                    alpha: 1.0,
-                    decay: 0.016 + Math.random() * 0.025
-                });
-            }
-        }
-
         function tbFxLoop() {
-            if (!tbFxCtx || !tbFxCanvas) return;
+            if (!tbFxCtx || !tbFxCanvas || !tbIntroActive) return;
             tbFxCtx.clearRect(0, 0, tbFxCanvas.width, tbFxCanvas.height);
 
-            // 1. 앰비언트 파티클
-            tbAmbientParticles.forEach(p => {
-                p.x += p.vx;
-                p.y += p.vy;
-                p.glow += 0.04;
-                let a = p.alpha * (0.6 + Math.sin(p.glow) * 0.4);
-                if (p.y < -10) p.y = tbFxCanvas.height + 10;
-                if (p.x < -10) p.x = tbFxCanvas.width + 10;
-                if (p.x > tbFxCanvas.width + 10) p.x = -10;
-
-                tbFxCtx.save();
-                tbFxCtx.fillStyle = p.color;
-                tbFxCtx.globalAlpha = Math.max(0, Math.min(1, a));
-                tbFxCtx.shadowColor = p.color;
-                tbFxCtx.shadowBlur = 8;
-                tbFxCtx.beginPath();
-                tbFxCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                tbFxCtx.fill();
-                tbFxCtx.restore();
-            });
-
-            // 2. 충격파 링
-            for (let i = tbShockwaves.length - 1; i >= 0; i--) {
-                const sw = tbShockwaves[i];
-                sw.radius += (sw.maxRadius - sw.radius) * 0.12;
-                sw.alpha -= 0.035;
-                if (sw.alpha <= 0) {
-                    tbShockwaves.splice(i, 1);
-                    continue;
-                }
-                tbFxCtx.save();
-                tbFxCtx.strokeStyle = sw.color;
-                tbFxCtx.lineWidth = 4 * sw.alpha;
-                tbFxCtx.globalAlpha = sw.alpha;
-                tbFxCtx.shadowColor = sw.color;
-                tbFxCtx.shadowBlur = 15;
-                tbFxCtx.beginPath();
-                tbFxCtx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
-                tbFxCtx.stroke();
-                tbFxCtx.restore();
-            }
-
-            // 3. 폭발 파티클
             for (let i = tbParticles.length - 1; i >= 0; i--) {
                 const p = tbParticles[i];
                 p.x += p.vx;
                 p.y += p.vy;
-                p.rot += p.vrot;
-                p.alpha -= p.decay;
+                p.alpha -= 0.025;
 
                 if (p.type === 'wood') {
                     p.vy += 0.35;
-                    p.vx *= 0.97;
-                    tbFxCtx.save();
-                    tbFxCtx.translate(p.x, p.y);
-                    tbFxCtx.rotate(p.rot);
+                    p.vx *= 0.96;
                     tbFxCtx.fillStyle = p.color;
                     tbFxCtx.globalAlpha = Math.max(0, p.alpha);
-                    tbFxCtx.shadowColor = '#000';
-                    tbFxCtx.shadowBlur = 4;
-                    tbFxCtx.fillRect(-p.width/2, -p.height/2, p.width, p.height);
-                    tbFxCtx.restore();
+                    tbFxCtx.fillRect(p.x, p.y, p.w, p.h);
                 } else if (p.type === 'leaf') {
-                    p.swingTimer += 0.1;
-                    p.vx += Math.sin(p.swingTimer) * 0.3;
-                    p.vy += 0.08;
+                    p.vy += 0.1;
                     p.vx *= 0.98;
-                    p.vy = Math.min(2.5, p.vy);
-                    tbFxCtx.save();
-                    tbFxCtx.translate(p.x, p.y);
-                    tbFxCtx.rotate(p.rot);
                     tbFxCtx.fillStyle = p.color;
                     tbFxCtx.globalAlpha = Math.max(0, p.alpha);
-                    tbFxCtx.shadowColor = p.color;
-                    tbFxCtx.shadowBlur = 6;
                     tbFxCtx.beginPath();
-                    tbFxCtx.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI * 2);
+                    tbFxCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
                     tbFxCtx.fill();
-                    tbFxCtx.restore();
-                } else if (p.type === 'spark') {
-                    p.vx *= 0.94;
-                    p.vy *= 0.94;
-                    tbFxCtx.save();
-                    tbFxCtx.fillStyle = p.color;
-                    tbFxCtx.globalAlpha = Math.max(0, p.alpha);
-                    tbFxCtx.shadowColor = p.color;
-                    tbFxCtx.shadowBlur = 10;
-                    tbFxCtx.beginPath();
-                    tbFxCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    tbFxCtx.fill();
-                    tbFxCtx.restore();
                 }
 
                 if (p.alpha <= 0) {
@@ -19478,18 +19146,20 @@
                 }
             }
 
-            if (tbIntroActive) {
+            tbFxCtx.globalAlpha = 1.0;
+
+            if (tbParticles.length > 0 && tbIntroActive) {
                 tbAnimFrameId = requestAnimationFrame(tbFxLoop);
             }
         }
 
-        // 터치 지점 리플 생성
+        // 터치 지점 리플
         function createTbTouchRipple(clientX, clientY) {
             const introEl = document.getElementById('tree-buster-intro');
             if (!introEl) return;
             const rect = introEl.getBoundingClientRect();
             const x = (clientX !== undefined ? clientX - rect.left : rect.width / 2);
-            const y = (clientY !== undefined ? clientY - rect.top : rect.height * 0.65);
+            const y = (clientY !== undefined ? clientY - rect.top : rect.height * 0.6);
 
             const ripple = document.createElement('div');
             ripple.style.position = 'absolute';
@@ -19499,34 +19169,31 @@
             ripple.style.height = '20px';
             ripple.style.borderRadius = '50%';
             ripple.style.transform = 'translate(-50%, -50%) scale(1)';
-            ripple.style.border = '3px solid #55efc4';
-            ripple.style.boxShadow = '0 0 20px #55efc4, inset 0 0 15px #ffeaa7';
+            ripple.style.border = '3px solid #34d399';
             ripple.style.pointerEvents = 'none';
             ripple.style.zIndex = '999';
-            ripple.style.transition = 'all 0.5s cubic-bezier(0.1, 0.8, 0.2, 1)';
+            ripple.style.transition = 'all 0.4s ease-out';
             introEl.appendChild(ripple);
 
             requestAnimationFrame(() => {
-                ripple.style.transform = 'translate(-50%, -50%) scale(22)';
+                ripple.style.transform = 'translate(-50%, -50%) scale(18)';
                 ripple.style.opacity = '0';
             });
-            setTimeout(() => { ripple.remove(); }, 600);
+            setTimeout(() => { ripple.remove(); }, 450);
         }
 
-        // 패스트포워드 (애니메이션 도중 탭 시 즉시 완성 상태로 전환)
+        // 패스트포워드 (도중 탭 시 즉시 완성 상태로 전환)
         function fastForwardTbIntro() {
             tbIntroState = 'ready';
             const beam = document.getElementById('tb-slash-beam');
             const leftTree = document.getElementById('tb-tree-left');
             const rightTree = document.getElementById('tb-tree-right');
-            const rays = document.getElementById('tb-god-rays');
             const title = document.getElementById('tb-title-container');
             const prompt = document.getElementById('tb-tap-prompt');
 
             if (beam) beam.classList.remove('flash');
             if (leftTree) leftTree.classList.add('split-left');
             if (rightTree) rightTree.classList.add('split-right');
-            if (rays) rays.classList.add('active');
             if (title) title.classList.add('active');
             if (prompt) prompt.classList.add('active');
         }
@@ -19541,12 +19208,11 @@
             finishTreeBusterIntro(e);
         }
 
-        // 인트로 종료 및 게임/로그인 진입
+        // 인트로 종료 및 게임 시작
         function finishTreeBusterIntro(e) {
             if (tbIntroState === 'exited') return;
             tbIntroState = 'exited';
 
-            // 세션에 1회 시청 완료 플래그 저장 (한 기기 1회성, 새 계정 로그인 시 재표시 안 됨)
             try { sessionStorage.setItem('tb_intro_shown', 'true'); } catch(err) {}
 
             createTbTouchRipple(e && e.clientX ? e.clientX : undefined, e && e.clientY ? e.clientY : undefined);
@@ -19554,7 +19220,7 @@
             const flashEl = document.getElementById('tb-flash-layer');
             if (flashEl) {
                 flashEl.classList.add('flash');
-                setTimeout(() => flashEl.classList.remove('flash'), 120);
+                setTimeout(() => flashEl.classList.remove('flash'), 100);
             }
 
             playIntroStartSound();
@@ -19569,20 +19235,23 @@
                 if (introEl) introEl.style.display = 'none';
                 if (tbAnimFrameId) cancelAnimationFrame(tbAnimFrameId);
 
-                // 🔑 [중요] 유저 요청: 로그인 되어있으면 바로 게임 진행, 안되어있으면 로그인 화면 오픈!
+                // 메인 게임 루프 가동
+                startGameLoop();
+
+                // 🔑 [유저 요청] 로그인 되어있으면 바로 게임 진입, 안되어있으면 로그인 모달 오픈!
                 if (!currentUser) {
                     if (typeof openLoginModal === 'function') openLoginModal();
                 }
-            }, 450);
+            }, 350);
         }
 
-        // 오프닝 애니메이션 시퀀스 실행
+        // 오프닝 애니메이션 시퀀스 실행 (총 1초 미만의 빠르고 경쾌한 전개)
         function runTreeBusterIntroSequence() {
             tbIntroState = 'init';
             tbIntroActive = true;
             initTbFxCanvas();
 
-            // T=480ms: 베기 광선 번쩍 & 사운드
+            // T=350ms: 베기 광선 번쩍 & 사운드
             setTimeout(() => {
                 if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
                 const beam = document.getElementById('tb-slash-beam');
@@ -19590,48 +19259,56 @@
                 if (beam) beam.classList.add('flash');
                 if (stage) stage.classList.add('shake');
                 playIntroSlashSound();
-            }, 480);
+            }, 350);
 
-            // T=620ms: 나무 쪼개짐 (좌/우 분리) & 폭발 파티클 & 크랙 사운드
+            // T=480ms: 나무 쪼개짐 (좌/우 분리) & 파편 폭발
             setTimeout(() => {
                 if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
                 tbIntroState = 'splitting';
                 const beam = document.getElementById('tb-slash-beam');
                 const leftTree = document.getElementById('tb-tree-left');
                 const rightTree = document.getElementById('tb-tree-right');
-                const rays = document.getElementById('tb-god-rays');
 
                 if (beam) beam.classList.remove('flash');
                 if (leftTree) leftTree.classList.add('split-left');
                 if (rightTree) rightTree.classList.add('split-right');
-                if (rays) rays.classList.add('active');
 
                 playIntroWoodCrackSound();
                 spawnTreeSplitParticles();
-            }, 620);
+            }, 480);
 
-            // T=1050ms: 트리버스터 로고 및 슬로건 등장 & 차임 사운드
+            // T=750ms: 트리버스터 로고 및 슬로건 등장
             setTimeout(() => {
                 if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
                 tbIntroState = 'revealed';
                 const title = document.getElementById('tb-title-container');
                 if (title) title.classList.add('active');
                 playIntroTitleRevealSound();
-            }, 1050);
+            }, 750);
 
-            // T=1350ms: 탭하여 시작하기 프롬프트 활성화
+            // T=950ms: 탭하여 시작하기 프롬프트 활성화
             setTimeout(() => {
                 if (tbIntroState === 'exited') return;
                 tbIntroState = 'ready';
                 const prompt = document.getElementById('tb-tap-prompt');
                 if (prompt) prompt.classList.add('active');
-            }, 1350);
+            }, 950);
+
+            // 안전장치: 1.5초 후 강제 ready 보장
+            setTimeout(() => {
+                if (tbIntroState !== 'exited') {
+                    fastForwardTbIntro();
+                }
+            }, 1500);
         }
 
-        // 페이지 진입 시 인트로 체크 & 실행 (새 계정 로그인이 아닌 한 기기 첫 진입 시 1회만 표시)
+        // 진입 시 1회만 표시 (새 계정 로그인 시는 재표시 안 됨)
         function checkAndInitTreeBusterIntro() {
             const introEl = document.getElementById('tree-buster-intro');
-            if (!introEl) return;
+            if (!introEl) {
+                startGameLoop();
+                return;
+            }
 
             let alreadyShown = false;
             try {
@@ -19639,40 +19316,50 @@
             } catch(e) {}
 
             if (alreadyShown) {
-                // 이미 기기/세션에서 시청한 경우 바로 숨김
                 introEl.style.display = 'none';
                 tbIntroActive = false;
                 tbIntroState = 'exited';
+                startGameLoop();
             } else {
                 introEl.style.display = 'flex';
                 runTreeBusterIntroSequence();
             }
         }
 
-        // 인트로 다시보기 테스트용 전역 함수
+        // 인트로 다시보기 테스트 함수
         window.replayTreeBusterIntro = function() {
             const introEl = document.getElementById('tree-buster-intro');
             if (!introEl) return;
             introEl.classList.remove('tb-exit');
             const leftTree = document.getElementById('tb-tree-left');
             const rightTree = document.getElementById('tb-tree-right');
-            const rays = document.getElementById('tb-god-rays');
             const title = document.getElementById('tb-title-container');
             const prompt = document.getElementById('tb-tap-prompt');
             if (leftTree) leftTree.classList.remove('split-left');
             if (rightTree) rightTree.classList.remove('split-right');
-            if (rays) rays.classList.remove('active');
             if (title) title.classList.remove('active');
             if (prompt) prompt.classList.remove('active');
             introEl.style.display = 'flex';
             runTreeBusterIntroSequence();
         };
 
-        // 초기 인트로 실행
-        checkAndInitTreeBusterIntro();
+        // 메인 게임 루프 (인트로 종료 후 또는 인트로 생략 시 가동)
+        function gameLoop() {
+            if (!isGameLoopRunning) return;
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
 
-        function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
-        gameLoop();
+        function startGameLoop() {
+            if (!isGameLoopRunning) {
+                isGameLoopRunning = true;
+                gameLoop();
+            }
+        }
+
+        // 페이지 로드 시 인트로 초기화
+        checkAndInitTreeBusterIntro();
     </script>
 </body>
 </html>
