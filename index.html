@@ -324,60 +324,39 @@
             text-shadow: 0 1px 4px rgba(0,0,0,0.9);
         }
 
-        .tb-slogan-pill {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(241, 196, 15, 0.4);
-            border-radius: 20px;
-            padding: 5px 16px;
-            margin-bottom: 24px;
-            color: #fce77d;
-            font-size: 13px;
-            font-weight: bold;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-        }
-
-        /* 탭하여 시작하기 프롬프트 */
+        /* 탭하여 시작하기 작은 텍스트 프롬프트 */
         .tb-tap-prompt {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             cursor: pointer;
+            margin-top: 26px;
             opacity: 0;
             transition: opacity 0.4s ease;
         }
         .tb-tap-prompt.active {
             opacity: 1;
-            animation: tbTapPulse 1.8s infinite ease-in-out;
+            animation: tbTapBreathe 1.8s infinite ease-in-out;
         }
-        @keyframes tbTapPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.04); }
+        @keyframes tbTapBreathe {
+            0%, 100% { transform: scale(1); opacity: 0.85; }
+            50% { transform: scale(1.04); opacity: 1; }
         }
-
-        .tb-tap-glow-box {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border: 2px solid #a7f3d0;
-            border-radius: 35px;
-            padding: 13px 36px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(16, 185, 129, 0.5);
-        }
-        .tb-tap-hand {
-            font-size: 22px;
-        }
-        .tb-tap-main {
-            font-size: 20px;
-            font-weight: 900;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        .tb-tap-hint {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #f1f5f9;
+            letter-spacing: -0.3px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9), 0 0 10px rgba(52, 211, 153, 0.5);
         }
         .tb-tap-sub {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+        }
             letter-spacing: 2px;
             color: #94a3b8;
         }
@@ -1739,16 +1718,9 @@
 
                 <div class="tb-sub-logo">TREE BUSTER</div>
 
-                <div class="tb-slogan-pill">
-                    <span class="tb-slogan-text">✨ 나무를 베고 전설이 되어라! ✨</span>
-                </div>
-
                 <div class="tb-tap-prompt" id="tb-tap-prompt">
-                    <div class="tb-tap-glow-box">
-                        <span class="tb-tap-hand">👆</span>
-                        <span class="tb-tap-main">탭하여 시작하기</span>
-                    </div>
-                    <div class="tb-tap-sub">TAP TO START</div>
+                    <div class="tb-tap-hint">- 화면 아무 곳이나 터치하여 시작 -</div>
+                    <div class="tb-tap-sub">TOUCH ANYWHERE TO START</div>
                 </div>
             </div>
 
@@ -19245,13 +19217,13 @@
             }, 350);
         }
 
-        // 오프닝 애니메이션 시퀀스 실행 (총 1초 미만의 빠르고 경쾌한 전개)
+        // 오프닝 애니메이션 시퀀스 실행 (나무가 있다가 2초 후 부서지며 트리버스터 등장)
         function runTreeBusterIntroSequence() {
             tbIntroState = 'init';
             tbIntroActive = true;
             initTbFxCanvas();
 
-            // T=350ms: 베기 광선 번쩍 & 사운드
+            // T=2000ms (2초 후): 도끼 베기 광선 번쩍 & 사운드
             setTimeout(() => {
                 if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
                 const beam = document.getElementById('tb-slash-beam');
@@ -19259,9 +19231,9 @@
                 if (beam) beam.classList.add('flash');
                 if (stage) stage.classList.add('shake');
                 playIntroSlashSound();
-            }, 350);
+            }, 2000);
 
-            // T=480ms: 나무 쪼개짐 (좌/우 분리) & 파편 폭발
+            // T=2150ms: 나무가 반으로 쪼개짐 (좌/우 분리) & 파편 폭발
             setTimeout(() => {
                 if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
                 tbIntroState = 'splitting';
@@ -19275,31 +19247,31 @@
 
                 playIntroWoodCrackSound();
                 spawnTreeSplitParticles();
-            }, 480);
+            }, 2150);
 
-            // T=750ms: 트리버스터 로고 및 슬로건 등장
+            // T=2450ms: 트리버스터 로고 등장 & 차임 사운드
             setTimeout(() => {
                 if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
                 tbIntroState = 'revealed';
                 const title = document.getElementById('tb-title-container');
                 if (title) title.classList.add('active');
                 playIntroTitleRevealSound();
-            }, 750);
+            }, 2450);
 
-            // T=950ms: 탭하여 시작하기 프롬프트 활성화
+            // T=2700ms: 작은 텍스트 프롬프트 활성화 ("- 화면 아무 곳이나 터치하여 시작 -")
             setTimeout(() => {
                 if (tbIntroState === 'exited') return;
                 tbIntroState = 'ready';
                 const prompt = document.getElementById('tb-tap-prompt');
                 if (prompt) prompt.classList.add('active');
-            }, 950);
+            }, 2700);
 
-            // 안전장치: 1.5초 후 강제 ready 보장
+            // 안전장치: 3.5초 후 강제 ready 보장
             setTimeout(() => {
                 if (tbIntroState !== 'exited') {
                     fastForwardTbIntro();
                 }
-            }, 1500);
+            }, 3500);
         }
 
         // 진입 시 1회만 표시 (새 계정 로그인 시는 재표시 안 됨)
