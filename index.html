@@ -1874,14 +1874,24 @@
         let iceDragonBoss = {
             x: 300,
             y: 280,
-            hp: 10000,
-            maxHp: 10000,
+            baseY: 280,
+            hp: 7000,
+            maxHp: 7000,
             wingsAngle: 0,
-            state: 'idle', // 'idle', 'breath_charge', 'breath_attack', 'icicle_storm'
-            stateTimer: 0,
+            animTimer: 0,
             flinchTimer: 0,
             defeated: false,
-            icicles: []
+            attackTimer: 60,
+            icicleTimer: 110,
+            waveTimer: 160,
+            frostProjectiles: [],
+            icicleWarnings: [],
+            frostWaves: [],
+            frostParticles: [],
+            hasUsedTenPercentDive: false,
+            diveState: 'none',
+            diveTimer: 0,
+            diveTarget: { x: 300, y: 650 }
         };
 
         // 🦴 [고대 화석 도감] 사용자 지정 20종 화석 아이템 데이터 테이블
@@ -3425,13 +3435,19 @@
                 iceDragonBoss.x = 300;
                 iceDragonBoss.y = 280;
                 iceDragonBoss.baseY = 280;
+                iceDragonBoss.animTimer = 0;
                 iceDragonBoss.flinchTimer = 0;
                 iceDragonBoss.defeated = false;
-                iceDragonBoss.state = 'idle';
-                iceDragonBoss.stateTimer = 0;
-                iceDragonBoss.icicles = [];
+                iceDragonBoss.attackTimer = 60;
+                iceDragonBoss.icicleTimer = 110;
+                iceDragonBoss.waveTimer = 160;
+                iceDragonBoss.frostProjectiles = [];
+                iceDragonBoss.icicleWarnings = [];
                 iceDragonBoss.frostWaves = [];
+                iceDragonBoss.frostParticles = [];
                 iceDragonBoss.hasUsedTenPercentDive = false;
+                iceDragonBoss.diveState = 'none';
+                iceDragonBoss.diveTimer = 0;
                 iceDragonBoss.diveTarget = { x: 300, y: 650 };
                 setBossRoomHUDVisible(false);
                 floatTexts.push({ x: 300, y: 280, text: `❄️ [얼음의 협곡 수호룡] 고대 서리룡 출현! (7,000 HP)`, color: '#38bdf8', life: 100, size: 24 });
@@ -3475,7 +3491,11 @@
             floatTexts.push({ x: player.x, y: player.y - 70, text: `💀 패배하였습니다...`, color: '#e74c3c', life: 90, size: 24 });
             setTimeout(() => {
                 exitBossDimension();
-                alert("💀 악마 보스에게 패배하여 원래 세계로 돌아왔습니다...\n돌진 패턴을 피해 다시 도전해보세요!");
+                if (currentBossType === 'ice_dragon') {
+                    alert("❄️ 고대 서리룡에게 패배하였습니다...\n서리 탄환과 낙하 고드름을 피해 다시 도전해보세요!");
+                } else {
+                    alert("💀 악마 보스에게 패배하여 원래 세계로 돌아왔습니다...\n돌진 패턴을 피해 다시 도전해보세요!");
+                }
             }, 700);
         }
 
@@ -3574,9 +3594,10 @@
                 // [유저 요구] 타격 데미지 500
                 let dragonDmg = 500;
 
-                let hitTarget = (Math.hypot(player.x - iceDragonBoss.x, player.y - iceDragonBoss.y) < 220) ||
-                                (Math.hypot(player.x - (iceDragonBoss.x - 140), player.y - 480) < 130) ||
-                                (Math.hypot(player.x - (iceDragonBoss.x + 140), player.y - 480) < 130);
+                let hitTarget = (Math.hypot(targetX - iceDragonBoss.x, targetY - iceDragonBoss.y) < 220) ||
+                                (Math.hypot(player.x - iceDragonBoss.x, player.y - iceDragonBoss.y) < 320) ||
+                                (Math.hypot(player.x - (iceDragonBoss.x - 140), player.y - 420) < 180) ||
+                                (Math.hypot(player.x - (iceDragonBoss.x + 140), player.y - 420) < 180);
 
                 if (hitTarget) {
                     iceDragonBoss.hp = Math.max(0, iceDragonBoss.hp - dragonDmg);
@@ -3595,10 +3616,10 @@
                     floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 80, text: `-${dragonDmg} (${roar})`, color: '#38bdf8', life: 45, size: 20 });
 
                     // ⚠️ [유저 요구] 체력이 10%가 되면 (<= 700 HP) 그 즉시 하늘로 날아가서 300 데미지 꽂기
-                    if (iceDragonBoss.hp > 0 && iceDragonBoss.hp <= 700 && !iceDragonBoss.hasUsedTenPercentDive) {
+                    if (iceDragonBoss.hp > 0 && iceDragonBoss.hp <= 700 && !iceDragonBoss.hasUsedTenPercentDive && iceDragonBoss.diveState === 'none') {
                         iceDragonBoss.hasUsedTenPercentDive = true;
-                        iceDragonBoss.state = 'sky_dive_takeoff';
-                        iceDragonBoss.stateTimer = 40;
+                        iceDragonBoss.diveState = 'takeoff';
+                        iceDragonBoss.diveTimer = 35;
                         iceDragonBoss.diveTarget = { x: player.x, y: player.y };
                         floatTexts.push({ x: 300, y: 220, text: `⚠️ [각성] 체력 10% 돌파! 서리룡이 하늘로 비상합니다!`, color: '#38bdf8', life: 80, size: 24 });
                     }
@@ -3823,165 +3844,47 @@
                     }
                 }
             } else if (currentBossType === 'ice_dragon') {
-                // 🐉 고대 서리룡 보스 AI (공격 패턴 3개 - 크라켄과 비슷한 100 DMG + 체력 10% 비상 급강하 300 DMG)
+                // 🐉 고대 서리룡 보스 AI (크라켄처럼 끊임없이 공격: 3대 패턴 상시 발동 + 체력 10% 비상 급강하 300 DMG)
                 if (!iceDragonBoss.defeated && playerBossHp > 0) {
-                    iceDragonBoss.stateTimer++;
+                    iceDragonBoss.animTimer++;
                     iceDragonBoss.wingsAngle = Math.sin(Date.now() * 0.003) * 0.15;
                     if (iceDragonBoss.flinchTimer > 0) iceDragonBoss.flinchTimer--;
 
-                    // ⚠️ [유저 요구] 체력 10% 돌파 즉시 감지 (<= 700 HP) -> 하늘로 날아가서 300 데미지 강타
-                    if (iceDragonBoss.hp > 0 && iceDragonBoss.hp <= 700 && !iceDragonBoss.hasUsedTenPercentDive && iceDragonBoss.state !== 'sky_dive_takeoff' && iceDragonBoss.state !== 'sky_dive_hover' && iceDragonBoss.state !== 'sky_dive_slam') {
+                    // ⚠️ [유저 요구] 체력 10% 돌파 감지 (<= 700 HP) -> 그 즉시 하늘로 날아가서 300 데미지 꽂기
+                    if (iceDragonBoss.hp > 0 && iceDragonBoss.hp <= 700 && !iceDragonBoss.hasUsedTenPercentDive && iceDragonBoss.diveState === 'none') {
                         iceDragonBoss.hasUsedTenPercentDive = true;
-                        iceDragonBoss.state = 'sky_dive_takeoff';
-                        iceDragonBoss.stateTimer = 40;
+                        iceDragonBoss.diveState = 'takeoff';
+                        iceDragonBoss.diveTimer = 35;
                         iceDragonBoss.diveTarget = { x: player.x, y: player.y };
-                        floatTexts.push({ x: 300, y: 220, text: `⚠️ [각성] 체력 10% 돌파! 서리룡이 하늘로 비상합니다!`, color: '#38bdf8', life: 75, size: 24 });
+                        floatTexts.push({ x: 300, y: 220, text: `⚠️ [각성] 체력 10% 돌파! 서리룡이 하늘로 비상합니다!`, color: '#38bdf8', life: 80, size: 24 });
                     }
 
-                    if (iceDragonBoss.state === 'idle') {
-                        iceDragonBoss.y = 280;
-                        // 85프레임마다 3대 공격 패턴 중 하나 발동
-                        if (iceDragonBoss.stateTimer > 85) {
-                            iceDragonBoss.stateTimer = 0;
-                            let p = Math.random();
-                            if (p < 0.35) {
-                                // 패턴 1: 절대영도 서리 브레스 (100 DMG)
-                                iceDragonBoss.state = 'breath_charge';
-                                iceDragonBoss.stateTimer = 45;
-                                floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 60, text: `❄️ [패턴 1] 혹한의 서리 브레스 준비!`, color: '#38bdf8', life: 50, size: 18 });
-                            } else if (p < 0.70) {
-                                // 패턴 2: 낙하 고드름 폭풍 (100 DMG)
-                                iceDragonBoss.state = 'icicle_storm';
-                                iceDragonBoss.stateTimer = 90;
-                                iceDragonBoss.icicles = [];
-                                for (let k = 0; k < 7; k++) {
-                                    iceDragonBoss.icicles.push({
-                                        x: 80 + Math.random() * (GAME_WIDTH - 160),
-                                        y: -50 - (k * 45),
-                                        groundY: 520 + (Math.random() * 260),
-                                        vy: 6 + Math.random() * 3,
-                                        hit: false
-                                    });
-                                }
-                                floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 60, text: `🌨️ [패턴 2] 날카로운 고드름 폭풍 소환!`, color: '#0284c7', life: 50, size: 18 });
-                            } else {
-                                // 패턴 3: 혹한의 서리 충격파 파동 (100 DMG)
-                                iceDragonBoss.state = 'frost_nova_charge';
-                                iceDragonBoss.stateTimer = 35;
-                                floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 60, text: `🌊 [패턴 3] 서리 충격파 방출 준비!`, color: '#00cec9', life: 45, size: 18 });
-                            }
-                        }
-                    } else if (iceDragonBoss.state === 'breath_charge') {
-                        for (let k = 0; k < 3; k++) {
-                            let a = Math.random() * Math.PI * 2;
-                            labSparks.push({ x: iceDragonBoss.x + Math.cos(a)*30, y: iceDragonBoss.y + 40 + Math.sin(a)*30, vx: -Math.cos(a)*3, vy: -Math.sin(a)*3, color: '#38bdf8', life: 15 });
-                        }
-                        if (iceDragonBoss.stateTimer >= 45) {
-                            iceDragonBoss.state = 'breath_attack';
-                            iceDragonBoss.stateTimer = 55;
-                        }
-                    } else if (iceDragonBoss.state === 'breath_attack') {
-                        iceDragonBoss.stateTimer--;
-                        if (iceDragonBoss.stateTimer % 20 === 0) {
-                            if (player.x > 110 && player.x < GAME_WIDTH - 110 && player.y > 500) {
-                                playerBossHp = Math.max(0, playerBossHp - 100);
-                                slashEffects.push({ x: player.x, y: player.y, life: 16 });
-                                floatTexts.push({ x: player.x, y: player.y - 60, text: `-100 HP! ❄️ (절대영도 브레스!)`, color: '#38bdf8', life: 45, size: 22 });
-                                if (playerBossHp <= 0) {
-                                    handlePlayerBossDefeat();
-                                    return;
-                                }
-                            }
-                        }
-                        if (iceDragonBoss.stateTimer <= 0) {
-                            iceDragonBoss.state = 'idle';
-                            iceDragonBoss.stateTimer = 0;
-                        }
-                    } else if (iceDragonBoss.state === 'icicle_storm') {
-                        iceDragonBoss.stateTimer--;
-                        if (iceDragonBoss.icicles) {
-                            iceDragonBoss.icicles.forEach(ic => {
-                                ic.y += ic.vy;
-                                if (ic.y >= ic.groundY && !ic.hit) {
-                                    ic.hit = true;
-                                    for (let s = 0; s < 6; s++) {
-                                        let a = Math.random() * Math.PI * 2;
-                                        labSparks.push({ x: ic.x, y: ic.groundY, vx: Math.cos(a)*4, vy: Math.sin(a)*4, color: '#e0f2fe', life: 20 });
-                                    }
-                                    if (Math.hypot(player.x - ic.x, player.y - ic.groundY) < 50) {
-                                        playerBossHp = Math.max(0, playerBossHp - 100);
-                                        floatTexts.push({ x: player.x, y: player.y - 60, text: `-100 HP! 💥 (낙하 고드름 충돌!)`, color: '#0284c7', life: 45, size: 22 });
-                                        if (playerBossHp <= 0) {
-                                            handlePlayerBossDefeat();
-                                            return;
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                        if (iceDragonBoss.stateTimer <= 0) {
-                            iceDragonBoss.state = 'idle';
-                            iceDragonBoss.stateTimer = 0;
-                            iceDragonBoss.icicles = [];
-                        }
-                    } else if (iceDragonBoss.state === 'frost_nova_charge') {
-                        iceDragonBoss.stateTimer--;
-                        if (iceDragonBoss.stateTimer <= 0) {
-                            iceDragonBoss.state = 'frost_nova_active';
-                            iceDragonBoss.stateTimer = 70;
-                            iceDragonBoss.frostWaves = [
-                                { x: iceDragonBoss.x, y: iceDragonBoss.y + 40, radius: 10, maxRadius: 550, speed: 7, hit: false }
-                            ];
-                            floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 60, text: `❄️ 서리 충격파 방출!!`, color: '#00cec9', life: 40, size: 22 });
-                        }
-                    } else if (iceDragonBoss.state === 'frost_nova_active') {
-                        iceDragonBoss.stateTimer--;
-                        if (iceDragonBoss.frostWaves) {
-                            iceDragonBoss.frostWaves.forEach(w => {
-                                w.radius += w.speed;
-                                let pDist = Math.hypot(player.x - w.x, player.y - w.y);
-                                if (!w.hit && Math.abs(pDist - w.radius) < 26) {
-                                    w.hit = true;
-                                    playerBossHp = Math.max(0, playerBossHp - 100);
-                                    floatTexts.push({ x: player.x, y: player.y - 60, text: `-100 HP! 🌊 (혹한의 서리 파동!)`, color: '#00cec9', life: 45, size: 22 });
-                                    if (playerBossHp <= 0) {
-                                        handlePlayerBossDefeat();
-                                        return;
-                                    }
-                                }
-                            });
-                        }
-                        if (iceDragonBoss.stateTimer <= 0) {
-                            iceDragonBoss.state = 'idle';
-                            iceDragonBoss.stateTimer = 0;
-                            iceDragonBoss.frostWaves = [];
-                        }
-                    } else if (iceDragonBoss.state === 'sky_dive_takeoff') {
-                        // 🐉 체력 10% 돌파: 하늘로 날아오름
-                        iceDragonBoss.y -= 8;
-                        iceDragonBoss.stateTimer--;
-                        if (iceDragonBoss.stateTimer <= 0) {
-                            iceDragonBoss.state = 'sky_dive_hover';
-                            iceDragonBoss.stateTimer = 65; // 체공 및 플레이어 위치 조준
+                    // 1. 체력 10% 비상 급강하 특수기 진행 중일 때
+                    if (iceDragonBoss.diveState === 'takeoff') {
+                        iceDragonBoss.y -= 12;
+                        iceDragonBoss.diveTimer--;
+                        if (iceDragonBoss.diveTimer <= 0) {
+                            iceDragonBoss.diveState = 'hover';
+                            iceDragonBoss.diveTimer = 65; // 체공하며 플레이어 위치 조준
                             iceDragonBoss.diveTarget = { x: player.x, y: player.y };
                         }
-                    } else if (iceDragonBoss.state === 'sky_dive_hover') {
-                        if (iceDragonBoss.stateTimer > 20) {
-                            iceDragonBoss.diveTarget.x += (player.x - iceDragonBoss.diveTarget.x) * 0.12;
-                            iceDragonBoss.diveTarget.y += (player.y - iceDragonBoss.diveTarget.y) * 0.12;
+                    } else if (iceDragonBoss.diveState === 'hover') {
+                        if (iceDragonBoss.diveTimer > 15) {
+                            iceDragonBoss.diveTarget.x += (player.x - iceDragonBoss.diveTarget.x) * 0.14;
+                            iceDragonBoss.diveTarget.y += (player.y - iceDragonBoss.diveTarget.y) * 0.14;
                         }
-                        iceDragonBoss.stateTimer--;
-                        if (iceDragonBoss.stateTimer <= 0) {
-                            iceDragonBoss.state = 'sky_dive_slam';
-                            iceDragonBoss.stateTimer = 20;
+                        iceDragonBoss.diveTimer--;
+                        if (iceDragonBoss.diveTimer <= 0) {
+                            iceDragonBoss.diveState = 'slam';
+                            iceDragonBoss.diveTimer = 25;
                             iceDragonBoss.x = iceDragonBoss.diveTarget.x;
                             iceDragonBoss.y = -100;
                         }
-                    } else if (iceDragonBoss.state === 'sky_dive_slam') {
+                    } else if (iceDragonBoss.diveState === 'slam') {
                         let ty = iceDragonBoss.diveTarget.y - 30;
-                        iceDragonBoss.y += (ty - iceDragonBoss.y) * 0.35 + 15;
-                        if (iceDragonBoss.y >= ty - 10) {
-                            // [유저 요구] 300 데미지 꽂기
+                        iceDragonBoss.y += (ty - iceDragonBoss.y) * 0.38 + 16;
+                        if (iceDragonBoss.y >= ty - 12) {
+                            // [유저 요구] 300 데미지 꽂기!
                             playerBossHp = Math.max(0, playerBossHp - 300);
                             floatTexts.push({ x: player.x, y: player.y - 70, text: `-300 HP!! 💥 (서리룡 비상 강타!)`, color: '#38bdf8', life: 60, size: 26 });
                             for (let k = 0; k < 25; k++) {
@@ -3993,19 +3896,203 @@
                                 handlePlayerBossDefeat();
                                 return;
                             }
-                            iceDragonBoss.state = 'sky_dive_recover';
-                            iceDragonBoss.stateTimer = 40;
+                            iceDragonBoss.diveState = 'recover';
+                            iceDragonBoss.diveTimer = 40;
                         }
-                    } else if (iceDragonBoss.state === 'sky_dive_recover') {
+                    } else if (iceDragonBoss.diveState === 'recover') {
                         iceDragonBoss.x += (300 - iceDragonBoss.x) * 0.08;
                         iceDragonBoss.y += (280 - iceDragonBoss.y) * 0.08;
-                        iceDragonBoss.stateTimer--;
-                        if (iceDragonBoss.stateTimer <= 0) {
+                        iceDragonBoss.diveTimer--;
+                        if (iceDragonBoss.diveTimer <= 0) {
                             iceDragonBoss.x = 300;
                             iceDragonBoss.y = 280;
-                            iceDragonBoss.state = 'idle';
-                            iceDragonBoss.stateTimer = 0;
+                            iceDragonBoss.diveState = 'none';
                         }
+                    } else {
+                        // 2. 평상시 상태: 크라켄처럼 부유하며 3가지 공격을 끊임없이 연속 발동!
+                        iceDragonBoss.y = iceDragonBoss.baseY + Math.sin(iceDragonBoss.animTimer * 0.04) * 12;
+                        iceDragonBoss.facing = player.x >= iceDragonBoss.x ? 1 : -1;
+
+                        // [패턴 1: 서리 탄환 발사 (Frost Shards)] - 100 DMG (크라켄 물대포처럼 연속 발사)
+                        iceDragonBoss.attackTimer--;
+                        if (iceDragonBoss.attackTimer <= 0) {
+                            let dx = player.x - iceDragonBoss.x;
+                            let dy = player.y - (iceDragonBoss.y + 35);
+                            let baseAng = Math.atan2(dy, dx);
+
+                            // 1발 또는 3방향 부채꼴 서리 탄환
+                            let isSpread = (iceDragonBoss.animTimer % 180 > 90);
+                            let angles = isSpread ? [baseAng - 0.28, baseAng, baseAng + 0.28] : [baseAng];
+
+                            angles.forEach(ang => {
+                                iceDragonBoss.frostProjectiles.push({
+                                    x: iceDragonBoss.x,
+                                    y: iceDragonBoss.y + 35,
+                                    vx: Math.cos(ang) * 5.8,
+                                    vy: Math.sin(ang) * 5.8,
+                                    radius: 14,
+                                    life: 160
+                                });
+                            });
+
+                            for (let i = 0; i < 6; i++) {
+                                iceDragonBoss.frostParticles.push({
+                                    x: iceDragonBoss.x,
+                                    y: iceDragonBoss.y + 35,
+                                    vx: (Math.random() - 0.5) * 4,
+                                    vy: (Math.random() - 0.5) * 4,
+                                    radius: 3 + Math.random() * 3,
+                                    color: '#38bdf8',
+                                    life: 18,
+                                    maxLife: 18
+                                });
+                            }
+
+                            floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 70, text: `❄️ 서리 탄환!`, color: '#38bdf8', life: 35, size: 18 });
+                            iceDragonBoss.attackTimer = 80 + Math.floor(Math.random() * 30);
+                        }
+
+                        // [패턴 2: 낙하 고드름 / 서리창 폭풍 (Falling Icicles)] - 100 DMG (크라켄 간헐천처럼 바닥 경고 후 강타)
+                        iceDragonBoss.icicleTimer--;
+                        if (iceDragonBoss.icicleTimer <= 0) {
+                            let count = 2 + Math.floor(Math.random() * 2);
+                            for (let k = 0; k < count; k++) {
+                                let ox = (k === 0) ? 0 : (Math.random() - 0.5) * 140;
+                                let oy = (k === 0) ? 0 : (Math.random() - 0.5) * 80;
+                                iceDragonBoss.icicleWarnings.push({
+                                    x: Math.max(80, Math.min(GAME_WIDTH - 80, player.x + ox)),
+                                    y: Math.max(480, Math.min(GAME_HEIGHT - 60, player.y + oy)),
+                                    radius: 46,
+                                    timer: 45,
+                                    maxTimer: 45,
+                                    state: 'warning',
+                                    duration: 22,
+                                    hit: false
+                                });
+                            }
+                            floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 70, text: `🌨️ 낙하 고드름 소환!`, color: '#0284c7', life: 40, size: 18 });
+                            iceDragonBoss.icicleTimer = 140 + Math.floor(Math.random() * 40);
+                        }
+
+                        // [패턴 3: 혹한의 서리 충격파 파동 (Frost Nova Wave)] - 100 DMG (크라켄 촉수 충격파처럼 외곽 확산)
+                        iceDragonBoss.waveTimer--;
+                        if (iceDragonBoss.waveTimer <= 0) {
+                            iceDragonBoss.frostWaves.push({
+                                x: iceDragonBoss.x,
+                                y: iceDragonBoss.y + 40,
+                                radius: 30,
+                                maxRadius: 530,
+                                speed: 5.2,
+                                hit: false
+                            });
+                            floatTexts.push({ x: iceDragonBoss.x, y: iceDragonBoss.y - 70, text: `🌊 서리 충격파 방출!!`, color: '#00cec9', life: 40, size: 20 });
+                            iceDragonBoss.waveTimer = 200 + Math.floor(Math.random() * 50);
+                        }
+                    }
+
+                    // 투사체 업데이트 및 피격 판정 (100 DMG)
+                    if (iceDragonBoss.frostProjectiles) {
+                        iceDragonBoss.frostProjectiles.forEach(p => {
+                            p.x += p.vx;
+                            p.y += p.vy;
+                            p.life--;
+
+                            if (Math.random() < 0.45) {
+                                iceDragonBoss.frostParticles.push({
+                                    x: p.x,
+                                    y: p.y,
+                                    vx: -p.vx * 0.15 + (Math.random() - 0.5) * 1.5,
+                                    vy: -p.vy * 0.15 + (Math.random() - 0.5) * 1.5,
+                                    radius: 2.5 + Math.random() * 2,
+                                    color: '#e0f2fe',
+                                    life: 14,
+                                    maxLife: 14
+                                });
+                            }
+
+                            let dist = Math.hypot(p.x - player.x, p.y - player.y);
+                            if (dist < p.radius + 18) {
+                                p.life = 0;
+                                playerBossHp = Math.max(0, playerBossHp - 100);
+                                slashEffects.push({ x: player.x, y: player.y, life: 14 });
+                                floatTexts.push({ x: player.x, y: player.y - 65, text: `-100 HP! ❄️ (서리 탄환!)`, color: '#38bdf8', life: 50, size: 22 });
+                                if (playerBossHp <= 0) {
+                                    handlePlayerBossDefeat();
+                                    return;
+                                }
+                            }
+                        });
+                        iceDragonBoss.frostProjectiles = iceDragonBoss.frostProjectiles.filter(p => p.life > 0 && p.x > -40 && p.x < GAME_WIDTH + 40 && p.y > -40 && p.y < GAME_HEIGHT + 40);
+                    }
+
+                    // 낙하 고드름 업데이트 및 피격 판정 (100 DMG)
+                    if (iceDragonBoss.icicleWarnings) {
+                        iceDragonBoss.icicleWarnings.forEach(g => {
+                            if (g.state === 'warning') {
+                                g.timer--;
+                                if (g.timer <= 0) {
+                                    g.state = 'erupting';
+                                    for (let i = 0; i < 16; i++) {
+                                        let a = Math.random() * Math.PI * 2;
+                                        iceDragonBoss.frostParticles.push({
+                                            x: g.x,
+                                            y: g.y,
+                                            vx: Math.cos(a) * (2 + Math.random() * 5),
+                                            vy: Math.sin(a) * (2 + Math.random() * 5),
+                                            radius: 3 + Math.random() * 4,
+                                            color: '#e0f2fe',
+                                            life: 24,
+                                            maxLife: 24
+                                        });
+                                    }
+                                }
+                            } else if (g.state === 'erupting') {
+                                g.duration--;
+                                if (!g.hit) {
+                                    let dist = Math.hypot(player.x - g.x, player.y - g.y);
+                                    if (dist < g.radius + 14) {
+                                        g.hit = true;
+                                        playerBossHp = Math.max(0, playerBossHp - 100);
+                                        slashEffects.push({ x: player.x, y: player.y, life: 16 });
+                                        floatTexts.push({ x: player.x, y: player.y - 70, text: `-100 HP! 🌨️ (낙하 고드름!)`, color: '#0284c7', life: 50, size: 22 });
+                                        if (playerBossHp <= 0) {
+                                            handlePlayerBossDefeat();
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        iceDragonBoss.icicleWarnings = iceDragonBoss.icicleWarnings.filter(g => g.duration > 0 || g.state === 'warning');
+                    }
+
+                    // 서리 충격파 업데이트 및 피격 판정 (100 DMG)
+                    if (iceDragonBoss.frostWaves) {
+                        iceDragonBoss.frostWaves.forEach(w => {
+                            w.radius += w.speed;
+                            let pDist = Math.hypot(player.x - w.x, player.y - w.y);
+                            if (!w.hit && Math.abs(pDist - w.radius) < 26) {
+                                w.hit = true;
+                                playerBossHp = Math.max(0, playerBossHp - 100);
+                                slashEffects.push({ x: player.x, y: player.y, life: 16 });
+                                floatTexts.push({ x: player.x, y: player.y - 65, text: `-100 HP! 🌊 (혹한의 서리 파동!)`, color: '#00cec9', life: 50, size: 22 });
+                                if (playerBossHp <= 0) {
+                                    handlePlayerBossDefeat();
+                                    return;
+                                }
+                            }
+                        });
+                        iceDragonBoss.frostWaves = iceDragonBoss.frostWaves.filter(w => w.radius < w.maxRadius);
+                    }
+
+                    // 얼음 파티클 수명
+                    if (iceDragonBoss.frostParticles) {
+                        iceDragonBoss.frostParticles.forEach(pt => {
+                            pt.x += pt.vx;
+                            pt.y += pt.vy;
+                            pt.life--;
+                        });
+                        iceDragonBoss.frostParticles = iceDragonBoss.frostParticles.filter(pt => pt.life > 0);
                     }
                 }
             }
@@ -4194,62 +4281,99 @@
                 // 3. 보스 드래곤 렌더링 (Image 2 서리룡)
                 drawFrostDragonBoss(ctx, iceDragonBoss);
 
-                // 4. 낙하 고드름 스톰 공격 렌더링
-                if (iceDragonBoss.icicles && iceDragonBoss.icicles.length > 0) {
-                    iceDragonBoss.icicles.forEach(ic => {
-                        ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
-                        ctx.beginPath(); ctx.ellipse(ic.x, ic.groundY, 18 * Math.min(1, Math.max(0.2, ic.y / ic.groundY)), 6, 0, 0, Math.PI*2); ctx.fill();
-                        ctx.fillStyle = '#e0f2fe';
-                        ctx.strokeStyle = '#38bdf8';
-                        ctx.lineWidth = 2;
-                        ctx.beginPath();
-                        ctx.moveTo(ic.x, ic.y + 35);
-                        ctx.lineTo(ic.x - 10, ic.y);
-                        ctx.lineTo(ic.x + 10, ic.y);
-                        ctx.closePath();
-                        ctx.fill(); ctx.stroke();
+                // 4. 낙하 고드름 경고 장판 및 낙하 얼음창 (패턴 2) 렌더링
+                if (iceDragonBoss.icicleWarnings && iceDragonBoss.icicleWarnings.length > 0) {
+                    iceDragonBoss.icicleWarnings.forEach(g => {
+                        if (g.state === 'warning') {
+                            ctx.save();
+                            let progress = 1 - (g.timer / g.maxTimer);
+                            ctx.strokeStyle = '#38bdf8';
+                            ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+                            ctx.lineWidth = 2.5;
+                            ctx.setLineDash([8, 6]);
+                            ctx.beginPath();
+                            ctx.arc(g.x, g.y, g.radius, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.stroke();
+
+                            // 충전 원
+                            ctx.setLineDash([]);
+                            ctx.strokeStyle = '#e0f2fe';
+                            ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            ctx.arc(g.x, g.y, g.radius * progress, 0, Math.PI * 2);
+                            ctx.stroke();
+
+                            ctx.fillStyle = '#7dd3fc';
+                            ctx.font = 'bold 12px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('⚠️ 낙하 주의!', g.x, g.y - g.radius - 8);
+                            ctx.restore();
+                        } else if (g.state === 'erupting') {
+                            // 거대 고드름 낙하 관통
+                            ctx.save();
+                            ctx.shadowColor = '#38bdf8';
+                            ctx.shadowBlur = 15;
+                            ctx.fillStyle = '#e0f2fe';
+                            ctx.strokeStyle = '#0284c7';
+                            ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            ctx.moveTo(g.x, g.y);
+                            ctx.lineTo(g.x - 14, g.y - 75);
+                            ctx.lineTo(g.x + 14, g.y - 75);
+                            ctx.closePath();
+                            ctx.fill();
+                            ctx.stroke();
+                            ctx.restore();
+                        }
                     });
                 }
 
-                // 5. 드래곤 브레스 공격 이펙트
-                if (iceDragonBoss.state === 'breath_attack') {
-                    let bGrad = ctx.createRadialGradient(iceDragonBoss.x, iceDragonBoss.y + 40, 10, iceDragonBoss.x, 650, 180);
-                    bGrad.addColorStop(0, '#ffffff');
-                    bGrad.addColorStop(0.3, 'rgba(56, 189, 248, 0.85)');
-                    bGrad.addColorStop(0.7, 'rgba(14, 165, 233, 0.45)');
-                    bGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-                    ctx.fillStyle = bGrad;
-                    ctx.beginPath();
-                    ctx.moveTo(iceDragonBoss.x - 25, iceDragonBoss.y + 30);
-                    ctx.lineTo(iceDragonBoss.x + 25, iceDragonBoss.y + 30);
-                    ctx.lineTo(GAME_WIDTH - 60, 750);
-                    ctx.lineTo(60, 750);
-                    ctx.closePath();
-                    ctx.fill();
+                // 5. 서리 탄환 (패턴 1) 렌더링
+                if (iceDragonBoss.frostProjectiles && iceDragonBoss.frostProjectiles.length > 0) {
+                    iceDragonBoss.frostProjectiles.forEach(p => {
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        let ang = Math.atan2(p.vy, p.vx);
+                        ctx.rotate(ang);
+                        ctx.shadowColor = '#38bdf8';
+                        ctx.shadowBlur = 12;
+                        let grad = ctx.createLinearGradient(-14, 0, 18, 0);
+                        grad.addColorStop(0, '#0284c7');
+                        grad.addColorStop(0.5, '#38bdf8');
+                        grad.addColorStop(1, '#ffffff');
+                        ctx.fillStyle = grad;
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 1.5;
+                        ctx.beginPath();
+                        ctx.moveTo(18, 0);
+                        ctx.lineTo(-6, -9);
+                        ctx.lineTo(-14, 0);
+                        ctx.lineTo(-6, 9);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        ctx.restore();
+                    });
                 }
 
-                // 6. 플레이어 렌더링
-                drawCharacter(ctx, player, player.x, player.y, player.axeSwingTimer > 0, player.walkTimer);
+                // 6. 얼음 파티클 렌더링
+                if (iceDragonBoss.frostParticles && iceDragonBoss.frostParticles.length > 0) {
+                    iceDragonBoss.frostParticles.forEach(pt => {
+                        let alpha = Math.max(0, pt.life / pt.maxLife);
+                        ctx.save();
+                        ctx.globalAlpha = alpha;
+                        ctx.fillStyle = pt.color || '#38bdf8';
+                        ctx.shadowColor = '#38bdf8';
+                        ctx.shadowBlur = 6;
+                        ctx.beginPath();
+                        ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    });
+                }
 
-                // 7. 상단 UI: 보스 체력바 & 내 체력바
-                let barW = 380, barH = 22, barX = (GAME_WIDTH - barW) / 2;
-                let bRatio = Math.max(0, iceDragonBoss.hp / iceDragonBoss.maxHp);
-                let bBarY = 20;
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-                ctx.beginPath(); ctx.roundRect(barX, bBarY, barW, barH, 11); ctx.fill();
-                ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2.5; ctx.stroke();
-
-                let dGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
-                dGrad.addColorStop(0, '#0284c7');
-                dGrad.addColorStop(0.5, '#38bdf8');
-                dGrad.addColorStop(1, '#e0f2fe');
-                ctx.fillStyle = dGrad;
-                ctx.beginPath(); ctx.roundRect(barX + 2, bBarY + 2, Math.max(0, (barW - 4) * bRatio), barH - 4, 9); ctx.fill();
-
-                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12.5px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText(`🐉 [얼음의 협곡 수호룡] 고대 서리룡  ${iceDragonBoss.hp} / ${iceDragonBoss.maxHp} HP`, GAME_WIDTH / 2, bBarY + 11);
-
-                // 서리 충격파 (패턴 3) 렌더링
+                // 7. 서리 충격파 파동 (패턴 3) 렌더링
                 if (iceDragonBoss.frostWaves && iceDragonBoss.frostWaves.length > 0) {
                     iceDragonBoss.frostWaves.forEach(w => {
                         ctx.save();
@@ -4268,8 +4392,8 @@
                     });
                 }
 
-                // 10% 비상 급강하 조준점 렌더링
-                if (iceDragonBoss.state === 'sky_dive_hover' || iceDragonBoss.state === 'sky_dive_slam') {
+                // 8. 10% 비상 급강하 조준점 렌더링
+                if (iceDragonBoss.diveState === 'hover' || iceDragonBoss.diveState === 'slam') {
                     ctx.save();
                     let dt = iceDragonBoss.diveTarget;
                     let rot = (Date.now() * 0.005) % (Math.PI * 2);
@@ -4289,6 +4413,27 @@
                     ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.fillText('⚠️ 300 DMG 낙하 지점!', 0, -42);
                     ctx.restore();
                 }
+
+                // 9. 플레이어 렌더링
+                drawCharacter(ctx, player, player.x, player.y, player.axeSwingTimer > 0, player.walkTimer);
+
+                // 10. 상단 UI: 보스 체력바 & 내 체력바
+                let barW = 380, barH = 22, barX = (GAME_WIDTH - barW) / 2;
+                let bRatio = Math.max(0, iceDragonBoss.hp / iceDragonBoss.maxHp);
+                let bBarY = 20;
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.beginPath(); ctx.roundRect(barX, bBarY, barW, barH, 11); ctx.fill();
+                ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2.5; ctx.stroke();
+
+                let dGrad = ctx.createLinearGradient(barX, 0, barX + barW, 0);
+                dGrad.addColorStop(0, '#0284c7');
+                dGrad.addColorStop(0.5, '#38bdf8');
+                dGrad.addColorStop(1, '#e0f2fe');
+                ctx.fillStyle = dGrad;
+                ctx.beginPath(); ctx.roundRect(barX + 2, bBarY + 2, Math.max(0, (barW - 4) * bRatio), barH - 4, 9); ctx.fill();
+
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12.5px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(`🐉 [얼음의 협곡 수호룡] 고대 서리룡  ${iceDragonBoss.hp} / ${iceDragonBoss.maxHp} HP`, GAME_WIDTH / 2, bBarY + 11);
 
                 let pRatio = Math.max(0, playerBossHp / 1000);
                 let pBarY = 50;
