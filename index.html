@@ -1695,21 +1695,10 @@
             </div>
 
             <!-- 중앙 타이틀 & 탭하여 시작하기 -->
-            <div class="tb-title-container" id="tb-title-container">
-                <div class="tb-title-kicker">ULTIMATE ACTION ADVENTURE</div>
-
-                <div class="tb-logo-wrapper">
-                    <div class="tb-axe-icon tb-axe-left">🪓</div>
-                    <h1 class="tb-main-title">트리버스터</h1>
-                    <div class="tb-axe-icon tb-axe-right">🪓</div>
-                </div>
-
-                <div class="tb-sub-logo">TREE BUSTER</div>
-
-                <div class="tb-tap-prompt" id="tb-tap-prompt">
-                    <div class="tb-tap-hint">- 화면 아무 곳이나 터치하여 시작 -</div>
-                    <div class="tb-tap-sub">TOUCH ANYWHERE TO START</div>
-                </div>
+            <!-- 나무 부서진 뒤 등장하는 앱 사진 로고 & 밑에 흐릿하고 작은 '탭하여 시작' -->
+            <div class="tb-logo-container" id="tb-logo-container">
+                <img src="tree_buster_logo.png" alt="트리버스터" class="tb-official-logo" id="tb-official-logo">
+                <div class="tb-faint-prompt" id="tb-faint-prompt">탭하여 시작</div>
             </div>
 
         </div>
@@ -19416,14 +19405,20 @@
         // ============================================================
         // 🌳⚡ [트리버스터 (TREE BUSTER)] 초경량 & 고성능 오프닝 인트로 엔진
         // ============================================================
-        let tbIntroState = 'init'; // 'init' -> 'slashed' -> 'splitting' -> 'revealed' -> 'ready' -> 'exited'
+        let tbIntroState = 'init'; // 'init' -> 'slashing' -> 'splitting' -> 'revealed' -> 'ready' -> 'exited'
         let tbIntroActive = false;
         let tbFxCanvas = null;
         let tbFxCtx = null;
         let tbParticles = [];
         let tbAnimFrameId = null;
         let tbAudioCtx = null;
+        let tbTimers = [];
         let isGameLoopRunning = false;
+
+        function clearTbTimers() {
+            tbTimers.forEach(id => clearTimeout(id));
+            tbTimers = [];
+        }
 
         function getTbAudioCtx() {
             try {
@@ -19531,8 +19526,8 @@
             tbFxCanvas = document.getElementById('tb-intro-canvas');
             if (!tbFxCanvas) return;
             const introEl = document.getElementById('tree-buster-intro');
-            const w = introEl ? introEl.clientWidth || 600 : 600;
-            const h = introEl ? introEl.clientHeight || 1000 : 1000;
+            const w = (introEl && introEl.clientWidth) ? introEl.clientWidth : (window.innerWidth || 600);
+            const h = (introEl && introEl.clientHeight) ? introEl.clientHeight : (window.innerHeight || 1000);
             tbFxCanvas.width = w;
             tbFxCanvas.height = h;
             tbFxCtx = tbFxCanvas.getContext('2d');
@@ -19541,176 +19536,7 @@
 
         // 나무 파편 & 잎사귀 폭발 (GPU 부담 없는 초경량 드로우)
         function spawnTreeSplitParticles() {
-            if (!tbFxCanvas) return;
-            const cx = tbFxCanvas.width / 2;
-            const cy = tbFxCanvas.height * 0.32;
-
-            const woodColors = ['#b45309', '#d97706', '#fde68a', '#78350f'];
-            for (let i = 0; i < 24; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = 4 + Math.random() * 10;
-                tbParticles.push({
-                    type: 'wood',
-                    x: cx + (Math.random() - 0.5) * 20,
-                    y: cy + (Math.random() - 0.5) * 80,
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed - 2,
-                    w: 4 + Math.random() * 5,
-                    h: 8 + Math.random() * 12,
-                    color: woodColors[Math.floor(Math.random() * woodColors.length)],
-                    alpha: 1.0
-                });
-            }
-
-            const leafColors = ['#22c55e', '#16a34a', '#86efac', '#4ade80'];
-            for (let i = 0; i < 20; i++) {
-                const dir = (Math.random() > 0.5 ? 1 : -1);
-                tbParticles.push({
-                    type: 'leaf',
-                    x: cx + dir * (10 + Math.random() * 40),
-                    y: cy - 20 + (Math.random() - 0.5) * 80,
-                    vx: dir * (2 + Math.random() * 6),
-                    vy: -2 - Math.random() * 4,
-                    r: 4 + Math.random() * 4,
-                    color: leafColors[Math.floor(Math.random() * leafColors.length)],
-                    alpha: 1.0
-                });
-            }
-
-            tbFxLoop();
-        }
-
-        function tbFxLoop() {
-            if (!tbFxCtx || !tbFxCanvas || !tbIntroActive) return;
-            tbFxCtx.clearRect(0, 0, tbFxCanvas.width, tbFxCanvas.height);
-
-            for (let i = tbParticles.length - 1; i >= 0; i--) {
-                const p = tbParticles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-                p.alpha -= 0.025;
-
-                if (p.type === 'wood') {
-                    p.vy += 0.35;
-                    p.vx *= 0.96;
-                    tbFxCtx.fillStyle = p.color;
-                    tbFxCtx.globalAlpha = Math.max(0, p.alpha);
-                    tbFxCtx.fillRect(p.x, p.y, p.w, p.h);
-                } else if (p.type === 'leaf') {
-                    p.vy += 0.1;
-                    p.vx *= 0.98;
-                    tbFxCtx.fillStyle = p.color;
-                    tbFxCtx.globalAlpha = Math.max(0, p.alpha);
-                    tbFxCtx.beginPath();
-                    tbFxCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                    tbFxCtx.fill();
-                }
-
-                if (p.alpha <= 0) {
-                    tbParticles.splice(i, 1);
-                }
-            }
-
-            tbFxCtx.globalAlpha = 1.0;
-
-            if (tbParticles.length > 0 && tbIntroActive) {
-                tbAnimFrameId = requestAnimationFrame(tbFxLoop);
-            }
-        }
-
-        // 터치 지점 리플
-        function createTbTouchRipple(clientX, clientY) {
-            const introEl = document.getElementById('tree-buster-intro');
-            if (!introEl) return;
-            const rect = introEl.getBoundingClientRect();
-            const x = (clientX !== undefined ? clientX - rect.left : rect.width / 2);
-            const y = (clientY !== undefined ? clientY - rect.top : rect.height * 0.6);
-
-            const ripple = document.createElement('div');
-            ripple.style.position = 'absolute';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
-            ripple.style.width = '20px';
-            ripple.style.height = '20px';
-            ripple.style.borderRadius = '50%';
-            ripple.style.transform = 'translate(-50%, -50%) scale(1)';
-            ripple.style.border = '3px solid #34d399';
-            ripple.style.pointerEvents = 'none';
-            ripple.style.zIndex = '999';
-            ripple.style.transition = 'all 0.4s ease-out';
-            introEl.appendChild(ripple);
-
-            requestAnimationFrame(() => {
-                ripple.style.transform = 'translate(-50%, -50%) scale(18)';
-                ripple.style.opacity = '0';
-            });
-            setTimeout(() => { ripple.remove(); }, 450);
-        }
-
-        // 패스트포워드 (도중 탭 시 즉시 완성 상태로 전환)
-        function fastForwardTbIntro() {
-            tbIntroState = 'ready';
-            const beam = document.getElementById('tb-slash-beam');
-            const leftTree = document.getElementById('tb-tree-left');
-            const rightTree = document.getElementById('tb-tree-right');
-            const title = document.getElementById('tb-title-container');
-            const prompt = document.getElementById('tb-tap-prompt');
-
-            if (beam) beam.classList.remove('flash');
-            if (leftTree) leftTree.classList.add('split-left');
-            if (rightTree) rightTree.classList.add('split-right');
-            if (title) title.classList.add('active');
-            if (prompt) prompt.classList.add('active');
-        }
-
-        // 탭 이벤트 핸들러
-        function handleTbIntroClick(e) {
-            if (tbIntroState === 'exited') return;
-            finishTreeBusterIntro(e);
-        }
-
-        // 인트로 종료 및 게임 시작
-        function finishTreeBusterIntro(e) {
-            if (tbIntroState === 'exited') return;
-            tbIntroState = 'exited';
-
-            try { sessionStorage.setItem('tb_intro_shown', 'true'); } catch(err) {}
-
-            createTbTouchRipple(e && e.clientX ? e.clientX : undefined, e && e.clientY ? e.clientY : undefined);
-
-            const flashEl = document.getElementById('tb-flash-layer');
-            if (flashEl) {
-                flashEl.classList.add('flash');
-                setTimeout(() => flashEl.classList.remove('flash'), 100);
-            }
-
-            playIntroStartSound();
-
-            const introEl = document.getElementById('tree-buster-intro');
-            if (introEl) {
-                introEl.classList.add('tb-exit');
-            }
-
-            setTimeout(() => {
-                tbIntroActive = false;
-                if (introEl) introEl.style.display = 'none';
-                if (tbAnimFrameId) cancelAnimationFrame(tbAnimFrameId);
-
-                // 메인 게임 루프 가동
-                startGameLoop();
-
-                // 🔑 [유저 요청] 로그인 되어있으면 바로 게임 진입, 안되어있으면 로그인 모달 오픈!
-                if (!currentUser) {
-                    if (typeof openLoginModal === 'function') openLoginModal();
-                } else {
-                    setTimeout(checkAndShowFrostCanyonNotice, 500);
-                }
-            }, 350);
-        }
-
-        // 🌲 나무 쪼개짐 파편 파티클 분출
-        function spawnTreeSplitParticles() {
-            if (!tbFxCanvas) return;
+            if (!tbFxCanvas || !tbFxCtx) return;
             const cx = tbFxCanvas.width / 2;
             const cy = tbFxCanvas.height * 0.5;
 
@@ -19749,50 +19575,171 @@
             if (!tbAnimFrameId) tbFxLoop();
         }
 
-        // 도중 탭 시 즉시 나무 쪼개지고 앱 사진 로고 등장
+        function tbFxLoop() {
+            if (!tbFxCtx || !tbFxCanvas || !tbIntroActive) {
+                tbAnimFrameId = null;
+                return;
+            }
+            tbFxCtx.clearRect(0, 0, tbFxCanvas.width, tbFxCanvas.height);
+
+            for (let i = tbParticles.length - 1; i >= 0; i--) {
+                const p = tbParticles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= 0.025;
+
+                if (p.type === 'wood') {
+                    p.vy += 0.35;
+                    p.vx *= 0.96;
+                    tbFxCtx.fillStyle = p.color;
+                    tbFxCtx.globalAlpha = Math.max(0, p.alpha);
+                    tbFxCtx.fillRect(p.x, p.y, p.w, p.h);
+                } else if (p.type === 'leaf') {
+                    p.vy += 0.1;
+                    p.vx *= 0.98;
+                    tbFxCtx.fillStyle = p.color;
+                    tbFxCtx.globalAlpha = Math.max(0, p.alpha);
+                    tbFxCtx.beginPath();
+                    tbFxCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    tbFxCtx.fill();
+                }
+
+                if (p.alpha <= 0) {
+                    tbParticles.splice(i, 1);
+                }
+            }
+
+            tbFxCtx.globalAlpha = 1.0;
+
+            if (tbParticles.length > 0 && tbIntroActive) {
+                tbAnimFrameId = requestAnimationFrame(tbFxLoop);
+            } else {
+                tbAnimFrameId = null;
+            }
+        }
+
+        // 터치 지점 리플
+        function createTbTouchRipple(clientX, clientY) {
+            const introEl = document.getElementById('tree-buster-intro');
+            if (!introEl) return;
+            const rect = introEl.getBoundingClientRect();
+            const x = (clientX !== undefined ? clientX - rect.left : rect.width / 2);
+            const y = (clientY !== undefined ? clientY - rect.top : rect.height * 0.6);
+
+            const ripple = document.createElement('div');
+            ripple.style.position = 'absolute';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.style.width = '20px';
+            ripple.style.height = '20px';
+            ripple.style.borderRadius = '50%';
+            ripple.style.transform = 'translate(-50%, -50%) scale(1)';
+            ripple.style.border = '3px solid #34d399';
+            ripple.style.pointerEvents = 'none';
+            ripple.style.zIndex = '999';
+            ripple.style.transition = 'all 0.4s ease-out';
+            introEl.appendChild(ripple);
+
+            requestAnimationFrame(() => {
+                ripple.style.transform = 'translate(-50%, -50%) scale(18)';
+                ripple.style.opacity = '0';
+            });
+            setTimeout(() => { ripple.remove(); }, 450);
+        }
+
+        // 도중 탭 시 즉시 나무 쪼개지고 앱 사진 로고 & '탭하여 시작' 등장
         function fastForwardTbIntro() {
+            clearTbTimers();
             tbIntroState = 'ready';
             const beam = document.getElementById('tb-slash-beam');
+            const stage = document.getElementById('tb-tree-stage');
             const leftTree = document.getElementById('tb-tree-left');
             const rightTree = document.getElementById('tb-tree-right');
             const logo = document.getElementById('tb-logo-container');
             const prompt = document.getElementById('tb-faint-prompt');
 
             if (beam) beam.classList.remove('flash');
+            if (stage) stage.classList.remove('shake');
             if (leftTree) leftTree.classList.add('split-left');
             if (rightTree) rightTree.classList.add('split-right');
             if (logo) logo.classList.add('active');
             if (prompt) prompt.classList.add('active');
         }
 
-        // 탭 이벤트 핸들러
+        // 탭 이벤트 핸들러 (화면 아무 곳이나 탭 시 작동)
         function handleTbIntroClick(e) {
             if (tbIntroState === 'exited') return;
-            if (tbIntroState !== 'ready') {
+            // 2초 전 나무가 서 있는 동안 탭했다면 즉시 나무 쪼개고 로고 및 '탭하여 시작' 노출
+            if (tbIntroState === 'init') {
                 fastForwardTbIntro();
                 return;
             }
+            // 그 외(베는 중, 쪼개지는 중, 로고 노출 후, ready 상태)에서는 탭 시 즉시 게임 시작!
             finishTreeBusterIntro(e);
+        }
+
+        // 인트로 종료 및 게임 시작
+        function finishTreeBusterIntro(e) {
+            if (tbIntroState === 'exited') return;
+            tbIntroState = 'exited';
+            clearTbTimers();
+
+            try { sessionStorage.setItem('tb_intro_shown', 'true'); } catch(err) {}
+
+            createTbTouchRipple(e && e.clientX ? e.clientX : undefined, e && e.clientY ? e.clientY : undefined);
+
+            const flashEl = document.getElementById('tb-flash-layer');
+            if (flashEl) {
+                flashEl.classList.add('flash');
+                setTimeout(() => flashEl.classList.remove('flash'), 100);
+            }
+
+            playIntroStartSound();
+
+            const introEl = document.getElementById('tree-buster-intro');
+            if (introEl) {
+                introEl.classList.add('tb-exit');
+            }
+
+            setTimeout(() => {
+                tbIntroActive = false;
+                if (introEl) introEl.style.display = 'none';
+                if (tbAnimFrameId) cancelAnimationFrame(tbAnimFrameId);
+
+                // 메인 게임 루프 가동
+                startGameLoop();
+
+                // 🔑 로그인 여부 확인 및 후속 안내
+                if (!currentUser) {
+                    if (typeof openLoginModal === 'function') openLoginModal();
+                } else {
+                    if (typeof checkAndShowFrostCanyonNotice === 'function') {
+                        setTimeout(checkAndShowFrostCanyonNotice, 500);
+                    }
+                }
+            }, 350);
         }
 
         // 오프닝 애니메이션 시퀀스 실행 (나무가 있다가 2초 후 부서지며 앱 사진 로고 등장)
         function runTreeBusterIntroSequence() {
+            clearTbTimers();
             tbIntroState = 'init';
             tbIntroActive = true;
             initTbFxCanvas();
 
-            // T=2000ms (2초 후): 도끼 베기 광선 번쩍 & 사운드
-            setTimeout(() => {
+            // T=2000ms (2초 후): 도끼 베기 광선 번쩍 & 사운드 & 흔들림
+            tbTimers.push(setTimeout(() => {
                 if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
+                tbIntroState = 'slashing';
                 const beam = document.getElementById('tb-slash-beam');
                 const stage = document.getElementById('tb-tree-stage');
                 if (beam) beam.classList.add('flash');
                 if (stage) stage.classList.add('shake');
                 playIntroSlashSound();
-            }, 2000);
+            }, 2000));
 
             // T=2150ms: 나무가 반으로 쪼개짐 (좌/우 분리) & 파편 폭발
-            setTimeout(() => {
+            tbTimers.push(setTimeout(() => {
                 if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
                 tbIntroState = 'splitting';
                 const beam = document.getElementById('tb-slash-beam');
@@ -19805,48 +19752,63 @@
 
                 playIntroWoodCrackSound();
                 spawnTreeSplitParticles();
-            }, 2150);
+            }, 2150));
 
-            // T=2400ms: 앱 사진 로고 등장 & 차임 사운드
-            setTimeout(() => {
+            // T=2400ms: 공식 앱 사진 로고 등장 & 차임 사운드
+            tbTimers.push(setTimeout(() => {
                 if (tbIntroState === 'exited' || tbIntroState === 'ready') return;
                 tbIntroState = 'revealed';
                 const logo = document.getElementById('tb-logo-container');
                 if (logo) logo.classList.add('active');
                 playIntroTitleRevealSound();
-            }, 2400);
+            }, 2400));
 
             // T=2650ms: 하단 흐릿하고 작은 '탭하여 시작' 활성화
-            setTimeout(() => {
+            tbTimers.push(setTimeout(() => {
                 if (tbIntroState === 'exited') return;
                 tbIntroState = 'ready';
                 const prompt = document.getElementById('tb-faint-prompt');
                 if (prompt) prompt.classList.add('active');
-            }, 2650);
+            }, 2650));
 
             // 안전장치: 3.5초 후 강제 ready 보장
-            setTimeout(() => {
+            tbTimers.push(setTimeout(() => {
                 if (tbIntroState !== 'exited') {
                     fastForwardTbIntro();
                 }
-            }, 3500);
+            }, 3500));
         }
 
-        // 인트로 다시보기 테스트 함수
-        window.replayTreeBusterIntro = function() {
+        // 페이지 진입 및 다시보기 시 인트로 초기화 & 가동
+        function checkAndInitTreeBusterIntro() {
             const introEl = document.getElementById('tree-buster-intro');
-            if (!introEl) return;
+            if (!introEl) {
+                startGameLoop();
+                return;
+            }
+
             introEl.classList.remove('tb-exit');
+            const beam = document.getElementById('tb-slash-beam');
+            const stage = document.getElementById('tb-tree-stage');
             const leftTree = document.getElementById('tb-tree-left');
             const rightTree = document.getElementById('tb-tree-right');
             const logo = document.getElementById('tb-logo-container');
             const prompt = document.getElementById('tb-faint-prompt');
+
+            if (beam) beam.classList.remove('flash');
+            if (stage) stage.classList.remove('shake');
             if (leftTree) leftTree.classList.remove('split-left');
             if (rightTree) rightTree.classList.remove('split-right');
             if (logo) logo.classList.remove('active');
             if (prompt) prompt.classList.remove('active');
+
             introEl.style.display = 'flex';
             runTreeBusterIntroSequence();
+        }
+
+        // 인트로 다시보기 테스트 함수
+        window.replayTreeBusterIntro = function() {
+            checkAndInitTreeBusterIntro();
         };
 
         // 메인 게임 루프 (인트로 종료 후 또는 인트로 생략 시 가동)
@@ -19864,8 +19826,12 @@
             }
         }
 
-        // 페이지 로드 시 인트로 초기화
-        checkAndInitTreeBusterIntro();
+        // 페이지 로드 시 인트로 초기화 및 가동
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', checkAndInitTreeBusterIntro);
+        } else {
+            checkAndInitTreeBusterIntro();
+        }
     </script>
 </body>
 </html>
