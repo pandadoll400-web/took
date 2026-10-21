@@ -20142,15 +20142,16 @@
         }
 
         // 페이지 진입 및 다시보기 시 인트로 판별 & 가동
-        function checkAndInitTreeBusterIntro(forceReplay = false) {
+        function checkAndInitTreeBusterIntro(forceReplay) {
             const introEl = document.getElementById('tree-buster-intro');
             if (!introEl) {
                 startGameLoop();
                 return;
             }
 
-            // [다시보기] 사용자가 replayTreeBusterIntro()를 호출한 경우 즉시 강제 재생
-            if (forceReplay) {
+            // [다시보기] 사용자가 replayTreeBusterIntro()를 명시적으로 호출한 경우 (DOM Event 객체 오작동 방지: 엄격 비교 === true)
+            const isForced = (forceReplay === true);
+            if (isForced) {
                 introEl.classList.remove('tb-exit');
                 resetIntroElements();
                 introEl.style.display = 'flex';
@@ -20250,11 +20251,13 @@
             }
         }
 
-        // 페이지 로드 시 인트로 초기화 및 가동
+        // 페이지 로드 시 인트로 초기화 및 가동 (DOM Event 인자가 넘어오지 않도록 콜백 래핑)
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', checkAndInitTreeBusterIntro);
+            document.addEventListener('DOMContentLoaded', function() {
+                checkAndInitTreeBusterIntro(false);
+            });
         } else {
-            checkAndInitTreeBusterIntro();
+            checkAndInitTreeBusterIntro(false);
         }
     </script>
 </body>
