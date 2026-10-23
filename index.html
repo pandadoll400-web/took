@@ -1962,8 +1962,8 @@
 
         // ❄️ 얼음의 협곡 고대 화석 바위 2개 (바위 1: 케르베로스 제작, 바위 2: 펫 목줄 & 스킨 펫 장착)
         let iceCanyonFossilRocks = [
-            { id: 'cerberus_rock', name: '케르베로스 제작 바위', x: 215, y: -8540, radius: 28, hitTimer: 0 },
-            { id: 'leash_rock', name: '펫 목줄 & 스킨 펫 바위', x: 485, y: -8540, radius: 28, hitTimer: 0 }
+            { id: 'cerberus_rock', name: '케르베로스 제작 바위', x: 200, y: -8340, radius: 30, hitTimer: 0 },
+            { id: 'leash_rock', name: '펫 목줄 & 스킨 펫 바위', x: 440, y: -8340, radius: 30, hitTimer: 0 }
         ];
 
         // 🐾 [ADMIN] 얼음 지형 고급 펫 머신 / 상점 (x: 80, y: -8540)
@@ -11450,7 +11450,7 @@
                 unlocked: true, price: 0, reqLevel: 105, color1: '#000000', color2: '#2c003e', drops: [10, 16] 
             },
             {
-                id: 'ice_canyon', type: 'ice_canyon', x: 350, y: -8590, radius: 100, trunkRadius: 40,
+                id: 'ice_canyon', type: 'ice_canyon', x: 320, y: -8620, radius: 140, trunkRadius: 48,
                 progress: 0, maxProgress: 450, shakeAngle: 0,
                 unlocked: false, price: 30000000, reqLevel: 125, color1: '#e0f2fe', color2: '#38bdf8', drops: [16, 26] 
             },
@@ -11897,9 +11897,9 @@
             closeAdminPanelModal();
             if (inBossRoom) exitBossDimension();
             if (inPvpArena) exitPvpArena();
-            player.x = 300;
-            player.y = -8540;
-            cameraY = -8650;
+            player.x = 320;
+            player.y = -8470;
+            cameraY = -8570;
             player.targetTree = null;
             player.vx = 0; player.vy = 0;
             floatTexts.push({ x: player.x, y: player.y - 80, text: '❄️ 얼음의 협곡(부유섬 & 고대 화석 발굴지)으로 워프!', color: '#38bdf8', life: 100, size: 20 });
