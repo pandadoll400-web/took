@@ -3740,7 +3740,7 @@
 
         function enterFarmDimension() {
             if (!isAdmin()) {
-                floatTexts.push({ x: player.x, y: player.y - 70, text: `🔒 관리자 전용 차원 포탈입니다!`, color: '#e74c3c', life: 80, size: 18 });
+                floatTexts.push({ x: player.x, y: player.y - 70, text: '🔒 관리자 전용 차원 포탈입니다!', color: '#e74c3c', life: 80, size: 18 });
                 alert("🔒 [차원 이동 거부]\n\n이 신비한 포탈은 최고 관리자(ADMIN)만 진입할 수 있는 미지의 농장 차원입니다.");
                 return;
             }
@@ -3748,15 +3748,17 @@
             savedOverworldPos = { x: player.x, y: player.y, cameraY: cameraY };
             inFarmDimension = true;
             player.x = 300;
-            player.y = 700;
+            player.y = 660; // 출구 포탈(780)과 충분한 안전거리
             player.vx = 0;
             player.vy = 0;
+            player.destTarget = null;
+            player.farmEnterTime = Date.now();
             player.targetTree = null;
             player.axeSwingTimer = 0;
             cameraY = 0;
 
             rerollFarmShop(false);
-            floatTexts.push({ x: 300, y: 640, text: `🌾 [ADMIN] 신비한 차원 농장 진입!`, color: '#2ecc71', life: 90, size: 22 });
+            floatTexts.push({ x: 300, y: 600, text: '🌾 [ADMIN] 신비한 차원 농장 진입!', color: '#2ecc71', life: 90, size: 22 });
         }
 
         function exitFarmDimension() {
@@ -4090,37 +4092,84 @@
 
             // 2. 실시간 타이머 갱신 (상점 모달이 열려있다면)
             const timerSpan = document.getElementById('seed-shop-reroll-timer');
-            if (timerSpan && document.getElementById('seed-shop-modal').style.display === 'block') {
+            const shopModal = document.getElementById('seed-shop-modal');
+            if (timerSpan && shopModal && shopModal.style.display === 'block') {
                 const remainSec = Math.max(0, Math.ceil((farmShopData.nextRerollTime - Date.now()) / 1000));
                 const m = String(Math.floor(remainSec / 60)).padStart(2, '0');
                 const s = String(remainSec % 60).padStart(2, '0');
-                timerSpan.innerText = `${m}:${s}`;
+                timerSpan.innerText = m + ':' + s;
             }
 
-            // 3. 플레이어 이동 & 경계 제한
-            updatePlayerMovement();
-            player.x = Math.max(50, Math.min(550, player.x));
-            player.y = Math.max(140, Math.min(840, player.y));
+            // 3. 플레이어 이동 처리 (WASD, 조이스틱, 클릭 이동 지원)
+            let moveX = 0, moveY = 0;
+            if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
+            if (keys.a) moveX -= 1; if (keys.d) moveX += 1;
 
-            // 4. 출구 포탈 접촉 감지 (x: 300, y: 780, radius: 45)
-            let exitDist = Math.hypot(player.x - 300, player.y - 780);
-            if (exitDist < 42) {
-                exitFarmDimension();
-                return;
+            if (moveX !== 0 || moveY !== 0) {
+                player.destTarget = null;
+                let mag = Math.hypot(moveX, moveY);
+                player.vx = (moveX / mag) * player.speed;
+                player.vy = (moveY / mag) * player.speed;
+            } else if (joystick.active) {
+                player.destTarget = null;
+                player.vx = joystick.dx * player.speed;
+                player.vy = joystick.dy * player.speed;
+            } else if (player.destTarget) {
+                let dx = player.destTarget.x - player.x;
+                let dy = player.destTarget.y - player.y;
+                let dist = Math.hypot(dx, dy);
+                if (dist > 8) {
+                    player.vx = (dx / dist) * player.speed;
+                    player.vy = (dy / dist) * player.speed;
+                } else {
+                    player.destTarget = null;
+                    player.vx = 0;
+                    player.vy = 0;
+                }
+            } else {
+                player.vx *= 0.8;
+                player.vy *= 0.8;
+            }
+
+            let isMoving = Math.hypot(player.vx, player.vy) > 0.5;
+            if (isMoving) {
+                player.walkTimer++;
+                player.x += player.vx;
+                player.y += player.vy;
+                if (Math.abs(player.vx) > 0.1) player.facing = player.vx > 0 ? 1 : -1;
+            } else {
+                player.walkTimer = 0;
+            }
+
+            // 농장 내부 경계 제한
+            player.x = Math.max(45, Math.min(GAME_WIDTH - 45, player.x));
+            player.y = Math.max(135, Math.min(845, player.y));
+
+            // 4. 출구 포탈 접촉 감지 (x: 300, y: 780, radius: 42)
+            if (!player.farmEnterTime || Date.now() - player.farmEnterTime > 1200) {
+                let exitDist = Math.hypot(player.x - 300, player.y - 780);
+                if (exitDist < 42) {
+                    exitFarmDimension();
+                    return;
+                }
             }
 
             // 5. 부유 텍스트 업데이트
-            updateFloatTexts();
+            for (let i = floatTexts.length - 1; i >= 0; i--) {
+                floatTexts[i].y -= 1;
+                floatTexts[i].life--;
+                if (floatTexts[i].life <= 0) floatTexts.splice(i, 1);
+            }
         }
 
         function handleFarmDimensionClick(cx, cy, isSpacebar) {
             // 상단 HUD 버튼 클릭 감지 (cy <= 75)
             if (cy <= 75) {
-                if (cx >= 260 && cx <= 435) {
+                if (cx >= 250 && cx <= 440) {
                     openSeedShopModal();
                     return;
                 }
-                if (cx >= 450 && cx <= 585) {
+                if (cx >= 450 && cx <= 590) {
                     exitFarmDimension();
                     return;
                 }
@@ -4154,9 +4203,8 @@
                 }
             }
 
-            // 그 외: 플레이어 목적지 이동
-            player.targetX = cx;
-            player.targetY = cy;
+            // 그 외: 목적지 이동
+            player.destTarget = { x: cx, y: cy };
         }
 
         function drawFarmDimension() {
@@ -4170,18 +4218,8 @@
             ctx.fillStyle = grassGrad;
             ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-            // 잔디 질감 & 꽃밭 데코
-            ctx.fillStyle = 'rgba(0,0,0,0.06)';
-            for (let y = 100; y < 900; y += 40) {
-                for (let x = 30; x < GAME_WIDTH - 30; x += 40) {
-                    ctx.beginPath();
-                    ctx.arc(x + ((y * 13) % 20), y, 2.5, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
             // 자갈길 (Pathways)
-            ctx.fillStyle = 'rgba(189, 195, 199, 0.22)';
+            ctx.fillStyle = 'rgba(189, 195, 199, 0.25)';
             ctx.beginPath(); ctx.roundRect(280, 240, 40, 520, 15); ctx.fill();
             ctx.beginPath(); ctx.roundRect(140, 240, 160, 35, 10); ctx.fill();
             ctx.beginPath(); ctx.roundRect(130, 440, 340, 35, 10); ctx.fill();
@@ -4255,10 +4293,10 @@
 
                 if (!plot.seed) {
                     ctx.fillStyle = '#a8a29e';
-                    ctx.font = '11px Arial';
+                    ctx.font = 'bold 11px Arial';
                     ctx.textAlign = 'center';
                     ctx.fillText(c.label, px, py - 8);
-                    ctx.fillStyle = '#78716c';
+                    ctx.fillStyle = '#2ecc71';
                     ctx.fillText('+ 심기', px, py + 12);
                 } else {
                     const elapsed = now - plot.plantedAt;
@@ -4269,38 +4307,22 @@
                     if (isReady) {
                         ctx.strokeStyle = '#f1c40f';
                         ctx.lineWidth = 3;
-                        ctx.shadowColor = '#f1c40f'; ctx.shadowBlur = 10;
-                        ctx.strokeRect(px - 44, py - 32, 88, 64);
-                        ctx.shadowBlur = 0;
+                        const pulse = Math.sin(now * 0.006) * 3;
+                        ctx.beginPath(); ctx.roundRect(px - 40 - pulse, py - 28 - pulse, 80 + pulse*2, 56 + pulse*2, 8); ctx.stroke();
 
-                        if (plot.seed === 'kraken') {
-                            ctx.fillStyle = '#00cec9';
-                            ctx.beginPath(); ctx.arc(px, py - 2, 14, 0, Math.PI*2); ctx.fill();
-                            ctx.strokeStyle = '#81ecec'; ctx.lineWidth = 2.5;
-                            ctx.beginPath();
-                            ctx.moveTo(px - 10, py); ctx.quadraticCurveTo(px - 18, py - 14, px - 12, py - 24);
-                            ctx.moveTo(px + 10, py); ctx.quadraticCurveTo(px + 18, py - 14, px + 12, py - 24);
-                            ctx.stroke();
-                        } else if (plot.seed === 'halloween') {
-                            ctx.fillStyle = '#e67e22';
-                            ctx.beginPath(); ctx.arc(px, py - 2, 15, 0, Math.PI*2); ctx.fill();
-                            ctx.fillStyle = '#f1c40f';
-                            ctx.beginPath(); ctx.arc(px - 4, py - 4, 3, 0, Math.PI*2); ctx.arc(px + 4, py - 4, 3, 0, Math.PI*2); ctx.fill();
-                        } else {
-                            ctx.fillStyle = '#f1c40f';
-                            ctx.shadowColor = '#f1c40f'; ctx.shadowBlur = 12;
-                            ctx.beginPath(); ctx.arc(px, py - 4, 15, 0, Math.PI*2); ctx.fill();
-                            ctx.shadowBlur = 0;
-                        }
+                        ctx.fillStyle = cfg.badgeColor;
+                        ctx.font = '22px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(cfg.icon, px, py + 2);
 
                         ctx.fillStyle = '#f1c40f';
-                        ctx.font = 'bold 12px Arial';
-                        ctx.textAlign = 'center';
+                        ctx.font = 'bold 11px Arial';
                         ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-                        ctx.fillText('✨ 수확 가능! (클릭)', px, py - 40);
+                        ctx.fillText('✨ 수확 가능!', px, py + 18);
                         ctx.shadowBlur = 0;
                     } else {
-                        if (progress < 0.35) {
+                        // 자라는 중: 새싹 및 프로그레스 바
+                        if (progress < 0.4) {
                             ctx.fillStyle = '#4ade80';
                             ctx.beginPath(); ctx.arc(px, py + 2, 4, 0, Math.PI*2); ctx.fill();
                             ctx.beginPath(); ctx.ellipse(px + 4, py - 2, 5, 2.5, Math.PI/4, 0, Math.PI*2); ctx.fill();
@@ -4324,7 +4346,7 @@
                         ctx.fillStyle = '#ffffff';
                         ctx.font = 'bold 10px Arial';
                         ctx.textAlign = 'center';
-                        ctx.fillText(`${m}:${s}`, px, py + 12);
+                        ctx.fillText(m + ':' + s, px, py + 12);
                     }
                 }
                 ctx.restore();
@@ -4376,7 +4398,7 @@
 
             ctx.fillStyle = '#f1c40f';
             ctx.font = 'bold 14px Arial';
-            ctx.fillText(`💰 ${money.toLocaleString()} 골드`, 16, 56);
+            ctx.fillText('💰 ' + money.toLocaleString() + ' 골드', 16, 56);
 
             // 상점 바로가기 & 타이머 버튼
             ctx.fillStyle = 'rgba(46, 204, 113, 0.2)';
@@ -4394,7 +4416,7 @@
             ctx.fillText('🏪 씨앗 상점', 347, 34);
             ctx.fillStyle = '#74b9ff';
             ctx.font = '11px Arial';
-            ctx.fillText(`⏰ 리필: ${rm}:${rs}`, 347, 50);
+            ctx.fillText('⏰ 리필: ' + rm + ':' + rs, 347, 50);
 
             // 나가기 버튼
             ctx.fillStyle = 'rgba(231, 76, 60, 0.2)';
@@ -4408,7 +4430,24 @@
             ctx.restore();
 
             // 7. 부유 텍스트
-            drawFloatTexts();
+            floatTexts.forEach(t => {
+                ctx.fillStyle = t.color;
+                ctx.globalAlpha = Math.max(0, Math.min(1, t.life / 40));
+                let size = t.size || 18;
+                ctx.font = 'bold ' + size + 'px Arial';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = 'black';
+                ctx.shadowBlur = 4;
+                ctx.fillText(t.text, t.x, t.y);
+                ctx.shadowBlur = 0;
+            });
+            ctx.globalAlpha = 1.0;
+
+            // 8. 모바일 가상 조이스틱
+            if (joystick.active) {
+                ctx.beginPath(); ctx.arc(joystick.originX, joystick.originY, 60, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; ctx.fill();
+                ctx.beginPath(); ctx.arc(joystick.x, joystick.y, 25, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'; ctx.fill();
+            }
         }
 
         function handlePlayerBossDefeat() {
