@@ -1452,9 +1452,8 @@
 
             <!-- 화석 채굴 섹션 -->
             <div style="background: rgba(30, 41, 59, 0.7); border-radius: 12px; padding: 12px; margin-bottom: 14px; border: 1px solid #334155; text-align: center;">
-                <div style="font-size: 14px; font-weight: bold; color: #e2e8f0; margin-bottom: 5px;">⛏️ 바위 채굴하기</div>
-                <div style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">빙하 암석을 도끼로 타격하여 고대 화석을 발굴합니다.</div>
-                <button onclick="mineFromFossilRockModal()" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 8px; padding: 10px 22px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);">⛏️ 화석 발굴하기 (클릭)</button>
+                <div style="font-size: 13.5px; font-weight: bold; color: #38bdf8; margin-bottom: 4px;">🌲 공룡 화석 획득 방법</div>
+                <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.4;">나무를 벌목하면 낮은 확률로 <strong>[공룡 화석]</strong>과 <strong>[공룡 심장 화석]</strong>을 발굴할 수 있습니다!</div>
             </div>
 
             <!-- 보유 화석 현황 -->
@@ -1503,8 +1502,8 @@
 
             <!-- 화석 채굴 섹션 -->
             <div style="background: rgba(30, 41, 59, 0.7); border-radius: 12px; padding: 10px 12px; margin-bottom: 14px; border: 1px solid #334155; text-align: center;">
-                <div style="font-size: 12px; color: #94a3b8; margin-bottom: 8px;">빙하 암석을 도끼로 타격하여 공룡 심장 화석을 채굴합니다.</div>
-                <button onclick="mineFromLeashRockModal()" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 8px; padding: 9px 20px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);">⛏️ 화석 발굴하기 (클릭)</button>
+                <div style="font-size: 13px; font-weight: bold; color: #38bdf8; margin-bottom: 3px;">🌲 공룡 심장 화석 획득 방법</div>
+                <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.4;">나무를 벌목하면 낮은 확률로 <strong>[공룡 심장 화석]</strong>을 발굴할 수 있습니다!</div>
             </div>
 
             <!-- 목줄 획득 섹션 -->
@@ -2415,7 +2414,7 @@
             }
 
             if (heartCount < 10) {
-                alert(`공룡 심장 화석이 부족합니다!\n\n현재 보유: ${heartCount}개 / 필요: 10개\n(상단의 '화석 발굴하기' 버튼으로 화석을 채굴하세요!)`);
+                alert(`공룡 심장 화석이 부족합니다!\n\n현재 보유: ${heartCount}개 / 필요: 10개\n(나무를 벌목하여 낮은 확률로 공룡 심장 화석을 발굴하세요!)`);
                 return;
             }
 
@@ -2563,7 +2562,7 @@
                     `;
                 } else {
                     actionAreaEl.innerHTML = `
-                        <button disabled style="background: #475569; color: #94a3b8; padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px;">재료 부족 (각 1개 필요 - 상단 발굴 버튼 클릭!)</button>
+                        <button disabled style="background: #475569; color: #94a3b8; padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px;">재료 부족 (각 1개 필요 - 나무 벌목 시 낮은 확률 발굴)</button>
                     `;
                 }
             }
@@ -3615,7 +3614,6 @@
         };
 
         function drawTwistedFarmPortal(ctx, x, y) {
-            if (!isAdmin()) return;
             ctx.save();
             const anim = Date.now() * 0.003;
 
@@ -3651,16 +3649,32 @@
                 ctx.stroke();
             }
 
-            // 4. 머리 위 라벨
+            // 4. 머리 위 라벨 (10월 25일 일요일 오후 8시 오픈 예고)
             ctx.fillStyle = '#2ecc71';
             ctx.font = 'bold 15px Arial';
             ctx.textAlign = 'center';
             ctx.shadowColor = '#000';
-            ctx.shadowBlur = 4;
-            ctx.fillText('🌀 [ADMIN] 신비한 차원 포탈 (농장)', x, y - 56);
-            ctx.fillStyle = '#f1c40f';
-            ctx.font = 'bold 11px Arial';
-            ctx.fillText('클릭 또는 진입하여 이동', x, y - 40);
+            ctx.shadowBlur = 5;
+            ctx.fillText('🌀 신비한 차원 포탈 (농장)', x, y - 62);
+
+            // 네온 오픈 예고 배너
+            ctx.fillStyle = 'rgba(231, 76, 60, 0.25)';
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(x - 110, y - 50, 220, 24, 6);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#ff7675';
+            ctx.font = 'bold 12px Arial';
+            ctx.fillText('🔒 10월 25일(일) 오후 8시 오픈!', x, y - 34);
+
+            if (isAdmin()) {
+                ctx.fillStyle = '#f1c40f';
+                ctx.font = 'bold 11px Arial';
+                ctx.fillText('👑 [ADMIN] 클릭하여 즉시 진입', x, y - 16);
+            }
             ctx.shadowBlur = 0;
 
             ctx.restore();
@@ -3740,8 +3754,8 @@
 
         function enterFarmDimension() {
             if (!isAdmin()) {
-                floatTexts.push({ x: player.x, y: player.y - 70, text: '🔒 관리자 전용 차원 포탈입니다!', color: '#e74c3c', life: 80, size: 18 });
-                alert("🔒 [차원 이동 거부]\n\n이 신비한 포탈은 최고 관리자(ADMIN)만 진입할 수 있는 미지의 농장 차원입니다.");
+                floatTexts.push({ x: player.x, y: player.y - 70, text: '🔒 10월 25일(일) 오후 8시에 오픈됩니다!', color: '#e74c3c', life: 80, size: 18 });
+                alert("🔒 [신비한 농장 차원 포탈 예고]\n\n이 신비로운 차원 포탈은 10월 25일 일요일 오후 8시(20:00)에 전격 오픈됩니다!\n새로운 농장 차원과 씨앗 상점을 기대해주세요!");
                 return;
             }
 
@@ -9673,11 +9687,16 @@
 
 
             // 🌀 [ADMIN] 뒤틀린 지형 농장 차원 포탈 (x: 130, y: -1400)
-            if (isAdmin() && typeof twistedFarmPortal !== 'undefined') {
+            if (typeof twistedFarmPortal !== 'undefined') {
                 let tfDist = Math.hypot(cx - twistedFarmPortal.x, cy - twistedFarmPortal.y);
                 let tfPlayerDist = Math.hypot(player.x - twistedFarmPortal.x, player.y - twistedFarmPortal.y);
                 if (tfDist < twistedFarmPortal.radius + 35 || (isSpacebar && tfPlayerDist < 85)) {
-                    enterFarmDimension();
+                    if (isAdmin()) {
+                        enterFarmDimension();
+                    } else {
+                        floatTexts.push({ x: twistedFarmPortal.x, y: twistedFarmPortal.y - 70, text: '🔒 10월 25일(일) 오후 8시에 오픈됩니다!', color: '#2ecc71', life: 90, size: 18 });
+                        alert("🔒 [신비한 농장 차원 포탈 예고]\n\n이 신비로운 차원 포탈은 10월 25일 일요일 오후 8시(20:00)에 전격 오픈됩니다!\n새로운 농장 차원과 씨앗 상점을 기대해주세요!");
+                    }
                     return;
                 }
             }
@@ -16866,7 +16885,8 @@
                             for(let i=0; i<dropCount; i++) spawnFruit(tree.x, tree.y, tree.type);
 
                             // ❄️ 얼음의 협곡 얼음 나무 벌목 시 50% 확률로 고대 화석 발굴 드롭!
-                            if (tree.type === 'ice' && Math.random() < 0.5) {
+                            let fossilChance = (tree.type === 'ice') ? 0.08 : 0.04;
+                            if (Math.random() < fossilChance) {
                                 excavateFossilAtSpot(tree.x, tree.y, true);
                             }
 
@@ -20148,7 +20168,7 @@
             trees.forEach(t => renderList.push({ type: 'tree', obj: t, y: t.y }));
             renderList.push({ type: 'teleporter', obj: teleporter, y: teleporter.y });
             renderList.push({ type: 'teleporterHalloween', obj: teleporterHalloween, y: teleporterHalloween.y });
-            if (isAdmin() && typeof twistedFarmPortal !== 'undefined') {
+            if (typeof twistedFarmPortal !== 'undefined') {
                 renderList.push({ type: 'twistedFarmPortal', obj: twistedFarmPortal, y: twistedFarmPortal.y });
             }
             if (typeof teleporterIceDragon !== 'undefined') {
@@ -20481,30 +20501,7 @@
 
                         ctx.restore();
 
-                        // "다음 업데이트때 공개!" 네온 타이틀 배너
-                        let pulse = 1 + Math.sin(Date.now() * 0.004) * 0.06;
-                        ctx.save();
-                        ctx.translate(0, -t.radius * 1.5);
-                        ctx.scale(pulse, pulse);
                         
-                        ctx.fillStyle = 'rgba(15, 12, 34, 0.88)';
-                        ctx.strokeStyle = '#a29bfe';
-                        ctx.lineWidth = 2.5;
-                        ctx.shadowColor = '#6c5ce7';
-                        ctx.shadowBlur = 15;
-                        ctx.beginPath();
-                        ctx.roundRect(-100, -18, 200, 36, 10);
-                        ctx.fill();
-                        ctx.stroke();
-                        
-                        ctx.fillStyle = '#ffffff';
-                        ctx.font = 'bold 15px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.shadowColor = '#fd79a8';
-                        ctx.shadowBlur = 10;
-                        ctx.fillText("🌌 다음 업데이트때 공개!", 0, 0);
-                        ctx.restore();
                     } else {
                         let leafGrad = ctx.createRadialGradient(0, -60, 20, 0, -50, t.radius+40);
                         leafGrad.addColorStop(0, t.color1); leafGrad.addColorStop(1, t.color2);
