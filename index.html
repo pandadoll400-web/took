@@ -677,11 +677,16 @@
                 </div>
                 <span class="hud-tile-label">길드</span>
             </button>
-            <button id="halloween-teleport-hud-btn" class="hud-tile-btn" onclick="teleportToHalloweenZone()" style="display: none; border-color: #a29bfe;">
+            <button id="code-btn" class="hud-tile-btn" onclick="openCodeModal()">
                 <div class="hud-tile-icon-wrap">
-                    <span style="font-size: 15px;">🔮</span>
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M3 8C3 6.89543 3.89543 6 5 6H19C20.1046 6 21 6.89543 21 8V10C19.8954 10 19 10.8954 19 12C19 13.1046 19.8954 14 21 14V16C21 17.1046 20.1046 18 19 18H5C3.89543 18 3 17.1046 3 16V14C4.10457 14 5 13.1046 5 12C5 10.8954 4.10457 10 3 10V8Z" stroke="#f59e0b" stroke-width="1.6" fill="rgba(245, 158, 11, 0.2)" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="12" y1="8" x2="12" y2="16" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="2 2" stroke-linecap="round"/>
+                        <circle cx="8" cy="12" r="1.5" fill="#f59e0b"/>
+                        <circle cx="16" cy="12" r="1.5" fill="#f59e0b"/>
+                    </svg>
                 </div>
-                <span class="hud-tile-label" style="color: #a29bfe;">할로윈</span>
+                <span class="hud-tile-label">코드</span>
             </button>
             <button id="admin-panel-btn" class="hud-tile-btn" onclick="openAdminPanelModal()" style="display: none; border-color: #f1c40f;">
                 <div class="hud-tile-icon-wrap">
@@ -1704,6 +1709,39 @@
             <h3 id="harvest-modal-item-name" style="margin: 0 0 8px 0; color: #ffffff; font-size: 20px; font-weight: bold;">보상 스킨 이름</h3>
             <p id="harvest-modal-desc" style="margin: 0 0 16px 0; font-size: 13px; color: #cbd5e1; line-height: 1.5; white-space: pre-line;">수확 설명</p>
             <button onclick="closeFarmHarvestModal()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);">멋져요! 수령하기</button>
+        </div>
+
+        <!-- 🎁 시크릿 코드 입력 모달 -->
+        <div id="code-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 22, 34, 0.98); color: white; border-radius: 18px; width: 90%; max-width: 380px; display: none; border: 2.5px solid #f39c12; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(243, 156, 18, 0.35); z-index: 60; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box; overflow: hidden;">
+            <div style="background: linear-gradient(90deg, #d35400, #f39c12); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 18px;">🎁</span>
+                    <h3 style="margin: 0; color: #ffffff; font-size: 17px; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">코드 입력</h3>
+                </div>
+                <button onclick="closeCodeModal()" style="background: rgba(0, 0, 0, 0.3); border: none; color: white; width: 28px; height: 28px; font-weight: bold; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px;">✕</button>
+            </div>
+            <div style="padding: 20px 18px 22px 18px; text-align: center;">
+                <div style="font-size: 13px; color: #cbd5e1; margin-bottom: 16px; line-height: 1.4;">
+                    보유하신 시크릿 코드를 입력하시면<br>특별한 선물을 받으실 수 있습니다!
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <input id="code-input" type="text" placeholder="코드를 입력하세요" maxlength="30" autocomplete="off" spellcheck="false"
+                        style="width: 100%; box-sizing: border-box; padding: 12px 14px; background: rgba(10, 14, 24, 0.85); border: 2px solid #475569; border-radius: 10px; color: #ffffff; font-size: 15px; font-weight: bold; text-align: center; letter-spacing: 1px; outline: none; transition: border-color 0.2s;"
+                        onfocus="this.style.borderColor='#f39c12'" onblur="this.style.borderColor='#475569'"
+                        onkeydown="event.stopPropagation(); if(event.key==='Enter') submitCode();">
+                    
+                    <div id="code-status-msg" style="display: none; font-size: 13px; font-weight: bold; min-height: 18px;"></div>
+
+                    <div style="display: flex; gap: 8px; margin-top: 4px;">
+                        <button onclick="submitCode()" style="flex: 2; padding: 12px; background: linear-gradient(135deg, #e67e22, #f39c12); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 14px rgba(243, 156, 18, 0.4); transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
+                            제출하기
+                        </button>
+                        <button onclick="closeCodeModal()" style="flex: 1; padding: 12px; background: rgba(255, 255, 255, 0.1); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer;">
+                            닫기
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 🌳⚡ 트리버스터 (TREE BUSTER) 오프닝 인트로 애니메이션 -->
@@ -4190,6 +4228,54 @@
         function closeFarmHarvestModal() {
             const modal = document.getElementById('farm-harvest-modal');
             if (modal) modal.style.display = 'none';
+        }
+
+        // 🎁 시크릿 코드 시스템
+        function openCodeModal() {
+            const modal = document.getElementById('code-modal');
+            const input = document.getElementById('code-input');
+            const msg = document.getElementById('code-status-msg');
+            if (!modal) return;
+            if (typeof resetJoyMouse === 'function') resetJoyMouse();
+            if (typeof player !== 'undefined') player.targetTree = null;
+            if (input) {
+                input.value = '';
+                input.style.borderColor = '#475569';
+            }
+            if (msg) {
+                msg.style.display = 'none';
+                msg.innerText = '';
+            }
+            modal.style.display = 'block';
+            setTimeout(() => {
+                if (input) input.focus();
+            }, 60);
+        }
+
+        function closeCodeModal() {
+            const modal = document.getElementById('code-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function submitCode() {
+            const input = document.getElementById('code-input');
+            const msg = document.getElementById('code-status-msg');
+
+            // 사용자 요청: 아무거나 제출하거나 지금 뭐를 입력해도 유효하지않는코드라고해줘
+            if (msg) {
+                msg.innerText = '❌ 유효하지 않는 코드입니다.';
+                msg.style.color = '#ff6b6b';
+                msg.style.display = 'block';
+            }
+            if (input) {
+                input.style.borderColor = '#ff6b6b';
+                input.focus();
+                input.select();
+            }
+            if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                floatTexts.push({ x: player.x, y: player.y - 70, text: '❌ 유효하지 않는 코드입니다.', color: '#ff6b6b', life: 75, size: 18 });
+            }
+            alert('❌ 유효하지 않는 코드입니다.');
         }
 
         function updateFarmDimension() {
@@ -13959,7 +14045,6 @@
             const codexBtn = document.getElementById('codex-btn');
             const questBtn = document.getElementById('quest-btn');
             const adminBtn = document.getElementById('admin-panel-btn');
-            const halloweenBtn = document.getElementById('halloween-teleport-hud-btn');
 
             if (isAdmin()) {
                 if (badgeText) badgeText.innerText = '👑 ADMIN';
@@ -13969,10 +14054,9 @@
                     badgeEl.title = `최고 관리자 계정 (${currentUser})`;
                 }
                 if (adminBtn) adminBtn.style.display = 'flex';
-                // 👑 퀘스트 버튼: 모든 플레이어에게 정식 출시 공개! (할로윈 버튼은 관리자 전용)
+                // 👑 퀘스트 버튼: 모든 플레이어에게 정식 출시 공개!
                 if (codexBtn) codexBtn.style.display = 'none';
                 if (questBtn) questBtn.style.display = 'flex';
-                if (halloweenBtn) halloweenBtn.style.display = 'flex';
             } else if (currentUser) {
                 if (badgeText) badgeText.innerText = currentUser;
                 if (badgeEl) {
@@ -13983,7 +14067,6 @@
                 if (adminBtn) adminBtn.style.display = 'none';
                 if (codexBtn) codexBtn.style.display = 'none';
                 if (questBtn) questBtn.style.display = 'flex';
-                if (halloweenBtn) halloweenBtn.style.display = 'none';
             } else {
                 if (badgeText) badgeText.innerText = '로그인';
                 if (badgeEl) {
@@ -13994,7 +14077,6 @@
                 if (adminBtn) adminBtn.style.display = 'none';
                 if (codexBtn) codexBtn.style.display = 'none';
                 if (questBtn) questBtn.style.display = 'flex';
-                if (halloweenBtn) halloweenBtn.style.display = 'none';
             }
             if (typeof updateQuestHudBadge === 'function') updateQuestHudBadge();
         }
