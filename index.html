@@ -1656,7 +1656,7 @@
         </div>
 
         <!-- 🌾 [ADMIN] 신비한 차원 농장 - 씨앗 상점 모달 -->
-        <div id="seed-shop-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(16, 26, 18, 0.98); color: white; border-radius: 18px; width: 92%; max-width: 480px; max-height: 88%; overflow-y: auto; display: none; border: 3px solid #2ecc71; box-shadow: 0 0 35px rgba(46, 204, 113, 0.45); z-index: 55; font-family: 'Arial', sans-serif;">
+        <div id="seed-shop-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(14, 22, 17, 0.98); color: white; border-radius: 18px; width: 95%; max-width: 640px; max-height: 90%; overflow-y: auto; display: none; border: 3px solid #2ecc71; box-shadow: 0 0 40px rgba(46, 204, 113, 0.55); z-index: 55; font-family: 'Arial', sans-serif;">
             <div style="background: linear-gradient(90deg, #1b4332, #2d6a4f, #1b4332); padding: 14px 16px; border-top-left-radius: 15px; border-top-right-radius: 15px; border-bottom: 2.5px solid #2ecc71; display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 24px;">🏪</span>
@@ -3689,30 +3689,60 @@
                 name: '크라켄의 씨앗',
                 invName: '크라켄의 씨앗',
                 price: 10000,
-                rateText: '등장 확률 70%',
+                rateText: '입고 70%',
                 badgeColor: '#00cec9',
-                icon: '🦑',
-                desc: '심으면 5분 뒤 크라켄(75%), 감염된 고릴라(22%), 서리룡(3%) 중 1개 수확!'
+                themeBg: 'linear-gradient(135deg, rgba(8, 24, 34, 0.96), rgba(12, 48, 66, 0.96))',
+                themeBorder: '#00cec9',
+                bagTitle: 'KRAKEN PACK',
+                pouchEmoji: '🦑',
+                bagGlow: '0 0 22px rgba(0, 206, 201, 0.45)',
+                bagGradient: 'linear-gradient(135deg, #0984e3, #00cec9, #1b1429)',
+                desc: '심해의 거대 촉수 크라켄과 극지 서리룡이 봉인된 신비의 씨앗 봉투',
+                drops: [
+                    { id: 'kraken', name: '크라켄', percent: '75%', color: '#00cec9', cardBg: 'rgba(0, 206, 201, 0.15)', border: '#00cec9' },
+                    { id: 'infected_gorilla', name: '감염 고릴라', percent: '22%', color: '#a29bfe', cardBg: 'rgba(162, 155, 254, 0.15)', border: '#a29bfe' },
+                    { id: 'frost_dragon', name: '고대 서리룡', percent: '3%', color: '#38bdf8', cardBg: 'linear-gradient(135deg, rgba(56, 189, 248, 0.3), rgba(2, 132, 199, 0.4))', border: '#f1c40f', isMythic: true }
+                ]
             },
             halloween: {
                 key: 'halloween',
                 name: '할로윈의 씨앗',
                 invName: '할로윈의 씨앗',
                 price: 100000,
-                rateText: '등장 확률 29%',
+                rateText: '입고 29%',
                 badgeColor: '#e67e22',
-                icon: '🎃',
-                desc: '심으면 5분 뒤 잭오랜턴 라인업(페도라유령 70%, 클래식버니 13%, 헤드레스 9%, 불타는잭오랜턴 6%, 악마 2%) 중 1개 수확!'
+                themeBg: 'linear-gradient(135deg, rgba(35, 16, 10, 0.96), rgba(48, 18, 48, 0.96))',
+                themeBorder: '#e67e22',
+                bagTitle: 'PUMPKIN PACK',
+                pouchEmoji: '🎃',
+                bagGlow: '0 0 22px rgba(230, 126, 34, 0.45)',
+                bagGradient: 'linear-gradient(135deg, #d35400, #8e44ad, #1b1429)',
+                desc: '잭오랜턴 퓨즈 머신의 전설 스킨 라인업이 봉인된 할로윈 씨앗 봉투',
+                drops: [
+                    { id: 'ghost_fedora', name: '페도라 유령', percent: '70%', color: '#ffffff', cardBg: 'rgba(255, 255, 255, 0.12)', border: '#bdc3c7' },
+                    { id: 'classic_bunny', name: '클래식 버니', percent: '13%', color: '#ff7675', cardBg: 'rgba(255, 118, 117, 0.15)', border: '#ff7675' },
+                    { id: 'headless_horse', name: '헤드레스', percent: '9%', color: '#f1c40f', cardBg: 'rgba(241, 196, 15, 0.15)', border: '#f1c40f' },
+                    { id: 'jack_fiery', name: '불타는 잭', percent: '6%', color: '#e67e22', cardBg: 'rgba(230, 126, 34, 0.2)', border: '#e67e22' },
+                    { id: 'halloween_devil', name: '할로윈 악마', percent: '2%', color: '#ff4757', cardBg: 'linear-gradient(135deg, rgba(235, 47, 6, 0.3), rgba(110, 5, 20, 0.45))', border: '#ff4757', isMythic: true }
+                ]
             },
             admin: {
                 key: 'admin',
                 name: '어드민의 씨앗',
                 invName: '어드민의 씨앗',
                 price: 1000000,
-                rateText: '등장 확률 1%',
+                rateText: '입고 1%',
                 badgeColor: '#f1c40f',
-                icon: '👑',
-                desc: '전설의 어드민 씨앗. (효과는 추후 업데이트 공개 예정!)'
+                themeBg: 'linear-gradient(135deg, rgba(32, 24, 6, 0.96), rgba(46, 20, 50, 0.96))',
+                themeBorder: '#f1c40f',
+                bagTitle: 'ADMIN PACK',
+                pouchEmoji: '👑',
+                bagGlow: '0 0 25px rgba(241, 196, 15, 0.6)',
+                bagGradient: 'linear-gradient(135deg, #f1c40f, #e84393, #8e44ad)',
+                desc: '최고 관리자의 신비한 보너스와 향후 전용 신화 보상이 담긴 전설의 씨앗 봉투',
+                drops: [
+                    { id: 'admin_special', name: '어드민 신화', percent: '100%', color: '#f1c40f', cardBg: 'linear-gradient(135deg, rgba(241, 196, 15, 0.3), rgba(232, 67, 147, 0.3))', border: '#f1c40f', isMythic: true, customIcon: '👑✨' }
+                ]
             }
         };
 
@@ -3850,11 +3880,12 @@
                 const remainSec = Math.max(0, Math.ceil((farmShopData.nextRerollTime - Date.now()) / 1000));
                 const m = String(Math.floor(remainSec / 60)).padStart(2, '0');
                 const s = String(remainSec % 60).padStart(2, '0');
-                timerSpan.innerText = `${m}:${s}`;
+                timerSpan.innerText = m + ':' + s;
             }
 
             container.innerHTML = '';
             const keys = ['kraken', 'halloween', 'admin'];
+
             keys.forEach(key => {
                 const cfg = SEED_CONFIGS[key];
                 const stock = farmShopData.stocks[key] || 0;
@@ -3862,29 +3893,87 @@
                 const canAfford = money >= cfg.price;
                 const owned = inventory[cfg.invName] || 0;
 
-                container.innerHTML += `
-                    <div style="background: rgba(30, 48, 34, 0.9); border: 2px solid ${cfg.badgeColor}; border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                        <div style="flex: 1; padding-right: 10px;">
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                                <span style="font-size: 22px;">${cfg.icon}</span>
-                                <strong style="font-size: 16px; color: ${cfg.badgeColor};">${cfg.name}</strong>
-                                <span style="background: rgba(0,0,0,0.4); border: 1px solid ${cfg.badgeColor}; color: ${cfg.badgeColor}; font-size: 11px; padding: 2px 7px; border-radius: 10px; font-weight: bold;">${cfg.rateText}</span>
+                // 드랍 카드 목록 생성 (각 스킨별 미니 캔버스 + 확률 태그)
+                let dropsHtml = '';
+                if (cfg.drops) {
+                    cfg.drops.forEach(d => {
+                        dropsHtml += `
+                            <div style="width: 72px; min-width: 72px; height: 104px; background: ${d.cardBg}; border: 2px solid ${d.border}; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px 2px 5px 2px; position: relative; box-shadow: ${d.isMythic ? '0 0 14px ' + d.border : '0 3px 8px rgba(0,0,0,0.5)'}; box-sizing: border-box;">
+                                ${d.isMythic ? '<div style="position: absolute; top: -5px; right: -4px; font-size: 13px; filter: drop-shadow(0 0 4px gold);">⭐</div>' : ''}
+                                <div style="height: 56px; width: 100%; display: flex; align-items: center; justify-content: center;">
+                                    ${d.id === 'admin_special' 
+                                        ? '<span style="font-size: 32px; filter: drop-shadow(0 0 8px #f1c40f);">👑</span>'
+                                        : '<canvas id="seed-drop-preview-' + key + '-' + d.id + '" width="54" height="56"></canvas>'
+                                    }
+                                </div>
+                                <div style="font-size: 10.5px; font-weight: bold; color: #ffffff; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 1px 1px 3px #000; padding: 0 2px;">
+                                    ${d.name}
+                                </div>
+                                <div style="background: rgba(0, 0, 0, 0.85); border: 1.5px solid ${d.color}; color: ${d.color}; font-size: 11px; font-weight: 900; padding: 2px 7px; border-radius: 9px; line-height: 1.1; box-shadow: 0 1px 4px rgba(0,0,0,0.6);">
+                                    ${d.percent}
+                                </div>
                             </div>
-                            <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.4; margin-bottom: 6px;">${cfg.desc}</div>
-                            <div style="display: flex; gap: 12px; font-size: 12px;">
-                                <span style="color: #f1c40f; font-weight: bold;">💰 ${cfg.price.toLocaleString()} 골드</span>
-                                <span style="color: ${inStock ? '#2ecc71' : '#e74c3c'}; font-weight: bold;">재고: ${inStock ? stock + '개' : '품절 (매진)'}</span>
-                                <span style="color: #a29bfe;">보유중: ${owned}개</span>
+                        `;
+                    });
+                }
+
+                container.innerHTML += `
+                    <div style="background: ${cfg.themeBg}; border: 2.5px solid ${cfg.themeBorder}; border-radius: 16px; padding: 12px 14px; box-shadow: ${cfg.bagGlow}; display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden;">
+                        <!-- 상단 타이틀 & 입고 정보 -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="background: linear-gradient(135deg, #e74c3c, #f39c12); color: white; font-weight: 900; font-size: 10px; padding: 2px 7px; border-radius: 6px; letter-spacing: 0.5px; box-shadow: 0 2px 5px rgba(0,0,0,0.4);">NEW</span>
+                                <strong style="font-size: 16px; color: ${cfg.badgeColor}; text-shadow: 0 0 10px ${cfg.badgeColor}88;">${cfg.name}</strong>
+                                <span style="background: rgba(0,0,0,0.5); border: 1px solid ${cfg.badgeColor}; color: ${cfg.badgeColor}; font-size: 11px; padding: 1px 7px; border-radius: 10px; font-weight: bold;">${cfg.rateText}</span>
+                            </div>
+                            <div style="font-size: 12px; color: #cbd5e1; font-weight: bold;">
+                                <span style="color: #a29bfe;">보유: ${owned}개</span>
                             </div>
                         </div>
-                        <div>
-                            <button onclick="buyFarmSeed('${key}')" ${(!inStock || !canAfford) ? 'disabled' : ''} style="background: ${inStock && canAfford ? 'linear-gradient(135deg, #27ae60, #2ecc71)' : '#7f8c8d'}; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: ${inStock && canAfford ? 'pointer' : 'not-allowed'}; box-shadow: ${inStock && canAfford ? '0 3px 8px rgba(46,204,113,0.4)' : 'none'};">
-                                ${!inStock ? '품절' : (!canAfford ? '골드 부족' : '구매')}
+
+                        <!-- 중앙: 씨앗 봉투 (좌측) + 스킨 드랍 라인업 (우측) -->
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <!-- 🎁 행운의 씨앗 봉투 (Lucky Pouch Pack) -->
+                            <div style="width: 100px; min-width: 100px; height: 108px; background: ${cfg.bagGradient}; border-radius: 14px; border: 2px solid #ffffffaa; box-shadow: inset 0 0 15px rgba(255,255,255,0.3), ${cfg.bagGlow}; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; text-align: center; padding: 4px; box-sizing: border-box;">
+                                <div style="position: absolute; top: 3px; left: 4px; font-size: 8.5px; background: rgba(0,0,0,0.65); color: #fff; padding: 1px 4px; border-radius: 4px; font-weight: 900; letter-spacing: 0.5px;">LUCKY</div>
+                                <div style="font-size: 32px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.9)); margin-bottom: 2px;">${cfg.pouchEmoji || '🌱'}</div>
+                                <div style="font-size: 12.5px; font-weight: 900; color: #ffffff; text-shadow: 1px 1px 3px #000; letter-spacing: 0.5px;">? - ?</div>
+                                <div style="font-size: 9.5px; font-weight: bold; color: #f1c40f; text-shadow: 1px 1px 2px #000; margin-top: 2px;">씨앗 봉투</div>
+                            </div>
+
+                            <!-- 🎲 획득 가능한 스킨 목록 (이미지 형태) -->
+                            <div style="flex: 1; display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px 2px; align-items: center;">
+                                ${dropsHtml}
+                            </div>
+                        </div>
+
+                        <!-- 하단: 가격, 재고, 구매 버튼 -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.45); padding: 7px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: rgba(241, 196, 15, 0.2); border: 1.5px solid #f1c40f; color: #f1c40f; font-weight: 900; font-size: 13.5px; padding: 3px 9px; border-radius: 8px;">💰 ${cfg.price.toLocaleString()} 골드</span>
+                                <span style="color: ${inStock ? '#2ecc71' : '#e74c3c'}; font-weight: bold; font-size: 12.5px;">${inStock ? '재고: ' + stock + '개' : '품절 (매진)'}</span>
+                            </div>
+                            <button onclick="buyFarmSeed('${key}')" ${(!inStock || !canAfford) ? 'disabled' : ''} style="background: ${inStock && canAfford ? 'linear-gradient(135deg, #27ae60, #2ecc71)' : '#475569'}; color: white; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 900; font-size: 13.5px; cursor: ${inStock && canAfford ? 'pointer' : 'not-allowed'}; box-shadow: ${inStock && canAfford ? '0 3px 10px rgba(46,204,113,0.5)' : 'none'};">
+                                ${!inStock ? '품절' : (!canAfford ? '골드 부족' : '구매하기')}
                             </button>
                         </div>
                     </div>
                 `;
             });
+
+            // 생성된 각 스킨별 미니 캔버스에 캐릭터 라이브 렌더링
+            setTimeout(() => {
+                keys.forEach(k => {
+                    const conf = SEED_CONFIGS[k];
+                    if (conf && conf.drops) {
+                        conf.drops.forEach(d => {
+                            if (d.id !== 'admin_special') {
+                                drawPreviewCanvas('seed-drop-preview-' + k + '-' + d.id, d.id);
+                            }
+                        });
+                    }
+                });
+            }, 0);
         }
 
         function buyFarmSeed(seedKey) {
@@ -17694,76 +17783,229 @@
                 ctx.shadowBlur = 0;
 
             } else if (useSkin === 'frost_dragon') {
-                // 🐉❄️ 서리룡 스킨 (플레이어 아바타 크기 서리룡, 푸른 서리 날개, 얼음 뿔, 얼음 꼬리)
-                ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
-                ctx.beginPath(); ctx.ellipse(0, 22, 20, 8, 0, 0, Math.PI*2); ctx.fill();
-                ctx.translate(0, -bobbing);
-
+                // 🐉❄️ [LEGENDARY] 극지 혹한의 고대 서리룡 (Majestic Glacial Frost Dragon)
                 const nowTime = Date.now();
-                const wingFlap = Math.sin(nowTime * 0.005) * 0.18;
+                const floatHover = Math.sin(nowTime * 0.003) * 3.5;
+                const wingFlap = Math.sin(nowTime * 0.005) * 0.22;
+                const tailWag = Math.sin(nowTime * 0.0055) * 0.25;
 
-                // 1. 얼음 날개 (왼/오른 날개)
+                // 1. 바닥 얼음 그림자 & 신비한 영구동토 아우라
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+                ctx.beginPath(); ctx.ellipse(0, 22, 24, 8, 0, 0, Math.PI*2); ctx.fill();
+
+                ctx.translate(0, -bobbing + floatHover);
+
+                // 2. 부유하는 다이아몬드 얼음 파티클 (Floating Ice Shards)
+                for (let sp = 0; sp < 4; sp++) {
+                    let sAngle = nowTime * 0.003 + sp * (Math.PI / 2);
+                    let sx = Math.cos(sAngle) * (22 + Math.sin(nowTime * 0.004 + sp) * 6);
+                    let sy = Math.sin(sAngle) * 9;
+                    ctx.fillStyle = sp % 2 === 0 ? '#38bdf8' : '#e0f2fe';
+                    ctx.beginPath();
+                    ctx.moveTo(sx, sy - 3); ctx.lineTo(sx + 2, sy); ctx.lineTo(sx, sy + 3); ctx.lineTo(sx - 2, sy);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+
+                // 3. 얼음 날개 (Left & Right Crystalline Frost Wings)
+                // Left Wing
                 ctx.save();
-                ctx.translate(-12, -4);
+                ctx.translate(-14, -6);
                 ctx.rotate(-wingFlap);
-                let wGradL = ctx.createLinearGradient(0, 0, -25, -20);
+                let wGradL = ctx.createLinearGradient(0, 0, -32, -26);
                 wGradL.addColorStop(0, '#0c2461');
-                wGradL.addColorStop(0.5, '#0284c7');
+                wGradL.addColorStop(0.35, '#0284c7');
+                wGradL.addColorStop(0.7, '#38bdf8');
                 wGradL.addColorStop(1, '#e0f2fe');
                 ctx.fillStyle = wGradL;
                 ctx.beginPath();
-                ctx.moveTo(0, 0); ctx.lineTo(-24, -14); ctx.lineTo(-18, 0); ctx.lineTo(-26, 6); ctx.lineTo(0, 10);
-                ctx.closePath(); ctx.fill();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(-30, -22);
+                ctx.lineTo(-24, -4);
+                ctx.lineTo(-34, 4);
+                ctx.lineTo(-18, 8);
+                ctx.lineTo(-26, 16);
+                ctx.lineTo(0, 10);
+                ctx.closePath();
+                ctx.fill();
+                // 날개 뼈대 & 서리 발톱
+                ctx.strokeStyle = '#e0f2fe'; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-30, -22); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(-16, -11); ctx.lineTo(-24, -4); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(-9, -6); ctx.lineTo(-34, 4); ctx.stroke();
                 ctx.restore();
 
+                // Right Wing
                 ctx.save();
-                ctx.translate(12, -4);
+                ctx.translate(14, -6);
                 ctx.rotate(wingFlap);
-                let wGradR = ctx.createLinearGradient(0, 0, 25, -20);
+                let wGradR = ctx.createLinearGradient(0, 0, 32, -26);
                 wGradR.addColorStop(0, '#0c2461');
-                wGradR.addColorStop(0.5, '#0284c7');
+                wGradR.addColorStop(0.35, '#0284c7');
+                wGradR.addColorStop(0.7, '#38bdf8');
                 wGradR.addColorStop(1, '#e0f2fe');
                 ctx.fillStyle = wGradR;
                 ctx.beginPath();
-                ctx.moveTo(0, 0); ctx.lineTo(24, -14); ctx.lineTo(18, 0); ctx.lineTo(26, 6); ctx.lineTo(0, 10);
-                ctx.closePath(); ctx.fill();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(30, -22);
+                ctx.lineTo(24, -4);
+                ctx.lineTo(34, 4);
+                ctx.lineTo(18, 8);
+                ctx.lineTo(26, 16);
+                ctx.lineTo(0, 10);
+                ctx.closePath();
+                ctx.fill();
+                // 날개 뼈대 & 서리 발톱
+                ctx.strokeStyle = '#e0f2fe'; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(30, -22); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(16, -11); ctx.lineTo(24, -4); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(9, -6); ctx.lineTo(34, 4); ctx.stroke();
                 ctx.restore();
 
-                // 2. 얼음 꼬리
-                const tailWag = Math.sin(nowTime * 0.006) * 0.2;
+                // 4. 휘어지는 빙하 대검 꼬리 (Articulated Glacier Tail & Blade Tip)
                 ctx.save();
                 ctx.translate(-8 * facing, 10);
                 ctx.rotate(tailWag - facing * 0.2);
                 ctx.strokeStyle = '#0284c7'; ctx.lineWidth = 4;
-                ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-8 * facing, 8, -16 * facing, 14); ctx.stroke();
-                ctx.fillStyle = '#e0f2fe';
-                ctx.beginPath(); ctx.arc(-16 * facing, 14, 3, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-10 * facing, 10, -20 * facing, 16); ctx.stroke();
+                // 등/꼬리 가시 돌기
+                ctx.fillStyle = '#7dd3fc';
+                ctx.beginPath();
+                ctx.moveTo(-6 * facing, 4); ctx.lineTo(-10 * facing, 0); ctx.lineTo(-8 * facing, 7);
+                ctx.moveTo(-13 * facing, 10); ctx.lineTo(-17 * facing, 6); ctx.lineTo(-15 * facing, 13);
+                ctx.fill();
+                // 꼬리 끝 거대 얼음 대검날 (Glacial Spearhead Blade)
+                ctx.fillStyle = '#bae6fd';
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(-18 * facing, 14);
+                ctx.lineTo(-28 * facing, 21);
+                ctx.lineTo(-24 * facing, 16);
+                ctx.lineTo(-30 * facing, 11);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
                 ctx.restore();
 
-                // 3. 서리룡 몸통 (용 비늘)
-                let bGrad = ctx.createLinearGradient(-10, -10, 10, 15);
-                bGrad.addColorStop(0, '#0369a1');
-                bGrad.addColorStop(0.6, '#0284c7');
+                // 5. 서리룡 아머 몸통 (Glacier Scale Plated Armor)
+                let bGrad = ctx.createLinearGradient(-13, -10, 13, 16);
+                bGrad.addColorStop(0, '#082f49');
+                bGrad.addColorStop(0.5, '#0284c7');
                 bGrad.addColorStop(1, '#0c4a6e');
                 ctx.fillStyle = bGrad;
-                ctx.beginPath(); ctx.roundRect(-12, -8, 24, 23, 8); ctx.fill();
+                ctx.beginPath(); ctx.roundRect(-13, -8, 26, 24, 8); ctx.fill();
 
-                // 4. 얼음 용 머리 & 뿔
-                ctx.fillStyle = '#0284c7';
-                ctx.beginPath(); ctx.ellipse(4 * facing, -16, 12, 10, 0, 0, Math.PI*2); ctx.fill();
-                // 얼음 뿔
-                ctx.fillStyle = '#e0f2fe';
+                // 등뼈 얼음 가시 (Dorsal Spine Ice Crystals)
+                ctx.fillStyle = '#bae6fd';
                 ctx.beginPath();
-                ctx.moveTo(-2 * facing, -22); ctx.lineTo(-8 * facing, -30); ctx.lineTo(-4 * facing, -20);
-                ctx.moveTo(4 * facing, -22); ctx.lineTo(2 * facing, -32); ctx.lineTo(6 * facing, -20);
+                ctx.moveTo(-10, -9); ctx.lineTo(-14, -16); ctx.lineTo(-7, -9);
+                ctx.moveTo(-2, -9); ctx.lineTo(0, -18); ctx.lineTo(3, -9);
                 ctx.fill();
 
-                // 빛나는 얼음 눈
-                ctx.fillStyle = '#38bdf8';
-                ctx.shadowColor = '#38bdf8'; ctx.shadowBlur = 8;
-                ctx.beginPath(); ctx.arc(7 * facing, -16, 2.5, 0, Math.PI*2); ctx.fill();
+                // 6. 가슴 속 타오르는 영구동토 심장 코어 (Pulsing Glacial Crystal Heart)
+                let heartPulse = 1 + Math.sin(nowTime * 0.008) * 0.2;
+                ctx.save();
+                ctx.translate(0, 4);
+                ctx.scale(heartPulse, heartPulse);
+                ctx.shadowColor = '#00f2fe'; ctx.shadowBlur = 10;
+                ctx.fillStyle = '#00f2fe';
+                ctx.beginPath();
+                ctx.moveTo(0, -4); ctx.lineTo(4, 0); ctx.lineTo(0, 5); ctx.lineTo(-4, 0);
+                ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(0, 0, 1.5, 0, Math.PI*2); ctx.fill();
                 ctx.shadowBlur = 0;
+                ctx.restore();
 
+                // 7. 앞발 & 뒷발 얼음 갈퀴 (Ice Claws)
+                ctx.fillStyle = '#7dd3fc';
+                ctx.beginPath();
+                ctx.fillRect(-10, 14, 6, 7);
+                ctx.fillRect(4, 14, 6, 7);
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(-10, 21); ctx.lineTo(-11, 24); ctx.lineTo(-8, 21);
+                ctx.moveTo(4, 21); ctx.lineTo(3, 24); ctx.lineTo(6, 21);
+                ctx.fill();
+
+                // 8. 서리룡 머리 & 거대 4단 크리스탈 뿔 & 드래곤 주둥이
+                ctx.save();
+                ctx.translate(5 * facing, -16);
+
+                // 두개골 베이스
+                let hGrad = ctx.createLinearGradient(-10, -10, 12, 10);
+                hGrad.addColorStop(0, '#0369a1');
+                hGrad.addColorStop(0.7, '#0284c7');
+                hGrad.addColorStop(1, '#0c4a6e');
+                ctx.fillStyle = hGrad;
+                ctx.beginPath(); ctx.ellipse(0, 0, 13, 10, 0, 0, Math.PI*2); ctx.fill();
+
+                // 드래곤 주둥이 & 아래턱
+                ctx.fillStyle = '#0284c7';
+                ctx.beginPath();
+                ctx.moveTo(0, -3);
+                ctx.lineTo(13 * facing, -1);
+                ctx.lineTo(11 * facing, 6);
+                ctx.lineTo(-2 * facing, 7);
+                ctx.closePath();
+                ctx.fill();
+
+                // 날카로운 용 이빨 (Dragon Fangs)
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(6 * facing, 0); ctx.lineTo(8 * facing, 4); ctx.lineTo(10 * facing, 0);
+                ctx.fill();
+
+                // 서리 입김 (Freezing Frost Breath particle)
+                let breathAnim = (nowTime * 0.005) % 1;
+                ctx.fillStyle = 'rgba(224, 242, 254, ' + (1 - breathAnim) * 0.6 + ')';
+                ctx.beginPath();
+                ctx.arc((14 + breathAnim * 10) * facing, 1 + Math.sin(nowTime * 0.01) * 2, 2 + breathAnim * 3, 0, Math.PI*2);
+                ctx.fill();
+
+                // 다단 크리스탈 서리 뿔 (Multi-Tier Glacial Horns)
+                // 1) 메인 롱 뿔 (뒤로 뻗어나가는 거대 곡면 뿔)
+                let hornGrad = ctx.createLinearGradient(0, 0, -14 * facing, -24);
+                hornGrad.addColorStop(0, '#0284c7');
+                hornGrad.addColorStop(0.5, '#38bdf8');
+                hornGrad.addColorStop(1, '#ffffff');
+                ctx.fillStyle = hornGrad;
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(-3 * facing, -7);
+                ctx.quadraticCurveTo(-10 * facing, -18, -18 * facing, -25);
+                ctx.quadraticCurveTo(-8 * facing, -14, 2 * facing, -8);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // 2) 앞쪽 서브 뿔 (Crown Brow Horns)
+                ctx.fillStyle = '#e0f2fe';
+                ctx.beginPath();
+                ctx.moveTo(3 * facing, -7);
+                ctx.lineTo(8 * facing, -16);
+                ctx.lineTo(6 * facing, -7);
+                ctx.closePath();
+                ctx.fill();
+
+                // 3) 뒤통수 크리스탈 갈기 (Neck Spines)
+                ctx.fillStyle = '#7dd3fc';
+                ctx.beginPath();
+                ctx.moveTo(-7 * facing, -2); ctx.lineTo(-14 * facing, -6); ctx.lineTo(-8 * facing, 3);
+                ctx.fill();
+
+                // 빛나는 맹수 서리룡 눈 (Piercing Radiant Arctic Cyan Eye)
+                ctx.fillStyle = '#00f2fe';
+                ctx.shadowColor = '#00f2fe'; ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.ellipse(5 * facing, -3, 3.5, 2, 0.2 * facing, 0, Math.PI*2);
+                ctx.fill();
+                // 동공 (Dragon Slit Pupil)
+                ctx.fillStyle = '#082f49';
+                ctx.shadowBlur = 0;
+                ctx.beginPath();
+                ctx.ellipse(5 * facing, -3, 1, 2, 0.2 * facing, 0, Math.PI*2);
+                ctx.fill();
+
+                ctx.restore();
             } else if (useSkin === 'phoenix') {
                 // 🔥🦅 불사조 피닉스 스킨: 타오르는 화염의 날개, 불꽃 깃털, 황금 관, 작열하는 화염 오라
                 let pTime = Date.now() * 0.005;
