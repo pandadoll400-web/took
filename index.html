@@ -3998,7 +3998,7 @@
             try {
                 localStorage.setItem('tb_farm_shop_data', JSON.stringify(farmShopData));
             } catch(e) {}
-            saveGame();
+            saveGame(true);
 
             floatTexts.push({ x: player.x, y: player.y - 70, text: `+1 ${cfg.invName} 구매 완료!`, color: cfg.badgeColor, life: 60, size: 20 });
             updateSeedShopModalUI();
@@ -4079,7 +4079,7 @@
             try {
                 localStorage.setItem('tb_farm_plots', JSON.stringify(farmPlots));
             } catch(e) {}
-            saveGame();
+            saveGame(true);
 
             closePlantSeedModal();
             floatTexts.push({ x: FARM_PLOT_COORDS[plotIndex].x, y: FARM_PLOT_COORDS[plotIndex].y - 30, text: `🌱 [밭 #${plotIndex + 1}] ${cfg.name} 심기 완료! (5분 뒤 수확)`, color: '#2ecc71', life: 75, size: 18 });
@@ -4105,6 +4105,7 @@
             try {
                 localStorage.setItem('tb_farm_plots', JSON.stringify(farmPlots));
             } catch(e) {}
+            saveGame(true);
 
             // 확률 수확
             if (seedKey === 'kraken') {
@@ -4131,7 +4132,7 @@
                 }
             } else if (seedKey === 'admin') {
                 money += 1000000;
-                saveGame();
+                saveGame(true);
                 updateMoney();
                 openFarmHarvestModal('admin_special', '👑 전설의 어드민 씨앗', '어드민 신화 보상', '#f1c40f', '어드민 씨앗 수확 성공!\n(유저 요청: 어드민 보상은 차후 업데이트 시 추가될 예정입니다! 보너스 💰 1,000,000 골드 환급)');
             }
@@ -4141,13 +4142,15 @@
             const isNew = !ownedSkins.includes(skinId);
             if (isNew) {
                 ownedSkins.push(skinId);
-                saveGame();
+                saveGame(true);
             } else {
                 money += 50000;
-                saveGame();
+                saveGame(true);
                 updateMoney();
                 descText += '\n(✨ 이미 보유한 스킨입니다! 중복 보너스 💰 50,000 골드 지급!)';
             }
+            updateShopSkinUI();
+            updateInvSkinUI();
             openFarmHarvestModal(skinId, skinName, rarityText, color, descText);
         }
 
@@ -10852,6 +10855,9 @@
         let floatTexts = [];
 
         function getItemColor(itemName) {
+            if (itemName === '크라켄의 씨앗') return '#00cec9';
+            if (itemName === '할로윈의 씨앗') return '#e17055';
+            if (itemName === '어드민의 씨앗') return '#f1c40f';
             if (itemName.startsWith('[도끼]')) return '#e67e22';
             if (itemName.startsWith('[스킨]')) return '#e056fd';
             if (itemName === '쪽지 조각') return '#f1c40f';
@@ -11161,6 +11167,7 @@
             if (ownedSkins.includes(skinId)) {
                 equippedSkin = skinId;
                 updateInvSkinUI();
+                saveGame(true);
                 floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `스킨 장착 완료!`, color: '#3498db', life: 60 });
             }
         }
@@ -11645,7 +11652,38 @@
                 });
             }
 
+            // 🌾 씨앗 3종 완벽 보존 (구매했거나 저장된 씨앗 수량 유지)
+            const seedNames = ['크라켄의 씨앗', '할로윈의 씨앗', '어드민의 씨앗'];
+            seedNames.forEach(s => {
+                let count = 0;
+                if (typeof inventory !== 'undefined' && inventory && inventory[s] !== undefined) {
+                    count = Math.max(count, Number(inventory[s]) || 0);
+                }
+                try {
+                    const localRaw = localStorage.getItem('treeGameSave_adminaccount') || localStorage.getItem('treeGameSave');
+                    if (localRaw) {
+                        const parsed = JSON.parse(localRaw);
+                        if (parsed && parsed.inventory && parsed.inventory[s] !== undefined) {
+                            count = Math.max(count, Number(parsed.inventory[s]) || 0);
+                        }
+                    }
+                } catch(e) {}
+                adminInventory[s] = count;
+            });
+
             const allSkinIds = skinsData.map(s => s.id);
+            let adminEquipped = 'halloween_devil';
+            if (typeof equippedSkin !== 'undefined' && equippedSkin) {
+                adminEquipped = equippedSkin;
+            } else {
+                try {
+                    const localRaw = localStorage.getItem('treeGameSave_adminaccount') || localStorage.getItem('treeGameSave');
+                    if (localRaw) {
+                        const parsed = JSON.parse(localRaw);
+                        if (parsed && parsed.equippedSkin) adminEquipped = parsed.equippedSkin;
+                    }
+                } catch(e) {}
+            }
 
             return {
                 level: 10000,
@@ -11655,7 +11693,7 @@
                 axeLevel: 4,
                 equippedAxe: 4,
                 ownedSkins: allSkinIds,
-                equippedSkin: 'halloween_devil',
+                equippedSkin: adminEquipped,
                 inventory: adminInventory,
                 fishCollection: [...oceanFishNames],
                 radioactiveCollection: [...baseFruitNames],
@@ -13867,6 +13905,15 @@
             player.y = GAME_HEIGHT / 2;
             cameraY = 0;
             player.targetTree = null;
+            farmPlots = [
+                { id: 0, seed: null, plantedAt: 0, duration: 300000 },
+                { id: 1, seed: null, plantedAt: 0, duration: 300000 },
+                { id: 2, seed: null, plantedAt: 0, duration: 300000 },
+                { id: 3, seed: null, plantedAt: 0, duration: 300000 },
+                { id: 4, seed: null, plantedAt: 0, duration: 300000 },
+                { id: 5, seed: null, plantedAt: 0, duration: 300000 }
+            ];
+            try { localStorage.removeItem('tb_farm_plots'); } catch(e) {}
             applyLoadedGameData(getDefaultGameData());
             localStorage.removeItem('treeGameSave');
         }
@@ -13874,6 +13921,7 @@
         async function handleTreeGameLogout() {
             if (!currentUser) return;
             const oldUser = currentUser;
+            saveGame(true);
             // 로그아웃 전 현재 계정의 진행 상황을 Firebase 클라우드에 확실히 즉시 저장
             if (db) {
                 try {
@@ -13981,6 +14029,18 @@
                 }
                 currentUser = 'adminaccount';
                 localStorage.setItem('treegame_user', currentUser);
+                if (db) {
+                    try {
+                        const snap = await db.collection('users').doc('adminaccount').get();
+                        if (snap.exists && snap.data().gameData && snap.data().gameData.inventory) {
+                            ['크라켄의 씨앗', '할로윈의 씨앗', '어드민의 씨앗'].forEach(s => {
+                                if (snap.data().gameData.inventory[s] !== undefined) {
+                                    inventory[s] = Math.max(Number(inventory[s]) || 0, Number(snap.data().gameData.inventory[s]) || 0);
+                                }
+                            });
+                        }
+                    } catch(e) {}
+                }
                 const adminData = getAdminGameData();
                 applyLoadedGameData(adminData);
                 if (db) {
@@ -14090,6 +14150,8 @@
                 equippedAxe: equippedAxe,
                 ownedAxes: getOwnedAxesList(),
                 ownedSkins: ownedSkins, equippedSkin: equippedSkin,
+                farmPlots: (typeof farmPlots !== 'undefined' && Array.isArray(farmPlots)) ? farmPlots : [],
+                farmShopData: (typeof farmShopData !== 'undefined') ? farmShopData : null,
                 questData: { cycle: currentQuestCycle, quests: activeQuests },
                 treeUnlocked: trees.map(t => t.unlocked),
                 fishCollection: fishCollection,
@@ -14146,10 +14208,56 @@
             } else if (typeof loadQuestData === 'function') {
                 loadQuestData();
             }
-            ownedSkins = (data.ownedSkins && data.ownedSkins.length > 0) ? [...data.ownedSkins] : ['default'];
-            if (!ownedSkins.includes('default')) ownedSkins.unshift('default');
-            equippedSkin = (data.equippedSkin && ownedSkins.includes(data.equippedSkin)) ? data.equippedSkin : 'default';
+            // 🛡️ 스킨 목록 복원 및 안전한 병합
+            let skinSet = new Set(['default']);
+            if (Array.isArray(data.ownedSkins)) {
+                data.ownedSkins.forEach(s => { if (s) skinSet.add(s); });
+            }
+            if (typeof ownedSkins !== 'undefined' && Array.isArray(ownedSkins)) {
+                ownedSkins.forEach(s => { if (s) skinSet.add(s); });
+            }
+            try {
+                const uKey = currentUser ? ('treeGameSave_' + currentUser.toLowerCase()) : 'treeGameSave';
+                const localSaved = JSON.parse(localStorage.getItem(uKey) || localStorage.getItem('treeGameSave') || '{}');
+                if (Array.isArray(localSaved.ownedSkins)) {
+                    localSaved.ownedSkins.forEach(s => { if (s) skinSet.add(s); });
+                }
+            } catch(e) {}
+            ownedSkins = Array.from(skinSet);
+
+            equippedSkin = (data.equippedSkin && ownedSkins.includes(data.equippedSkin)) ? data.equippedSkin : ((typeof equippedSkin !== 'undefined' && ownedSkins.includes(equippedSkin)) ? equippedSkin : 'default');
+
+            // 🌾 인벤토리 및 씨앗 복원
+            const prevSeeds = {};
+            ['크라켄의 씨앗', '할로윈의 씨앗', '어드민의 씨앗'].forEach(s => {
+                if (typeof inventory !== 'undefined' && inventory && inventory[s] !== undefined) {
+                    prevSeeds[s] = Number(inventory[s]) || 0;
+                }
+            });
             inventory = data.inventory ? { ...data.inventory } : {};
+            ['크라켄의 씨앗', '할로윈의 씨앗', '어드민의 씨앗'].forEach(s => {
+                let maxCount = Math.max(Number(inventory[s]) || 0, prevSeeds[s] || 0);
+                try {
+                    const uKey = currentUser ? ('treeGameSave_' + currentUser.toLowerCase()) : 'treeGameSave';
+                    const localSaved = JSON.parse(localStorage.getItem(uKey) || localStorage.getItem('treeGameSave') || '{}');
+                    if (localSaved && localSaved.inventory && localSaved.inventory[s] !== undefined) {
+                        maxCount = Math.max(maxCount, Number(localSaved.inventory[s]) || 0);
+                    }
+                } catch(e) {}
+                if (maxCount > 0) {
+                    inventory[s] = maxCount;
+                }
+            });
+
+            // 🌾 농장 밭 및 상점 상태 복원
+            if (Array.isArray(data.farmPlots) && data.farmPlots.length === 6) {
+                farmPlots = [...data.farmPlots];
+                try { localStorage.setItem('tb_farm_plots', JSON.stringify(farmPlots)); } catch(e) {}
+            }
+            if (data.farmShopData) {
+                farmShopData = Object.assign(farmShopData, data.farmShopData);
+                try { localStorage.setItem('tb_farm_shop_data', JSON.stringify(farmShopData)); } catch(e) {}
+            }
             fishCollection = data.fishCollection ? [...data.fishCollection] : [];
             radioactiveCollection = data.radioactiveCollection ? [...data.radioactiveCollection] : [];
             caveCollection = data.caveCollection ? [...data.caveCollection] : [];
@@ -16446,6 +16554,16 @@
                     if (docSnap.exists) {
                         const userData = docSnap.data();
                         if (isAdmin()) {
+                            if (userData.gameData && userData.gameData.inventory) {
+                                ['크라켄의 씨앗', '할로윈의 씨앗', '어드민의 씨앗'].forEach(s => {
+                                    if (userData.gameData.inventory[s] !== undefined) {
+                                        inventory[s] = Math.max(Number(inventory[s]) || 0, Number(userData.gameData.inventory[s]) || 0);
+                                    }
+                                });
+                            }
+                            if (userData.gameData && userData.gameData.equippedSkin) {
+                                equippedSkin = userData.gameData.equippedSkin;
+                            }
                             applyLoadedGameData(getAdminGameData());
                         } else if (userData.gameData) {
                             if (isTargetNamuSajang(currentUser)) {
