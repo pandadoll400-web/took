@@ -1753,14 +1753,14 @@
 
 
         <!-- ⚔️ 트레이드 머신 모달 (한정 수량 2개 선착순) -->
-                <!-- ⚔️ 트레이닝 머신 모달 (한정 수량 2개 선착순) -->
-                <!-- ⚔️ 트레이닝 머신 모달 (한정 수량 2명 선착순) -->
+                <!-- ⚔️ 크레프팅 머신 모달 (한정 수량 2개 선착순) -->
+                <!-- ⚔️ 크레프팅 머신 모달 (한정 수량 2명 선착순) -->
         <div id="trade-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 50% 20%, #1e112a 0%, #080610 100%); color: white; border-radius: 24px; width: 88%; max-width: 340px; display: none; border: 2px solid #ef4444; box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 35px rgba(239, 68, 68, 0.45); z-index: 60; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 18px 16px; box-sizing: border-box;">
             <!-- 헤더 & 닫기 -->
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(239, 68, 68, 0.35); padding-bottom: 10px; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 20px;">⚔️</span>
-                    <span style="color: #ff7675; font-size: 18px; font-weight: 900; letter-spacing: -0.5px;">트레이닝 머신</span>
+                    <span style="color: #ff7675; font-size: 18px; font-weight: 900; letter-spacing: -0.5px;">크레프팅 머신</span>
                 </div>
                 <button onclick="closeTradeMachineModal()" style="background: rgba(255,255,255,0.1); border: none; color: #cbd5e1; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
             </div>
@@ -4259,7 +4259,7 @@
             } catch(e) {}
         }
 
-        // ⚔️ 전체 서버 모든 유저에게 트레이닝 머신 공개
+        // ⚔️ 전체 서버 모든 유저에게 크레프팅 머신 공개
         function isTradeMachineActive() {
             if (adminTradeMachineOverride !== null) return adminTradeMachineOverride;
             return true;
@@ -4359,177 +4359,32 @@
         }
 
         function updateTradeMachineModalUI() {
-            checkTradeMachineRestock();
-            const info = getTradeCycleInfo();
-
             const stockBadge = document.getElementById('trade-stock-badge');
             if (stockBadge) {
-                if (!info.isOpen) {
-                    stockBadge.innerText = '🔒 21:30 오픈';
-                    stockBadge.style.color = '#fca5a5';
-                } else {
-                    stockBadge.innerText = `${tradeMachineStock} / 2명`;
-                    stockBadge.style.color = (tradeMachineStock > 0) ? '#facc15' : '#ef4444';
-                }
+                stockBadge.innerText = '🔒 일요일 공개!';
+                stockBadge.style.color = '#facc15';
             }
 
             const timerLabel = document.getElementById('trade-timer-label');
             const timerText = document.getElementById('trade-timer-text');
-            if (timerText) {
-                const targetTime = info.nextRestock;
-                const remain = Math.max(0, targetTime - Date.now());
-                const h = Math.floor(remain / 3600000);
-                const m = String(Math.floor((remain % 3600000) / 60000)).padStart(2, '0');
-                const s = String(Math.floor((remain % 60000) / 1000)).padStart(2, '0');
-
-                if (timerLabel) {
-                    timerLabel.innerText = info.isOpen ? '다음 충전' : '오픈까지';
-                }
-                timerText.innerText = (h > 0) ? `${h}:${m}:${s}` : `${m}:${s}`;
-            }
+            if (timerLabel) timerLabel.innerText = '오픈 일정';
+            if (timerText) timerText.innerText = '일요일';
 
             const claimBtn = document.getElementById('trade-claim-btn');
             if (claimBtn) {
-                const isOwned = ownedSkins.includes('japanese_ronin');
-                const isEquipped = (equippedSkin === 'japanese_ronin');
-
-                if (!info.isOpen) {
-                    // 🔒 9시 오픈 전: 무조건 오픈 대기 버튼 (장착/획득 불가)
-                    claimBtn.disabled = false;
-                    claimBtn.innerText = '🔒 오늘 21:30 오픈!';
-                    claimBtn.style.background = 'linear-gradient(180deg, #475569 0%, #334155 100%)';
-                    claimBtn.style.color = '#cbd5e1';
-                    claimBtn.style.border = 'none';
-                    claimBtn.style.boxShadow = 'none';
-                    claimBtn.style.cursor = 'pointer';
-                } else if (isOwned) {
-                    claimBtn.disabled = false;
-                    claimBtn.innerText = isEquipped ? '✓ equipped!' : 'equip!';
-                    claimBtn.style.background = isEquipped ? 'linear-gradient(180deg, #0284c7 0%, #0369a1 100%)' : 'linear-gradient(180deg, #10b981 0%, #059669 100%)';
-                    claimBtn.style.color = '#ffffff';
-                    claimBtn.style.border = 'none';
-                    claimBtn.style.boxShadow = isEquipped ? '0 4px 14px rgba(2, 132, 199, 0.4)' : '0 4px 14px rgba(16, 185, 129, 0.4)';
-                    claimBtn.style.cursor = 'pointer';
-                } else if (tradeMachineStock <= 0) {
-                    claimBtn.disabled = false;
-                    claimBtn.innerText = 'sold out!!';
-                    claimBtn.style.background = 'rgba(239, 68, 68, 0.2)';
-                    claimBtn.style.color = '#ef4444';
-                    claimBtn.style.border = '2px solid #ef4444';
-                    claimBtn.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.3)';
-                    claimBtn.style.cursor = 'pointer';
-                } else {
-                    claimBtn.disabled = false;
-                    claimBtn.innerText = '획득';
-                    claimBtn.style.background = 'linear-gradient(180deg, #ef4444 0%, #b91c1c 100%)';
-                    claimBtn.style.color = '#ffffff';
-                    claimBtn.style.border = 'none';
-                    claimBtn.style.boxShadow = '0 4px 0 #7f1d1d, 0 6px 18px rgba(239, 68, 68, 0.45)';
-                    claimBtn.style.cursor = 'pointer';
-                }
+                claimBtn.disabled = false;
+                claimBtn.innerText = '🔒 일요일 공개!';
+                claimBtn.style.background = 'linear-gradient(180deg, #475569 0%, #334155 100%)';
+                claimBtn.style.color = '#cbd5e1';
+                claimBtn.style.border = 'none';
+                claimBtn.style.boxShadow = 'none';
+                claimBtn.style.cursor = 'pointer';
             }
         }
 
         async function claimTradeMachineSkin() {
-            checkTradeMachineRestock();
-            const info = getTradeCycleInfo();
-
-            // 1. 오픈 전인 경우 -> 절대 획득/장착 불가
-            if (!info.isOpen) {
-                alert('🔒 [오픈 대기]\n\n오늘 밤 9시 30분(21:30) 정각에 선착순 2명만 오픈됩니다!\n오픈 전에는 획득하거나 장착할 수 없습니다.');
-                return;
-            }
-
-            // 2. 이미 소유한 경우 -> 장착/해제 토글
-            if (ownedSkins.includes('japanese_ronin')) {
-                equippedSkin = 'japanese_ronin';
-                saveGame(true);
-                updateShopSkinUI();
-                updateInvSkinUI();
-                updateTradeMachineModalUI();
-                floatTexts.push({ x: player.x, y: player.y - 80, text: '⚔️ [일본풍 검사] 장착 완료!', color: '#38bdf8', life: 100, size: 20 });
-                return;
-            }
-
-            // 3. 재고 소진 시 -> sold out!!
-            if (tradeMachineStock <= 0) {
-                const claimBtn = document.getElementById('trade-claim-btn');
-                if (claimBtn) {
-                    claimBtn.innerText = 'sold out!!';
-                    claimBtn.style.background = 'rgba(239, 68, 68, 0.2)';
-                    claimBtn.style.color = '#ef4444';
-                    claimBtn.style.border = '2px solid #ef4444';
-                }
-                alert('sold out!!\n\n선착순 2명이 모두 소진되었습니다!');
-                updateTradeMachineModalUI();
-                return;
-            }
-
-            // 4. Firestore 글로벌 동기화 (전 서버 모든 유저 중 딱 2명 한정 엄격 보장)
-            let success = false;
-            if (typeof db !== 'undefined' && db) {
-                try {
-                    const docRef = db.collection('server_events').doc('trade_machine');
-                    await db.runTransaction(async (transaction) => {
-                        const doc = await transaction.get(docRef);
-                        let data = doc.exists ? doc.data() : { cycleId: info.cycleId, stock: 2, claimedUsers: [] };
-                        if (data.cycleId !== info.cycleId) {
-                            data = { cycleId: info.cycleId, stock: 2, claimedUsers: [] };
-                        }
-                        if (data.stock <= 0 || (data.claimedUsers && data.claimedUsers.length >= 2)) {
-                            throw new Error('SOLD_OUT');
-                        }
-                        const uid = (currentUser ? currentUser.toLowerCase() : '') || ('user_' + Math.random().toString(36).substring(7));
-                        if (data.claimedUsers && data.claimedUsers.includes(uid)) {
-                            throw new Error('ALREADY_CLAIMED');
-                        }
-                        data.stock = data.stock - 1;
-                        if (!data.claimedUsers) data.claimedUsers = [];
-                        data.claimedUsers.push(uid);
-                        transaction.set(docRef, data);
-                        tradeMachineStock = data.stock;
-                    });
-                    success = true;
-                } catch(e) {
-                    if (e && e.message === 'SOLD_OUT') {
-                        tradeMachineStock = 0;
-                        saveTradeMachineState(info.cycleId);
-                        updateTradeMachineModalUI();
-                        alert('sold out!!\n\n다른 플레이어가 먼저 획득하여 선착순 2명이 모두 마감되었습니다!');
-                        return;
-                    }
-                    if (e && e.message === 'ALREADY_CLAIMED') {
-                        alert('이미 이번 차수 선착순 스킨을 획득하셨습니다!');
-                        updateTradeMachineModalUI();
-                        return;
-                    }
-                    console.warn('Firestore transaction error, using local/broadcast fallback:', e);
-                }
-            }
-
-            // 로컬/브로드캐스트 채널 fallback (Firestore 미연결 시)
-            if (!success && tradeMachineStock > 0) {
-                tradeMachineStock--;
-                success = true;
-            }
-
-            if (success) {
-                saveTradeMachineState(info.cycleId);
-                if (!ownedSkins.includes('japanese_ronin')) {
-                    ownedSkins.push('japanese_ronin');
-                }
-                equippedSkin = 'japanese_ronin';
-                saveGame(true);
-                updateShopSkinUI();
-                updateInvSkinUI();
-
-                floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [일본풍 검사] 선착순 획득 성공!', color: '#ff7675', life: 120, size: 24 });
-                alert('🎉 [대성공!] 전 서버 선착순 2명 한정 [일본풍 검사] 스킨을 획득하셨습니다!!\n\n버튼이 [equip!]으로 변경되었습니다.');
-                updateTradeMachineModalUI();
-            } else {
-                updateTradeMachineModalUI();
-                alert('sold out!!\n\n선착순 재고가 모두 소진되었습니다.');
-            }
+            alert('🔒 [일요일 공개]\n\n크레프팅 머신은 일요일에 전격 공개됩니다!\n현재는 획득하실 수 없습니다.');
+            return;
         }
 
         function drawTradeSkinPreviewCanvas() {
@@ -22775,26 +22630,23 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-            ctx.fillText(tradeActive ? "⚔️ 트레이닝 머신" : "호박 융합", x + 98, y + 65);
+            ctx.fillText(tradeActive ? "⚔️ 크레프팅 머신" : "호박 융합", x + 98, y + 65);
             ctx.shadowBlur = 0;
 
             // 9. 머리 위 배너: "오늘 9시에 오픈" vs "한정수량 2명 선착순"
             let floatY = Math.sin(Date.now() * 0.005) * 4;
             if (tradeActive) {
-                const cycleInfo = (typeof getTradeCycleInfo === 'function') ? getTradeCycleInfo() : { isOpen: true };
-                const bannerText = !cycleInfo.isOpen 
-                    ? "🔒 오늘 21:30 오픈 (선착순 2명)" 
-                    : `⚔️ 선착순 ${tradeMachineStock}/2명 한정!`;
+                const bannerText = "🔒 일요일 공개!";
 
-                ctx.fillStyle = !cycleInfo.isOpen ? 'rgba(30, 41, 59, 0.95)' : 'rgba(220, 38, 38, 0.95)';
-                ctx.strokeStyle = !cycleInfo.isOpen ? '#38bdf8' : '#facc15'; 
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+                ctx.strokeStyle = '#ef4444'; 
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.roundRect(x + 8, y - 78 + floatY, 180, 26, 8);
+                ctx.roundRect(x + 18, y - 78 + floatY, 160, 26, 8);
                 ctx.fill(); ctx.stroke();
 
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '900 12px Arial';
+                ctx.fillStyle = '#fca5a5';
+                ctx.font = '900 13px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
