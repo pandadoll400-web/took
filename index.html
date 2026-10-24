@@ -730,6 +730,7 @@
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <button onclick="adminToggleTradeMachine()" style="padding: 10px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.45);">⚔️ [이벤트] 퓨즈 삭제 ➔ 트레이드 머신 전환 토글</button>
                 <button onclick="adminRefillTradeStock()" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);">🔄 [트레이드 머신] 선착순 재고 2개 즉시 충전</button>
+                <button onclick="adminFastForwardIncubator()" style="padding: 10px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.45);">⚡ [인큐베이터] 5분 배양 즉시 완료</button>
                 <button onclick="adminWarpToPetMachine()" style="padding: 10px; background: linear-gradient(135deg, #0ea5e9, #38bdf8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);">🐾 [신규] 얼음 지형 고급 펫 머신으로 이동</button>
                 <button onclick="adminToggle10PmEvent()" style="padding: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);">👽😈 [이벤트] 외계박사 & 악마보스 10시 이벤트 공개 토글</button>
                 <button onclick="adminToggleIceCanyonEvent()" style="padding: 10px; background: linear-gradient(135deg, #0284c7, #0ea5e9); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);">❄️ [이벤트] 얼음의 협곡 토요일 21:30 공개 토글</button>
@@ -2397,30 +2398,47 @@
         // ==========================================
         // 🐾 [ADMIN] 얼음 지형 고급 펫 머신 컨트롤 함수들
         // ==========================================
-        // 🧬 [유저 요구] 5분 인큐베이터 부화 시스템 상태
+        // 🧬 [유저 요구] 5분 인큐베이터 부화 시스템 상태 (세로고침/재접속 시에도 완벽 보존)
         let incubatorState = {
             active: false,
             startTime: 0,
             duration: 300000 // 5분 = 300,000ms
         };
-        try {
-            const savedInc = JSON.parse(localStorage.getItem('tb_incubator_state') || 'null');
-            if (savedInc && typeof savedInc === 'object') {
-                incubatorState = Object.assign(incubatorState, savedInc);
-            }
-        } catch(e) {}
 
         function saveIncubatorState() {
             try {
                 localStorage.setItem('tb_incubator_state', JSON.stringify(incubatorState));
+                if (currentUser) {
+                    localStorage.setItem('tb_incubator_state_' + currentUser.toLowerCase(), JSON.stringify(incubatorState));
+                }
             } catch(e) {}
         }
+
+        function loadIncubatorState() {
+            try {
+                let saved = null;
+                if (currentUser) {
+                    saved = localStorage.getItem('tb_incubator_state_' + currentUser.toLowerCase());
+                }
+                if (!saved) {
+                    saved = localStorage.getItem('tb_incubator_state');
+                }
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && typeof parsed === 'object') {
+                        incubatorState = Object.assign(incubatorState, parsed);
+                    }
+                }
+            } catch(e) {}
+        }
+        loadIncubatorState();
 
         function openPetMachineModal() {
             if (!isAdmin()) {
                 alert('🔒 관리자(Admin) 전용 머신입니다!');
                 return;
             }
+            loadIncubatorState();
             const modal = document.getElementById('pet-machine-modal');
             if (!modal) return;
             updatePetMachineModalUI();
@@ -2435,6 +2453,7 @@
         }
 
         function updatePetMachineModalUI() {
+            loadIncubatorState();
             const ownedEl = document.getElementById('incubator-owned-eggs');
             const activeEl = document.getElementById('incubator-active-eggs');
             const btnArea = document.getElementById('incubator-action-btn-area');
@@ -2481,41 +2500,25 @@
                 }
             }
 
-            // 2. 중앙 챔버 렌더링 (원래 알 없다가 -> 안치 시 전체 알 등장 -> 5분 경과 시 부화 준비)
+            // 2. 중앙 챔버: [유저 요구] "여기에 알만 있게 해주라고 초랑" -> 글씨/바 없이 오직 알과 타이머(초)만 깔끔 렌더링!
             if (chamberEl) {
                 if (!incubatorState.active) {
                     chamberEl.innerHTML = `
-                        <div style="font-size: 38px; margin-bottom: 6px; opacity: 0.6;">🫧</div>
-                        <div style="font-size: 16px; font-weight: bold; color: #94a3b8; margin-bottom: 4px;">빈 인큐베이터 (대기 중)</div>
-                        <div style="font-size: 12px; color: #64748b; line-height: 1.5;">
-                            현재 인큐베이터가 비어 있습니다.<br>
-                            상단의 <strong>[인큐베이터에 펫 알 넣기]</strong> 버튼을 누르면<br>
-                            화면 전체에 달걀이 안치되며 5분간 배양이 시작됩니다!
-                        </div>
+                        <div style="font-size: 64px; margin-bottom: 6px; opacity: 0.35;">🥚</div>
+                        <div style="font-size: 28px; font-weight: 900; color: #64748b; letter-spacing: 1px;">--:--</div>
                     `;
                 } else if (!isCompleted) {
                     const m = String(Math.floor(remain / 60000)).padStart(2, '0');
                     const s = String(Math.floor((remain % 60000) / 1000)).padStart(2, '0');
-                    const pct = Math.min(100, Math.floor((elapsed / incubatorState.duration) * 100));
 
                     chamberEl.innerHTML = `
-                        <div style="font-size: 54px; margin-bottom: 4px; filter: drop-shadow(0 0 16px #38bdf8); animation: pulse 1.5s infinite;">🥚✨</div>
-                        <div style="font-size: 18px; font-weight: 900; color: #38bdf8; margin-bottom: 4px;">생명 에너지 배양 중</div>
-                        <div style="font-size: 22px; font-weight: 900; color: #facc15; margin-bottom: 8px; letter-spacing: 1px;">⏱️ ${m}:${s} 남음</div>
-                        <div style="width: 82%; background: rgba(0,0,0,0.5); border-radius: 8px; height: 12px; overflow: hidden; border: 1.5px solid #38bdf8; margin-bottom: 6px;">
-                            <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, #38bdf8, #22c55e); border-radius: 6px; transition: width 0.5s ease;"></div>
-                        </div>
-                        <div style="font-size: 11px; color: #94a3b8;">배양 진행도: ${pct}% (총 5분 소요)</div>
-                        ${isAdmin() ? '<button onclick="adminFastForwardIncubator()" style="margin-top: 10px; background: #dc2626; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">⚡ [Admin] 5분 즉시 단축</button>' : ''}
+                        <div style="font-size: 68px; margin-bottom: 6px; filter: drop-shadow(0 0 18px #38bdf8); animation: pulse 1.5s infinite;">🥚</div>
+                        <div style="font-size: 32px; font-weight: 900; color: #facc15; letter-spacing: 1px;">${m}:${s}</div>
                     `;
                 } else {
                     chamberEl.innerHTML = `
-                        <div style="font-size: 58px; margin-bottom: 4px; filter: drop-shadow(0 0 20px #facc15); animation: pulse 0.8s infinite;">🥚💥✨</div>
-                        <div style="font-size: 20px; font-weight: 900; color: #4ade80; margin-bottom: 4px;">🎉 부화 준비 완료!</div>
-                        <div style="font-size: 12.5px; color: #cbd5e1; line-height: 1.5;">
-                            5분간의 생명 에너지 배양이 성공적으로 끝났습니다!<br>
-                            하단의 <strong>[달걀 획득]</strong> 버튼을 눌러 부화한 펫을 맞이하세요!
-                        </div>
+                        <div style="font-size: 68px; margin-bottom: 6px; filter: drop-shadow(0 0 22px #4ade80); animation: pulse 0.8s infinite;">🥚</div>
+                        <div style="font-size: 32px; font-weight: 900; color: #4ade80; letter-spacing: 1px;">00:00</div>
                     `;
                 }
             }
@@ -2559,7 +2562,7 @@
             incubatorState.startTime = Date.now();
             incubatorState.duration = 300000; // 5분
             saveIncubatorState();
-            saveGame();
+            saveGame(true); // 즉시 강제 세이브 (세로고침/재접속 대비)
             updatePetMachineModalUI();
 
             floatTexts.push({ x: player.x, y: player.y - 80, text: '🥚 [인큐베이터] 펫 알 안치! (5분 배양 시작)', color: '#38bdf8', life: 100, size: 20 });
@@ -2631,6 +2634,7 @@
             if (!isAdmin() || !incubatorState.active) return;
             incubatorState.startTime = Date.now() - incubatorState.duration - 1000;
             saveIncubatorState();
+            saveGame(true);
             updatePetMachineModalUI();
         }
 
@@ -13283,6 +13287,27 @@ function drawTradeSkinPreviewCanvas() {
                 });
             }
 
+            // 🥚 펫 알 및 공룡알 조각 수량 세로고침/재접속 시 완벽 보존
+            const eggItems = ['펫 알', '공룡알 조각', '공룡알조각', '공룡 알 조각', '공룡 알 화석', '공룡알 화석'];
+            eggItems.forEach(s => {
+                let count = 0;
+                if (typeof inventory !== 'undefined' && inventory && inventory[s] !== undefined) {
+                    count = Math.max(count, Number(inventory[s]) || 0);
+                }
+                try {
+                    const localRaw = localStorage.getItem('treeGameSave_adminaccount') || localStorage.getItem('treeGameSave');
+                    if (localRaw) {
+                        const parsed = JSON.parse(localRaw);
+                        if (parsed && parsed.inventory && parsed.inventory[s] !== undefined) {
+                            count = Math.max(count, Number(parsed.inventory[s]) || 0);
+                        }
+                    }
+                } catch(e) {}
+                adminInventory[s] = Math.max(count, Number(inventory && inventory[s]) || 0);
+            });
+            if (!adminInventory['펫 알'] || adminInventory['펫 알'] < 99) adminInventory['펫 알'] = Math.max(99, adminInventory['펫 알'] || 0);
+            if (!adminInventory['공룡알 조각'] || adminInventory['공룡알 조각'] < 99) adminInventory['공룡알 조각'] = Math.max(99, adminInventory['공룡알 조각'] || 0);
+
             // 🌾 씨앗 3종 완벽 보존 (구매했거나 저장된 씨앗 수량 유지)
             const seedNames = ['크라켄의 씨앗', '할로윈의 씨앗', '어드민의 씨앗'];
             seedNames.forEach(s => {
@@ -15837,7 +15862,8 @@ function drawTradeSkinPreviewCanvas() {
                 activeSkinPet: activeSkinPet || null,
                 adminActivePet: adminActivePet || 'frost_wolf',
                 adminPetFollowEnabled: !!adminPetFollowEnabled,
-                synthesizedPets: Array.isArray(synthesizedPets) ? synthesizedPets : []
+                synthesizedPets: Array.isArray(synthesizedPets) ? synthesizedPets : [],
+                incubatorState: (typeof incubatorState !== 'undefined' ? incubatorState : { active: false, startTime: 0, duration: 300000 })
             };
         }
 
@@ -16088,6 +16114,10 @@ function drawTradeSkinPreviewCanvas() {
             updateInvSkinUI();
             if (typeof updateFuseUI === 'function') updateFuseUI();
             if (typeof updateRouletteCooldownUI === 'function') updateRouletteCooldownUI();
+            if (data && data.incubatorState && typeof data.incubatorState === 'object') {
+                incubatorState = Object.assign(incubatorState, data.incubatorState);
+                if (typeof saveIncubatorState === 'function') saveIncubatorState();
+            }
         }
 
         function saveGame(forceCloud = false) {
