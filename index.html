@@ -4243,7 +4243,7 @@
             try {
                 if (typeof db !== 'undefined' && db) {
                     tradeMachineSyncInitialized = true;
-                    db.collection('global_events').doc('trade_machine').onSnapshot(doc => {
+                    db.collection('server_events').doc('trade_machine').onSnapshot(doc => {
                         if (doc.exists) {
                             const d = doc.data();
                             const info = (typeof getTradeCycleInfo === 'function') ? getTradeCycleInfo() : null;
@@ -4259,16 +4259,17 @@
             } catch(e) {}
         }
 
-        // 🔒 [유저 긴급 요청] 트레이닝 머신 즉시 임시 중단 및 점검 잠금
+        // ⚔️ 전체 서버 모든 유저에게 트레이닝 머신 공개
         function isTradeMachineActive() {
-            return false;
+            if (adminTradeMachineOverride !== null) return adminTradeMachineOverride;
+            return true;
         }
 
         function getTradeCycleInfo() {
             const now = new Date();
             const nowMs = now.getTime();
-            // 기준 시각: 오늘 21:00:00 (오후 9시)
-            const anchorToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 21, 0, 0, 0).getTime();
+            // 기준 시각: 오늘 21:30:00 (오후 9시 30분)
+            const anchorToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 21, 30, 0, 0).getTime();
             const CYCLE_MS = 60 * 60 * 1000; // 1시간 주기
 
             let isOpen = false;
@@ -4277,10 +4278,10 @@
             let timeUntilOpen = 0;
 
             if (nowMs < anchorToday) {
-                // 9시 전: 대기 상태 (오픈 전 절대 획득/장착 불가)
+                // 오픈 전: 대기 상태 (오픈 전 절대 획득/장착 불가)
                 isOpen = false;
                 const dateStr = now.getFullYear() + '_' + String(now.getMonth() + 1).padStart(2, '0') + '_' + String(now.getDate()).padStart(2, '0');
-                cycleId = 'pre_2100_' + dateStr;
+                cycleId = 'pre_2130_' + dateStr;
                 nextRestock = anchorToday;
                 timeUntilOpen = anchorToday - nowMs;
                 if (typeof ownedSkins !== 'undefined' && Array.isArray(ownedSkins) && ownedSkins.includes('japanese_ronin')) {
@@ -4288,13 +4289,13 @@
                     if (typeof equippedSkin !== 'undefined' && equippedSkin === 'japanese_ronin') equippedSkin = 'default';
                 }
             } else {
-                // 9시 이후: 오픈 & 1시간마다 새 사이클
+                // 오픈 후: 2명 선착순
                 isOpen = true;
                 const cycleIdx = Math.floor((nowMs - anchorToday) / CYCLE_MS);
                 const cycleStart = anchorToday + cycleIdx * CYCLE_MS;
                 nextRestock = cycleStart + CYCLE_MS;
                 const dateStr = now.getFullYear() + '_' + String(now.getMonth() + 1).padStart(2, '0') + '_' + String(now.getDate()).padStart(2, '0');
-                cycleId = 'cycle_2100_' + dateStr + '_' + cycleIdx;
+                cycleId = 'cycle_2130_' + dateStr + '_' + cycleIdx;
                 timeUntilOpen = 0;
             }
 
@@ -4344,10 +4345,12 @@
         }
 
         function openTradeMachineModal() {
-            alert('🔒 [긴급 점검] 트레이닝 머신이 임시 점검 중입니다.\n현재 이용하실 수 없습니다.');
+            initTradeMachineFirestoreSync();
+            checkTradeMachineRestock();
+            updateTradeMachineModalUI();
             const modal = document.getElementById('trade-machine-modal');
-            if (modal) modal.style.display = 'none';
-            return;
+            if (modal) modal.style.display = 'block';
+            drawTradeSkinPreviewCanvas();
         }
 
         function closeTradeMachineModal() {
@@ -4362,7 +4365,7 @@
             const stockBadge = document.getElementById('trade-stock-badge');
             if (stockBadge) {
                 if (!info.isOpen) {
-                    stockBadge.innerText = '🔒 21:00 오픈';
+                    stockBadge.innerText = '🔒 21:30 오픈';
                     stockBadge.style.color = '#fca5a5';
                 } else {
                     stockBadge.innerText = `${tradeMachineStock} / 2명`;
@@ -4393,7 +4396,7 @@
                 if (!info.isOpen) {
                     // 🔒 9시 오픈 전: 무조건 오픈 대기 버튼 (장착/획득 불가)
                     claimBtn.disabled = false;
-                    claimBtn.innerText = '🔒 오늘 21:00 오픈!';
+                    claimBtn.innerText = '🔒 오늘 21:30 오픈!';
                     claimBtn.style.background = 'linear-gradient(180deg, #475569 0%, #334155 100%)';
                     claimBtn.style.color = '#cbd5e1';
                     claimBtn.style.border = 'none';
@@ -4428,8 +4431,105 @@
         }
 
         async function claimTradeMachineSkin() {
-            alert('🔒 [긴급 점검] 트레이닝 머신이 임시 점검 중입니다.');
-            return;
+            checkTradeMachineRestock();
+            const info = getTradeCycleInfo();
+
+            // 1. 오픈 전인 경우 -> 절대 획득/장착 불가
+            if (!info.isOpen) {
+                alert('🔒 [오픈 대기]\n\n오늘 밤 9시 30분(21:30) 정각에 선착순 2명만 오픈됩니다!\n오픈 전에는 획득하거나 장착할 수 없습니다.');
+                return;
+            }
+
+            // 2. 이미 소유한 경우 -> 장착/해제 토글
+            if (ownedSkins.includes('japanese_ronin')) {
+                equippedSkin = 'japanese_ronin';
+                saveGame(true);
+                updateShopSkinUI();
+                updateInvSkinUI();
+                updateTradeMachineModalUI();
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '⚔️ [일본풍 검사] 장착 완료!', color: '#38bdf8', life: 100, size: 20 });
+                return;
+            }
+
+            // 3. 재고 소진 시 -> sold out!!
+            if (tradeMachineStock <= 0) {
+                const claimBtn = document.getElementById('trade-claim-btn');
+                if (claimBtn) {
+                    claimBtn.innerText = 'sold out!!';
+                    claimBtn.style.background = 'rgba(239, 68, 68, 0.2)';
+                    claimBtn.style.color = '#ef4444';
+                    claimBtn.style.border = '2px solid #ef4444';
+                }
+                alert('sold out!!\n\n선착순 2명이 모두 소진되었습니다!');
+                updateTradeMachineModalUI();
+                return;
+            }
+
+            // 4. Firestore 글로벌 동기화 (전 서버 모든 유저 중 딱 2명 한정 엄격 보장)
+            let success = false;
+            if (typeof db !== 'undefined' && db) {
+                try {
+                    const docRef = db.collection('server_events').doc('trade_machine');
+                    await db.runTransaction(async (transaction) => {
+                        const doc = await transaction.get(docRef);
+                        let data = doc.exists ? doc.data() : { cycleId: info.cycleId, stock: 2, claimedUsers: [] };
+                        if (data.cycleId !== info.cycleId) {
+                            data = { cycleId: info.cycleId, stock: 2, claimedUsers: [] };
+                        }
+                        if (data.stock <= 0 || (data.claimedUsers && data.claimedUsers.length >= 2)) {
+                            throw new Error('SOLD_OUT');
+                        }
+                        const uid = (currentUser ? currentUser.toLowerCase() : '') || ('user_' + Math.random().toString(36).substring(7));
+                        if (data.claimedUsers && data.claimedUsers.includes(uid)) {
+                            throw new Error('ALREADY_CLAIMED');
+                        }
+                        data.stock = data.stock - 1;
+                        if (!data.claimedUsers) data.claimedUsers = [];
+                        data.claimedUsers.push(uid);
+                        transaction.set(docRef, data);
+                        tradeMachineStock = data.stock;
+                    });
+                    success = true;
+                } catch(e) {
+                    if (e && e.message === 'SOLD_OUT') {
+                        tradeMachineStock = 0;
+                        saveTradeMachineState(info.cycleId);
+                        updateTradeMachineModalUI();
+                        alert('sold out!!\n\n다른 플레이어가 먼저 획득하여 선착순 2명이 모두 마감되었습니다!');
+                        return;
+                    }
+                    if (e && e.message === 'ALREADY_CLAIMED') {
+                        alert('이미 이번 차수 선착순 스킨을 획득하셨습니다!');
+                        updateTradeMachineModalUI();
+                        return;
+                    }
+                    console.warn('Firestore transaction error, using local/broadcast fallback:', e);
+                }
+            }
+
+            // 로컬/브로드캐스트 채널 fallback (Firestore 미연결 시)
+            if (!success && tradeMachineStock > 0) {
+                tradeMachineStock--;
+                success = true;
+            }
+
+            if (success) {
+                saveTradeMachineState(info.cycleId);
+                if (!ownedSkins.includes('japanese_ronin')) {
+                    ownedSkins.push('japanese_ronin');
+                }
+                equippedSkin = 'japanese_ronin';
+                saveGame(true);
+                updateShopSkinUI();
+                updateInvSkinUI();
+
+                floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [일본풍 검사] 선착순 획득 성공!', color: '#ff7675', life: 120, size: 24 });
+                alert('🎉 [대성공!] 전 서버 선착순 2명 한정 [일본풍 검사] 스킨을 획득하셨습니다!!\n\n버튼이 [equip!]으로 변경되었습니다.');
+                updateTradeMachineModalUI();
+            } else {
+                updateTradeMachineModalUI();
+                alert('sold out!!\n\n선착순 재고가 모두 소진되었습니다.');
+            }
         }
 
         function drawTradeSkinPreviewCanvas() {
@@ -22683,7 +22783,7 @@
             if (tradeActive) {
                 const cycleInfo = (typeof getTradeCycleInfo === 'function') ? getTradeCycleInfo() : { isOpen: true };
                 const bannerText = !cycleInfo.isOpen 
-                    ? "🔒 오늘 21:00 오픈 (선착순 2명)" 
+                    ? "🔒 오늘 21:30 오픈 (선착순 2명)" 
                     : `⚔️ 선착순 ${tradeMachineStock}/2명 한정!`;
 
                 ctx.fillStyle = !cycleInfo.isOpen ? 'rgba(30, 41, 59, 0.95)' : 'rgba(220, 38, 38, 0.95)';
