@@ -728,7 +728,8 @@
                 <button onclick="closeAdminPanelModal()" style="background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; line-height: 1;">✕</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button onclick="activateFuseLuck25(!isFuseLuck25Active)" style="padding: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);">🍀 [이벤트] 퓨즈머신 희귀 확률 2.5배 럭 토글</button>
+                <button onclick="adminToggleTradeMachine()" style="padding: 10px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.45);">⚔️ [이벤트] 퓨즈 삭제 ➔ 트레이드 머신 전환 토글</button>
+                <button onclick="adminRefillTradeStock()" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);">🔄 [트레이드 머신] 선착순 재고 2개 즉시 충전</button>
                 <button onclick="adminWarpToPetMachine()" style="padding: 10px; background: linear-gradient(135deg, #0ea5e9, #38bdf8); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);">🐾 [신규] 얼음 지형 고급 펫 머신으로 이동</button>
                 <button onclick="adminToggle10PmEvent()" style="padding: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45);">👽😈 [이벤트] 외계박사 & 악마보스 10시 이벤트 공개 토글</button>
                 <button onclick="adminToggleIceCanyonEvent()" style="padding: 10px; background: linear-gradient(135deg, #0284c7, #0ea5e9); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);">❄️ [이벤트] 얼음의 협곡 토요일 21:30 공개 토글</button>
@@ -1006,21 +1007,16 @@
         <!-- 🌀 고차원 악마 보스 텔레포트 게이트 모달 -->
         <div id="boss-portal-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 12, 30, 0.98); color: white; padding: 22px 20px; border-radius: 18px; width: 88%; max-width: 380px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #a29bfe; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.85), 0 0 25px rgba(162, 155, 254, 0.4); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(162, 155, 254, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
-                <h3 style="margin: 0; color: #a29bfe; font-size: 18px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(162, 155, 254, 0.5);">
-                    <span>🌀</span> 고차원 악마 보스전
+                <h3 style="margin: 0; color: #ff7675; font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(231, 76, 60, 0.6);">
+                    <span>😈</span> 악마
                 </h3>
                 <button onclick="closeBossPortalModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
             </div>
 
-            <!-- 보스 프로필 카드 -->
-            <div style="background: rgba(231, 76, 60, 0.12); border: 1.5px solid #e74c3c; border-radius: 12px; padding: 14px; margin-bottom: 14px; text-align: center;">
-                <div style="font-size: 40px; margin-bottom: 4px;">😈</div>
-                <div style="font-size: 17px; font-weight: bold; color: #ff7675; margin-bottom: 6px;">어둠의 악마 보스</div>
-                <div style="font-size: 12px; color: #ecf0f1; line-height: 1.55;">
-                    🔥 <strong>공격 패턴:</strong> 초고속 돌진 및 강타 (피격 시 -10 HP)<br>
-                    ❤️ <strong>내 체력:</strong> 100 HP | <strong>보스 체력:</strong> 100 HP<br>
-                    🪓 <strong>도끼 필수:</strong> 금도끼 10방 / 은도끼 20방 / 기타 25방
-                </div>
+            <!-- 보스 프로필 카드 (복잡한 글씨 제거, 깔끔한 명칭 표기) -->
+            <div style="background: rgba(231, 76, 60, 0.12); border: 1.5px solid #e74c3c; border-radius: 14px; padding: 18px 14px; margin-bottom: 14px; text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 6px;">😈🔥</div>
+                <div style="font-size: 24px; font-weight: 900; color: #ff7675; letter-spacing: -0.5px; text-shadow: 0 0 14px rgba(231, 76, 60, 0.7);">악마</div>
             </div>
 
             <!-- 오픈 일정 안내 카드 -->
@@ -1047,22 +1043,16 @@
         <!-- 🐉 얼음의 협곡 고대 서리룡 보스 차원문 모달 -->
         <div id="ice-dragon-portal-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(8, 20, 36, 0.98); color: white; padding: 22px 20px; border-radius: 20px; width: 88%; max-width: 380px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 30px rgba(56, 189, 248, 0.45); box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
-                <h3 style="margin: 0; color: #38bdf8; font-size: 18px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);">
-                    <span>❄️</span> 고대 서리룡 결투장
+                <h3 style="margin: 0; color: #38bdf8; font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);">
+                    <span>❄️</span> 서리룡
                 </h3>
                 <button onclick="closeIceDragonPortalModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
             </div>
 
-            <!-- 보스 프로필 카드 -->
-            <div style="background: rgba(14, 165, 233, 0.12); border: 1.5px solid #0284c7; border-radius: 12px; padding: 14px; margin-bottom: 14px; text-align: center;">
-                <div style="font-size: 42px; margin-bottom: 4px;">🐉❄️</div>
-                <div style="font-size: 18px; font-weight: bold; color: #7dd3fc; margin-bottom: 6px;">[얼음의 협곡 수호룡] 고대 서리룡</div>
-                <div style="font-size: 12px; color: #e0f2fe; line-height: 1.6; text-align: left; background: rgba(0,0,0,0.3); padding: 10px 12px; border-radius: 8px;">
-                    🐉 <strong>서리룡 체력:</strong> 7,000 HP<br>
-                    ❤️ <strong>내 체력:</strong> 1,000 HP | 💥 <strong>타격 데미지:</strong> 500 DMG<br>
-                    ❄️ <strong>일반 패턴 (100 DMG):</strong> 서리 브레스 / 고드름 폭풍 / 서리 충격파<br>
-                    ⚠️ <strong>특수 각성 패턴:</strong> 체력 10% 돌파 시 하늘로 비상 후 급강하 폭격 (300 DMG)!
-                </div>
+            <!-- 보스 프로필 카드 (복잡한 글씨 제거, 깔끔한 명칭 표기) -->
+            <div style="background: rgba(14, 165, 233, 0.12); border: 1.5px solid #0284c7; border-radius: 14px; padding: 18px 14px; margin-bottom: 14px; text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 6px;">🐉❄️</div>
+                <div style="font-size: 24px; font-weight: 900; color: #38bdf8; letter-spacing: -0.5px; text-shadow: 0 0 14px rgba(56, 189, 248, 0.7);">서리룡</div>
             </div>
 
             <!-- 내 서리룡 처치 수 & 피닉스 스킨 보상 안내 -->
@@ -1712,6 +1702,10 @@
 
         <!-- 호박 융합 (퓨즈) 모달 -->
         <div id="fuse-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(30, 20, 10, 0.96); color: white; border-radius: 16px; width: 92%; max-width: 460px; max-height: 85%; overflow-y: auto; display: none; border: 3px solid #d35400; box-shadow: 0 0 25px rgba(230, 126, 34, 0.4); z-index: 45; font-family: 'Arial', sans-serif;">
+            <!-- ⚠️ 9시 삭제 예고 배너 -->
+            <div style="background: linear-gradient(90deg, #dc2626, #ef4444, #dc2626); color: white; padding: 8px 12px; font-weight: 900; font-size: 13px; text-align: center; border-bottom: 2px solid #b91c1c; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+                ⚠️ [안내] 퓨즈 머신은 오늘 밤 9시에 전격 삭제됩니다!
+            </div>
             <!-- 상단 할로윈 호박/박쥐 장식 배너 -->
             <div style="background: linear-gradient(90deg, #e67e22, #f39c12, #e67e22); padding: 12px 15px; border-top-left-radius: 13px; border-top-right-radius: 13px; border-bottom: 3px solid #ba4a00; display: flex; justify-content: space-between; align-items: center; position: relative;">
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -1784,6 +1778,39 @@
             </div>
         </div>
 
+
+
+        <!-- ⚔️ 트레이드 머신 모달 (한정 수량 2개 선착순) -->
+        <div id="trade-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 12, 25, 0.98); color: white; border-radius: 20px; width: 90%; max-width: 370px; display: none; border: 2.5px solid #e74c3c; box-shadow: 0 10px 45px rgba(0,0,0,0.95), 0 0 35px rgba(231, 76, 60, 0.5); z-index: 60; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 18px 16px; box-sizing: border-box;">
+            <!-- 헤더 -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(231, 76, 60, 0.35); padding-bottom: 8px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 20px;">⚔️</span>
+                    <h3 style="margin: 0; color: #ff7675; font-size: 18px; font-weight: 900;">트레이드 머신</h3>
+                </div>
+                <button onclick="closeTradeMachineModal()" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
+            </div>
+
+            <!-- 선착순 2개 한정 수량 배지 -->
+            <div style="background: rgba(220, 38, 38, 0.2); border: 1.5px solid #ef4444; border-radius: 10px; padding: 8px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #fca5a5; font-weight: bold; font-size: 12.5px;">🔥 한정 수량 (1시간 리필):</span>
+                <span id="trade-stock-badge" style="font-weight: 900; font-size: 14px; color: #facc15;">2 / 2개</span>
+            </div>
+
+            <!-- 중간 크기 스킨 캔버스 프리뷰 (일본풍 검사) -->
+            <div style="display: flex; justify-content: center; margin-bottom: 8px;">
+                <canvas id="trade-skin-preview" width="110" height="120" style="background: rgba(0,0,0,0.4); border-radius: 14px; border: 1.5px solid rgba(244, 114, 182, 0.3);"></canvas>
+            </div>
+            <h4 style="margin: 0 0 4px 0; color: #ffffff; font-size: 17px; font-weight: 900;">일본풍 검사</h4>
+            <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 14px;">
+                다음 충전: <span id="trade-timer-text" style="color: #38bdf8; font-weight: bold;">--:--</span>
+            </div>
+
+            <!-- 누르기! 버튼 -->
+            <button id="trade-claim-btn" onclick="claimTradeMachineSkin()" style="width: 100%; padding: 13px; background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%); color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 17px; cursor: pointer; box-shadow: 0 4px 0 #7f1d1d, 0 6px 15px rgba(239, 68, 68, 0.4); letter-spacing: 1px;">
+                🔥 누르기!
+            </button>
+        </div>
 
         <!-- 🛠️ 농장 밭 & 장비 업그레이드 상점 모달 -->
         <div id="farm-upgrade-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 16, 26, 0.98); color: white; border-radius: 18px; width: 95%; max-width: 540px; max-height: 90%; overflow-y: auto; display: none; border: 3px solid #f39c12; box-shadow: 0 0 40px rgba(243, 156, 18, 0.55); z-index: 55; font-family: 'Arial', sans-serif;">
@@ -2440,7 +2467,48 @@
                 labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#38bdf8' : '#f1c40f'), life: 30 });
             }
 
-            alert("🥚 [공룡 펫 알 부화 대기 중!]\n\n신비한 펫 알이 인큐베이터에 안전하게 안치되었습니다!\n\n인큐베이터 안에서 알이 따뜻하게 생명 에너지를 모으고 있습니다.\n✨ 부화 결과와 태어날 신비한 펫은 다음 업데이트에서 전격 공개됩니다!");
+            // 🐣 [유저 요구] 펫 알 부화 확률: 일반 고릴라 75%, 일반 늑대 15%, 일반 고양이 10%
+            const roll = Math.random() * 100;
+            let petId, petName, petIcon, petColor, petRarity;
+            if (roll < 75) {
+                petId = 'pet_gorilla';
+                petName = '일반 고릴라';
+                petIcon = '🦍';
+                petColor = '#a855f7';
+                petRarity = '일반 (75%)';
+            } else if (roll < 90) {
+                petId = 'pet_wolf';
+                petName = '일반 늑대';
+                petIcon = '🐺';
+                petColor = '#38bdf8';
+                petRarity = '희귀 (15%)';
+            } else {
+                petId = 'pet_cat';
+                petName = '일반 고양이';
+                petIcon = '🐱';
+                petColor = '#facc15';
+                petRarity = '초희귀 (10%)';
+            }
+
+            if (!synthesizedPets.includes(petId)) {
+                synthesizedPets.push(petId);
+            }
+            if (!ownedSkins.includes(petId)) {
+                ownedSkins.push(petId);
+            }
+            activeSkinPet = petId;
+            adminPetFollowEnabled = true;
+
+            try {
+                localStorage.setItem('active_skin_pet', petId);
+                localStorage.setItem('synthesized_pets', JSON.stringify(synthesizedPets));
+                localStorage.setItem('admin_pet_follow', 'true');
+            } catch(e) {}
+            saveGame(true);
+            updatePetMachineModalUI();
+
+            floatTexts.push({ x: player.x, y: player.y - 90, text: `🥚✨ 부화 성공! [${petIcon} ${petName}]`, color: petColor, life: 120, size: 24 });
+            alert(`🎉 [🥚 펫 알 부화 성공!]\n\n인큐베이터에서 따뜻하게 생명을 품은 알이 깨어났습니다!\n\n출현 펫: ${petIcon} [${petName}] (${petRarity})\n\n동행 펫으로 플레이어 옆을 든든하게 따르며 함께 모험합니다!\n(🌲 벌목 속도 +20% 단축 부스트 활성화!)`);
         }
 
         function fuseSkinWithLeash(skinId) {
@@ -2645,6 +2713,24 @@
             forceIceCanyonOpen = !forceIceCanyonOpen;
             try { localStorage.setItem('force_ice_canyon_event', forceIceCanyonOpen ? 'true' : 'false'); } catch(e) {}
             alert('❄️ 신규 지역(얼음의 협곡) 강제 오픈 상태: ' + (forceIceCanyonOpen ? '🔓 오픈됨' : '🔒 잠김 (10/24 21:30 공개)'));
+        }
+
+
+        function adminToggleTradeMachine() {
+            if (adminTradeMachineOverride === null) {
+                adminTradeMachineOverride = false;
+            } else {
+                adminTradeMachineOverride = !adminTradeMachineOverride;
+            }
+            alert(adminTradeMachineOverride ? '⚔️ [이벤트] 퓨즈머신이 삭제되고 트레이드 머신이 즉시 활성화되었습니다!' : '🔒 [이벤트] 퓨즈머신으로 복원되었습니다.');
+        }
+
+        function adminRefillTradeStock() {
+            tradeMachineStock = 2;
+            tradeMachineNextRestock = Math.ceil(Date.now() / 3600000) * 3600000;
+            saveTradeMachineState();
+            alert('🔄 [트레이드 머신] 선착순 재고가 즉시 2개로 재충전되었습니다!');
+            updateTradeMachineModalUI();
         }
 
         function adminToggle10PmEvent() {
@@ -4068,6 +4154,167 @@
         }
 
 
+
+        // ============================================================================
+        // ⚔️ 9시 트레이드 머신 (선착순 2명 한정판 스킨 & 1시간 충전) 시스템
+        // ============================================================================
+        let adminTradeMachineOverride = null;
+        let tradeMachineStock = 2;
+        let tradeMachineNextRestock = 0;
+        let tradeMachineChannel = null;
+
+        try {
+            tradeMachineChannel = new BroadcastChannel('took_trade_channel');
+            tradeMachineChannel.onmessage = (e) => {
+                if (e.data && e.data.type === 'TRADE_STOCK_UPDATE') {
+                    tradeMachineStock = e.data.stock;
+                    updateTradeMachineModalUI();
+                }
+            };
+        } catch(e) {}
+
+        function isTradeMachineActive() {
+            // 🔒 [유저 요구] 현재는 오직 어드민 계정에서만 트레이드 머신 이용 가능
+            if (typeof isAdmin === 'function' && !isAdmin()) return false;
+            if (adminTradeMachineOverride !== null) return adminTradeMachineOverride;
+            return true; // 어드민 계정에서는 즉시 활성화
+        }
+
+        function checkTradeMachineRestock() {
+            const now = Date.now();
+            try {
+                const saved = JSON.parse(localStorage.getItem('tb_trade_machine_state') || '{}');
+                if (saved.nextRestock && now < saved.nextRestock) {
+                    tradeMachineStock = (saved.stock !== undefined) ? saved.stock : 2;
+                    tradeMachineNextRestock = saved.nextRestock;
+                    return;
+                }
+            } catch(e) {}
+
+            // 1시간 주기로 리필 (Next top of the hour)
+            tradeMachineStock = 2;
+            tradeMachineNextRestock = Math.ceil(now / 3600000) * 3600000;
+            saveTradeMachineState();
+        }
+
+        function saveTradeMachineState() {
+            try {
+                localStorage.setItem('tb_trade_machine_state', JSON.stringify({
+                    stock: tradeMachineStock,
+                    nextRestock: tradeMachineNextRestock
+                }));
+            } catch(e) {}
+            if (tradeMachineChannel) {
+                try { tradeMachineChannel.postMessage({ type: 'TRADE_STOCK_UPDATE', stock: tradeMachineStock }); } catch(e) {}
+            }
+        }
+
+        function openTradeMachineModal() {
+            if (!isTradeMachineActive()) {
+                alert('⚠️ 트레이드 머신은 어드민 계정에서만 테스트 가능합니다.');
+                return;
+            }
+            checkTradeMachineRestock();
+            updateTradeMachineModalUI();
+            const modal = document.getElementById('trade-machine-modal');
+            if (modal) modal.style.display = 'block';
+            drawTradeSkinPreviewCanvas();
+        }
+
+        function closeTradeMachineModal() {
+            const modal = document.getElementById('trade-machine-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function updateTradeMachineModalUI() {
+            checkTradeMachineRestock();
+            const stockBadge = document.getElementById('trade-stock-badge');
+            if (stockBadge) {
+                stockBadge.innerText = `${tradeMachineStock} / 2개`;
+                stockBadge.style.color = (tradeMachineStock > 0) ? '#facc15' : '#ef4444';
+            }
+
+            const timerText = document.getElementById('trade-timer-text');
+            if (timerText) {
+                const remain = Math.max(0, tradeMachineNextRestock - Date.now());
+                const m = String(Math.floor(remain / 60000)).padStart(2, '0');
+                const s = String(Math.floor((remain % 60000) / 1000)).padStart(2, '0');
+                timerText.innerText = `${m}:${s}`;
+            }
+
+            const claimBtn = document.getElementById('trade-claim-btn');
+            if (claimBtn) {
+                const isOwned = ownedSkins.includes('japanese_ronin');
+                if (isOwned) {
+                    claimBtn.disabled = true;
+                    claimBtn.innerText = '✓ 이미 획득함';
+                    claimBtn.style.background = '#475569';
+                    claimBtn.style.boxShadow = 'none';
+                    claimBtn.style.cursor = 'default';
+                } else if (tradeMachineStock <= 0) {
+                    claimBtn.disabled = true;
+                    claimBtn.innerText = '❌ 품절 (2/2 소진 완료)';
+                    claimBtn.style.background = '#64748b';
+                    claimBtn.style.boxShadow = 'none';
+                    claimBtn.style.cursor = 'default';
+                } else {
+                    claimBtn.disabled = false;
+                    claimBtn.innerText = '🔥 누르기!';
+                    claimBtn.style.background = 'linear-gradient(180deg, #ef4444 0%, #b91c1c 100%)';
+                    claimBtn.style.boxShadow = '0 4px 0 #7f1d1d, 0 6px 15px rgba(239, 68, 68, 0.4)';
+                    claimBtn.style.cursor = 'pointer';
+                }
+            }
+        }
+
+        function claimTradeMachineSkin() {
+            checkTradeMachineRestock();
+            if (ownedSkins.includes('japanese_ronin')) {
+                alert('이미 [일본풍 검사] 스킨을 보유하고 있습니다!');
+                return;
+            }
+            if (tradeMachineStock <= 0) {
+                alert('앗! 선착순 2명이 모두 마감되었습니다!\n다음 1시간 뒤 충전 시 빠르게 [누르기!] 버튼을 눌러보세요.');
+                updateTradeMachineModalUI();
+                return;
+            }
+
+            tradeMachineStock--;
+            saveTradeMachineState();
+
+            ownedSkins.push('japanese_ronin');
+            equippedSkin = 'japanese_ronin';
+            saveGame(true);
+            updateShopSkinUI();
+            updateInvSkinUI();
+
+            floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [일본풍 검사] 선착순 획득 성공!', color: '#ff7675', life: 120, size: 24 });
+            alert('🎉 [대성공!] 선착순 2명 한정 [일본풍 검사] 스킨을 가장 빠르게 획득하셨습니다!!\n인벤토리 및 외형에 즉시 적용되었습니다!');
+            updateTradeMachineModalUI();
+        }
+
+        // 트레이드 머신 일본풍 검사 캔버스 렌더러
+        function drawTradeSkinPreviewCanvas() {
+            const canvas = document.getElementById('trade-skin-preview');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2 + 10);
+            ctx.scale(0.85, 0.85);
+            const dummyChar = { colors: { skin: '#ffeaa7' }, walkTimer: 0 };
+            drawCharacter(ctx, dummyChar, 0, 0, false, 0, 'japanese_ronin');
+            ctx.restore();
+        }
+
+        setInterval(() => {
+            const modal = document.getElementById('trade-machine-modal');
+            if (modal && modal.style.display === 'block') {
+                updateTradeMachineModalUI();
+                drawTradeSkinPreviewCanvas();
+            }
+        }, 1000);
+
         // ============================================================================
         // 🛠️ 밭 & 장비 업그레이드 상점 시스템
         // ============================================================================
@@ -4095,11 +4342,11 @@
             const badge = document.getElementById('farm-plot-expand-badge');
 
             if (unlockedFarmPlots >= 9) {
-                if (nextTitle) nextTitle.innerText = '모든 밭 개간 완료 (최대 9개)';
-                if (nextCost) nextCost.innerText = '더 이상 확장할 수 없습니다.';
+                if (nextTitle) nextTitle.innerText = '모든 밭 확장 완료 (9/9)';
+                if (nextCost) nextCost.innerText = '최대 부지 달성';
                 if (buyBtn) {
                     buyBtn.disabled = true;
-                    buyBtn.innerText = 'MAX 완료';
+                    buyBtn.innerText = 'MAX';
                     buyBtn.style.background = '#64748b';
                     buyBtn.style.boxShadow = 'none';
                     buyBtn.style.cursor = 'default';
@@ -4108,41 +4355,46 @@
             } else {
                 const nextPlotNum = unlockedFarmPlots + 1;
                 const cost = FARM_PLOT_EXPANSION_COSTS[nextPlotNum] || 50000;
-                if (nextTitle) nextTitle.innerText = `${nextPlotNum}번째 밭 개간`;
-                if (nextCost) nextCost.innerText = `비용: 💰 ${cost.toLocaleString()} 골드`;
+                if (nextTitle) nextTitle.innerText = `🌱 밭 #${nextPlotNum} 확장`;
+                if (nextCost) nextCost.innerText = `${unlockedFarmPlots}개 ➔ ${nextPlotNum}개 확장`;
                 if (buyBtn) {
                     buyBtn.disabled = false;
-                    buyBtn.innerText = '밭 확장';
+                    buyBtn.innerHTML = `💰 ${cost.toLocaleString()}`;
                     buyBtn.style.background = 'linear-gradient(180deg, #22c55e 0%, #16a34a 100%)';
-                    buyBtn.style.boxShadow = '0 3px 0 #15803d';
+                    buyBtn.style.boxShadow = '0 3.5px 0 #15803d';
                     buyBtn.style.cursor = 'pointer';
+                    buyBtn.style.fontWeight = '900';
                 }
-                if (badge) badge.innerText = `진행도: ${unlockedFarmPlots}/9`;
+                if (badge) badge.innerText = `${unlockedFarmPlots}/9`;
             }
 
-            // 특수 장비 목록 렌더링
+            // 특수 장비 목록 렌더링 (제품 사진 + 돈 버튼 + 밑에 사는 버튼 카드 레이아웃)
             const eqList = document.getElementById('farm-equipment-list');
             if (eqList) {
                 eqList.innerHTML = '';
+                eqList.style.display = 'grid';
+                eqList.style.gridTemplateColumns = 'repeat(auto-fit, minmax(130px, 1fr))';
+                eqList.style.gap = '10px';
+
                 FARM_EQUIPMENT_DATA.forEach(eq => {
                     const isOwned = ownedFarmEquipments.includes(eq.id);
-                    let btnHtml = '';
+                    let buyBtnHtml = '';
                     if (isOwned) {
-                        btnHtml = `<button disabled style="background: #475569; color: #94a3b8; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 11px;">장착 중</button>`;
+                        buyBtnHtml = `<button disabled style="width: 100%; background: #475569; color: #94a3b8; border: none; padding: 7px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: default;">장착 중</button>`;
                     } else {
-                        btnHtml = `<button onclick="buyFarmEquipment('${eq.id}')" style="background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 900; font-size: 11px; cursor: pointer; box-shadow: 0 2px 0 #075985;">💰 ${eq.price.toLocaleString()}</button>`;
+                        buyBtnHtml = `<button onclick="buyFarmEquipment('${eq.id}')" style="width: 100%; background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%); color: white; border: none; padding: 7px; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 0 #15803d;">구매</button>`;
                     }
 
                     eqList.innerHTML += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.85); padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.3);">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 22px;">${eq.icon}</span>
-                                <div>
-                                    <div style="font-size: 12.5px; font-weight: bold; color: #f8fafc;">${eq.name}</div>
-                                    <div style="font-size: 10.5px; color: #38bdf8;">${eq.effectText}</div>
-                                </div>
-                            </div>
-                            <div>${btnHtml}</div>
+                        <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(56, 189, 248, 0.4); border-radius: 12px; padding: 10px 8px; display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: space-between;">
+                            <!-- 1. 제품 사진 / 아이콘 -->
+                            <div style="font-size: 34px; margin-bottom: 2px;">${eq.icon}</div>
+                            <div style="font-size: 13px; font-weight: bold; color: #ffffff; margin-bottom: 2px;">${eq.name}</div>
+                            <div style="font-size: 10px; color: #38bdf8; margin-bottom: 6px;">${eq.effectText}</div>
+                            <!-- 2. 돈 버튼 (가격) -->
+                            <div style="background: rgba(0,0,0,0.5); border: 1px solid #facc15; border-radius: 6px; padding: 4px 8px; font-weight: 900; color: #facc15; font-size: 12px; margin-bottom: 6px; width: 85%;">💰 ${eq.price.toLocaleString()}</div>
+                            <!-- 3. 밑에 사는 버튼 (구매) -->
+                            ${buyBtnHtml}
                         </div>
                     `;
                 });
@@ -6754,7 +7006,20 @@
                 ctx.shadowBlur = 0;
             }
 
-            // (상단 네온 라벨 박스 제거 - 자연스러운 바위 렌더링)
+            // 알 제작 바위 상단 명칭 표기
+            if (isLeashRock) {
+                ctx.save();
+                let bobA = Math.sin(now * 0.005) * 3;
+                ctx.translate(x, y - r - 15 + bobA);
+                ctx.fillStyle = '#fde047';
+                ctx.font = 'bold 13px Arial';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = '#000'; ctx.shadowBlur = 5;
+                ctx.fillText("🥚 알 제작 바위", 0, 0);
+                ctx.shadowBlur = 0;
+                ctx.restore();
+            }
+
             ctx.restore();
         }
 
@@ -10433,10 +10698,14 @@
                         }
                     }
                 }
-                // 호박 융합 (퓨즈) 건물 클릭 감지 (할로윈 맵 하단 Y: 2050)
+                // 호박 융합 (퓨즈) / 트레이드 머신 건물 클릭 감지 (할로윈 맵 하단 Y: 2050)
                 if (typeof fuseBuilding !== 'undefined') {
                     if (cx > fuseBuilding.x - 20 && cx < fuseBuilding.x + fuseBuilding.width + 20 && cy > fuseBuilding.y && cy < fuseBuilding.y + fuseBuilding.height + 20) {
-                        openFuseModal();
+                        if (isTradeMachineActive()) {
+                            openTradeMachineModal();
+                        } else {
+                            openFuseModal();
+                        }
                         return;
                     }
                 }
@@ -11606,6 +11875,10 @@
             { id: 'angel', name: '천사', price: 0, icon: '👼', isReward: true, adminOnly: true, desc: '전설의 럭키블럭 보상 (15%)' },
             { id: 'devil', name: '악마', price: 0, icon: '😈', isReward: true, adminOnly: true, desc: '전설의 럭키블럭 보상 (9%)' },
             { id: 'etheron', name: '에테론 (천사반 악마반)', price: 0, icon: '🌓', isReward: true, adminOnly: true, desc: '전설의 럭키블럭 초신화 보상 (1%)' },
+            { id: 'japanese_ronin', name: '일본풍 검사', price: 0, icon: '⚔️🌸', isReward: true, desc: '트레이드 머신 선착순 한정판 스킨 (시간당 2명)' },
+            { id: 'pet_gorilla', name: '일반 고릴라', price: 0, icon: '🦍', isReward: true, desc: '인큐베이터 부화 펫 (벌목 속도 +20%)' },
+            { id: 'pet_wolf', name: '일반 늑대', price: 0, icon: '🐺', isReward: true, desc: '인큐베이터 부화 펫 (벌목 속도 +20%)' },
+            { id: 'pet_cat', name: '일반 고양이', price: 0, icon: '🐱', isReward: true, desc: '인큐베이터 부화 펫 (벌목 속도 +20%)' },
             { id: 'kraken', name: '크라켄', price: 0, icon: '🦑', isReward: true, desc: '크라켄의 씨앗 수확 보상 (75%)' },
             { id: 'infected_gorilla', name: '감염된 고릴라', price: 0, icon: '🦍💜', isReward: true, desc: '크라켄의 씨앗 수확 보상 (22%)' },
             { id: 'frost_dragon', name: '서리룡', price: 0, icon: '🐉❄️', isReward: true, desc: '크라켄의 씨앗 초희귀 수확 보상 (3%)' }
@@ -18341,6 +18614,14 @@
                                 excavateFossilAtSpot(tree.x, tree.y, true);
                             }
 
+                            // 🧩 [유저 요구] 나무 벌목 시 1% 확률로 [공룡알 조각] 발굴
+                            if (Math.random() < 0.01) {
+                                if (!inventory['공룡알 조각']) inventory['공룡알 조각'] = 0;
+                                inventory['공룡알 조각']++;
+                                saveGame(true);
+                                floatTexts.push({ x: tree.x, y: tree.y - 110, text: `🧩 [공룡알 조각 (1%)] 획득! (${inventory['공룡알 조각']}개)`, color: '#38bdf8', life: 100, size: 20 });
+                            }
+
                             // 쪽지가 심어진 일반 나무 벌목 카운트 (3번 완전히 부수면 쪽지 조각 드롭)
                             if (noteEmbedded && tree.id === 'normal') {
                                 noteTreeHits++;
@@ -20197,7 +20478,165 @@
                 }
                 ctx.shadowBlur = 0;
 
-            } else if (useSkin.startsWith('ghost')) {
+            // ⚔️ [유저 요구] 일본풍 검사 (Japanese Ronin / Samurai) 스킨 렌더링
+            } else if (useSkin === 'japanese_ronin') {
+                ctx.save();
+                ctx.translate(0, -bobbing);
+
+                let rTime = Date.now() * 0.003;
+
+                // 1. 하의 (검붉은 하카마 치마바지)
+                ctx.fillStyle = '#1e293b';
+                ctx.beginPath();
+                ctx.moveTo(-10, 8);
+                ctx.lineTo(-14, 24);
+                ctx.lineTo(14, 24);
+                ctx.lineTo(10, 8);
+                ctx.closePath();
+                ctx.fill();
+
+                // 2. 상의 하오리 (블랙/네이비 무사 복장)
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.roundRect(-12, -4, 24, 16, [4, 4, 0, 0]);
+                ctx.fill();
+
+                // 3. 붉은색 허리띠 오비 (Crimson Sash)
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(-12, 6, 24, 4);
+
+                // 4. 일본도 카타나 (등 뒤 또는 허리 패도)
+                ctx.save();
+                ctx.translate(facing * 8, 4);
+                ctx.rotate(facing * 0.45);
+                // 칼집 (검은 옻칠 & 금박 장식)
+                ctx.fillStyle = '#18181b';
+                ctx.fillRect(-3, -2, 6, 28);
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillRect(-3, 2, 6, 2);
+                ctx.fillRect(-3, 10, 6, 2);
+                // 츠바 (코등이)
+                ctx.fillStyle = '#eab308';
+                ctx.beginPath(); ctx.ellipse(0, -2, 6, 2.5, 0, 0, Math.PI * 2); ctx.fill();
+                // 칼자루 (손잡이)
+                ctx.fillStyle = '#7f1d1d';
+                ctx.fillRect(-2, -12, 4, 10);
+                // 칼날 발도 섬광 효과
+                ctx.save();
+                let bladeLen = 30;
+                let bladeGlint = (Math.sin(rTime * 5) + 1) * 0.5;
+                ctx.translate(0, -12);
+                ctx.rotate(0.15 * facing);
+                // 날카로운 은백색 강철 칼날
+                let steelGrad = ctx.createLinearGradient(-2, 0, 2, 0);
+                steelGrad.addColorStop(0, '#f8fafc');
+                steelGrad.addColorStop(0.5, '#e2e8f0');
+                steelGrad.addColorStop(1, '#94a3b8');
+                ctx.fillStyle = steelGrad;
+                ctx.beginPath();
+                ctx.moveTo(-1.5, 0);
+                ctx.lineTo(-1.8, -bladeLen + 6);
+                ctx.lineTo(0, -bladeLen);
+                ctx.lineTo(1.8, -bladeLen + 6);
+                ctx.lineTo(1.5, 0);
+                ctx.closePath();
+                ctx.fill();
+
+                // 푸른 섬광 검기 잔상
+                ctx.strokeStyle = `rgba(56, 189, 248, ${0.4 * bladeGlint})`;
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.arc(-10 * facing, -bladeLen * 0.6, 22, -0.8, 0.4);
+                ctx.stroke();
+                ctx.restore();
+                ctx.restore();
+
+                // 5. 검사 두부 & 얼굴
+                ctx.fillStyle = '#fed7aa';
+                ctx.beginPath(); ctx.arc(0, -11, 8, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath(); ctx.arc(-7 * facing, -8, 3.5, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(facing * 1.5, -12, 3, 1.8);
+
+                // 6. 삿갓 (Traditional Conical Ronin Straw Hat)
+                ctx.save();
+                ctx.translate(0, -15);
+                let hatGrad = ctx.createLinearGradient(0, -14, 0, 4);
+                hatGrad.addColorStop(0, '#d97706');
+                hatGrad.addColorStop(0.5, '#b45309');
+                hatGrad.addColorStop(1, '#78350f');
+                ctx.fillStyle = hatGrad;
+                ctx.strokeStyle = '#451a03';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(0, -12);
+                ctx.lineTo(18, 2);
+                ctx.lineTo(-18, 2);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                ctx.strokeStyle = '#dc2626';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(-12, 2); ctx.lineTo(-2, 10); ctx.lineTo(12, 2);
+                ctx.stroke();
+                ctx.restore();
+
+                // 7. 벚꽃 잎 파티클
+                for (let sk = 0; sk < 4; sk++) {
+                    let sProg = (rTime * 1.5 + sk * 1.4) % 1;
+                    let sx = Math.sin(sk * 3 + rTime * 2) * 22;
+                    let sy = 16 - sProg * 42;
+                    ctx.save();
+                    ctx.translate(sx, sy);
+                    ctx.rotate(rTime * 2 + sk);
+                    ctx.fillStyle = `rgba(244, 114, 182, ${1 - sProg})`;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, 3, 1.8, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                ctx.restore();
+
+            // 부화된 일반 펫 3종 렌더링 지원 (고릴라, 늑대, 고양이)
+            } else if (useSkin === 'pet_gorilla') {
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                ctx.fillStyle = '#3b0764';
+                ctx.beginPath(); ctx.ellipse(0, 4, 14, 12, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#581c87';
+                ctx.beginPath(); ctx.arc(0, -8, 8, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath(); ctx.arc(-2 * facing, -9, 1.8, 0, Math.PI*2); ctx.arc(2 * facing, -9, 1.8, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+            } else if (useSkin === 'pet_wolf') {
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                ctx.fillStyle = '#475569';
+                ctx.beginPath(); ctx.ellipse(0, 4, 13, 9, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#64748b';
+                ctx.beginPath(); ctx.arc(facing * 4, -5, 7, 0, Math.PI*2); ctx.fill();
+                // 뾰족 귀
+                ctx.fillStyle = '#334155';
+                ctx.beginPath(); ctx.moveTo(facing * 2, -10); ctx.lineTo(facing * 4, -16); ctx.lineTo(facing * 7, -9); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath(); ctx.arc(facing * 5, -6, 1.8, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+            } else if (useSkin === 'pet_cat') {
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                ctx.fillStyle = '#f59e0b';
+                ctx.beginPath(); ctx.ellipse(0, 4, 10, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath(); ctx.arc(facing * 3, -4, 6.5, 0, Math.PI*2); ctx.fill();
+                // 고양이 귀
+                ctx.fillStyle = '#d97706';
+                ctx.beginPath(); ctx.moveTo(facing * 1, -9); ctx.lineTo(facing * 2, -14); ctx.lineTo(facing * 5, -8); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#22c55e';
+                ctx.beginPath(); ctx.arc(facing * 4, -5, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+                        } else if (useSkin.startsWith('ghost')) {
                 let floatOffset = Math.sin(Date.now() * 0.005) * 5 - bobbing;
                 ctx.translate(0, floatOffset - 10);
                 
@@ -22021,58 +22460,51 @@
             ctx.beginPath(); ctx.moveTo(x + 140, y - 25); ctx.lineTo(x + 155, y - 45); ctx.lineTo(x + 170, y - 25); ctx.fill();
             ctx.fillStyle = '#ff9f43'; ctx.fillRect(x + 150, y - 18, 10, 12);
 
-            // 8. 상단 "호박 융합" 네온 간판 배너
-            ctx.fillStyle = '#d35400';
-            ctx.fillRect(x + 35, y + 52, 126, 26);
-            ctx.strokeStyle = '#f39c12'; ctx.lineWidth = 2;
-            ctx.strokeRect(x + 35, y + 52, 126, 26);
+            // 8. 상단 네온 간판 배너 (어드민 트레이드 머신 / 퓨즈머신)
+            const tradeActive = isTradeMachineActive();
+            ctx.fillStyle = tradeActive ? '#7f1d1d' : '#d35400';
+            ctx.fillRect(x + 30, y + 52, 136, 26);
+            ctx.strokeStyle = tradeActive ? '#ef4444' : '#f39c12'; ctx.lineWidth = 2;
+            ctx.strokeRect(x + 30, y + 52, 136, 26);
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 13px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-            ctx.fillText(bld.name, x + 98, y + 65);
+            ctx.fillText(tradeActive ? "⚔️ 트레이드 머신" : "호박 융합", x + 98, y + 65);
             ctx.shadowBlur = 0;
 
-            // 9. 머리 위 클릭 인디케이터 / 퓨즈 타이머 / 퓨즈 완료 상태 외부 표시!
+            // 9. 머리 위 배너: "오늘 9시에 삭제" vs "한정수량 2개 선착순"
             let floatY = Math.sin(Date.now() * 0.005) * 4;
-            const now = Date.now();
-            const isFusing = (activeFuseDurationMs > 0 && activeFuseStartTime > 0 && now < activeFuseStartTime + activeFuseDurationMs);
-            const isCompleted = (activeFuseStartTime > 0 && (activeFuseDurationMs === 0 || now >= activeFuseStartTime + activeFuseDurationMs));
-
-            if (isCompleted) {
-                // 퓨즈 완료 시 반짝이는 황금/초록 배너
-                ctx.fillStyle = '#2ecc71';
-                ctx.shadowColor = '#2ecc71'; ctx.shadowBlur = 10;
+            if (tradeActive) {
+                ctx.fillStyle = 'rgba(220, 38, 38, 0.95)';
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.roundRect(x + 40, y - 78 + floatY, 116, 25, 7);
-                ctx.fill();
+                ctx.roundRect(x + 18, y - 78 + floatY, 160, 26, 8);
+                ctx.fill(); ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '900 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
+                ctx.fillText(`⚔️ 한정수량 ${tradeMachineStock}/2개 선착순!`, x + 98, y - 65 + floatY);
                 ctx.shadowBlur = 0;
-                ctx.strokeStyle = '#f1c40f'; ctx.lineWidth = 2; ctx.stroke();
+            } else {
+                ctx.fillStyle = 'rgba(220, 38, 38, 0.92)';
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(x + 22, y - 78 + floatY, 152, 26, 8);
+                ctx.fill(); ctx.stroke();
 
                 ctx.fillStyle = '#ffffff';
                 ctx.font = 'bold 12px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText("✨ 퓨즈 완료!", x + 98, y - 65 + floatY);
-            } else if (isFusing) {
-                // 퓨징 중 외부 타이머 표시 (남은 분/초)
-                const remaining = Math.max(0, activeFuseStartTime + activeFuseDurationMs - now);
-                const rmMin = Math.floor(remaining / 60000);
-                const rmSec = Math.floor((remaining % 60000) / 1000);
-
-                ctx.fillStyle = '#c0392b';
-                ctx.beginPath();
-                ctx.roundRect(x + 36, y - 78 + floatY, 124, 25, 7);
-                ctx.fill();
-                ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 1.5; ctx.stroke();
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 11px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(`⏱️ ${rmMin}분 ${rmSec < 10 ? '0' : ''}${rmSec}초 남음`, x + 98, y - 65 + floatY);
+                ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
+                ctx.fillText("⚠️ 오늘 9시에 삭제!", x + 98, y - 65 + floatY);
+                ctx.shadowBlur = 0;
             }
 
             ctx.restore();
