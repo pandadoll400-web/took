@@ -4279,12 +4279,16 @@
             let timeUntilOpen = 0;
 
             if (nowMs < anchorToday) {
-                // 9시 전: 대기 상태
+                // 9시 전: 대기 상태 (오픈 전 절대 획득/장착 불가)
                 isOpen = false;
                 const dateStr = now.getFullYear() + '_' + String(now.getMonth() + 1).padStart(2, '0') + '_' + String(now.getDate()).padStart(2, '0');
                 cycleId = 'pre_2100_' + dateStr;
                 nextRestock = anchorToday;
                 timeUntilOpen = anchorToday - nowMs;
+                if (typeof ownedSkins !== 'undefined' && Array.isArray(ownedSkins) && ownedSkins.includes('japanese_ronin')) {
+                    ownedSkins = ownedSkins.filter(s => s !== 'japanese_ronin');
+                    if (typeof equippedSkin !== 'undefined' && equippedSkin === 'japanese_ronin') equippedSkin = 'default';
+                }
             } else {
                 // 9시 이후: 오픈 & 1시간마다 새 사이클
                 isOpen = true;
@@ -4390,21 +4394,22 @@
                 const isOwned = ownedSkins.includes('japanese_ronin');
                 const isEquipped = (equippedSkin === 'japanese_ronin');
 
-                if (isOwned) {
-                    claimBtn.disabled = false;
-                    claimBtn.innerText = isEquipped ? '✓ equipped!' : 'equip!';
-                    claimBtn.style.background = isEquipped ? 'linear-gradient(180deg, #0284c7 0%, #0369a1 100%)' : 'linear-gradient(180deg, #10b981 0%, #059669 100%)';
-                    claimBtn.style.color = '#ffffff';
-                    claimBtn.style.border = 'none';
-                    claimBtn.style.boxShadow = isEquipped ? '0 4px 14px rgba(2, 132, 199, 0.4)' : '0 4px 14px rgba(16, 185, 129, 0.4)';
-                    claimBtn.style.cursor = 'pointer';
-                } else if (!info.isOpen) {
+                if (!info.isOpen) {
+                    // 🔒 9시 오픈 전: 무조건 오픈 대기 버튼 (장착/획득 불가)
                     claimBtn.disabled = false;
                     claimBtn.innerText = '🔒 오늘 21:00 오픈!';
                     claimBtn.style.background = 'linear-gradient(180deg, #475569 0%, #334155 100%)';
                     claimBtn.style.color = '#cbd5e1';
                     claimBtn.style.border = 'none';
                     claimBtn.style.boxShadow = 'none';
+                    claimBtn.style.cursor = 'pointer';
+                } else if (isOwned) {
+                    claimBtn.disabled = false;
+                    claimBtn.innerText = isEquipped ? '✓ equipped!' : 'equip!';
+                    claimBtn.style.background = isEquipped ? 'linear-gradient(180deg, #0284c7 0%, #0369a1 100%)' : 'linear-gradient(180deg, #10b981 0%, #059669 100%)';
+                    claimBtn.style.color = '#ffffff';
+                    claimBtn.style.border = 'none';
+                    claimBtn.style.boxShadow = isEquipped ? '0 4px 14px rgba(2, 132, 199, 0.4)' : '0 4px 14px rgba(16, 185, 129, 0.4)';
                     claimBtn.style.cursor = 'pointer';
                 } else if (tradeMachineStock <= 0) {
                     claimBtn.disabled = false;
@@ -4430,7 +4435,13 @@
             checkTradeMachineRestock();
             const info = getTradeCycleInfo();
 
-            // 1. 이미 소유한 경우 -> 장착/해제 토글
+            // 1. 오픈 전인 경우 -> 절대 획득/장착 불가!
+            if (!info.isOpen) {
+                alert('🔒 [오픈 대기]\n\n오늘 밤 9시(21:00) 정각에 선착순 2명만 오픈됩니다!\n오픈 전에는 획득하거나 장착할 수 없습니다.');
+                return;
+            }
+
+            // 2. 오픈 후 이미 소유한 경우 -> 장착/해제 토글
             if (ownedSkins.includes('japanese_ronin')) {
                 equippedSkin = 'japanese_ronin';
                 saveGame(true);
@@ -4438,12 +4449,6 @@
                 updateInvSkinUI();
                 updateTradeMachineModalUI();
                 floatTexts.push({ x: player.x, y: player.y - 80, text: '⚔️ [일본풍 검사] 장착 완료!', color: '#38bdf8', life: 100, size: 20 });
-                return;
-            }
-
-            // 2. 오픈 전인 경우
-            if (!info.isOpen) {
-                alert('🔒 [오픈 대기]\n\n오늘 밤 9시(21:00)에 전 서버 오픈됩니다!\n오픈 시 선착순 2명만 [획득]을 눌러 스킨을 획득할 수 있습니다.');
                 return;
             }
 
@@ -13401,7 +13406,7 @@
                 adminInventory[s] = count;
             });
 
-            const allSkinIds = skinsData.map(s => s.id);
+            const allSkinIds = skinsData.map(s => s.id).filter(id => id !== 'japanese_ronin');
             let adminEquipped = 'halloween_devil';
             if (typeof equippedSkin !== 'undefined' && equippedSkin) {
                 adminEquipped = equippedSkin;
@@ -13523,7 +13528,7 @@
             money = 999999999999;
             axeLevel = 4;
             equippedAxe = 4;
-            ownedSkins = skinsData.map(s => s.id);
+            ownedSkins = skinsData.map(s => s.id).filter(id => id !== 'japanese_ronin');
             trees.forEach(t => t.unlocked = true);
             updateMoney();
             updateAxeUI();
@@ -16151,7 +16156,7 @@
                 axeLevel = 4;
                 equippedAxe = 4;
                 ownedAxes = [1, 2, 3, 4];
-                ownedSkins = skinsData.map(s => s.id);
+                ownedSkins = skinsData.map(s => s.id).filter(id => id !== 'japanese_ronin');
                 trees.forEach(t => t.unlocked = true);
             } else if (isUserCgim(currentUser)) {
                 // 🛡️ cgim6939 계정 완벽 복구
