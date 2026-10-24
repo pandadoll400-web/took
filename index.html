@@ -1784,6 +1784,62 @@
             </div>
         </div>
 
+
+        <!-- 🛠️ 농장 밭 & 장비 업그레이드 상점 모달 -->
+        <div id="farm-upgrade-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 16, 26, 0.98); color: white; border-radius: 18px; width: 95%; max-width: 540px; max-height: 90%; overflow-y: auto; display: none; border: 3px solid #f39c12; box-shadow: 0 0 40px rgba(243, 156, 18, 0.55); z-index: 55; font-family: 'Arial', sans-serif;">
+            <div style="background: linear-gradient(90deg, #78350f, #d97706, #78350f); padding: 14px 16px; border-top-left-radius: 15px; border-top-right-radius: 15px; border-bottom: 2.5px solid #f59e0b; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 24px;">🛠️</span>
+                    <h2 style="margin: 0; color: #ffffff; text-shadow: 2px 2px 0px #000; font-size: 19px; font-weight: 900;">밭 & 장비 업그레이드 상점</h2>
+                </div>
+                <button onclick="closeFarmUpgradeModal()" style="background: #962d22; border: 1.5px solid #4a110a; color: white; width: 32px; height: 32px; font-weight: 900; font-size: 16px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+            </div>
+            <div style="padding: 16px;">
+                <!-- 현재 보유 골드 -->
+                <div style="background: rgba(0,0,0,0.4); padding: 10px 14px; border-radius: 10px; margin-bottom: 14px; border: 1px solid rgba(243,156,18,0.3); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-size: 14px; font-weight: bold; color: #f1c40f;">
+                        💰 보유: <span id="farm-upgrade-user-gold">0</span> 골드
+                    </div>
+                    <div style="font-size: 13px; font-weight: bold; color: #2ecc71;">
+                        🌱 활성화 밭: <span id="farm-upgrade-plot-count">4</span> / 9개
+                    </div>
+                </div>
+
+                <!-- [1] 밭 확장 섹션 -->
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid #f59e0b; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h4 style="margin: 0; color: #fde047; font-size: 15px; font-weight: 900;">🌱 농장 밭 부지 확장</h4>
+                        <span id="farm-plot-expand-badge" style="background: #2563eb; color: white; font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 10px;">기본 4개 지원</span>
+                    </div>
+                    <p style="margin: 0 0 10px 0; font-size: 12px; color: #cbd5e1; line-height: 1.4;">
+                        골드를 지불하여 밭을 추가 개간합니다. (기본 4개 ➔ 최대 9개까지 확장 가능)
+                    </p>
+                    <div id="farm-plot-expand-box" style="display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.85); padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(245, 158, 11, 0.4);">
+                        <div>
+                            <div id="farm-plot-next-title" style="font-size: 13.5px; font-weight: bold; color: #ffffff;">5번째 밭 개간</div>
+                            <div id="farm-plot-next-cost" style="font-size: 12px; color: #facc15;">비용: 💰 50,000 골드</div>
+                        </div>
+                        <button id="farm-plot-buy-btn" onclick="buyFarmPlotExpansion()" style="background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%); color: white; border: none; font-weight: 900; font-size: 13px; padding: 8px 14px; border-radius: 8px; cursor: pointer; box-shadow: 0 3px 0 #15803d;">
+                            밭 확장
+                        </button>
+                    </div>
+                </div>
+
+                <!-- [2] 특수 농기구 & 장비 섹션 -->
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid #38bdf8; border-radius: 12px; padding: 12px 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0; color: #7dd3fc; font-size: 15px; font-weight: 900;">🚜 특수 농기구 & 장비</h4>
+                        <span style="background: #0284c7; color: white; font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 10px;">영구 버프</span>
+                    </div>
+                    <div id="farm-equipment-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                </div>
+
+                <div style="margin-top: 14px; text-align: right;">
+                    <button onclick="closeFarmUpgradeModal()" style="background: #7f8c8d; color: white; border: none; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">닫기</button>
+                </div>
+            </div>
+        </div>
+
         <!-- 🌱 씨앗 심기 모달 -->
         <div id="plant-seed-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(20, 26, 18, 0.98); color: white; border-radius: 16px; width: 90%; max-width: 420px; display: none; border: 2.5px solid #27ae60; box-shadow: 0 0 30px rgba(39, 174, 96, 0.4); z-index: 55; font-family: 'Arial', sans-serif;">
             <div style="background: linear-gradient(90deg, #27ae60, #2ecc71); padding: 12px 16px; border-top-left-radius: 13px; border-top-right-radius: 13px; display: flex; justify-content: space-between; align-items: center;">
@@ -3831,29 +3887,89 @@
             if (savedShop) farmShopData = Object.assign(farmShopData, JSON.parse(savedShop));
         } catch(e) {}
 
+        // 🌾 3x3 총 9개 밭 부지 좌표
         const FARM_PLOT_COORDS = [
-            { x: 170, y: 390, label: '밭 #1' },
-            { x: 300, y: 390, label: '밭 #2' },
-            { x: 430, y: 390, label: '밭 #3' },
-            { x: 170, y: 540, label: '밭 #4' },
-            { x: 300, y: 540, label: '밭 #5' },
-            { x: 430, y: 540, label: '밭 #6' }
+            { x: 150, y: 330, label: '밭 #1' },
+            { x: 300, y: 330, label: '밭 #2' },
+            { x: 450, y: 330, label: '밭 #3' },
+            { x: 150, y: 450, label: '밭 #4' },
+            { x: 300, y: 450, label: '밭 #5' },
+            { x: 450, y: 450, label: '밭 #6' },
+            { x: 150, y: 570, label: '밭 #7' },
+            { x: 300, y: 570, label: '밭 #8' },
+            { x: 450, y: 570, label: '밭 #9' }
         ];
 
-        let farmPlots = [
-            { id: 0, seed: null, plantedAt: 0, duration: 300000 },
-            { id: 1, seed: null, plantedAt: 0, duration: 300000 },
-            { id: 2, seed: null, plantedAt: 0, duration: 300000 },
-            { id: 3, seed: null, plantedAt: 0, duration: 300000 },
-            { id: 4, seed: null, plantedAt: 0, duration: 300000 },
-            { id: 5, seed: null, plantedAt: 0, duration: 300000 }
+        // 기본 4개 밭 제공, 최대 9개까지 확장 가능
+        let unlockedFarmPlots = 4;
+        const FARM_PLOT_EXPANSION_COSTS = {
+            5: 50000,
+            6: 150000,
+            7: 350000,
+            8: 750000,
+            9: 1500000
+        };
+
+        let ownedFarmEquipments = [];
+        const FARM_EQUIPMENT_DATA = [
+            {
+                id: 'golden_watering_can',
+                name: '황금 물뿌리개',
+                icon: '💧',
+                price: 50000,
+                desc: '신성한 황금수로 작물에 물을 주어 성장 시간을 25% 가속합니다.',
+                effectText: '성장 시간 25% 단축'
+            },
+            {
+                id: 'mithril_hoe',
+                name: '미스릴 호미',
+                icon: '⛏️',
+                price: 150000,
+                desc: '비옥한 대지를 개간하여 수확 시 기본 획득 골드를 1.5배 증가시킵니다.',
+                effectText: '수확 골드 +50% 보너스'
+            },
+            {
+                id: 'ancient_scythe',
+                name: '고대 풍요의 낫',
+                icon: '🌾',
+                price: 350000,
+                desc: '풍요의 여신이 축복한 낫으로, 수확 시 25% 확률로 씨앗을 소모 없이 무료 재수급합니다.',
+                effectText: '수확 시 25% 확률 씨앗 무료 재수급'
+            },
+            {
+                id: 'legendary_sprayer',
+                name: '전설의 영양 분무기',
+                icon: '🧪',
+                price: 800000,
+                desc: '고농축 바이오 영양제를 분사하여 희귀/신화 스킨 수확 확률을 2배로 상승시킵니다.',
+                effectText: '희귀/신화 스킨 수확 확률 2배'
+            }
         ];
+
+        let farmPlots = Array.from({ length: 9 }, (_, id) => ({
+            id,
+            seed: null,
+            plantedAt: 0,
+            duration: 300000
+        }));
 
         try {
+            const savedUnlocked = localStorage.getItem('tb_farm_unlocked_plots');
+            if (savedUnlocked) {
+                unlockedFarmPlots = Math.min(9, Math.max(4, parseInt(savedUnlocked) || 4));
+            }
+            const savedEq = localStorage.getItem('tb_farm_equipments');
+            if (savedEq) {
+                ownedFarmEquipments = JSON.parse(savedEq) || [];
+            }
             const savedPlots = localStorage.getItem('tb_farm_plots');
             if (savedPlots) {
                 const parsed = JSON.parse(savedPlots);
-                if (Array.isArray(parsed) && parsed.length === 6) farmPlots = parsed;
+                if (Array.isArray(parsed)) {
+                    parsed.forEach((p, idx) => {
+                        if (farmPlots[idx]) farmPlots[idx] = Object.assign(farmPlots[idx], p);
+                    });
+                }
             }
         } catch(e) {}
 
@@ -3867,7 +3983,7 @@
             savedOverworldPos = { x: player.x, y: player.y, cameraY: cameraY };
             inFarmDimension = true;
             player.x = 300;
-            player.y = 660; // 출구 포탈(780)과 충분한 안전거리
+            player.y = 650; // 출구 포탈과 충분한 안전거리
             player.vx = 0;
             player.vy = 0;
             player.destTarget = null;
@@ -3875,6 +3991,18 @@
             player.targetTree = null;
             player.axeSwingTimer = 0;
             cameraY = 0;
+
+            // 🚫 농장 진입 시 레벨, 로그인 버튼, 돈 버튼 숨김 처리
+            if (typeof setBossRoomHUDVisible === 'function') {
+                setBossRoomHUDVisible(false);
+            } else {
+                const mEl = document.getElementById('money-display');
+                const lEl = document.getElementById('level-container');
+                const pEl = document.getElementById('user-profile-badge');
+                if (mEl) mEl.style.display = 'none';
+                if (lEl) lEl.style.display = 'none';
+                if (pEl) pEl.style.display = 'none';
+            }
 
             rerollFarmShop(false);
             floatTexts.push({ x: 300, y: 600, text: '🌾 [ADMIN] 신비한 차원 농장 진입!', color: '#2ecc71', life: 90, size: 22 });
@@ -3887,6 +4015,19 @@
             cameraY = (savedOverworldPos && savedOverworldPos.cameraY) || -1400;
             player.targetTree = null;
             player.axeSwingTimer = 0;
+
+            // 🌍 메인 세계 복귀 시 레벨, 로그인 버튼, 돈 버튼 복원
+            if (typeof setBossRoomHUDVisible === 'function') {
+                setBossRoomHUDVisible(true);
+            } else {
+                const mEl = document.getElementById('money-display');
+                const lEl = document.getElementById('level-container');
+                const pEl = document.getElementById('user-profile-badge');
+                if (mEl) mEl.style.display = 'block';
+                if (lEl) lEl.style.display = 'flex';
+                if (pEl) pEl.style.display = 'flex';
+            }
+
             floatTexts.push({ x: player.x, y: player.y - 70, text: `🌪️ 뒤틀린 지형으로 복귀했습니다.`, color: '#a29bfe', life: 70, size: 20 });
         }
 
@@ -3924,6 +4065,145 @@
             if (document.getElementById('seed-shop-modal') && document.getElementById('seed-shop-modal').style.display === 'block') {
                 updateSeedShopModalUI();
             }
+        }
+
+
+        // ============================================================================
+        // 🛠️ 밭 & 장비 업그레이드 상점 시스템
+        // ============================================================================
+        function openFarmUpgradeModal() {
+            updateFarmUpgradeModalUI();
+            const modal = document.getElementById('farm-upgrade-modal');
+            if (modal) modal.style.display = 'block';
+        }
+
+        function closeFarmUpgradeModal() {
+            const modal = document.getElementById('farm-upgrade-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function updateFarmUpgradeModalUI() {
+            const goldSpan = document.getElementById('farm-upgrade-user-gold');
+            if (goldSpan) goldSpan.innerText = isAdmin() ? '무한' : money.toLocaleString();
+
+            const countSpan = document.getElementById('farm-upgrade-plot-count');
+            if (countSpan) countSpan.innerText = unlockedFarmPlots;
+
+            const nextTitle = document.getElementById('farm-plot-next-title');
+            const nextCost = document.getElementById('farm-plot-next-cost');
+            const buyBtn = document.getElementById('farm-plot-buy-btn');
+            const badge = document.getElementById('farm-plot-expand-badge');
+
+            if (unlockedFarmPlots >= 9) {
+                if (nextTitle) nextTitle.innerText = '모든 밭 개간 완료 (최대 9개)';
+                if (nextCost) nextCost.innerText = '더 이상 확장할 수 없습니다.';
+                if (buyBtn) {
+                    buyBtn.disabled = true;
+                    buyBtn.innerText = 'MAX 완료';
+                    buyBtn.style.background = '#64748b';
+                    buyBtn.style.boxShadow = 'none';
+                    buyBtn.style.cursor = 'default';
+                }
+                if (badge) badge.innerText = 'MAX (9/9)';
+            } else {
+                const nextPlotNum = unlockedFarmPlots + 1;
+                const cost = FARM_PLOT_EXPANSION_COSTS[nextPlotNum] || 50000;
+                if (nextTitle) nextTitle.innerText = `${nextPlotNum}번째 밭 개간`;
+                if (nextCost) nextCost.innerText = `비용: 💰 ${cost.toLocaleString()} 골드`;
+                if (buyBtn) {
+                    buyBtn.disabled = false;
+                    buyBtn.innerText = '밭 확장';
+                    buyBtn.style.background = 'linear-gradient(180deg, #22c55e 0%, #16a34a 100%)';
+                    buyBtn.style.boxShadow = '0 3px 0 #15803d';
+                    buyBtn.style.cursor = 'pointer';
+                }
+                if (badge) badge.innerText = `진행도: ${unlockedFarmPlots}/9`;
+            }
+
+            // 특수 장비 목록 렌더링
+            const eqList = document.getElementById('farm-equipment-list');
+            if (eqList) {
+                eqList.innerHTML = '';
+                FARM_EQUIPMENT_DATA.forEach(eq => {
+                    const isOwned = ownedFarmEquipments.includes(eq.id);
+                    let btnHtml = '';
+                    if (isOwned) {
+                        btnHtml = `<button disabled style="background: #475569; color: #94a3b8; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 11px;">장착 중</button>`;
+                    } else {
+                        btnHtml = `<button onclick="buyFarmEquipment('${eq.id}')" style="background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 900; font-size: 11px; cursor: pointer; box-shadow: 0 2px 0 #075985;">💰 ${eq.price.toLocaleString()}</button>`;
+                    }
+
+                    eqList.innerHTML += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.85); padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 22px;">${eq.icon}</span>
+                                <div>
+                                    <div style="font-size: 12.5px; font-weight: bold; color: #f8fafc;">${eq.name}</div>
+                                    <div style="font-size: 10.5px; color: #38bdf8;">${eq.effectText}</div>
+                                </div>
+                            </div>
+                            <div>${btnHtml}</div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function buyFarmPlotExpansion() {
+            if (unlockedFarmPlots >= 9) {
+                alert('이미 모든 밭(9개)을 해금하였습니다!');
+                return;
+            }
+            const nextPlotNum = unlockedFarmPlots + 1;
+            const cost = FARM_PLOT_EXPANSION_COSTS[nextPlotNum] || 50000;
+
+            if (!isAdmin() && money < cost) {
+                alert(`골드가 부족합니다! (필요: 💰 ${cost.toLocaleString()} 골드)`);
+                return;
+            }
+
+            if (!isAdmin()) {
+                money -= cost;
+                updateMoney();
+            }
+
+            unlockedFarmPlots = nextPlotNum;
+            try {
+                localStorage.setItem('tb_farm_unlocked_plots', unlockedFarmPlots.toString());
+            } catch(e) {}
+            saveGame(true);
+
+            floatTexts.push({ x: player.x, y: player.y - 70, text: `🎉 밭 #${unlockedFarmPlots} 해금 성공! (총 ${unlockedFarmPlots}개)`, color: '#f1c40f', life: 80, size: 20 });
+            updateFarmUpgradeModalUI();
+        }
+
+        function buyFarmEquipment(eqId) {
+            const eq = FARM_EQUIPMENT_DATA.find(e => e.id === eqId);
+            if (!eq) return;
+
+            if (ownedFarmEquipments.includes(eqId)) {
+                alert('이미 보유하고 있는 장비입니다!');
+                return;
+            }
+
+            if (!isAdmin() && money < eq.price) {
+                alert(`골드가 부족합니다! (필요: 💰 ${eq.price.toLocaleString()} 골드)`);
+                return;
+            }
+
+            if (!isAdmin()) {
+                money -= eq.price;
+                updateMoney();
+            }
+
+            ownedFarmEquipments.push(eqId);
+            try {
+                localStorage.setItem('tb_farm_equipments', JSON.stringify(ownedFarmEquipments));
+            } catch(e) {}
+            saveGame(true);
+
+            floatTexts.push({ x: player.x, y: player.y - 70, text: `✨ [${eq.name}] 구매 완료! 영구 적용`, color: '#38bdf8', life: 80, size: 20 });
+            updateFarmUpgradeModalUI();
         }
 
         function adminForceRerollFarmShop() {
@@ -4144,11 +4424,17 @@
             }
 
             inventory[cfg.invName]--;
+            let growDur = 300000;
+            // 💧 황금 물뿌리개 장비 보유 시 성장 속도 25% 가속
+            if (ownedFarmEquipments.includes('golden_watering_can')) {
+                growDur = Math.round(growDur * 0.75);
+            }
+
             farmPlots[plotIndex] = {
                 id: plotIndex,
                 seed: seedKey,
                 plantedAt: Date.now(),
-                duration: 300000 // 5분 = 300초 = 300,000ms
+                duration: growDur
             };
 
             try {
@@ -4182,28 +4468,71 @@
             } catch(e) {}
             saveGame(true);
 
+            // ⛏️ 미스릴 호미: 수확 시 골드 1.5배 보너스
+            if (ownedFarmEquipments.includes('mithril_hoe')) {
+                money += 30000;
+                updateMoney();
+                floatTexts.push({ x: FARM_PLOT_COORDS[plotIndex].x, y: FARM_PLOT_COORDS[plotIndex].y - 50, text: `⛏️ 미스릴 호미 보너스 +💰30,000!`, color: '#f1c40f', life: 60, size: 16 });
+            }
+
+            // 🌾 고대 풍요의 낫: 25% 확률로 씨앗 무료 재수급
+            if (ownedFarmEquipments.includes('ancient_scythe') && Math.random() < 0.25) {
+                const sName = (seedKey === 'kraken') ? '크라켄의 씨앗' : (seedKey === 'halloween' ? '할로윈의 씨앗' : '어드민의 씨앗');
+                inventory[sName] = (inventory[sName] || 0) + 1;
+                floatTexts.push({ x: FARM_PLOT_COORDS[plotIndex].x, y: FARM_PLOT_COORDS[plotIndex].y - 70, text: `🌾 고대 낫 축복: ${sName} 무료 재수급!`, color: '#2ecc71', life: 75, size: 16 });
+            }
+
+            // 🧪 전설의 영양 분무기 보유 여부
+            const hasSprayer = ownedFarmEquipments.includes('legendary_sprayer');
+
             // 확률 수확
             if (seedKey === 'kraken') {
                 const roll = Math.random() * 100;
-                if (roll < 75) {
-                    awardFarmSkin('kraken', '크라켄', '일반 수확 (75%)', '#00cec9', '심연의 거대 괴수 크라켄 스킨을 수확했습니다!');
-                } else if (roll < 97) {
-                    awardFarmSkin('infected_gorilla', '감염된 고릴라', '희귀 수확 (22%)', '#a29bfe', '외계 바이러스에 감염된 사이보그 고릴라 스킨을 수확했습니다!');
+                if (!hasSprayer) {
+                    if (roll < 75) {
+                        awardFarmSkin('kraken', '크라켄', '일반 수확 (75%)', '#00cec9', '심연의 거대 괴수 크라켄 스킨을 수확했습니다!');
+                    } else if (roll < 97) {
+                        awardFarmSkin('infected_gorilla', '감염된 고릴라', '희귀 수확 (22%)', '#a29bfe', '외계 바이러스에 감염된 사이보그 고릴라 스킨을 수확했습니다!');
+                    } else {
+                        awardFarmSkin('frost_dragon', '서리룡', '초희귀 수확 (3%)', '#38bdf8', '❄️ 전설의 혹한 수호신 고대 서리룡 스킨을 수확했습니다!!');
+                    }
                 } else {
-                    awardFarmSkin('frost_dragon', '서리룡', '초희귀 수확 (3%)', '#38bdf8', '❄️ 전설의 혹한 수호신 고대 서리룡 스킨을 수확했습니다!!');
+                    // 영양 분무기 버프: 희귀/신화 확률 대폭 상승 (크라켄 45%, 감염고릴라 45%, 서리룡 10%)
+                    if (roll < 45) {
+                        awardFarmSkin('kraken', '크라켄', '일반 수확 (45%)', '#00cec9', '심연의 거대 괴수 크라켄 스킨을 수확했습니다!');
+                    } else if (roll < 90) {
+                        awardFarmSkin('infected_gorilla', '감염된 고릴라', '희귀 수확 (45% 분무기UP)', '#a29bfe', '외계 바이러스에 감염된 사이보그 고릴라 스킨을 수확했습니다!');
+                    } else {
+                        awardFarmSkin('frost_dragon', '서리룡', '초희귀 수확 (10% 분무기UP)', '#38bdf8', '❄️ 전설의 혹한 수호신 고대 서리룡 스킨을 수확했습니다!!');
+                    }
                 }
             } else if (seedKey === 'halloween') {
                 const roll = Math.random() * 100;
-                if (roll < 70) {
-                    awardFarmSkin('ghost_fedora', '페도라 유령', '일반 수확 (70%)', '#ffffff', '신사 모자를 쓴 귀여운 페도라 유령 스킨을 수확했습니다!');
-                } else if (roll < 83) {
-                    awardFarmSkin('classic_bunny', '클래식 버니', '희귀 수확 (13%)', '#ff7675', '귀여운 클래식 버니 스킨을 수확했습니다!');
-                } else if (roll < 92) {
-                    awardFarmSkin('headless_horse', '헤드레스 홀스', '영웅 수확 (9%)', '#f1c40f', '호박 머리를 든 전설의 헤드레스 홀스 스킨을 수확했습니다!');
-                } else if (roll < 98) {
-                    awardFarmSkin('jack_fiery', '불타는 잭오랜턴', '전설 수확 (6%)', '#e67e22', '불타오르는 영혼의 잭오랜턴 스킨을 수확했습니다!');
+                if (!hasSprayer) {
+                    if (roll < 70) {
+                        awardFarmSkin('ghost_fedora', '페도라 유령', '일반 수확 (70%)', '#ffffff', '신사 모자를 쓴 귀여운 페도라 유령 스킨을 수확했습니다!');
+                    } else if (roll < 83) {
+                        awardFarmSkin('classic_bunny', '클래식 버니', '희귀 수확 (13%)', '#ff7675', '귀여운 클래식 버니 스킨을 수확했습니다!');
+                    } else if (roll < 92) {
+                        awardFarmSkin('headless_horse', '헤드레스 홀스', '영웅 수확 (9%)', '#f1c40f', '호박 머리를 든 전설의 헤드레스 홀스 스킨을 수확했습니다!');
+                    } else if (roll < 98) {
+                        awardFarmSkin('jack_fiery', '불타는 잭오랜턴', '전설 수확 (6%)', '#e67e22', '불타오르는 영혼의 잭오랜턴 스킨을 수확했습니다!');
+                    } else {
+                        awardFarmSkin('halloween_devil', '할로윈의 악마', '신화 수확 (2%)', '#ff4757', '어둠의 심연에서 강림한 할로윈의 악마 스킨을 수확했습니다!!');
+                    }
                 } else {
-                    awardFarmSkin('halloween_devil', '할로윈의 악마', '신화 수확 (2%)', '#ff4757', '어둠의 심연에서 강림한 할로윈의 악마 스킨을 수확했습니다!!');
+                    // 영양 분무기 버프
+                    if (roll < 45) {
+                        awardFarmSkin('ghost_fedora', '페도라 유령', '일반 수확 (45%)', '#ffffff', '신사 모자를 쓴 귀여운 페도라 유령 스킨을 수확했습니다!');
+                    } else if (roll < 70) {
+                        awardFarmSkin('classic_bunny', '클래식 버니', '희귀 수확 (25% UP)', '#ff7675', '귀여운 클래식 버니 스킨을 수확했습니다!');
+                    } else if (roll < 85) {
+                        awardFarmSkin('headless_horse', '헤드레스 홀스', '영웅 수확 (15% UP)', '#f1c40f', '호박 머리를 든 전설의 헤드레스 홀스 스킨을 수확했습니다!');
+                    } else if (roll < 95) {
+                        awardFarmSkin('jack_fiery', '불타는 잭오랜턴', '전설 수확 (10% UP)', '#e67e22', '불타오르는 영혼의 잭오랜턴 스킨을 수확했습니다!');
+                    } else {
+                        awardFarmSkin('halloween_devil', '할로윈의 악마', '신화 수확 (5% UP)', '#ff4757', '어둠의 심연에서 강림한 할로윈의 악마 스킨을 수확했습니다!!');
+                    }
                 }
             } else if (seedKey === 'admin') {
                 money += 1000000;
@@ -4392,41 +4721,89 @@
         }
 
         function handleFarmDimensionClick(cx, cy, isSpacebar) {
-            // 상단 HUD 버튼 클릭 감지 (cy <= 75)
-            if (cy <= 75) {
-                if (cx >= 250 && cx <= 440) {
+            // 스페이스바 조작 시: 플레이어 위치 기준 가장 가까운 오브젝트 상호작용
+            if (isSpacebar) {
+                // 씨앗 상점 근처 (x: 145, y: 185)
+                if (Math.hypot(player.x - 145, player.y - 185) < 95) {
                     openSeedShopModal();
                     return;
                 }
-                if (cx >= 450 && cx <= 590) {
+                // 업그레이드 상점 근처 (x: 375, y: 185)
+                if (Math.hypot(player.x - 375, player.y - 185) < 95) {
+                    openFarmUpgradeModal();
+                    return;
+                }
+                // 출구 포탈 근처 (x: 300, y: 730)
+                if (Math.hypot(player.x - 300, player.y - 730) < 85) {
+                    exitFarmDimension();
+                    return;
+                }
+                // 해금된 밭 근처 상호작용 (수확 또는 심기)
+                for (let i = 0; i < unlockedFarmPlots; i++) {
+                    const p = FARM_PLOT_COORDS[i];
+                    if (Math.hypot(player.x - p.x, player.y - p.y) < 70) {
+                        const plot = farmPlots[i];
+                        if (!plot.seed) {
+                            openPlantSeedModal(i);
+                        } else {
+                            harvestFarmPlot(i);
+                        }
+                        return;
+                    }
+                }
+                return;
+            }
+
+            // 상단 HUD 버튼 클릭 감지 (cy <= 75)
+            if (cy <= 75) {
+                if (cx >= 210 && cx <= 340) {
+                    openSeedShopModal();
+                    return;
+                }
+                if (cx >= 350 && cx <= 480) {
+                    openFarmUpgradeModal();
+                    return;
+                }
+                if (cx >= 490 && cx <= 590) {
                     exitFarmDimension();
                     return;
                 }
             }
 
-            // 1. 출구 포탈 클릭 (x: 300, y: 780)
-            let exitDist = Math.hypot(cx - 300, cy - 780);
+            // 1. 출구 포탈 클릭 (x: 300, y: 730)
+            let exitDist = Math.hypot(cx - 300, cy - 730);
             if (exitDist < 55) {
                 exitFarmDimension();
                 return;
             }
 
-            // 2. 상점 클릭 (x: 150, y: 200, w: 100, h: 80)
-            if (cx >= 80 && cx <= 220 && cy >= 140 && cy <= 260) {
+            // 2. 씨앗 상점 건물 클릭 (x: 145, y: 185, w: 110, h: 75)
+            if (cx >= 85 && cx <= 205 && cy >= 135 && cy <= 245) {
                 openSeedShopModal();
                 return;
             }
 
-            // 3. 6개 밭 클릭
+            // 3. 밭 & 장비 업그레이드 상점 건물 클릭 (x: 375, y: 185, w: 125, h: 75)
+            if (cx >= 310 && cx <= 440 && cy >= 135 && cy <= 245) {
+                openFarmUpgradeModal();
+                return;
+            }
+
+            // 4. 밭 클릭 (최대 9개 밭 감지)
             for (let i = 0; i < FARM_PLOT_COORDS.length; i++) {
                 const p = FARM_PLOT_COORDS[i];
                 let pDist = Math.hypot(cx - p.x, cy - p.y);
-                if (pDist < 52) {
-                    const plot = farmPlots[i];
-                    if (!plot.seed) {
-                        openPlantSeedModal(i);
+                if (pDist < 55) {
+                    if (i < unlockedFarmPlots) {
+                        const plot = farmPlots[i];
+                        if (!plot.seed) {
+                            openPlantSeedModal(i);
+                        } else {
+                            harvestFarmPlot(i);
+                        }
                     } else {
-                        harvestFarmPlot(i);
+                        floatTexts.push({ x: p.x, y: p.y - 30, text: `🔒 밭 #${i + 1} 해금 필요! (업그레이드 상점)`, color: '#f39c12', life: 60, size: 16 });
+                        openFarmUpgradeModal();
                     }
                     return;
                 }
@@ -4438,214 +4815,356 @@
 
         function drawFarmDimension() {
             ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+            const now = Date.now();
 
-            // 1. 풍요로운 농장 대지 (잔디 그라데이션)
-            let grassGrad = ctx.createLinearGradient(0, 0, 0, GAME_HEIGHT);
-            grassGrad.addColorStop(0, '#1e3d2f');
-            grassGrad.addColorStop(0.5, '#2d5a43');
-            grassGrad.addColorStop(1, '#1b382b');
+            // 1. 풍요로운 농장 비옥한 잔디 대지 (Lush Farm Ground)
+            let grassGrad = ctx.createRadialGradient(GAME_WIDTH / 2, GAME_HEIGHT / 2, 80, GAME_WIDTH / 2, GAME_HEIGHT / 2, 450);
+            grassGrad.addColorStop(0, '#2d5a3f');
+            grassGrad.addColorStop(0.55, '#1e3d2b');
+            grassGrad.addColorStop(1, '#13281c');
             ctx.fillStyle = grassGrad;
             ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-            // 자갈길 (Pathways)
-            ctx.fillStyle = 'rgba(189, 195, 199, 0.25)';
-            ctx.beginPath(); ctx.roundRect(280, 240, 40, 520, 15); ctx.fill();
-            ctx.beginPath(); ctx.roundRect(140, 240, 160, 35, 10); ctx.fill();
-            ctx.beginPath(); ctx.roundRect(130, 440, 340, 35, 10); ctx.fill();
+            // 클로버 & 야생화 잔디 데코
+            for (let c = 0; c < 16; c++) {
+                let cx = ((c * 137) % (GAME_WIDTH - 80)) + 40;
+                let cy = ((c * 219) % (GAME_HEIGHT - 220)) + 120;
+                ctx.fillStyle = (c % 2 === 0) ? '#4ade80' : '#fef08a';
+                ctx.beginPath(); ctx.arc(cx, cy, 1.8, 0, Math.PI * 2); ctx.fill();
+            }
 
-            // 나무 울타리 (Fences)
-            ctx.strokeStyle = '#5d4037';
-            ctx.lineWidth = 4;
-            ctx.strokeRect(30, 110, GAME_WIDTH - 60, 770);
+            // 고풍스러운 정원 석판 자갈길 (Paved Garden Flagstone Pathways)
+            ctx.fillStyle = 'rgba(203, 213, 225, 0.18)';
+            ctx.beginPath(); ctx.roundRect(280, 240, 40, 480, 16); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(100, 240, 400, 32, 12); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(100, 400, 400, 28, 10); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(100, 520, 400, 28, 10); ctx.fill();
 
-            // 2. 상점 건물 (씨앗 상점)
-            const sx = 150, sy = 200;
+            // 2. 고급 원목 울타리 & 모서리 랜턴 (Crafted Wood Rail Fence & Lanterns)
             ctx.save();
-            ctx.fillStyle = 'rgba(0,0,0,0.3)';
-            ctx.beginPath(); ctx.ellipse(sx, sy + 38, 55, 16, 0, 0, Math.PI*2); ctx.fill();
+            const fx = 25, fy = 95, fw = GAME_WIDTH - 50, fh = 680;
 
-            ctx.fillStyle = '#6d4c41';
-            ctx.beginPath(); ctx.roundRect(sx - 48, sy - 28, 96, 62, 8); ctx.fill();
+            // 가로 레일 (2단 원목 가로대)
+            ctx.strokeStyle = '#4e2e1e';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(fx, fy, fw, fh);
+            ctx.strokeStyle = '#6d432b';
+            ctx.lineWidth = 2.5;
+            ctx.strokeRect(fx + 3, fy + 8, fw - 6, fh - 16);
+
+            // 울타리 기둥 (Pillars along perimeter)
+            for (let x = fx; x <= fx + fw; x += 55) {
+                // 상단 기둥
+                ctx.fillStyle = '#5d3824';
+                ctx.fillRect(x - 4, fy - 6, 8, 16);
+                ctx.fillStyle = '#8d5b3d';
+                ctx.beginPath(); ctx.arc(x, fy - 6, 4, 0, Math.PI * 2); ctx.fill();
+                // 하단 기둥 (출구 포탈 통로 x: 260~340 제외)
+                if (x < 250 || x > 350) {
+                    ctx.fillStyle = '#5d3824';
+                    ctx.fillRect(x - 4, fy + fh - 10, 8, 16);
+                    ctx.fillStyle = '#8d5b3d';
+                    ctx.beginPath(); ctx.arc(x, fy + fh - 10, 4, 0, Math.PI * 2); ctx.fill();
+                }
+            }
+
+            // 모서리 4개 랜턴 기둥 (Lantern Posts)
+            [[fx, fy], [fx + fw, fy], [fx, fy + fh], [fx + fw, fy + fh]].forEach(([lx, ly]) => {
+                ctx.fillStyle = '#3e2723';
+                ctx.fillRect(lx - 5, ly - 14, 10, 22);
+                // 따뜻한 랜턴 빛 글로우
+                let lGrad = ctx.createRadialGradient(lx, ly - 8, 2, lx, ly - 8, 24);
+                lGrad.addColorStop(0, 'rgba(254, 240, 138, 0.85)');
+                lGrad.addColorStop(0.5, 'rgba(245, 158, 11, 0.35)');
+                lGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = lGrad;
+                ctx.beginPath(); ctx.arc(lx, ly - 8, 24, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath(); ctx.arc(lx, ly - 8, 4, 0, Math.PI * 2); ctx.fill();
+            });
+            ctx.restore();
+
+            // 3. 건물 1: 씨앗 상점 (Seed Shop - x: 145, y: 185)
+            const sx = 145, sy = 185;
+            ctx.save();
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            ctx.beginPath(); ctx.ellipse(sx, sy + 38, 55, 14, 0, 0, Math.PI * 2); ctx.fill();
+
+            // 건물 본체
+            ctx.fillStyle = '#5d4037';
+            ctx.beginPath(); ctx.roundRect(sx - 50, sy - 28, 100, 62, 8); ctx.fill();
             ctx.strokeStyle = '#3e2723'; ctx.lineWidth = 2.5; ctx.stroke();
 
-            // 녹색 스트라이프 차양막 (Awning)
-            ctx.fillStyle = '#27ae60';
-            ctx.beginPath(); ctx.roundRect(sx - 52, sy - 44, 104, 22, 6); ctx.fill();
-            ctx.fillStyle = '#ecf0f1';
-            for (let i = -40; i <= 40; i += 20) {
+            // 초록 스트라이프 차양막
+            ctx.fillStyle = '#16a34a';
+            ctx.beginPath(); ctx.roundRect(sx - 54, sy - 44, 108, 22, 6); ctx.fill();
+            ctx.fillStyle = '#f8fafc';
+            for (let i = -42; i <= 42; i += 21) {
                 ctx.fillRect(sx + i - 4, sy - 44, 8, 22);
             }
 
             // 상점 간판
-            ctx.fillStyle = '#f1c40f';
+            ctx.fillStyle = '#22c55e';
+            ctx.shadowColor = '#000'; ctx.shadowBlur = 5;
             ctx.font = 'bold 13px Arial';
             ctx.textAlign = 'center';
-            ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-            ctx.fillText('🏪 씨앗 상점 (클릭)', sx, sy - 52);
+            ctx.fillText('🏪 씨앗 상점', sx, sy - 52);
             ctx.shadowBlur = 0;
 
-            // 상인 NPC
+            // 씨앗 상인 NPC
             ctx.fillStyle = '#ffeaa7';
-            ctx.beginPath(); ctx.arc(sx, sy - 8, 10, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = '#d35400';
-            ctx.beginPath(); ctx.ellipse(sx, sy - 14, 15, 5, 0, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = '#e67e22';
+            ctx.beginPath(); ctx.arc(sx, sy - 8, 10, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#22c55e';
+            ctx.beginPath(); ctx.ellipse(sx, sy - 14, 15, 5, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#15803d';
             ctx.fillRect(sx - 10, sy + 2, 20, 18);
             ctx.restore();
 
-            // 3. 6개 농장 밭 (Farm Plots)
-            const now = Date.now();
+            // 4. 건물 2: 밭 & 장비 업그레이드 상점 (Upgrade Shop - x: 375, y: 185)
+            const ux = 375, uy = 185;
+            ctx.save();
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            ctx.beginPath(); ctx.ellipse(ux, uy + 38, 60, 14, 0, 0, Math.PI * 2); ctx.fill();
+
+            // 대장간/공방 본체 (다크 브론즈 & 스톤)
+            ctx.fillStyle = '#422006';
+            ctx.beginPath(); ctx.roundRect(ux - 55, uy - 28, 110, 62, 8); ctx.fill();
+            ctx.strokeStyle = '#78350f'; ctx.lineWidth = 2.5; ctx.stroke();
+
+            // 황금/오렌지 차양막
+            ctx.fillStyle = '#ea580c';
+            ctx.beginPath(); ctx.roundRect(ux - 58, uy - 44, 116, 22, 6); ctx.fill();
+            ctx.fillStyle = '#fef08a';
+            for (let i = -46; i <= 46; i += 23) {
+                ctx.fillRect(ux + i - 4, uy - 44, 8, 22);
+            }
+
+            // 업그레이드 상점 간판
+            ctx.fillStyle = '#facc15';
+            ctx.shadowColor = '#000'; ctx.shadowBlur = 5;
+            ctx.font = 'bold 13px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🛠️ 업그레이드 상점', ux, uy - 52);
+            ctx.shadowBlur = 0;
+
+            // 장인 NPC (가죽 앞치마 & 망치)
+            ctx.fillStyle = '#ffeaa7';
+            ctx.beginPath(); ctx.arc(ux, uy - 8, 10, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#d97706';
+            ctx.beginPath(); ctx.ellipse(ux, uy - 14, 15, 5, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#92400e';
+            ctx.fillRect(ux - 11, uy + 2, 22, 18);
+            // 작은 모루 장식
+            ctx.fillStyle = '#64748b';
+            ctx.fillRect(ux + 22, uy + 4, 16, 12);
+            ctx.restore();
+
+            // 5. 총 9개 농장 밭 (Farm Plots - 기본 4개 해금, 최대 9개)
             for (let i = 0; i < FARM_PLOT_COORDS.length; i++) {
                 const c = FARM_PLOT_COORDS[i];
                 const plot = farmPlots[i];
                 const px = c.x, py = c.y;
+                const isUnlocked = (i < unlockedFarmPlots);
 
                 ctx.save();
-                ctx.fillStyle = '#4e342e';
-                ctx.beginPath(); ctx.roundRect(px - 44, py - 32, 88, 64, 8); ctx.fill();
-                ctx.strokeStyle = '#271711'; ctx.lineWidth = 2; ctx.stroke();
+                if (isUnlocked) {
+                    // [해금된 밭] - 3D 럭셔리 목재 정원 화단 틀
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+                    ctx.beginPath(); ctx.roundRect(px - 44, py - 30, 88, 66, 10); ctx.fill();
 
-                let soilGrad = ctx.createLinearGradient(px, py - 26, px, py + 26);
-                soilGrad.addColorStop(0, '#3e2723');
-                soilGrad.addColorStop(1, '#2d1b15');
-                ctx.fillStyle = soilGrad;
-                ctx.beginPath(); ctx.roundRect(px - 38, py - 26, 76, 52, 6); ctx.fill();
+                    // 원목 화단 프레임
+                    let woodGrad = ctx.createLinearGradient(px, py - 32, px, py + 32);
+                    woodGrad.addColorStop(0, '#5c3a21');
+                    woodGrad.addColorStop(1, '#3b2314');
+                    ctx.fillStyle = woodGrad;
+                    ctx.beginPath(); ctx.roundRect(px - 43, py - 31, 86, 62, 8); ctx.fill();
+                    ctx.strokeStyle = '#27170c'; ctx.lineWidth = 2; ctx.stroke();
 
-                ctx.strokeStyle = '#1b100c';
-                ctx.lineWidth = 1.5;
-                for (let fy = -14; fy <= 14; fy += 14) {
-                    ctx.beginPath();
-                    ctx.moveTo(px - 32, py + fy);
-                    ctx.lineTo(px + 32, py + fy);
-                    ctx.stroke();
-                }
+                    // 황금빛 모서리 브래킷 장식 (Corner Brackets)
+                    ctx.fillStyle = '#d4af37';
+                    [[-41, -29], [35, -29], [-41, 25], [35, 25]].forEach(([bx, by]) => {
+                        ctx.fillRect(px + bx, py + by, 6, 6);
+                    });
 
-                if (!plot.seed) {
-                    ctx.fillStyle = '#a8a29e';
-                    ctx.font = 'bold 11px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(c.label, px, py - 8);
-                    ctx.fillStyle = '#2ecc71';
-                    ctx.fillText('+ 심기', px, py + 12);
-                } else {
-                    const elapsed = now - plot.plantedAt;
-                    const progress = Math.min(1, elapsed / plot.duration);
-                    const isReady = progress >= 1.0;
-                    const cfg = SEED_CONFIGS[plot.seed] || SEED_CONFIGS.kraken;
+                    // 비옥한 흑토양 (Rich Moist Soil)
+                    let soilGrad = ctx.createLinearGradient(px, py - 24, px, py + 24);
+                    soilGrad.addColorStop(0, '#2b170d');
+                    soilGrad.addColorStop(1, '#1a0d07');
+                    ctx.fillStyle = soilGrad;
+                    ctx.beginPath(); ctx.roundRect(px - 36, py - 24, 72, 48, 6); ctx.fill();
 
-                    if (isReady) {
-                        ctx.strokeStyle = '#f1c40f';
-                        ctx.lineWidth = 3;
-                        const pulse = Math.sin(now * 0.006) * 3;
-                        ctx.beginPath(); ctx.roundRect(px - 40 - pulse, py - 28 - pulse, 80 + pulse*2, 56 + pulse*2, 8); ctx.stroke();
-
-                        ctx.fillStyle = cfg.badgeColor;
-                        ctx.font = '22px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.fillText(cfg.icon, px, py + 2);
-
-                        ctx.fillStyle = '#f1c40f';
-                        ctx.font = 'bold 11px Arial';
-                        ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-                        ctx.fillText('✨ 수확 가능!', px, py + 18);
-                        ctx.shadowBlur = 0;
-                    } else {
-                        // 자라는 중: 새싹 및 프로그레스 바
-                        if (progress < 0.4) {
-                            ctx.fillStyle = '#4ade80';
-                            ctx.beginPath(); ctx.arc(px, py + 2, 4, 0, Math.PI*2); ctx.fill();
-                            ctx.beginPath(); ctx.ellipse(px + 4, py - 2, 5, 2.5, Math.PI/4, 0, Math.PI*2); ctx.fill();
-                        } else {
-                            ctx.fillStyle = '#22c55e';
-                            ctx.fillRect(px - 2, py - 8, 4, 14);
-                            ctx.beginPath(); ctx.ellipse(px - 8, py - 4, 8, 4, -Math.PI/6, 0, Math.PI*2); ctx.fill();
-                            ctx.beginPath(); ctx.ellipse(px + 8, py - 4, 8, 4, Math.PI/6, 0, Math.PI*2); ctx.fill();
-                            ctx.fillStyle = cfg.badgeColor;
-                            ctx.beginPath(); ctx.arc(px, py - 10, 6, 0, Math.PI*2); ctx.fill();
-                        }
-
-                        ctx.fillStyle = 'rgba(0,0,0,0.5)';
-                        ctx.fillRect(px - 30, py + 16, 60, 6);
-                        ctx.fillStyle = '#2ecc71';
-                        ctx.fillRect(px - 30, py + 16, 60 * progress, 6);
-
-                        const remainSec = Math.ceil((plot.duration - elapsed) / 1000);
-                        const m = Math.floor(remainSec / 60);
-                        const s = String(remainSec % 60).padStart(2, '0');
-                        ctx.fillStyle = '#ffffff';
-                        ctx.font = 'bold 10px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.fillText(m + ':' + s, px, py + 12);
+                    // 흙 고랑 (Tilled Furrows)
+                    ctx.strokeStyle = '#120804';
+                    ctx.lineWidth = 2;
+                    for (let fy = -13; fy <= 13; fy += 13) {
+                        ctx.beginPath();
+                        ctx.moveTo(px - 30, py + fy);
+                        ctx.lineTo(px + 30, py + fy);
+                        ctx.stroke();
                     }
+
+                    if (!plot || !plot.seed) {
+                        // 빈 밭 상태
+                        ctx.fillStyle = '#a8a29e';
+                        ctx.font = 'bold 11px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(c.label, px, py - 8);
+                        ctx.fillStyle = '#4ade80';
+                        ctx.font = 'bold 12px Arial';
+                        ctx.fillText('+ 씨앗 심기', px, py + 12);
+                    } else {
+                        // 작물 성장 또는 수확 가능 상태
+                        const elapsed = now - plot.plantedAt;
+                        const progress = Math.min(1, elapsed / plot.duration);
+                        const isReady = progress >= 1.0;
+                        const cfg = SEED_CONFIGS[plot.seed] || SEED_CONFIGS.kraken;
+
+                        if (isReady) {
+                            // ✨ 수확 가능: 황금 아우라 펄스 & 반짝이
+                            const pulse = Math.sin(now * 0.007) * 4;
+                            let goldAura = ctx.createRadialGradient(px, py, 5, px, py, 38 + pulse);
+                            goldAura.addColorStop(0, 'rgba(250, 204, 21, 0.65)');
+                            goldAura.addColorStop(0.7, 'rgba(234, 179, 8, 0.25)');
+                            goldAura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                            ctx.fillStyle = goldAura;
+                            ctx.beginPath(); ctx.arc(px, py, 38 + pulse, 0, Math.PI * 2); ctx.fill();
+
+                            ctx.strokeStyle = '#facc15';
+                            ctx.lineWidth = 2.5;
+                            ctx.beginPath(); ctx.roundRect(px - 38, py - 26, 76, 52, 6); ctx.stroke();
+
+                            ctx.font = '24px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.fillText(cfg.icon, px, py + 3);
+
+                            ctx.fillStyle = '#fde047';
+                            ctx.font = 'bold 11px Arial';
+                            ctx.shadowColor = '#000'; ctx.shadowBlur = 5;
+                            ctx.fillText('✨ 수확 터치!', px, py + 20);
+                            ctx.shadowBlur = 0;
+                        } else {
+                            // 성장 중 (새싹 / 줄기 / 열매)
+                            if (progress < 0.35) {
+                                ctx.fillStyle = '#4ade80';
+                                ctx.beginPath(); ctx.arc(px, py + 2, 4, 0, Math.PI * 2); ctx.fill();
+                                ctx.beginPath(); ctx.ellipse(px + 4, py - 2, 5, 2.5, Math.PI / 4, 0, Math.PI * 2); ctx.fill();
+                            } else {
+                                ctx.fillStyle = '#22c55e';
+                                ctx.fillRect(px - 2, py - 8, 4, 14);
+                                ctx.beginPath(); ctx.ellipse(px - 8, py - 4, 8, 4, -Math.PI / 6, 0, Math.PI * 2); ctx.fill();
+                                ctx.beginPath(); ctx.ellipse(px + 8, py - 4, 8, 4, Math.PI / 6, 0, Math.PI * 2); ctx.fill();
+                                ctx.fillStyle = cfg.badgeColor;
+                                ctx.beginPath(); ctx.arc(px, py - 10, 6, 0, Math.PI * 2); ctx.fill();
+                            }
+
+                            // 타이머 프로그레스 바
+                            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                            ctx.fillRect(px - 28, py + 15, 56, 6);
+                            ctx.fillStyle = '#22c55e';
+                            ctx.fillRect(px - 28, py + 15, 56 * progress, 6);
+
+                            const remainSec = Math.ceil((plot.duration - elapsed) / 1000);
+                            const m = Math.floor(remainSec / 60);
+                            const s = String(remainSec % 60).padStart(2, '0');
+                            ctx.fillStyle = '#ffffff';
+                            ctx.font = 'bold 10px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.fillText(m + ':' + s, px, py + 11);
+                        }
+                    }
+                } else {
+                    // [잠긴 밭] - 미개간 부지 & 자물쇠 표시
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                    ctx.beginPath(); ctx.roundRect(px - 42, py - 28, 84, 56, 8); ctx.fill();
+
+                    ctx.fillStyle = '#292524';
+                    ctx.beginPath(); ctx.roundRect(px - 40, py - 26, 80, 52, 6); ctx.fill();
+                    ctx.strokeStyle = '#57534e'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                    ctx.fillStyle = '#fbbf24';
+                    ctx.font = '16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('🔒', px, py - 4);
+
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.font = 'bold 9.5px Arial';
+                    ctx.fillText(c.label + ' (확장 필요)', px, py + 14);
                 }
                 ctx.restore();
             }
 
-            // 4. 출구 포탈 (X: 300, Y: 780)
-            const ex = 300, ey = 780;
+            // 6. 출구 차원 포탈 (X: 300, Y: 730)
+            const ex = 300, ey = 730;
             ctx.save();
             const animP = Date.now() * 0.003;
-            ctx.strokeStyle = 'rgba(155, 89, 182, 0.45)';
+            ctx.strokeStyle = 'rgba(168, 85, 247, 0.5)';
             ctx.lineWidth = 3;
             ctx.setLineDash([8, 6]);
             ctx.beginPath();
-            ctx.arc(ex, ey, 42 + Math.sin(animP * 2) * 3, 0, Math.PI * 2);
+            ctx.arc(ex, ey, 40 + Math.sin(animP * 2) * 3, 0, Math.PI * 2);
             ctx.stroke();
             ctx.setLineDash([]);
 
-            let epGrad = ctx.createRadialGradient(ex, ey, 4, ex, ey, 40);
+            let epGrad = ctx.createRadialGradient(ex, ey, 4, ex, ey, 38);
             epGrad.addColorStop(0, '#ffffff');
-            epGrad.addColorStop(0.3, '#9b59b6');
-            epGrad.addColorStop(0.8, '#8e44ad');
-            epGrad.addColorStop(1, '#2c3e50');
+            epGrad.addColorStop(0.3, '#a855f7');
+            epGrad.addColorStop(0.8, '#7e22ce');
+            epGrad.addColorStop(1, '#1e1b4b');
             ctx.fillStyle = epGrad;
-            ctx.beginPath(); ctx.arc(ex, ey, 38, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(ex, ey, 36, 0, Math.PI * 2); ctx.fill();
 
-            ctx.fillStyle = '#e0f2fe';
-            ctx.font = 'bold 13px Arial';
+            ctx.fillStyle = '#f3e8ff';
+            ctx.font = 'bold 12.5px Arial';
             ctx.textAlign = 'center';
             ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-            ctx.fillText('🌀 뒤틀린 지형으로 돌아가기 (클릭/진입)', ex, ey + 52);
+            ctx.fillText('🌀 메인 월드로 돌아가기 (클릭/진입)', ex, ey + 48);
             ctx.shadowBlur = 0;
             ctx.restore();
 
-            // 5. 플레이어 렌더링
+            // 7. 플레이어 렌더링
             drawCharacter(ctx, player, player.x, player.y, false, player.walkTimer);
 
-            // 6. 상단 HUD
+            // 8. 상단 세련된 헤더 HUD (레벨/돈/로그인 미노출 - 유저 요구 충족)
             ctx.save();
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
-            ctx.fillRect(0, 0, GAME_WIDTH, 75);
-            ctx.strokeStyle = 'rgba(46, 204, 113, 0.4)';
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+            ctx.fillRect(0, 0, GAME_WIDTH, 70);
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
             ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(0, 75); ctx.lineTo(GAME_WIDTH, 75); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, 70); ctx.lineTo(GAME_WIDTH, 70); ctx.stroke();
 
-            ctx.fillStyle = '#2ecc71';
-            ctx.font = 'bold 17px Arial';
+            ctx.fillStyle = '#22c55e';
+            ctx.font = 'bold 16px Arial';
             ctx.textAlign = 'left';
-            ctx.fillText('🌾 [ADMIN] 신비한 차원 농장', 16, 32);
+            ctx.fillText('🌾 신비한 차원 농장', 16, 40);
 
-            ctx.fillStyle = '#f1c40f';
-            ctx.font = 'bold 14px Arial';
-            ctx.fillText('💰 ' + money.toLocaleString() + ' 골드', 16, 56);
-
-            // 상점 바로가기 & 타이머 버튼
-            ctx.fillStyle = 'rgba(46, 204, 113, 0.2)';
-            ctx.strokeStyle = '#2ecc71';
+            // 씨앗 상점 바로가기 버튼
+            ctx.fillStyle = 'rgba(34, 197, 94, 0.2)';
+            ctx.strokeStyle = '#22c55e';
             ctx.lineWidth = 1.5;
-            ctx.beginPath(); ctx.roundRect(260, 16, 175, 44, 8); ctx.fill(); ctx.stroke();
-
+            ctx.beginPath(); ctx.roundRect(210, 14, 125, 42, 8); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11.5px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🏪 씨앗 상점', 272, 32);
             const remainSec = Math.max(0, Math.ceil((farmShopData.nextRerollTime - Date.now()) / 1000));
             const rm = String(Math.floor(remainSec / 60)).padStart(2, '0');
             const rs = String(remainSec % 60).padStart(2, '0');
+            ctx.fillStyle = '#86efac';
+            ctx.font = '10px Arial';
+            ctx.fillText('⏰ 리필 ' + rm + ':' + rs, 272, 46);
 
+            // 밭 & 장비 업그레이드 상점 바로가기 버튼
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.2)';
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.roundRect(350, 14, 125, 42, 8); ctx.fill(); ctx.stroke();
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 12px Arial';
+            ctx.font = 'bold 11.5px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('🏪 씨앗 상점', 347, 34);
-            ctx.fillStyle = '#74b9ff';
-            ctx.font = '11px Arial';
-            ctx.fillText('⏰ 리필: ' + rm + ':' + rs, 347, 50);
+            ctx.fillText('🛠️ 업그레이드', 412, 32);
+            ctx.fillStyle = '#fde047';
+            ctx.font = '10px Arial';
+            ctx.fillText('밭 ' + unlockedFarmPlots + '/9개 · 장비', 412, 46);
 
             // 나가기 버튼
             ctx.fillStyle = 'rgba(231, 76, 60, 0.2)';
@@ -9959,6 +10478,22 @@
 
         canvas.addEventListener('mousedown', e => {
             let pos = getPos(e.clientX, e.clientY);
+            // 🌾 농장 차원 내에서는 밭 및 상점 클릭을 조이스틱보다 최우선 처리!
+            if (inFarmDimension) {
+                for (let pi = 0; pi < FARM_PLOT_COORDS.length; pi++) {
+                    const p = FARM_PLOT_COORDS[pi];
+                    if (Math.hypot(pos.x - p.x, pos.y - p.y) < 55) {
+                        handleFarmDimensionClick(pos.x, pos.y, false);
+                        return;
+                    }
+                }
+                if ((pos.cx >= 85 && pos.cx <= 205 && pos.cy >= 135 && pos.cy <= 245) ||
+                    (pos.cx >= 310 && pos.cx <= 440 && pos.cy >= 135 && pos.cy <= 245) ||
+                    Math.hypot(pos.x - 300, pos.y - 730) < 55 || pos.y <= 75) {
+                    handleFarmDimensionClick(pos.x, pos.y, false);
+                    return;
+                }
+            }
             if (pos.x < GAME_WIDTH / 2 && pos.y > GAME_HEIGHT / 2) {
                 joystick.active = true; joystick.originX = pos.x; joystick.originY = pos.y; joystick.x = pos.x; joystick.y = pos.y;
             } else { handleTreeClick(pos.x, pos.y + cameraY); }
@@ -9976,6 +10511,27 @@
             if(e.target === canvas) e.preventDefault();
             for(let i=0; i<e.changedTouches.length; i++) {
                 let t = e.changedTouches[i]; let pos = getPos(t.clientX, t.clientY);
+                // 🌾 농장 차원 내에서는 밭 및 상점 터치를 조이스틱보다 최우선 처리!
+                if (inFarmDimension) {
+                    let farmHandled = false;
+                    for (let pi = 0; pi < FARM_PLOT_COORDS.length; pi++) {
+                        const p = FARM_PLOT_COORDS[pi];
+                        if (Math.hypot(pos.x - p.x, pos.y - p.y) < 55) {
+                            handleFarmDimensionClick(pos.x, pos.y, false);
+                            farmHandled = true;
+                            break;
+                        }
+                    }
+                    if (!farmHandled && (
+                        (pos.x >= 85 && pos.x <= 205 && pos.y >= 135 && pos.y <= 245) ||
+                        (pos.x >= 310 && pos.x <= 440 && pos.y >= 135 && pos.y <= 245) ||
+                        Math.hypot(pos.x - 300, pos.y - 730) < 55 || pos.y <= 75
+                    )) {
+                        handleFarmDimensionClick(pos.x, pos.y, false);
+                        farmHandled = true;
+                    }
+                    if (farmHandled) continue;
+                }
                 if (pos.x < GAME_WIDTH / 2 && pos.y > GAME_HEIGHT / 2 && !joystick.active) {
                     joystick.active = true; joystick.id = t.identifier;
                     joystick.originX = pos.x; joystick.originY = pos.y; joystick.x = pos.x; joystick.y = pos.y;
@@ -11057,7 +11613,7 @@
 
 
 
-        // 👼😈 천악 럭키블록 캔버스 렌더러 (좌측 천사 / 우측 악마)
+        // 👼😈 [신화 개편] 천악 럭키블록 캔버스 렌더러 (입체 3D 큐브, 신성한 깃털 날개, 용암 박쥐 날개, 회전 성흔)
         function drawAngelDevilLuckyBlock(canvasId) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
@@ -11067,146 +11623,207 @@
             ctx.clearRect(0, 0, w, h);
 
             const time = Date.now() * 0.003;
-            const bob = Math.sin(time * 2) * 4;
+            const bob = Math.sin(time * 2) * 5;
             const cx = w / 2;
             const cy = h / 2 + bob;
 
             ctx.save();
             ctx.translate(cx, cy);
 
-            // 1. 후광 및 암흑 아우라 배경
-            const auraGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, 60);
-            auraGrad.addColorStop(0, 'rgba(250, 204, 21, 0.45)');
-            auraGrad.addColorStop(0.5, 'rgba(239, 68, 68, 0.3)');
+            // 1. 성스러운 천상의 후광 & 지옥의 업화 아우라
+            const auraGrad = ctx.createRadialGradient(0, 0, 12, 0, 0, 64);
+            auraGrad.addColorStop(0, 'rgba(254, 240, 138, 0.6)');
+            auraGrad.addColorStop(0.35, 'rgba(234, 179, 8, 0.35)');
+            auraGrad.addColorStop(0.7, 'rgba(220, 38, 38, 0.25)');
             auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
             ctx.fillStyle = auraGrad;
             ctx.beginPath();
-            ctx.arc(0, 0, 60, 0, Math.PI * 2);
+            ctx.arc(0, 0, 64, 0, Math.PI * 2);
             ctx.fill();
 
-            // 2. 좌측 천사 날개 (순백/골드)
+            // 회전하는 룬 문자 링
             ctx.save();
-            ctx.translate(-35, -5);
-            ctx.rotate(-0.15 + Math.sin(time * 2.5) * 0.08);
-            ctx.fillStyle = '#ffffff';
-            ctx.shadowColor = '#fde047';
-            ctx.shadowBlur = 10;
+            ctx.rotate(time * 0.5);
+            ctx.strokeStyle = 'rgba(250, 204, 21, 0.35)';
+            ctx.lineWidth = 1.2;
+            ctx.setLineDash([6, 6]);
             ctx.beginPath();
-            ctx.ellipse(-12, -8, 20, 9, -0.4, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(-16, 4, 16, 7, -0.2, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.arc(0, 0, 54, 0, Math.PI * 2);
+            ctx.stroke();
             ctx.restore();
 
-            // 3. 우측 악마 박쥐 날개 (암흑/크림슨)
+            // 2. 좌측 천사 날개 (순백/골드 3중 깃털 - Triple-Layered Seraph Wings)
+            ctx.save();
+            ctx.translate(-35, -5);
+            let wFlapL = Math.sin(time * 2.5) * 0.1;
+            ctx.rotate(-0.18 + wFlapL);
+            [
+                { l: 24, w: 10, ang: -0.4, col: '#ffffff' },
+                { l: 20, w: 8,  ang: -0.15, col: '#fef08a' },
+                { l: 15, w: 6,  ang: 0.1,  col: '#f59e0b' }
+            ].forEach((f, fi) => {
+                ctx.save();
+                ctx.rotate(f.ang);
+                ctx.fillStyle = f.col;
+                ctx.shadowColor = '#facc15';
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.ellipse(-f.l * 0.6, -fi * 3, f.l * 0.6, f.w * 0.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+            ctx.restore();
+
+            // 3. 우측 악마 박쥐 날개 (옵시디언 & 불타는 용암 리브 - Magma Bat Wings)
             ctx.save();
             ctx.translate(35, -5);
-            ctx.rotate(0.15 - Math.sin(time * 2.5) * 0.08);
-            ctx.fillStyle = '#1c1917';
-            ctx.strokeStyle = '#ef4444';
-            ctx.lineWidth = 1.5;
+            let wFlapR = -Math.sin(time * 2.5) * 0.1;
+            ctx.rotate(0.18 + wFlapR);
+            ctx.fillStyle = '#18181b';
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 2;
             ctx.shadowColor = '#ef4444';
             ctx.shadowBlur = 10;
             ctx.beginPath();
             ctx.moveTo(0, 0);
-            ctx.lineTo(24, -18);
-            ctx.lineTo(16, 2);
-            ctx.lineTo(24, 10);
-            ctx.lineTo(10, 16);
+            ctx.lineTo(26, -20);
+            ctx.lineTo(18, 0);
+            ctx.lineTo(26, 12);
+            ctx.lineTo(10, 18);
             ctx.closePath();
             ctx.fill();
             ctx.stroke();
+
+            // 용암 뼈대 리브
+            ctx.strokeStyle = '#f87171';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.moveTo(0, 0); ctx.lineTo(24, -18);
+            ctx.moveTo(4, 2); ctx.lineTo(16, 2);
+            ctx.moveTo(4, 4); ctx.lineTo(22, 10);
+            ctx.stroke();
             ctx.restore();
 
-            // 4. 큐브 몸체 (정사각형 70x70)
-            const sz = 70;
+            // 4. 큐브 몸체 (정사각형 72x72) & 입체 베벨
+            const sz = 72;
             const half = sz / 2;
 
-            // 좌측 반 (천사 영역: 순백 & 황금)
+            // 좌측 반 (천사 영역: 순백 대리석 & 황금광)
             ctx.save();
             ctx.beginPath();
             ctx.rect(-half, -half, half, sz);
             ctx.clip();
             const angelGrad = ctx.createLinearGradient(-half, -half, 0, half);
             angelGrad.addColorStop(0, '#ffffff');
-            angelGrad.addColorStop(0.7, '#fef08a');
+            angelGrad.addColorStop(0.4, '#fffbeb');
+            angelGrad.addColorStop(0.75, '#fde047');
             angelGrad.addColorStop(1, '#f59e0b');
             ctx.fillStyle = angelGrad;
             ctx.fillRect(-half, -half, half, sz);
+            // 천사 골드 리벳
+            ctx.fillStyle = '#ca8a04';
+            [[-half + 5, -half + 5], [-half + 5, half - 5]].forEach(([rx, ry]) => {
+                ctx.beginPath(); ctx.arc(rx, ry, 2, 0, Math.PI * 2); ctx.fill();
+            });
             ctx.restore();
 
-            // 우측 반 (악마 영역: 다크옵시디언 & 크림슨)
+            // 우측 반 (악마 영역: 흑요석 & 지옥의 용암)
             ctx.save();
             ctx.beginPath();
             ctx.rect(0, -half, half, sz);
             ctx.clip();
             const devilGrad = ctx.createLinearGradient(0, -half, half, half);
-            devilGrad.addColorStop(0, '#450a0a');
-            devilGrad.addColorStop(0.6, '#1c1917');
-            devilGrad.addColorStop(1, '#991b1b');
+            devilGrad.addColorStop(0, '#262626');
+            devilGrad.addColorStop(0.45, '#171717');
+            devilGrad.addColorStop(0.8, '#7f1d1d');
+            devilGrad.addColorStop(1, '#b91c1c');
             ctx.fillStyle = devilGrad;
             ctx.fillRect(0, -half, half, sz);
+            // 악마 루비 리벳
+            ctx.fillStyle = '#ef4444';
+            [[half - 5, -half + 5], [half - 5, half - 5]].forEach(([rx, ry]) => {
+                ctx.beginPath(); ctx.arc(rx, ry, 2, 0, Math.PI * 2); ctx.fill();
+            });
             ctx.restore();
 
-            // 테두리
+            // 외부 3D 골드 테두리 프레임
             ctx.strokeStyle = '#facc15';
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 3;
             ctx.strokeRect(-half, -half, sz, sz);
 
-            // 중앙 경계선 (지그재그 에너지 균열)
-            ctx.strokeStyle = '#fde047';
-            ctx.lineWidth = 2;
+            // 중앙 경계선 (치직거리는 번개 성흔 균열 - Crack of Light & Dark)
+            ctx.strokeStyle = '#fef08a';
+            ctx.lineWidth = 2.5;
             ctx.shadowColor = '#f59e0b';
-            ctx.shadowBlur = 8;
+            ctx.shadowBlur = 10;
             ctx.beginPath();
             ctx.moveTo(0, -half);
-            ctx.lineTo(3, -half + 18);
-            ctx.lineTo(-3, -half + 35);
-            ctx.lineTo(3, -half + 52);
+            ctx.lineTo(4, -half + 16);
+            ctx.lineTo(-4, -half + 36);
+            ctx.lineTo(4, -half + 54);
             ctx.lineTo(0, half);
             ctx.stroke();
             ctx.shadowBlur = 0;
 
-            // 5. 좌측 천사 머리 위 황금 후광 (Halo)
+            // 5. 좌측 천사 머리 위 황금 후광 (3D Radiant Halo)
             ctx.save();
             ctx.strokeStyle = '#facc15';
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 3.5;
             ctx.shadowColor = '#fef08a';
-            ctx.shadowBlur = 8;
+            ctx.shadowBlur = 12;
             ctx.beginPath();
-            ctx.ellipse(-18, -half - 10, 14, 5, -0.15, 0, Math.PI * 2);
+            ctx.ellipse(-18, -half - 11, 15, 5, -0.15, 0, Math.PI * 2);
             ctx.stroke();
             ctx.restore();
 
-            // 6. 우측 악마 뾰족한 뿔 (Demon Horn)
+            // 6. 우측 악마 뾰족한 뿔 (Obsidian Demon Horn with Rune)
             ctx.save();
-            ctx.fillStyle = '#dc2626';
-            ctx.strokeStyle = '#7f1d1d';
+            ctx.fillStyle = '#991b1b';
+            ctx.strokeStyle = '#450a0a';
             ctx.lineWidth = 1.5;
             ctx.beginPath();
             ctx.moveTo(14, -half);
-            ctx.quadraticCurveTo(24, -half - 16, 28, -half - 20);
-            ctx.quadraticCurveTo(23, -half - 8, 22, -half);
+            ctx.quadraticCurveTo(25, -half - 18, 30, -half - 22);
+            ctx.quadraticCurveTo(24, -half - 9, 22, -half);
             ctx.closePath();
             ctx.fill();
             ctx.stroke();
+            // 뿔에 새겨진 붉은 룬
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 1.2;
+            ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 4;
+            ctx.beginPath();
+            ctx.moveTo(20, -half - 4); ctx.lineTo(24, -half - 12);
+            ctx.stroke();
             ctx.restore();
 
-            // 7. 중앙 황금빛 & 진홍빛 물음표 ('?')
-            ctx.font = '900 36px Arial';
+            // 7. 중앙 입체 3D 물음표 ('?')
+            ctx.font = '900 38px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowColor = '#000';
-            ctx.shadowBlur = 6;
+            // 그림자
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillText('?', 2, 4);
+            // 전면 텍스트
             ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = '#f59e0b';
+            ctx.shadowBlur = 8;
             ctx.fillText('?', 0, 2);
             ctx.shadowBlur = 0;
 
             // 8. 하단 라벨 "천 · 악"
-            ctx.font = 'bold 9px Arial';
+            ctx.font = 'bold 9.5px Arial';
             ctx.fillStyle = '#fde047';
             ctx.fillText('ANGEL · DEMON', 0, half - 7);
+
+            // 반짝이는 별 파티클
+            for (let sp = 0; sp < 3; sp++) {
+                let spTime = (time * 1.5 + sp * 1.2) % 1;
+                let spX = Math.sin(sp * 2 + time * 3) * 32;
+                let spY = -half + spTime * sz;
+                ctx.fillStyle = 'rgba(254, 240, 138, ' + (1 - spTime) + ')';
+                ctx.beginPath(); ctx.arc(spX, spY, 1.5, 0, Math.PI * 2); ctx.fill();
+            }
 
             ctx.restore();
         }
@@ -14766,6 +15383,8 @@
                 ownedAxes: getOwnedAxesList(),
                 ownedSkins: ownedSkins, equippedSkin: equippedSkin,
                 farmPlots: (typeof farmPlots !== 'undefined' && Array.isArray(farmPlots)) ? farmPlots : [],
+                unlockedFarmPlots: (typeof unlockedFarmPlots !== 'undefined') ? unlockedFarmPlots : 4,
+                ownedFarmEquipments: (typeof ownedFarmEquipments !== 'undefined') ? ownedFarmEquipments : [],
                 farmShopData: (typeof farmShopData !== 'undefined') ? farmShopData : null,
                 questData: { cycle: currentQuestCycle, quests: activeQuests },
                 treeUnlocked: trees.map(t => t.unlocked),
@@ -14864,10 +15483,20 @@
                 }
             });
 
-            // 🌾 농장 밭 및 상점 상태 복원
-            if (Array.isArray(data.farmPlots) && data.farmPlots.length === 6) {
-                farmPlots = [...data.farmPlots];
+            // 🌾 농장 밭 및 상점, 부지 확장, 장비 복원
+            if (Array.isArray(data.farmPlots)) {
+                data.farmPlots.forEach((p, idx) => {
+                    if (farmPlots[idx]) farmPlots[idx] = Object.assign(farmPlots[idx], p);
+                });
                 try { localStorage.setItem('tb_farm_plots', JSON.stringify(farmPlots)); } catch(e) {}
+            }
+            if (data.unlockedFarmPlots !== undefined) {
+                unlockedFarmPlots = Math.min(9, Math.max(4, parseInt(data.unlockedFarmPlots) || 4));
+                try { localStorage.setItem('tb_farm_unlocked_plots', unlockedFarmPlots.toString()); } catch(e) {}
+            }
+            if (Array.isArray(data.ownedFarmEquipments)) {
+                ownedFarmEquipments = [...data.ownedFarmEquipments];
+                try { localStorage.setItem('tb_farm_equipments', JSON.stringify(ownedFarmEquipments)); } catch(e) {}
             }
             if (data.farmShopData) {
                 farmShopData = Object.assign(farmShopData, data.farmShopData);
@@ -18416,103 +19045,230 @@
                 ctx.restore();
 
             } else if (useSkin === 'kraken') {
-                // 🦑 크라켄 스킨: 심연의 물결 촉수, 네이비/시안 외투막, 빛나는 눈
-                ctx.fillStyle = 'rgba(0, 206, 201, 0.25)';
-                ctx.beginPath(); ctx.ellipse(0, 20, 24, 8, 0, 0, Math.PI*2); ctx.fill();
-                ctx.translate(0, -bobbing);
+                // 🦑 [신화 개편] 심연의 지배자 거대 크라켄 (Bioluminescent Mantle, Oceanic Coral Horns, 8 Undulating Tentacles, Abyss Aura)
+                ctx.save();
+                let kTime = Date.now() * 0.004;
+                let kHover = Math.sin(kTime * 2.5) * 4;
 
-                // 8개 흔들리는 촉수
-                const tAnim = Date.now() * 0.005;
-                ctx.lineWidth = 3;
-                ctx.lineCap = 'round';
-                for (let i = -3; i <= 3; i++) {
+                // 바닥 심연의 소용돌이 아우라 & 거품
+                ctx.fillStyle = 'rgba(0, 206, 201, 0.35)';
+                ctx.beginPath(); ctx.ellipse(0, 24, 26, 9, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = 'rgba(9, 132, 227, 0.2)';
+                ctx.beginPath(); ctx.ellipse(0, 24, 32, 12, 0, 0, Math.PI * 2); ctx.fill();
+
+                ctx.translate(0, -bobbing + kHover);
+
+                // 1. 심해의 8개 거대 촉수 (8 Undulating Muscular Tentacles with Glowing Suckers)
+                for (let i = -4; i <= 4; i++) {
                     if (i === 0) continue;
-                    const tIdx = Math.abs(i);
-                    const sway = Math.sin(tAnim + tIdx * 0.8) * 6;
-                    ctx.strokeStyle = '#00cec9';
+                    let tIdx = Math.abs(i);
+                    let side = (i > 0) ? 1 : -1;
+                    let tWave = Math.sin(kTime * 3 + tIdx * 0.9) * 8;
+                    let tLen = 22 + tIdx * 3;
+
+                    ctx.save();
+                    let tGrad = ctx.createLinearGradient(0, 6, side * tLen * 0.7 + tWave, 6 + tLen);
+                    tGrad.addColorStop(0, '#0c2461');
+                    tGrad.addColorStop(0.5, '#1e3799');
+                    tGrad.addColorStop(0.85, '#00cec9');
+                    tGrad.addColorStop(1, '#81ecec');
+
+                    ctx.strokeStyle = tGrad;
+                    ctx.lineWidth = 4.5 - tIdx * 0.4;
+                    ctx.lineCap = 'round';
+                    ctx.shadowColor = '#00cec9'; ctx.shadowBlur = 6;
+
                     ctx.beginPath();
                     ctx.moveTo(i * 3.5, 6);
-                    ctx.quadraticCurveTo(i * 5 + sway, 15, i * 6.5 + sway * 1.4, 23);
+                    ctx.quadraticCurveTo(i * 6 + tWave * 0.8, 16, i * 7.5 + tWave, 6 + tLen);
                     ctx.stroke();
-                    // 빨판
-                    ctx.fillStyle = '#81ecec';
-                    ctx.beginPath();
-                    ctx.arc(i * 5 + sway * 0.5, 14, 1.2, 0, Math.PI*2);
-                    ctx.fill();
+
+                    // 발광 흡반 (Bioluminescent Sucker Nodes)
+                    ctx.fillStyle = '#00f2fe';
+                    ctx.shadowColor = '#00f2fe'; ctx.shadowBlur = 8;
+                    let suckX1 = i * 4.5 + tWave * 0.4;
+                    let suckY1 = 14;
+                    ctx.beginPath(); ctx.arc(suckX1, suckY1, 1.8, 0, Math.PI * 2); ctx.fill();
+                    let suckX2 = i * 6.5 + tWave * 0.8;
+                    let suckY2 = 22;
+                    ctx.beginPath(); ctx.arc(suckX2, suckY2, 1.5, 0, Math.PI * 2); ctx.fill();
+                    ctx.shadowBlur = 0;
+
+                    ctx.restore();
                 }
 
-                // 머리 / 외투막
-                let kGrad = ctx.createRadialGradient(0, -4, 4, 0, 0, 22);
-                kGrad.addColorStop(0, '#2e86de');
-                kGrad.addColorStop(0.5, '#1b3a6b');
-                kGrad.addColorStop(1, '#0c2461');
-                ctx.fillStyle = kGrad;
+                // 2. 심해 거대 외투막 (Mantle & Abyssal Shell)
+                let mantleGrad = ctx.createRadialGradient(0, -6, 3, 0, -4, 26);
+                mantleGrad.addColorStop(0, '#38bdf8');
+                mantleGrad.addColorStop(0.35, '#0984e3');
+                mantleGrad.addColorStop(0.7, '#1e3799');
+                mantleGrad.addColorStop(1, '#051336');
+                ctx.fillStyle = mantleGrad;
                 ctx.strokeStyle = '#00cec9';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 2.5;
+                ctx.shadowColor = '#00cec9'; ctx.shadowBlur = 10;
                 ctx.beginPath();
-                ctx.moveTo(-16, 8);
-                ctx.bezierCurveTo(-22, -2, -20, -22, 0, -26);
-                ctx.bezierCurveTo(20, -22, 22, -2, 16, 8);
+                ctx.moveTo(-18, 8);
+                ctx.bezierCurveTo(-26, -2, -22, -26, 0, -32);
+                ctx.bezierCurveTo(22, -26, 26, -2, 18, 8);
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
-
-                // 빛나는 시안 눈
-                ctx.fillStyle = '#00f2fe';
-                ctx.shadowColor = '#00f2fe'; ctx.shadowBlur = 8;
-                ctx.beginPath();
-                ctx.arc(-6 * facing, -4, 2.5, 0, Math.PI*2);
-                ctx.arc(6 * facing, -4, 2.5, 0, Math.PI*2);
-                ctx.fill();
                 ctx.shadowBlur = 0;
 
-            } else if (useSkin === 'infected_gorilla') {
-                // 🦍💜 감염된 고릴라 스킨 (보라색 거구, 네온 핑크 혈관, 사이버 바이저)
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
-                ctx.beginPath(); ctx.ellipse(0, 22, 22, 8, 0, 0, Math.PI*2); ctx.fill();
-                ctx.translate(0, -bobbing);
-
-                let armSwing = Math.sin(walkAngle * 0.15) * 8;
-
-                // 뒷팔
-                ctx.fillStyle = '#241038';
-                ctx.save(); ctx.translate(-14 * facing, 4); ctx.rotate(-armSwing * 0.05 * facing);
-                ctx.beginPath(); ctx.roundRect(-5, 0, 10, 22, 5); ctx.fill();
-                ctx.restore();
-
-                // 다리
-                ctx.fillStyle = '#160824';
-                ctx.fillRect(-10, 14, 8, 9);
-                ctx.fillRect(2, 14, 8, 9);
-
-                // 육중한 몸통
-                ctx.fillStyle = '#32164d';
-                ctx.beginPath(); ctx.ellipse(0, 6, 18, 17, 0, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = '#49226e';
-                ctx.beginPath(); ctx.ellipse(2 * facing, 5, 12, 11, 0, 0, Math.PI*2); ctx.fill();
-
-                // 네온 핑크 감염 혈관
-                ctx.strokeStyle = '#ff007f';
+                // 외투막 심해 고대 룬 문양 (Abyssal Runes)
+                ctx.strokeStyle = '#81ecec';
                 ctx.lineWidth = 1.5;
-                ctx.shadowColor = '#ff007f'; ctx.shadowBlur = 5;
+                ctx.shadowColor = '#00f2fe'; ctx.shadowBlur = 6;
                 ctx.beginPath();
-                ctx.moveTo(-4, -1); ctx.lineTo(-7 * facing, 7); ctx.lineTo(-2 * facing, 12);
-                ctx.moveTo(3 * facing, 1); ctx.lineTo(8 * facing, 6);
+                ctx.moveTo(0, -26); ctx.lineTo(0, -12);
+                ctx.moveTo(-6, -18); ctx.lineTo(0, -14); ctx.lineTo(6, -18);
                 ctx.stroke();
                 ctx.shadowBlur = 0;
 
-                // 앞팔
-                ctx.fillStyle = '#241038';
-                ctx.save(); ctx.translate(14 * facing, 4); ctx.rotate(armSwing * 0.05 * facing);
-                ctx.beginPath(); ctx.roundRect(-5, 0, 10, 22, 5); ctx.fill();
+                // 3. 발광하는 심연의 눈 (Glowing Golden Leviathan Eyes)
+                ctx.shadowColor = '#facc15'; ctx.shadowBlur = 10;
+                ctx.fillStyle = '#fde047';
+                ctx.beginPath(); ctx.arc(-7 * facing, -4, 3, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(7 * facing, -4, 3, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#051336';
+                ctx.fillRect(-7.5 * facing, -6, 1.5, 4);
+                ctx.fillRect(6.5 * facing, -6, 1.5, 4);
+                ctx.shadowBlur = 0;
+
+                // 4. 상승하는 심해 거품 파티클 (Rising Bubbles)
+                for (let bp = 0; bp < 4; bp++) {
+                    let bProg = (kTime * 2.2 + bp * 1.3) % 1;
+                    let bx = Math.sin(bp * 4 + kTime * 2) * 20;
+                    let by = 20 - bProg * 45;
+                    ctx.fillStyle = `rgba(0, 206, 201, ${1 - bProg})`;
+                    ctx.beginPath(); ctx.arc(bx, by, (1 - bProg) * 2.2, 0, Math.PI * 2); ctx.fill();
+                }
+
                 ctx.restore();
 
-                // 고릴라 얼굴 & 사이버 바이저
-                ctx.fillStyle = '#241038';
-                ctx.beginPath(); ctx.arc(0, -14, 11, 0, Math.PI*2); ctx.fill();
+            } else if (useSkin === 'infected_gorilla') {
+                // 🦍💜 [신화 개편] 사이버 바이오 감염 거대 고릴라 (Hulking Mutant Carapace, Neon Veins, Cyber Visor, Knuckle Plates)
+                ctx.save();
+                let gTime = Date.now() * 0.004;
+                let gWalk = Math.sin(walkAngle * 0.15) * 9;
+                let breath = Math.sin(gTime * 2) * 2;
+
+                // 바닥 독성 감염 오라 & 거대한 그림자
+                ctx.fillStyle = 'rgba(74, 20, 140, 0.45)';
+                ctx.beginPath(); ctx.ellipse(0, 24, 28, 9, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = 'rgba(255, 0, 127, 0.2)';
+                ctx.beginPath(); ctx.ellipse(0, 24, 20, 6, 0, 0, Math.PI * 2); ctx.fill();
+
+                ctx.translate(0, -bobbing + breath);
+
+                // 1. 뒷팔 & 육중한 바이오 너클 (Back Arm)
+                ctx.save();
+                ctx.translate(-18 * facing, 2);
+                ctx.rotate(-gWalk * 0.06 * facing);
+                ctx.fillStyle = '#1a052e';
+                ctx.beginPath(); ctx.roundRect(-8, -4, 16, 26, 6); ctx.fill();
+                ctx.fillStyle = '#d500f9';
+                ctx.beginPath(); ctx.moveTo(-6, -2); ctx.lineTo(-14 * facing, -12); ctx.lineTo(-2, 4); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#2c0b4d';
+                ctx.beginPath(); ctx.roundRect(-9, 14, 18, 14, 4); ctx.fill();
+                ctx.strokeStyle = '#ff007f'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.restore();
+
+                // 2. 다리 (Thick Legs)
+                ctx.fillStyle = '#120420';
+                ctx.beginPath(); ctx.roundRect(-12, 14, 10, 12, 3); ctx.fill();
+                ctx.beginPath(); ctx.roundRect(2, 14, 10, 12, 3); ctx.fill();
+
+                // 3. 거대한 근육질 몸통 (Hulking Mutated Torso)
+                let torsoGrad = ctx.createLinearGradient(0, -12, 0, 18);
+                torsoGrad.addColorStop(0, '#240b3b');
+                torsoGrad.addColorStop(0.5, '#3b1261');
+                torsoGrad.addColorStop(1, '#1b062c');
+                ctx.fillStyle = torsoGrad;
+                ctx.beginPath();
+                ctx.moveTo(0, -14);
+                ctx.quadraticCurveTo(-22, -4, -18, 16);
+                ctx.quadraticCurveTo(0, 20, 18, 16);
+                ctx.quadraticCurveTo(22, -4, 0, -14);
+                ctx.closePath();
+                ctx.fill();
+
+                // 흉근 플레이트
+                ctx.fillStyle = '#4a157a';
+                ctx.beginPath(); ctx.ellipse(-6 * facing, 2, 7, 9, 0.1, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(6 * facing, 2, 7, 9, -0.1, 0, Math.PI * 2); ctx.fill();
+
+                // 네온 핑크 감염 혈관 (Pulsing Mutagenic Conduits)
+                let pulseAlpha = 0.7 + Math.sin(gTime * 4) * 0.3;
+                ctx.strokeStyle = `rgba(255, 0, 127, ${pulseAlpha})`;
+                ctx.lineWidth = 2.2;
+                ctx.shadowColor = '#ff007f'; ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.moveTo(-10 * facing, -8);
+                ctx.lineTo(-4 * facing, 0);
+                ctx.lineTo(-7 * facing, 8);
+                ctx.lineTo(-2 * facing, 14);
+                ctx.moveTo(8 * facing, -6);
+                ctx.lineTo(3 * facing, 2);
+                ctx.lineTo(6 * facing, 10);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                // 4. 앞팔 & 사이버 건틀릿 (Forearm & Cyber Knuckle)
+                ctx.save();
+                ctx.translate(18 * facing, 2);
+                ctx.rotate(gWalk * 0.06 * facing);
+                ctx.fillStyle = '#1a052e';
+                ctx.beginPath(); ctx.roundRect(-8, -4, 16, 26, 6); ctx.fill();
+                ctx.fillStyle = '#ff007f';
+                ctx.beginPath(); ctx.moveTo(6, -2); ctx.lineTo(14 * facing, -12); ctx.lineTo(2, 4); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#2c0b4d';
+                ctx.beginPath(); ctx.roundRect(-9, 14, 18, 14, 4); ctx.fill();
+                ctx.strokeStyle = '#00f2fe'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.restore();
+
+                // 5. 고릴라 두부 & 사이버 바이저 & 송곳니
+                ctx.save();
+                ctx.translate(0, -16);
+                let headG = ctx.createRadialGradient(0, 0, 2, 0, 0, 13);
+                headG.addColorStop(0, '#3b1261');
+                headG.addColorStop(1, '#160424');
+                ctx.fillStyle = headG;
+                ctx.beginPath(); ctx.arc(0, 0, 12, 0, Math.PI * 2); ctx.fill();
+
+                // 두개골 돌기
+                ctx.fillStyle = '#120420';
+                ctx.beginPath(); ctx.ellipse(0, -11, 6, 3, 0, 0, Math.PI * 2); ctx.fill();
+
+                // 사이버 바이저 (Cyberpunk Laser Visor)
                 ctx.fillStyle = '#00f2fe';
-                ctx.shadowColor = '#00f2fe'; ctx.shadowBlur = 8;
-                ctx.beginPath(); ctx.roundRect(-8 * facing, -16, 10, 5, 2); ctx.fill();
+                ctx.shadowColor = '#00f2fe'; ctx.shadowBlur = 10;
+                ctx.beginPath(); ctx.roundRect(-10 * facing, -3, 14, 5, 2); ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(-6 * facing, -2, 6, 3);
+                ctx.shadowBlur = 0;
+
+                // 턱 & 날카로운 송곳니
+                ctx.fillStyle = '#220838';
+                ctx.beginPath(); ctx.ellipse(facing * 3, 7, 7, 5, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(facing * 2, 4); ctx.lineTo(facing * 3, 9); ctx.lineTo(facing * 4, 4); ctx.closePath(); ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(facing * 5, 4); ctx.lineTo(facing * 6, 9); ctx.lineTo(facing * 7, 4); ctx.closePath(); ctx.fill();
+                ctx.restore();
+
+                // 6. 감염 증기 / 바이러스 연기 파티클
+                for (let vp = 0; vp < 3; vp++) {
+                    let vProg = (gTime * 2 + vp * 1.5) % 1;
+                    let vx = Math.sin(vp * 3 + gTime * 2) * 22;
+                    let vy = 10 - vProg * 35;
+                    ctx.fillStyle = `rgba(224, 86, 253, ${1 - vProg})`;
+                    ctx.beginPath(); ctx.arc(vx, vy, (1 - vProg) * 2.5, 0, Math.PI * 2); ctx.fill();
+                }
+
+                ctx.restore();
                 ctx.shadowBlur = 0;
 
             } else if (useSkin === 'frost_dragon') {
