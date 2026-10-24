@@ -115,9 +115,30 @@
         #shop-modal {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(30, 40, 50, 0.95); color: white; padding: 20px; border-radius: 15px;
-            width: 85%; max-width: 350px; max-height: 80%; overflow-y: auto; display: none; border: 2px solid #fff; z-index: 30;
+            width: 92%; max-width: 480px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #fff; z-index: 30;
         }
         .shop-tabs { display: flex; justify-content: center; margin-bottom: 20px; gap: 10px; }
+        .lucky-buy-btn {
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 13.5px;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 4px;
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 3.5px 0 #15803d, 0 5px 10px rgba(0,0,0,0.35);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .lucky-buy-btn:hover {
+            filter: brightness(1.08);
+        }
+        .lucky-buy-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 0.5px 0 #15803d;
+        }
         .shop-tab-btn { flex: 1; padding: 10px; border: none; background: #7f8c8d; color: white; font-weight: bold; border-radius: 5px; cursor: pointer; }
         .shop-tab-btn.active { background: #f1c40f; color: black; }
         .axe-item { background: #2c3e50; margin-bottom: 15px; padding: 15px; border-radius: 10px; border: 2px solid #7f8c8d; text-align: center; }
@@ -1294,75 +1315,79 @@
                 <div id="skin-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
             </div>
 
-            <!-- 👑 [ADMIN 전용] 전설의 럭키블럭 상점 섹션 -->
+            <!-- 👑 [ADMIN 전용] 천악 럭키블록 상점 섹션 -->
             <div id="shop-lucky" style="display: none; padding-top: 10px;">
-                <div style="background: radial-gradient(circle at top, rgba(245, 158, 11, 0.25), rgba(15, 23, 42, 0.95)); border: 2px solid #f59e0b; border-radius: 16px; padding: 18px 14px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(245, 158, 11, 0.35);">
-                    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 4px;">
-                        <span style="font-size: 24px;">👑</span>
-                        <h3 style="margin: 0; color: #f1c40f; font-size: 20px; font-weight: 900; letter-spacing: -0.5px; text-shadow: 0 0 12px rgba(241,196,15,0.7);">전설의 어드민 럭키블럭</h3>
+                <div style="background: radial-gradient(circle at top, rgba(30, 27, 75, 0.9), rgba(15, 23, 42, 0.98)); border: 2px solid #a855f7; border-radius: 16px; padding: 16px 12px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(168, 85, 247, 0.35);">
+                    
+                    <!-- 헤더 타이틀 -->
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 2px;">
+                        <span style="font-size: 22px;">👼😈</span>
+                        <h3 style="margin: 0; color: #facc15; font-size: 21px; font-weight: 900; letter-spacing: -0.5px; text-shadow: 0 0 12px rgba(250, 204, 21, 0.7);">천악 럭키블록</h3>
                     </div>
-                    <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 16px;">
-                        황금빛 럭키블럭을 파괴하여 5종의 한정 전설/신화 스킨을 획득하세요!
-                    </div>
-
-                    <!-- 럭키블럭 비주얼 박스 -->
-                    <div style="background: linear-gradient(145deg, #f59e0b, #d97706); border: 3px solid #fef08a; border-radius: 18px; width: 130px; height: 130px; margin: 0 auto 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.4); animation: luckyPulseAnim 2s infinite ease-in-out;">
-                        <div style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; font-size: 9px; font-weight: 900; padding: 2px 7px; border-radius: 10px; border: 1.5px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4);">NEW</div>
-                        <span style="font-size: 54px; font-weight: 900; color: #ffffff; text-shadow: 0 3px 10px rgba(0,0,0,0.6);">?</span>
-                        <div style="font-size: 10.5px; font-weight: bold; color: #78350f; background: rgba(255,255,255,0.85); padding: 2px 8px; border-radius: 8px; margin-top: -2px;">LUCKY BLOCK</div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 12px;">
+                        순백의 천사와 칠흑의 악마가 깃든 초신화 럭키블록!
                     </div>
 
-                    <!-- 등장 확률 카드 리스트 -->
-                    <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; text-align: left;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.8); border: 1px solid #38bdf8; border-radius: 8px; padding: 7px 12px;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 18px;">🪼</span>
-                                <span style="color: #38bdf8; font-weight: bold; font-size: 13px;">해파리 스킨</span>
-                            </div>
-                            <span style="color: #38bdf8; font-weight: 900; font-size: 13.5px;">50%</span>
+                    <!-- 3D 캔버스 럭키블럭 비주얼 박스 -->
+                    <div style="display: flex; justify-content: center; margin-bottom: 14px;">
+                        <canvas id="angel-demon-lucky-canvas" width="130" height="130" style="filter: drop-shadow(0 8px 20px rgba(234, 179, 8, 0.45));"></canvas>
+                    </div>
+
+                    <!-- 5종 스킨 드랍 라인업 (Roblox 스타일 가로 카드 그리드) -->
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 16px;">
+                        <!-- 1. 해파리 50% -->
+                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #38bdf8; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
+                            <span style="position: absolute; top: -6px; background: #0284c7; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">50%</span>
+                            <canvas id="lucky-prev-jellyfish" width="48" height="48" style="margin-top: 4px;"></canvas>
+                            <span style="font-size: 10.5px; font-weight: bold; color: #7dd3fc; margin-top: 2px;">해파리</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.8); border: 1px solid #f97316; border-radius: 8px; padding: 7px 12px;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 18px;">🔥🦅</span>
-                                <span style="color: #fb923c; font-weight: bold; font-size: 13px;">피닉스 스킨</span>
-                            </div>
-                            <span style="color: #fb923c; font-weight: 900; font-size: 13.5px;">25%</span>
+                        <!-- 2. 피닉스 25% -->
+                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #f97316; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
+                            <span style="position: absolute; top: -6px; background: #ea580c; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">25%</span>
+                            <canvas id="lucky-prev-phoenix" width="48" height="48" style="margin-top: 4px;"></canvas>
+                            <span style="font-size: 10.5px; font-weight: bold; color: #fdba74; margin-top: 2px;">피닉스</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.8); border: 1px solid #fde047; border-radius: 8px; padding: 7px 12px;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 18px;">👼</span>
-                                <span style="color: #fef08a; font-weight: bold; font-size: 13px;">천사 스킨</span>
-                            </div>
-                            <span style="color: #fef08a; font-weight: 900; font-size: 13.5px;">15%</span>
+                        <!-- 3. 천사 15% -->
+                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #facc15; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
+                            <span style="position: absolute; top: -6px; background: #ca8a04; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">15%</span>
+                            <canvas id="lucky-prev-angel" width="48" height="48" style="margin-top: 4px;"></canvas>
+                            <span style="font-size: 10.5px; font-weight: bold; color: #fef08a; margin-top: 2px;">천사</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.8); border: 1px solid #ef4444; border-radius: 8px; padding: 7px 12px;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 18px;">😈</span>
-                                <span style="color: #f87171; font-weight: bold; font-size: 13px;">악마 스킨</span>
-                            </div>
-                            <span style="color: #f87171; font-weight: 900; font-size: 13.5px;">9%</span>
+                        <!-- 4. 악마 9% -->
+                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #ef4444; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
+                            <span style="position: absolute; top: -6px; background: #dc2626; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">9%</span>
+                            <canvas id="lucky-prev-devil" width="48" height="48" style="margin-top: 4px;"></canvas>
+                            <span style="font-size: 10.5px; font-weight: bold; color: #fca5a5; margin-top: 2px;">악마</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: linear-gradient(90deg, rgba(234, 179, 8, 0.2), rgba(239, 68, 68, 0.25)); border: 1.5px solid #eab308; border-radius: 8px; padding: 7px 12px; box-shadow: 0 0 10px rgba(234, 179, 8, 0.3);">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 18px;">🌓</span>
-                                <span style="color: #facc15; font-weight: bold; font-size: 13px;">에테론 (천사반 악마반)</span>
-                            </div>
-                            <span style="color: #facc15; font-weight: 900; font-size: 14px; text-shadow: 0 0 8px #f59e0b;">1% (초신화)</span>
+                        <!-- 5. 에테론 1% -->
+                        <div style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(239, 68, 68, 0.3)); border: 1.5px solid #eab308; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative; box-shadow: 0 0 10px rgba(234, 179, 8, 0.35);">
+                            <span style="position: absolute; top: -6px; background: linear-gradient(90deg, #eab308, #ef4444); color: white; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 6px;">1%</span>
+                            <canvas id="lucky-prev-etheron" width="48" height="48" style="margin-top: 4px;"></canvas>
+                            <span style="font-size: 10px; font-weight: 900; color: #fde047; margin-top: 2px;">에테론</span>
                         </div>
                     </div>
 
-                    <!-- 3개 구매 버튼 -->
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <button onclick="buyLuckyBlocks(1, 10000)" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; padding: 11px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);">
-                            🎁 럭키블럭 1개 구매 (💰 10,000 골드)
-                        </button>
-                        <button onclick="buyLuckyBlocks(10, 100000)" style="background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; border: none; padding: 11px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);">
-                            🎁 럭키블럭 10개 구매 (💰 100,000 골드)
-                        </button>
-                        <button onclick="buyLuckyBlocks(30, 500000)" style="background: linear-gradient(135deg, #ea580c, #f97316); color: white; border: none; padding: 11px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);">
-                            🔥 럭키블럭 30개 대량 구매 (💰 500,000 골드)
-                        </button>
+                    <!-- 3종 구매 카드 (Roblox 스타일 3열 레이아웃 & 버튼에는 순수 돈만 표시) -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <!-- 1개 -->
+                        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; min-height: 70px;">
+                            <div style="font-size: 12px; font-weight: bold; color: #e2e8f0; margin-bottom: 6px;">1x Lucky Block</div>
+                            <button onclick="buyLuckyBlocks(1, 10000)" class="lucky-buy-btn">💰 10,000</button>
+                        </div>
+                        <!-- 10개 [BEST] -->
+                        <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid #f59e0b; border-radius: 10px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; min-height: 70px; position: relative;">
+                            <span style="position: absolute; top: -8px; background: #ea580c; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">BEST</span>
+                            <div style="font-size: 12px; font-weight: bold; color: #fef08a; margin-bottom: 6px;">10x Lucky Blocks</div>
+                            <button onclick="buyLuckyBlocks(10, 100000)" class="lucky-buy-btn">💰 100,000</button>
+                        </div>
+                        <!-- 30개 [BEST] -->
+                        <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid #ec4899; border-radius: 10px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; min-height: 70px; position: relative;">
+                            <span style="position: absolute; top: -8px; background: #ec4899; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">BEST</span>
+                            <div style="font-size: 12px; font-weight: bold; color: #f472b6; margin-bottom: 6px;">30x Lucky Blocks</div>
+                            <button onclick="buyLuckyBlocks(30, 500000)" class="lucky-buy-btn">💰 500,000</button>
+                        </div>
                     </div>
+
                 </div>
             </div>
             
@@ -6751,6 +6776,29 @@
 
             // (상단 네온 간판 및 말풍선 박스 제거 - 자연스러운 오브젝트 렌더링)
 
+            // 👑😈🐉 보스전 명칭 표기 (원숭이 보스전, 악마 보스전, 서리룡 보스전)
+            ctx.save();
+            let bob = Math.sin(time * 2) * 3;
+            ctx.translate(0, -78 + bob);
+            ctx.font = 'bold 15px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 10;
+            if (isDevil) {
+                ctx.fillStyle = '#ff7675';
+                ctx.shadowColor = '#e74c3c';
+                ctx.fillText("😈 악마 보스전", 0, 0);
+            } else if (isIceDragon) {
+                ctx.fillStyle = '#38bdf8';
+                ctx.shadowColor = '#0284c7';
+                ctx.fillText("🐉 서리룡 보스전", 0, 0);
+            } else {
+                ctx.fillStyle = '#f1c40f';
+                ctx.shadowColor = '#f39c12';
+                ctx.fillText("👑 원숭이 보스전", 0, 0);
+            }
+            ctx.restore();
+
             ctx.restore();
         }
 
@@ -7361,46 +7409,7 @@
             ctx.fillText("🎰 할로윈 룰렛", x, signY);
             ctx.restore();
 
-            // 9. 플레이어가 가까이 오면 상단에 안내 말풍선 표시 (쿨타임 실시간 표시)
-            const distToPlayer = Math.hypot(player.x - x, player.y - y);
-            if (distToPlayer < 120) {
-                ctx.save();
-                const bob = Math.sin(now * 0.006) * 3;
-                const tipY = signY - 26 + bob;
-
-                const elapsed = now - (lastRouletteSpinTime || 0);
-                const isCooldown = !isAdmin() && (elapsed < ROULETTE_COOLDOWN_MS);
-
-                let tipText = "👉 [스페이스바] 또는 클릭하여 룰렛!";
-                let tipColor = '#ffffff';
-                let tipStroke = '#f39c12';
-                let boxW = 180;
-
-                if (isCooldown) {
-                    const remainMs = ROULETTE_COOLDOWN_MS - elapsed;
-                    const remainM = Math.floor(remainMs / 60000);
-                    const remainS = Math.floor((remainMs % 60000) / 1000);
-                    tipText = `🔒 룰렛 쿨타임: ${remainM}분 ${remainS}초 남음`;
-                    tipColor = '#ff7675';
-                    tipStroke = '#e74c3c';
-                    boxW = 190;
-                }
-
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.88)';
-                ctx.strokeStyle = tipStroke;
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.roundRect(x - (boxW / 2), tipY - 11, boxW, 22, 6);
-                ctx.fill();
-                ctx.stroke();
-
-                ctx.fillStyle = tipColor;
-                ctx.font = 'bold 10px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(tipText, x, tipY);
-                ctx.restore();
-            }
+            // (룰렛 상단 안내 말풍선 제거)
 
             ctx.restore();
         }
@@ -8052,32 +8061,7 @@
             ctx.textBaseline = 'middle';
             ctx.fillText(isRebelReady ? "👾 반란의 외계 과학자" : "🧪 외계 과학자", x, signY);
 
-            const distToPlayer = Math.hypot(player.x - x, player.y - y);
-            if (distToPlayer < 120) {
-                const tipY = signY - 26;
-                const hasNote = (inventory['쪽지 조각'] || 0) > 0;
-                let tipText = hasNote ? "👉 [스페이스바] 쪽지 조각 전달하기!" : "👉 [스페이스바] 대화하기";
-                let tipColor = hasNote ? '#f1c40f' : '#ffffff';
-                let tipBorder = hasNote ? '#f1c40f' : '#00f2fe';
-
-                if (isRebelReady) {
-                    tipText = "👉 [스페이스바] 반란 외계인 대면하기!";
-                    tipColor = '#ff4757';
-                    tipBorder = '#ff0055';
-                }
-
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
-                ctx.strokeStyle = tipBorder;
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.roundRect(x - 90, tipY - 11, 180, 22, 6);
-                ctx.fill();
-                ctx.stroke();
-
-                ctx.fillStyle = tipColor;
-                ctx.font = 'bold 10px Arial';
-                ctx.fillText(tipText, x, tipY);
-            }
+            // (외계 과학자 상단 말풍선 제거)
 
             ctx.restore();
         }
@@ -10955,7 +10939,15 @@
             document.getElementById('shop-limited').style.display = tab === 'limited' ? 'block' : 'none';
             document.getElementById('shop-skin').style.display = tab === 'skin' ? 'block' : 'none';
             const luckySec = document.getElementById('shop-lucky');
-            if (luckySec) luckySec.style.display = (tab === 'lucky' && isAdmin()) ? 'block' : 'none';
+            if (luckySec) {
+                luckySec.style.display = (tab === 'lucky' && isAdmin()) ? 'block' : 'none';
+                if (tab === 'lucky' && isAdmin()) {
+                    setTimeout(() => {
+                        renderLuckySkinPreviews();
+                        drawAngelDevilLuckyBlock('angel-demon-lucky-canvas');
+                    }, 50);
+                }
+            }
 
             document.querySelectorAll('.shop-tab-btn').forEach((btn, idx) => {
                 if (btn.id === 'shop-tab-lucky-btn') {
@@ -11063,6 +11055,412 @@
             { id: 'frost_dragon', name: '서리룡', price: 0, icon: '🐉❄️', isReward: true, desc: '크라켄의 씨앗 초희귀 수확 보상 (3%)' }
         ];
 
+
+
+        // 👼😈 천악 럭키블록 캔버스 렌더러 (좌측 천사 / 우측 악마)
+        function drawAngelDevilLuckyBlock(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            const time = Date.now() * 0.003;
+            const bob = Math.sin(time * 2) * 4;
+            const cx = w / 2;
+            const cy = h / 2 + bob;
+
+            ctx.save();
+            ctx.translate(cx, cy);
+
+            // 1. 후광 및 암흑 아우라 배경
+            const auraGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, 60);
+            auraGrad.addColorStop(0, 'rgba(250, 204, 21, 0.45)');
+            auraGrad.addColorStop(0.5, 'rgba(239, 68, 68, 0.3)');
+            auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = auraGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, 60, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 2. 좌측 천사 날개 (순백/골드)
+            ctx.save();
+            ctx.translate(-35, -5);
+            ctx.rotate(-0.15 + Math.sin(time * 2.5) * 0.08);
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = '#fde047';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.ellipse(-12, -8, 20, 9, -0.4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(-16, 4, 16, 7, -0.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // 3. 우측 악마 박쥐 날개 (암흑/크림슨)
+            ctx.save();
+            ctx.translate(35, -5);
+            ctx.rotate(0.15 - Math.sin(time * 2.5) * 0.08);
+            ctx.fillStyle = '#1c1917';
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 1.5;
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(24, -18);
+            ctx.lineTo(16, 2);
+            ctx.lineTo(24, 10);
+            ctx.lineTo(10, 16);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+
+            // 4. 큐브 몸체 (정사각형 70x70)
+            const sz = 70;
+            const half = sz / 2;
+
+            // 좌측 반 (천사 영역: 순백 & 황금)
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(-half, -half, half, sz);
+            ctx.clip();
+            const angelGrad = ctx.createLinearGradient(-half, -half, 0, half);
+            angelGrad.addColorStop(0, '#ffffff');
+            angelGrad.addColorStop(0.7, '#fef08a');
+            angelGrad.addColorStop(1, '#f59e0b');
+            ctx.fillStyle = angelGrad;
+            ctx.fillRect(-half, -half, half, sz);
+            ctx.restore();
+
+            // 우측 반 (악마 영역: 다크옵시디언 & 크림슨)
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(0, -half, half, sz);
+            ctx.clip();
+            const devilGrad = ctx.createLinearGradient(0, -half, half, half);
+            devilGrad.addColorStop(0, '#450a0a');
+            devilGrad.addColorStop(0.6, '#1c1917');
+            devilGrad.addColorStop(1, '#991b1b');
+            ctx.fillStyle = devilGrad;
+            ctx.fillRect(0, -half, half, sz);
+            ctx.restore();
+
+            // 테두리
+            ctx.strokeStyle = '#facc15';
+            ctx.lineWidth = 2.5;
+            ctx.strokeRect(-half, -half, sz, sz);
+
+            // 중앙 경계선 (지그재그 에너지 균열)
+            ctx.strokeStyle = '#fde047';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = '#f59e0b';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.moveTo(0, -half);
+            ctx.lineTo(3, -half + 18);
+            ctx.lineTo(-3, -half + 35);
+            ctx.lineTo(3, -half + 52);
+            ctx.lineTo(0, half);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // 5. 좌측 천사 머리 위 황금 후광 (Halo)
+            ctx.save();
+            ctx.strokeStyle = '#facc15';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#fef08a';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.ellipse(-18, -half - 10, 14, 5, -0.15, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+
+            // 6. 우측 악마 뾰족한 뿔 (Demon Horn)
+            ctx.save();
+            ctx.fillStyle = '#dc2626';
+            ctx.strokeStyle = '#7f1d1d';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(14, -half);
+            ctx.quadraticCurveTo(24, -half - 16, 28, -half - 20);
+            ctx.quadraticCurveTo(23, -half - 8, 22, -half);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+
+            // 7. 중앙 황금빛 & 진홍빛 물음표 ('?')
+            ctx.font = '900 36px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = '#000';
+            ctx.shadowBlur = 6;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('?', 0, 2);
+            ctx.shadowBlur = 0;
+
+            // 8. 하단 라벨 "천 · 악"
+            ctx.font = 'bold 9px Arial';
+            ctx.fillStyle = '#fde047';
+            ctx.fillText('ANGEL · DEMON', 0, half - 7);
+
+            ctx.restore();
+        }
+
+        // 5종 스킨 프리뷰 미니 캔버스 렌더러
+        function renderLuckySkinPreviews() {
+            // 1. 해파리
+            const cJelly = document.getElementById('lucky-prev-jellyfish');
+            if (cJelly) {
+                const ctx = cJelly.getContext('2d');
+                ctx.clearRect(0, 0, 48, 48);
+                ctx.save();
+                ctx.translate(24, 22);
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.85)';
+                ctx.shadowColor = '#38bdf8';
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.arc(0, -4, 15, Math.PI, 0, false);
+                ctx.quadraticCurveTo(0, 4, 0, 4);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#e0f2fe';
+                ctx.lineWidth = 1.5;
+                [-8, -3, 3, 8].forEach(tx => {
+                    ctx.beginPath();
+                    ctx.moveTo(tx, 4);
+                    ctx.quadraticCurveTo(tx + 2, 12, tx - 1, 18);
+                    ctx.stroke();
+                });
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(-5, -3, 2, 0, Math.PI * 2);
+                ctx.arc(5, -3, 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // 2. 피닉스
+            const cPhx = document.getElementById('lucky-prev-phoenix');
+            if (cPhx) {
+                const ctx = cPhx.getContext('2d');
+                ctx.clearRect(0, 0, 48, 48);
+                ctx.save();
+                ctx.translate(24, 24);
+                ctx.fillStyle = '#ea580c';
+                ctx.shadowColor = '#f97316';
+                ctx.shadowBlur = 8;
+                // 날개
+                ctx.beginPath();
+                ctx.ellipse(-14, -2, 10, 5, -0.4, 0, Math.PI * 2);
+                ctx.ellipse(14, -2, 10, 5, 0.4, 0, Math.PI * 2);
+                ctx.fill();
+                // 몸통 & 불꽃 깃털
+                ctx.fillStyle = '#f97316';
+                ctx.beginPath();
+                ctx.arc(0, 0, 9, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath();
+                ctx.moveTo(0, -9);
+                ctx.lineTo(-4, -16);
+                ctx.lineTo(0, -13);
+                ctx.lineTo(4, -16);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(-3, -1, 1.8, 0, Math.PI * 2);
+                ctx.arc(3, -1, 1.8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // 3. 천사
+            const cAng = document.getElementById('lucky-prev-angel');
+            if (cAng) {
+                const ctx = cAng.getContext('2d');
+                ctx.clearRect(0, 0, 48, 48);
+                ctx.save();
+                ctx.translate(24, 25);
+                // 후광
+                ctx.strokeStyle = '#facc15';
+                ctx.lineWidth = 2.5;
+                ctx.shadowColor = '#fde047';
+                ctx.shadowBlur = 6;
+                ctx.beginPath();
+                ctx.ellipse(0, -17, 10, 3.5, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                // 날개
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.ellipse(-13, -3, 9, 4.5, -0.3, 0, Math.PI * 2);
+                ctx.ellipse(13, -3, 9, 4.5, 0.3, 0, Math.PI * 2);
+                ctx.fill();
+                // 머리 & 순백 로브
+                ctx.fillStyle = '#f8fafc';
+                ctx.beginPath();
+                ctx.arc(0, -7, 7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(-7, -2);
+                ctx.lineTo(7, -2);
+                ctx.lineTo(9, 14);
+                ctx.lineTo(-9, 14);
+                ctx.closePath();
+                ctx.fill();
+                // 푸른 눈
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath();
+                ctx.arc(-2.5, -7, 1.5, 0, Math.PI * 2);
+                ctx.arc(2.5, -7, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // 4. 악마
+            const cDev = document.getElementById('lucky-prev-devil');
+            if (cDev) {
+                const ctx = cDev.getContext('2d');
+                ctx.clearRect(0, 0, 48, 48);
+                ctx.save();
+                ctx.translate(24, 25);
+                // 박쥐 날개
+                ctx.fillStyle = '#1c1917';
+                ctx.strokeStyle = '#dc2626';
+                ctx.lineWidth = 1;
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 6;
+                ctx.beginPath();
+                ctx.moveTo(-6, -2);
+                ctx.lineTo(-18, -12);
+                ctx.lineTo(-14, 2);
+                ctx.lineTo(-18, 10);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(6, -2);
+                ctx.lineTo(18, -12);
+                ctx.lineTo(14, 2);
+                ctx.lineTo(18, 10);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+                // 악마 머리 & 뿔
+                ctx.fillStyle = '#450a0a';
+                ctx.beginPath();
+                ctx.arc(0, -7, 7, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#dc2626';
+                ctx.beginPath();
+                ctx.moveTo(-5, -12);
+                ctx.lineTo(-8, -19);
+                ctx.lineTo(-2, -13);
+                ctx.closePath();
+                ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(5, -12);
+                ctx.lineTo(8, -19);
+                ctx.lineTo(2, -13);
+                ctx.closePath();
+                ctx.fill();
+                // 붉은 눈
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(-2.5, -7, 1.5, 0, Math.PI * 2);
+                ctx.arc(2.5, -7, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+                // 몸통
+                ctx.fillStyle = '#18181b';
+                ctx.beginPath();
+                ctx.moveTo(-6, -1);
+                ctx.lineTo(6, -1);
+                ctx.lineTo(8, 14);
+                ctx.lineTo(-8, 14);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // 5. 에테론 (천사반 악마반)
+            const cEth = document.getElementById('lucky-prev-etheron');
+            if (cEth) {
+                const ctx = cEth.getContext('2d');
+                ctx.clearRect(0, 0, 48, 48);
+                ctx.save();
+                ctx.translate(24, 25);
+                // 좌측 천사날개 / 우측 악마날개
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = '#facc15';
+                ctx.shadowBlur = 6;
+                ctx.beginPath();
+                ctx.ellipse(-13, -3, 9, 4.5, -0.3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#1c1917';
+                ctx.strokeStyle = '#dc2626';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(6, -2);
+                ctx.lineTo(18, -12);
+                ctx.lineTo(14, 2);
+                ctx.lineTo(18, 10);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+                // 좌측 후광 / 우측 뿔
+                ctx.strokeStyle = '#facc15';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(-4, -17, 5, Math.PI * 0.7, Math.PI * 1.8);
+                ctx.stroke();
+                ctx.fillStyle = '#dc2626';
+                ctx.beginPath();
+                ctx.moveTo(4, -12);
+                ctx.lineTo(8, -19);
+                ctx.lineTo(1, -13);
+                ctx.closePath();
+                ctx.fill();
+                // 반반 얼굴
+                ctx.fillStyle = '#f8fafc';
+                ctx.beginPath();
+                ctx.arc(0, -7, 7, Math.PI * 0.5, Math.PI * 1.5);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#450a0a';
+                ctx.beginPath();
+                ctx.arc(0, -7, 7, -Math.PI * 0.5, Math.PI * 0.5);
+                ctx.closePath();
+                ctx.fill();
+                // 눈: 좌측 푸름 / 우측 붉음
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath();
+                ctx.arc(-2.5, -7, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(2.5, -7, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+                // 반반 몸통
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(-7, -1, 7, 15);
+                ctx.fillStyle = '#18181b';
+                ctx.fillRect(0, -1, 7, 15);
+                ctx.restore();
+            }
+        }
+
+
+        setInterval(() => {
+            const luckySec = document.getElementById('shop-lucky');
+            if (luckySec && luckySec.style.display === 'block') {
+                drawAngelDevilLuckyBlock('angel-demon-lucky-canvas');
+            }
+        }, 50);
 
         // 👑 [ADMIN 전용] 럭키블럭 구매 및 언박싱
         function buyLuckyBlocks(count, price) {
@@ -20712,16 +21110,6 @@
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(`⏱️ ${rmMin}분 ${rmSec < 10 ? '0' : ''}${rmSec}초 남음`, x + 98, y - 65 + floatY);
-            } else {
-                ctx.fillStyle = 'white';
-                ctx.beginPath();
-                ctx.roundRect(x + 55, y - 75 + floatY, 86, 22, 6);
-                ctx.fill();
-                ctx.fillStyle = '#2c3e50';
-                ctx.font = 'bold 11px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText("🎃 퓨즈 클릭!", x + 98, y - 64 + floatY);
             }
 
             ctx.restore();
@@ -21450,61 +21838,6 @@
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
                         ctx.fillText(`📜 쪽지 심어짐! (${noteTreeHits}/3)`, 0, 0);
-                        ctx.restore();
-                    } else if (t.id === 'normal' && Math.hypot(player.x - t.x, player.y - t.y) < 200) {
-                        ctx.save();
-                        let bobTp = Math.sin(Date.now() * 0.006) * 4;
-                        ctx.translate(t.x + 85, t.y - t.radius - 35 + bobTp);
-                        ctx.fillStyle = 'rgba(108, 92, 231, 0.92)';
-                        ctx.strokeStyle = '#a29bfe';
-                        ctx.lineWidth = 1.5;
-                        ctx.beginPath();
-                        ctx.roundRect(-70, -14, 140, 28, 6);
-                        ctx.fill();
-                        ctx.stroke();
-
-                        ctx.fillStyle = '#ffffff';
-                        ctx.font = 'bold 11px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText("👉 우측: 👑원숭이 보스", 0, 0);
-                        ctx.restore();
-
-                        // 👈 좌측 랭킹 보드 안내 풍선
-                        ctx.save();
-                        let bobRb = Math.sin(Date.now() * 0.005) * 4;
-                        ctx.translate(t.x - 85, t.y - t.radius - 35 + bobRb);
-                        ctx.fillStyle = 'rgba(241, 196, 15, 0.92)';
-                        ctx.strokeStyle = '#d35400';
-                        ctx.lineWidth = 1.5;
-                        ctx.beginPath();
-                        ctx.roundRect(-68, -14, 136, 28, 6);
-                        ctx.fill();
-                        ctx.stroke();
-
-                        ctx.fillStyle = '#2c3e50';
-                        ctx.font = 'bold 11px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText("👈 좌측: 🏆랭킹 보드", 0, 0);
-                        ctx.restore();
-                    } else if (t.id === 'halloween' && Math.hypot(player.x - t.x, player.y - t.y) < 200) {
-                        ctx.save();
-                        let bobHtp = Math.sin(Date.now() * 0.006) * 4;
-                        ctx.translate(t.x + 85, t.y - t.radius - 35 + bobHtp);
-                        ctx.fillStyle = 'rgba(231, 76, 60, 0.92)';
-                        ctx.strokeStyle = '#ff7675';
-                        ctx.lineWidth = 1.5;
-                        ctx.beginPath();
-                        ctx.roundRect(-80, -14, 160, 28, 6);
-                        ctx.fill();
-                        ctx.stroke();
-
-                        ctx.fillStyle = '#ffffff';
-                        ctx.font = 'bold 11px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText(isBossEventStarted() ? "👉 우측: 😈 악마 보스전 오픈!" : "👉 우측: 오늘 10시 공개!", 0, 0);
                         ctx.restore();
                     }
                 } else if (item.type === 'rocket') {
