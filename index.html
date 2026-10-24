@@ -4237,20 +4237,25 @@
         } catch(e) {}
 
         // Firebase Firestore 실시간 감시 (전 서버 실시간 동기화)
-        if (typeof db !== 'undefined' && db) {
+        let tradeMachineSyncInitialized = false;
+        function initTradeMachineFirestoreSync() {
+            if (tradeMachineSyncInitialized) return;
             try {
-                db.collection('global_events').doc('trade_machine').onSnapshot(doc => {
-                    if (doc.exists) {
-                        const d = doc.data();
-                        const info = (typeof getTradeCycleInfo === 'function') ? getTradeCycleInfo() : null;
-                        if (info && d.cycleId === info.cycleId) {
-                            if (d.stock !== undefined) {
-                                tradeMachineStock = d.stock;
-                                updateTradeMachineModalUI();
+                if (typeof db !== 'undefined' && db) {
+                    tradeMachineSyncInitialized = true;
+                    db.collection('global_events').doc('trade_machine').onSnapshot(doc => {
+                        if (doc.exists) {
+                            const d = doc.data();
+                            const info = (typeof getTradeCycleInfo === 'function') ? getTradeCycleInfo() : null;
+                            if (info && d.cycleId === info.cycleId) {
+                                if (d.stock !== undefined) {
+                                    tradeMachineStock = d.stock;
+                                    updateTradeMachineModalUI();
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
             } catch(e) {}
         }
 
@@ -4337,6 +4342,7 @@
         }
 
         function openTradeMachineModal() {
+            initTradeMachineFirestoreSync();
             checkTradeMachineRestock();
             updateTradeMachineModalUI();
             const modal = document.getElementById('trade-machine-modal');
