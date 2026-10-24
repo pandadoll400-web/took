@@ -1569,52 +1569,32 @@
         </div>
 
         <!-- 🥚 [바위 2] 공룡알 조각 10개 -> 펫 알 교환 제단 모달 -->
-        <div id="pet-leash-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 440px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 26px;">🥚</span>
-                    <div>
-                        <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold;">🥚 알 제작 바위</h2>
-                        <span style="font-size: 11px; color: #94a3b8;">공룡알 조각 10개를 모아 신비한 [펫 알]을 제작합니다</span>
-                    </div>
-                </div>
-                <button onclick="closePetLeashModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
+                <!-- 🥚 알 제작 바위 모달 (달걀 아이콘 + 숫자 + 사기! 버튼) -->
+        <div id="pet-leash-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 50% 20%, #1a2234 0%, #0b1120 100%); color: white; padding: 22px 20px; border-radius: 24px; width: 88%; max-width: 320px; display: none; border: 2px solid #38bdf8; z-index: 60; box-shadow: 0 15px 50px rgba(0,0,0,0.95), 0 0 35px rgba(56, 189, 248, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; text-align: center; box-sizing: border-box;">
+            <!-- 닫기 버튼 -->
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 2px;">
+                <button onclick="closePetLeashModal()" style="background: rgba(255,255,255,0.1); border: none; color: #94a3b8; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
             </div>
 
-            <!-- 조각 획득 방법 안내 -->
-            <div style="background: rgba(30, 41, 59, 0.7); border-radius: 12px; padding: 10px 12px; margin-bottom: 14px; border: 1px solid #334155; text-align: center;">
-                <div style="font-size: 13px; font-weight: bold; color: #38bdf8; margin-bottom: 3px;">🧩 공룡알 조각 획득 방법</div>
-                <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.4;">나무를 벌목하거나 바위를 채굴하면 낮은 확률로 <strong>[공룡알 조각]</strong>을 발굴할 수 있습니다!</div>
-            </div>
+            <!-- 달걀 하나 -->
+            <div style="font-size: 80px; line-height: 1; margin: 6px 0 16px 0; filter: drop-shadow(0 0 18px rgba(250, 204, 21, 0.5));">🥚</div>
 
-            <!-- 펫 알 교환 섹션 -->
-            <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95)); border: 1.5px solid #f59e0b; border-radius: 14px; padding: 16px; margin-bottom: 14px; text-align: center;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px;">
-                    <span style="font-size: 26px;">🧩 ➔ 🥚</span>
-                    <span style="font-weight: bold; font-size: 16px; color: #facc15;">신비한 펫 알 연성</span>
+            <!-- 보유 개수 숫자 -->
+            <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 20px;">
+                <div style="background: rgba(15, 23, 42, 0.85); padding: 7px 14px; border-radius: 12px; border: 1.5px solid rgba(56, 189, 248, 0.45);">
+                    <div style="font-size: 11px; color: #94a3b8; font-weight: bold;">조각</div>
+                    <div id="leash-modal-heart-count" style="color: #38bdf8; font-size: 17px; font-weight: 900;">0 / 10</div>
                 </div>
-                <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 12px; line-height: 1.4;">
-                    [공룡알 조각] 10개를 모아 바치면<br>
-                    고대 생명의 씨앗이 담긴 <strong>'펫 알'</strong>을 획득할 수 있습니다!
-                </div>
-                <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 12px;">
-                    <span style="font-size: 13px; color: #94a3b8;">현재 공룡알 조각:</span>
-                    <span id="leash-modal-heart-count" style="font-size: 17px; font-weight: bold; color: #38bdf8;">0 / 10개</span>
-                </div>
-                <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 12px;">
-                    <span style="font-size: 13px; color: #94a3b8;">현재 보유 펫 알:</span>
-                    <span id="leash-modal-egg-count" style="font-size: 17px; font-weight: bold; color: #facc15;">0개</span>
-                </div>
-                <div id="leash-action-area">
-                    <!-- Dynamic button inserted by updatePetLeashModalUI() -->
+                <div style="background: rgba(15, 23, 42, 0.85); padding: 7px 14px; border-radius: 12px; border: 1.5px solid rgba(250, 204, 21, 0.45);">
+                    <div style="font-size: 11px; color: #94a3b8; font-weight: bold;">보유 알</div>
+                    <div id="leash-modal-egg-count" style="color: #facc15; font-size: 17px; font-weight: 900;">0</div>
                 </div>
             </div>
 
-            <div style="text-align: center;">
-                <button onclick="closePetLeashModal()" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.1); color: #cbd5e1; border: 1px solid #475569; border-radius: 8px; font-size: 13px; cursor: pointer;">
-                    닫기
-                </button>
-            </div>
+            <!-- 사기! 버튼 -->
+            <button id="leash-buy-btn" onclick="craftPetEgg()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 14px; font-weight: 900; font-size: 19px; cursor: pointer; box-shadow: 0 4px 0 #047857, 0 8px 20px rgba(16, 185, 129, 0.45); letter-spacing: 2px;">
+                사기!
+            </button>
         </div>
 
         <!-- 🦴 고대 화석 도감 모달 (얼음의 협곡 20종 화석 수집) -->
@@ -1774,39 +1754,34 @@
 
         <!-- ⚔️ 트레이드 머신 모달 (한정 수량 2개 선착순) -->
                 <!-- ⚔️ 트레이닝 머신 모달 (한정 수량 2개 선착순) -->
-        <div id="trade-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #1e112a, #0a0812); color: white; border-radius: 22px; width: 90%; max-width: 380px; display: none; border: 2px solid #ef4444; box-shadow: 0 15px 50px rgba(0,0,0,0.95), 0 0 40px rgba(239, 68, 68, 0.45); z-index: 60; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px 18px; box-sizing: border-box;">
-            <!-- 헤더 -->
+                <!-- ⚔️ 트레이닝 머신 모달 (한정 수량 2명 선착순) -->
+        <div id="trade-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 50% 20%, #1e112a 0%, #080610 100%); color: white; border-radius: 24px; width: 88%; max-width: 340px; display: none; border: 2px solid #ef4444; box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 35px rgba(239, 68, 68, 0.45); z-index: 60; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 18px 16px; box-sizing: border-box;">
+            <!-- 헤더 & 닫기 -->
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(239, 68, 68, 0.35); padding-bottom: 10px; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 22px; filter: drop-shadow(0 0 8px #ef4444);">⚔️</span>
-                    <div style="text-align: left;">
-                        <h3 style="margin: 0; color: #ff7675; font-size: 19px; font-weight: 900; letter-spacing: -0.5px;">트레이닝 머신</h3>
-                        <span style="font-size: 10.5px; color: #fca5a5;">전 서버 1시간당 단 2명 한정 선착순 스킨</span>
-                    </div>
+                    <span style="font-size: 20px;">⚔️</span>
+                    <span style="color: #ff7675; font-size: 18px; font-weight: 900; letter-spacing: -0.5px;">트레이닝 머신</span>
                 </div>
-                <button onclick="closeTradeMachineModal()" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
+                <button onclick="closeTradeMachineModal()" style="background: rgba(255,255,255,0.1); border: none; color: #cbd5e1; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
             </div>
 
-            <!-- 선착순 2개 한정 수량 & 타이머 정보 카드 -->
-            <div style="background: rgba(220, 38, 38, 0.15); border: 1.5px solid rgba(239, 68, 68, 0.5); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+            <!-- 상태 정보 (남은 수량 & 타이머) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.5); border: 1.5px solid rgba(239, 68, 68, 0.4); border-radius: 12px; padding: 9px 14px; margin-bottom: 14px;">
                 <div style="text-align: left;">
                     <div style="font-size: 10.5px; color: #fca5a5; font-weight: bold;">남은 수량</div>
-                    <div id="trade-stock-badge" style="font-weight: 900; font-size: 16px; color: #facc15;">2 / 2개</div>
+                    <div id="trade-stock-badge" style="font-weight: 900; font-size: 15px; color: #facc15;">2 / 2명</div>
                 </div>
-                <div style="height: 24px; width: 1px; background: rgba(239, 68, 68, 0.3);"></div>
+                <div style="height: 22px; width: 1px; background: rgba(239, 68, 68, 0.3);"></div>
                 <div style="text-align: right;">
-                    <div style="font-size: 10.5px; color: #94a3b8; font-weight: bold;">다음 충전</div>
+                    <div id="trade-timer-label" style="font-size: 10.5px; color: #94a3b8; font-weight: bold;">다음 충전</div>
                     <div id="trade-timer-text" style="color: #38bdf8; font-weight: 900; font-size: 15px;">--:--</div>
                 </div>
             </div>
 
-            <!-- 스킨 캔버스 프리뷰 (일본풍 검사) -->
-            <div style="background: rgba(0, 0, 0, 0.5); border-radius: 16px; padding: 12px; border: 1.5px solid rgba(244, 114, 182, 0.35); margin-bottom: 14px; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.8);">
-                <canvas id="trade-skin-preview" width="120" height="130" style="display: block; margin: 0 auto;"></canvas>
-                <div style="margin-top: 6px;">
-                    <div style="color: #ffffff; font-size: 17px; font-weight: 900; letter-spacing: -0.5px;">일본풍 검사</div>
-                    <div style="color: #f472b6; font-size: 11px; font-weight: bold; margin-top: 2px;">🌸 선착순 한정 전설 스킨 (카타나 & 삿갓)</div>
-                </div>
+            <!-- 스킨 이미지 중간 크기 프리뷰 -->
+            <div style="background: radial-gradient(circle, rgba(239, 68, 68, 0.18) 0%, rgba(0, 0, 0, 0.6) 80%); border-radius: 16px; padding: 10px; border: 1.5px solid rgba(244, 114, 182, 0.35); margin-bottom: 14px; box-shadow: inset 0 0 25px rgba(0,0,0,0.85);">
+                <canvas id="trade-skin-preview" width="140" height="150" style="display: block; margin: 0 auto;"></canvas>
+                <div style="color: #ffffff; font-size: 17px; font-weight: 900; margin-top: 6px; letter-spacing: -0.5px;">일본풍 검사</div>
             </div>
 
             <!-- 메인 액션 버튼: 획득 / equip! / sold out!! -->
@@ -2645,7 +2620,7 @@
             }
         }, 1000);
         
-function openPetLeashModal(rock) {
+        function openPetLeashModal(rock) {
             currentActiveLeashRock = rock;
             currentActiveFossilRock = rock;
             const modal = document.getElementById('pet-leash-modal');
@@ -2672,27 +2647,29 @@ function openPetLeashModal(rock) {
         function updatePetLeashModalUI() {
             const fragCountEl = document.getElementById('leash-modal-heart-count');
             const eggCountEl = document.getElementById('leash-modal-egg-count');
-            const actionAreaEl = document.getElementById('leash-action-area');
+            const buyBtn = document.getElementById('leash-buy-btn');
 
             const fragCount = getDinoFragCount();
             const eggCount = (inventory['펫 알'] || 0) + (inventory['공룡 알 화석'] || 0);
 
-            if (fragCountEl) fragCountEl.innerText = `${fragCount} / 10개`;
-            if (eggCountEl) eggCountEl.innerText = `${eggCount}개`;
+            if (fragCountEl) fragCountEl.innerText = `${fragCount} / 10`;
+            if (eggCountEl) eggCountEl.innerText = `${eggCount}`;
 
-            if (actionAreaEl) {
+            if (buyBtn) {
                 if (fragCount >= 10) {
-                    actionAreaEl.innerHTML = `
-                        <button onclick="craftPetEgg()" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 11px 24px; border: none; border-radius: 8px; font-weight: bold; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5);">
-                            🥚 펫 알 교환하기 (공룡알 조각 10개 소모)
-                        </button>
-                    `;
+                    buyBtn.disabled = false;
+                    buyBtn.innerText = '사기!';
+                    buyBtn.style.opacity = '1';
+                    buyBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                    buyBtn.style.boxShadow = '0 4px 0 #047857, 0 8px 20px rgba(16, 185, 129, 0.45)';
+                    buyBtn.style.cursor = 'pointer';
                 } else {
-                    actionAreaEl.innerHTML = `
-                        <button disabled style="background: #475569; color: #94a3b8; padding: 9px 20px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px;">
-                            공룡알 조각 부족 (${fragCount}/10개 필요 - 상단 발굴 및 벌목!)
-                        </button>
-                    `;
+                    buyBtn.disabled = false;
+                    buyBtn.innerText = '사기!';
+                    buyBtn.style.opacity = '0.75';
+                    buyBtn.style.background = 'linear-gradient(135deg, #475569 0%, #334155 100%)';
+                    buyBtn.style.boxShadow = '0 4px 0 #1e293b';
+                    buyBtn.style.cursor = 'pointer';
                 }
             }
         }
@@ -2700,7 +2677,7 @@ function openPetLeashModal(rock) {
         function craftPetEgg() {
             const fragCount = getDinoFragCount();
             if (fragCount < 10) {
-                alert(`공룡알 조각이 부족합니다!\n\n현재 보유: ${fragCount}개 / 필요: 10개\n(나무를 벌목하거나 바위를 채굴하여 공룡알 조각을 모으세요!)`);
+                alert(`공룡알 조각이 부족합니다!\n\n현재 보유: ${fragCount}개 / 필요: 10개\n(나무를 벌목하면 1% 확률로 공룡알 조각을 얻을 수 있습니다!)`);
                 return;
             }
 
@@ -2723,13 +2700,13 @@ function openPetLeashModal(rock) {
             updatePetLeashModalUI();
             if (typeof updatePetMachineModalUI === 'function') updatePetMachineModalUI();
 
-            floatTexts.push({ x: player.x, y: player.y - 90, text: `🥚 [펫 알 획득!]`, color: '#facc15', life: 100, size: 22 });
+            floatTexts.push({ x: player.x, y: player.y - 90, text: `🥚 [알 구매 완료!]`, color: '#facc15', life: 100, size: 22 });
             for (let i = 0; i < 35; i++) {
                 let a = Math.random() * Math.PI * 2;
                 let sp = Math.random() * 5 + 2;
                 labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#38bdf8' : '#facc15'), life: 35 });
             }
-            alert("🎉 [🥚 펫 알 획득!]\n\n공룡알 조각 10개를 합성하여 신비로운 [펫 알]을 획득했습니다!\n\n좌측의 [인큐베이터]로 가서 펫 알을 넣으세요!\n✨ 인큐베이터에서 태어날 신비한 펫은 다음 업데이트에서 전격 공개됩니다!");
+            alert("🎉 [🥚 알 제작 완료!]\n\n공룡알 조각 10개로 신비로운 [펫 알]을 획득했습니다!\n\n인큐베이터로 가서 알을 넣고 5분 후 펫을 획득하세요!");
         }
 
         const buyPetLeash = craftPetEgg;
@@ -4259,47 +4236,107 @@ function openPetLeashModal(rock) {
             };
         } catch(e) {}
 
+        // Firebase Firestore 실시간 감시 (전 서버 실시간 동기화)
+        if (typeof db !== 'undefined' && db) {
+            try {
+                db.collection('global_events').doc('trade_machine').onSnapshot(doc => {
+                    if (doc.exists) {
+                        const d = doc.data();
+                        const info = (typeof getTradeCycleInfo === 'function') ? getTradeCycleInfo() : null;
+                        if (info && d.cycleId === info.cycleId) {
+                            if (d.stock !== undefined) {
+                                tradeMachineStock = d.stock;
+                                updateTradeMachineModalUI();
+                            }
+                        }
+                    }
+                });
+            } catch(e) {}
+        }
+
+        // 전체 서버 모든 유저에게 트레이닝 머신 공개
         function isTradeMachineActive() {
-            // 🔒 [유저 요구] 현재는 오직 어드민 계정에서만 트레이드 머신 이용 가능
-            if (typeof isAdmin === 'function' && !isAdmin()) return false;
             if (adminTradeMachineOverride !== null) return adminTradeMachineOverride;
-            return true; // 어드민 계정에서는 즉시 활성화
+            return true;
+        }
+
+        // 9:00 PM (21:00) 오픈 및 1시간마다 선착순 2명 충전 사이클
+        function getTradeCycleInfo() {
+            const now = new Date();
+            const nowMs = now.getTime();
+            // 기준 시각: 오늘 21:00:00 (오후 9시)
+            const anchorToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 21, 0, 0, 0).getTime();
+            const CYCLE_MS = 60 * 60 * 1000; // 1시간 주기
+
+            let isOpen = false;
+            let cycleId = '';
+            let nextRestock = 0;
+            let timeUntilOpen = 0;
+
+            if (nowMs < anchorToday) {
+                // 9시 전: 대기 상태
+                isOpen = false;
+                const dateStr = now.getFullYear() + '_' + String(now.getMonth() + 1).padStart(2, '0') + '_' + String(now.getDate()).padStart(2, '0');
+                cycleId = 'pre_2100_' + dateStr;
+                nextRestock = anchorToday;
+                timeUntilOpen = anchorToday - nowMs;
+            } else {
+                // 9시 이후: 오픈 & 1시간마다 새 사이클
+                isOpen = true;
+                const cycleIdx = Math.floor((nowMs - anchorToday) / CYCLE_MS);
+                const cycleStart = anchorToday + cycleIdx * CYCLE_MS;
+                nextRestock = cycleStart + CYCLE_MS;
+                const dateStr = now.getFullYear() + '_' + String(now.getMonth() + 1).padStart(2, '0') + '_' + String(now.getDate()).padStart(2, '0');
+                cycleId = 'cycle_2100_' + dateStr + '_' + cycleIdx;
+                timeUntilOpen = 0;
+            }
+
+            if (adminTradeMachineOverride === true) {
+                isOpen = true;
+                if (!nextRestock) nextRestock = nowMs + CYCLE_MS;
+            }
+
+            return { isOpen, cycleId, nextRestock, timeUntilOpen, nowMs };
         }
 
         function checkTradeMachineRestock() {
-            const now = Date.now();
+            const info = getTradeCycleInfo();
             try {
                 const saved = JSON.parse(localStorage.getItem('tb_trade_machine_state') || '{}');
-                if (saved.nextRestock && now < saved.nextRestock) {
+                if (saved.cycleId === info.cycleId) {
                     tradeMachineStock = (saved.stock !== undefined) ? saved.stock : 2;
-                    tradeMachineNextRestock = saved.nextRestock;
+                    tradeMachineNextRestock = info.nextRestock;
                     return;
                 }
             } catch(e) {}
 
-            // 1시간 주기로 리필 (Next top of the hour)
+            // 새 사이클: 재고 2개 충전
             tradeMachineStock = 2;
-            tradeMachineNextRestock = Math.ceil(now / 3600000) * 3600000;
-            saveTradeMachineState();
+            tradeMachineNextRestock = info.nextRestock;
+            saveTradeMachineState(info.cycleId);
         }
 
-        function saveTradeMachineState() {
+        function saveTradeMachineState(cycleId) {
+            if (!cycleId) cycleId = getTradeCycleInfo().cycleId;
             try {
                 localStorage.setItem('tb_trade_machine_state', JSON.stringify({
+                    cycleId: cycleId,
                     stock: tradeMachineStock,
                     nextRestock: tradeMachineNextRestock
                 }));
             } catch(e) {}
             if (tradeMachineChannel) {
-                try { tradeMachineChannel.postMessage({ type: 'TRADE_STOCK_UPDATE', stock: tradeMachineStock }); } catch(e) {}
+                try { 
+                    tradeMachineChannel.postMessage({ 
+                        type: 'TRADE_STOCK_UPDATE', 
+                        cycleId: cycleId, 
+                        stock: tradeMachineStock 
+                    }); 
+                } catch(e) {}
             }
         }
 
         function openTradeMachineModal() {
-            if (!isTradeMachineActive()) {
-                alert('⚠️ 트레이드 머신은 어드민 계정에서만 테스트 가능합니다.');
-                return;
-            }
             checkTradeMachineRestock();
             updateTradeMachineModalUI();
             const modal = document.getElementById('trade-machine-modal');
@@ -4314,18 +4351,32 @@ function openPetLeashModal(rock) {
 
         function updateTradeMachineModalUI() {
             checkTradeMachineRestock();
+            const info = getTradeCycleInfo();
+
             const stockBadge = document.getElementById('trade-stock-badge');
             if (stockBadge) {
-                stockBadge.innerText = `${tradeMachineStock} / 2개`;
-                stockBadge.style.color = (tradeMachineStock > 0) ? '#facc15' : '#ef4444';
+                if (!info.isOpen) {
+                    stockBadge.innerText = '🔒 21:00 오픈';
+                    stockBadge.style.color = '#fca5a5';
+                } else {
+                    stockBadge.innerText = `${tradeMachineStock} / 2명`;
+                    stockBadge.style.color = (tradeMachineStock > 0) ? '#facc15' : '#ef4444';
+                }
             }
 
+            const timerLabel = document.getElementById('trade-timer-label');
             const timerText = document.getElementById('trade-timer-text');
             if (timerText) {
-                const remain = Math.max(0, tradeMachineNextRestock - Date.now());
-                const m = String(Math.floor(remain / 60000)).padStart(2, '0');
+                const targetTime = info.nextRestock;
+                const remain = Math.max(0, targetTime - Date.now());
+                const h = Math.floor(remain / 3600000);
+                const m = String(Math.floor((remain % 3600000) / 60000)).padStart(2, '0');
                 const s = String(Math.floor((remain % 60000) / 1000)).padStart(2, '0');
-                timerText.innerText = `${m}:${s}`;
+
+                if (timerLabel) {
+                    timerLabel.innerText = info.isOpen ? '다음 충전' : '오픈까지';
+                }
+                timerText.innerText = (h > 0) ? `${h}:${m}:${s}` : `${m}:${s}`;
             }
 
             const claimBtn = document.getElementById('trade-claim-btn');
@@ -4341,10 +4392,18 @@ function openPetLeashModal(rock) {
                     claimBtn.style.border = 'none';
                     claimBtn.style.boxShadow = isEquipped ? '0 4px 14px rgba(2, 132, 199, 0.4)' : '0 4px 14px rgba(16, 185, 129, 0.4)';
                     claimBtn.style.cursor = 'pointer';
+                } else if (!info.isOpen) {
+                    claimBtn.disabled = false;
+                    claimBtn.innerText = '🔒 오늘 21:00 오픈!';
+                    claimBtn.style.background = 'linear-gradient(180deg, #475569 0%, #334155 100%)';
+                    claimBtn.style.color = '#cbd5e1';
+                    claimBtn.style.border = 'none';
+                    claimBtn.style.boxShadow = 'none';
+                    claimBtn.style.cursor = 'pointer';
                 } else if (tradeMachineStock <= 0) {
-                    claimBtn.disabled = false; // 클릭 시 sold out!! 피드백 제공
+                    claimBtn.disabled = false;
                     claimBtn.innerText = 'sold out!!';
-                    claimBtn.style.background = 'rgba(239, 68, 68, 0.25)';
+                    claimBtn.style.background = 'rgba(239, 68, 68, 0.2)';
                     claimBtn.style.color = '#ef4444';
                     claimBtn.style.border = '2px solid #ef4444';
                     claimBtn.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.3)';
@@ -4363,8 +4422,9 @@ function openPetLeashModal(rock) {
 
         async function claimTradeMachineSkin() {
             checkTradeMachineRestock();
+            const info = getTradeCycleInfo();
 
-            // 1. 이미 획득한 경우 -> 장착/해제 토글
+            // 1. 이미 소유한 경우 -> 장착/해제 토글
             if (ownedSkins.includes('japanese_ronin')) {
                 equippedSkin = 'japanese_ronin';
                 saveGame(true);
@@ -4375,12 +4435,18 @@ function openPetLeashModal(rock) {
                 return;
             }
 
-            // 2. 재고가 소진된 경우 -> sold out!! 안내
+            // 2. 오픈 전인 경우
+            if (!info.isOpen) {
+                alert('🔒 [오픈 대기]\n\n오늘 밤 9시(21:00)에 전 서버 오픈됩니다!\n오픈 시 선착순 2명만 [획득]을 눌러 스킨을 획득할 수 있습니다.');
+                return;
+            }
+
+            // 3. 재고 소진 시 -> sold out!!
             if (tradeMachineStock <= 0) {
                 const claimBtn = document.getElementById('trade-claim-btn');
                 if (claimBtn) {
                     claimBtn.innerText = 'sold out!!';
-                    claimBtn.style.background = 'rgba(239, 68, 68, 0.25)';
+                    claimBtn.style.background = 'rgba(239, 68, 68, 0.2)';
                     claimBtn.style.color = '#ef4444';
                     claimBtn.style.border = '2px solid #ef4444';
                 }
@@ -4389,24 +4455,26 @@ function openPetLeashModal(rock) {
                 return;
             }
 
-            // 3. 글로벌 Firebase Firestore 동기화 (전 서버/전 유저 중 딱 2명 한정 보장)
+            // 4. Firestore 글로벌 동기화 (전 서버 모든 유저 중 딱 2명 한정 엄격 보장)
             let success = false;
             if (typeof db !== 'undefined' && db) {
                 try {
-                    const hourId = Math.floor(Date.now() / 3600000);
                     const docRef = db.collection('global_events').doc('trade_machine');
                     await db.runTransaction(async (transaction) => {
                         const doc = await transaction.get(docRef);
-                        let data = doc.exists ? doc.data() : { hourId: hourId, stock: 2, claimedUsers: [] };
-                        if (data.hourId !== hourId) {
-                            data = { hourId: hourId, stock: 2, claimedUsers: [] };
+                        let data = doc.exists ? doc.data() : { cycleId: info.cycleId, stock: 2, claimedUsers: [] };
+                        if (data.cycleId !== info.cycleId) {
+                            data = { cycleId: info.cycleId, stock: 2, claimedUsers: [] };
                         }
                         if (data.stock <= 0 || (data.claimedUsers && data.claimedUsers.length >= 2)) {
                             throw new Error('SOLD_OUT');
                         }
                         data.stock = data.stock - 1;
                         if (!data.claimedUsers) data.claimedUsers = [];
-                        data.claimedUsers.push(currentUser || ('user_' + Math.random().toString(36).substring(7)));
+                        const uid = (typeof currentUser !== 'undefined' && currentUser && currentUser.uid)
+                            ? currentUser.uid
+                            : (typeof player !== 'undefined' && player.name ? player.name : ('user_' + Math.random().toString(36).substring(7)));
+                        data.claimedUsers.push(uid);
                         transaction.set(docRef, data);
                         tradeMachineStock = data.stock;
                     });
@@ -4414,12 +4482,12 @@ function openPetLeashModal(rock) {
                 } catch(e) {
                     if (e && e.message === 'SOLD_OUT') {
                         tradeMachineStock = 0;
-                        saveTradeMachineState();
+                        saveTradeMachineState(info.cycleId);
                         updateTradeMachineModalUI();
                         alert('sold out!!\n\n다른 플레이어가 먼저 획득하여 선착순 2명이 모두 마감되었습니다!');
                         return;
                     }
-                    console.warn('Firestore transaction error, using local/broadcast sync fallback:', e);
+                    console.warn('Firestore transaction error, using local/broadcast fallback:', e);
                 }
             }
 
@@ -4430,7 +4498,7 @@ function openPetLeashModal(rock) {
             }
 
             if (success) {
-                saveTradeMachineState();
+                saveTradeMachineState(info.cycleId);
                 if (!ownedSkins.includes('japanese_ronin')) {
                     ownedSkins.push('japanese_ronin');
                 }
@@ -4440,22 +4508,22 @@ function openPetLeashModal(rock) {
                 updateInvSkinUI();
 
                 floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [일본풍 검사] 선착순 획득 성공!', color: '#ff7675', life: 120, size: 24 });
-                alert('🎉 [대성공!] 전 서버 선착순 2명 한정 [일본풍 검사] 스킨을 가장 빠르게 획득하셨습니다!!\n\n버튼이 [equip!]으로 변경되었습니다!');
+                alert('🎉 [대성공!] 전 서버 선착순 2명 한정 [일본풍 검사] 스킨을 획득하셨습니다!!\n\n버튼이 [equip!]으로 변경되었습니다.');
                 updateTradeMachineModalUI();
             } else {
                 updateTradeMachineModalUI();
                 alert('sold out!!\n\n선착순 재고가 모두 소진되었습니다.');
             }
         }
-        
-function drawTradeSkinPreviewCanvas() {
+
+        function drawTradeSkinPreviewCanvas() {
             const canvas = document.getElementById('trade-skin-preview');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
-            ctx.translate(canvas.width / 2, canvas.height / 2 + 10);
-            ctx.scale(0.85, 0.85);
+            ctx.translate(canvas.width / 2, canvas.height / 2 + 12);
+            ctx.scale(0.95, 0.95);
             const dummyChar = { colors: { skin: '#ffeaa7' }, walkTimer: 0 };
             drawCharacter(ctx, dummyChar, 0, 0, false, 0, 'japanese_ronin');
             ctx.restore();
@@ -22653,16 +22721,22 @@ function drawTradeSkinPreviewCanvas() {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-            ctx.fillText(tradeActive ? "⚔️ 트레이드 머신" : "호박 융합", x + 98, y + 65);
+            ctx.fillText(tradeActive ? "⚔️ 트레이닝 머신" : "호박 융합", x + 98, y + 65);
             ctx.shadowBlur = 0;
 
-            // 9. 머리 위 배너: "오늘 9시에 삭제" vs "한정수량 2개 선착순"
+            // 9. 머리 위 배너: "오늘 9시에 오픈" vs "한정수량 2명 선착순"
             let floatY = Math.sin(Date.now() * 0.005) * 4;
             if (tradeActive) {
-                ctx.fillStyle = 'rgba(220, 38, 38, 0.95)';
-                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2;
+                const cycleInfo = (typeof getTradeCycleInfo === 'function') ? getTradeCycleInfo() : { isOpen: true };
+                const bannerText = !cycleInfo.isOpen 
+                    ? "🔒 오늘 21:00 오픈 (선착순 2명)" 
+                    : `⚔️ 선착순 ${tradeMachineStock}/2명 한정!`;
+
+                ctx.fillStyle = !cycleInfo.isOpen ? 'rgba(30, 41, 59, 0.95)' : 'rgba(220, 38, 38, 0.95)';
+                ctx.strokeStyle = !cycleInfo.isOpen ? '#38bdf8' : '#facc15'; 
+                ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.roundRect(x + 18, y - 78 + floatY, 160, 26, 8);
+                ctx.roundRect(x + 8, y - 78 + floatY, 180, 26, 8);
                 ctx.fill(); ctx.stroke();
 
                 ctx.fillStyle = '#ffffff';
@@ -22670,7 +22744,7 @@ function drawTradeSkinPreviewCanvas() {
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-                ctx.fillText(`⚔️ 한정수량 ${tradeMachineStock}/2개 선착순!`, x + 98, y - 65 + floatY);
+                ctx.fillText(bannerText, x + 98, y - 65 + floatY);
                 ctx.shadowBlur = 0;
             } else {
                 ctx.fillStyle = 'rgba(220, 38, 38, 0.92)';
