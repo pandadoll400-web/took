@@ -394,6 +394,10 @@
             opacity: 0.7;
             transition: opacity 0.04s ease-in;
         }
+        @keyframes luckyPulseAnim {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
     </style>
 </head>
 <body>
@@ -1252,6 +1256,7 @@
                 <button class="shop-tab-btn active" onclick="switchShopTab('axe')">도끼</button>
                 <button class="shop-tab-btn" onclick="switchShopTab('limited')">한정조합</button>
                 <button class="shop-tab-btn" onclick="switchShopTab('skin')">시즌 스킨!</button>
+                <button class="shop-tab-btn" id="shop-tab-lucky-btn" onclick="switchShopTab('lucky')" style="display: none; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 900;">👑 럭키블럭</button>
             </div>
             
             <div id="shop-axe" style="display: block;">
@@ -1287,6 +1292,78 @@
 
             <div id="shop-skin" style="display: none; padding-top: 10px;">
                 <div id="skin-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+            </div>
+
+            <!-- 👑 [ADMIN 전용] 전설의 럭키블럭 상점 섹션 -->
+            <div id="shop-lucky" style="display: none; padding-top: 10px;">
+                <div style="background: radial-gradient(circle at top, rgba(245, 158, 11, 0.25), rgba(15, 23, 42, 0.95)); border: 2px solid #f59e0b; border-radius: 16px; padding: 18px 14px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(245, 158, 11, 0.35);">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 4px;">
+                        <span style="font-size: 24px;">👑</span>
+                        <h3 style="margin: 0; color: #f1c40f; font-size: 20px; font-weight: 900; letter-spacing: -0.5px; text-shadow: 0 0 12px rgba(241,196,15,0.7);">전설의 어드민 럭키블럭</h3>
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 16px;">
+                        황금빛 럭키블럭을 파괴하여 5종의 한정 전설/신화 스킨을 획득하세요!
+                    </div>
+
+                    <!-- 럭키블럭 비주얼 박스 -->
+                    <div style="background: linear-gradient(145deg, #f59e0b, #d97706); border: 3px solid #fef08a; border-radius: 18px; width: 130px; height: 130px; margin: 0 auto 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.4); animation: luckyPulseAnim 2s infinite ease-in-out;">
+                        <div style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; font-size: 9px; font-weight: 900; padding: 2px 7px; border-radius: 10px; border: 1.5px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4);">NEW</div>
+                        <span style="font-size: 54px; font-weight: 900; color: #ffffff; text-shadow: 0 3px 10px rgba(0,0,0,0.6);">?</span>
+                        <div style="font-size: 10.5px; font-weight: bold; color: #78350f; background: rgba(255,255,255,0.85); padding: 2px 8px; border-radius: 8px; margin-top: -2px;">LUCKY BLOCK</div>
+                    </div>
+
+                    <!-- 등장 확률 카드 리스트 -->
+                    <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; text-align: left;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.8); border: 1px solid #38bdf8; border-radius: 8px; padding: 7px 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 18px;">🪼</span>
+                                <span style="color: #38bdf8; font-weight: bold; font-size: 13px;">해파리 스킨</span>
+                            </div>
+                            <span style="color: #38bdf8; font-weight: 900; font-size: 13.5px;">50%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.8); border: 1px solid #f97316; border-radius: 8px; padding: 7px 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 18px;">🔥🦅</span>
+                                <span style="color: #fb923c; font-weight: bold; font-size: 13px;">피닉스 스킨</span>
+                            </div>
+                            <span style="color: #fb923c; font-weight: 900; font-size: 13.5px;">25%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.8); border: 1px solid #fde047; border-radius: 8px; padding: 7px 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 18px;">👼</span>
+                                <span style="color: #fef08a; font-weight: bold; font-size: 13px;">천사 스킨</span>
+                            </div>
+                            <span style="color: #fef08a; font-weight: 900; font-size: 13.5px;">15%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.8); border: 1px solid #ef4444; border-radius: 8px; padding: 7px 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 18px;">😈</span>
+                                <span style="color: #f87171; font-weight: bold; font-size: 13px;">악마 스킨</span>
+                            </div>
+                            <span style="color: #f87171; font-weight: 900; font-size: 13.5px;">9%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: linear-gradient(90deg, rgba(234, 179, 8, 0.2), rgba(239, 68, 68, 0.25)); border: 1.5px solid #eab308; border-radius: 8px; padding: 7px 12px; box-shadow: 0 0 10px rgba(234, 179, 8, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 18px;">🌓</span>
+                                <span style="color: #facc15; font-weight: bold; font-size: 13px;">에테론 (천사반 악마반)</span>
+                            </div>
+                            <span style="color: #facc15; font-weight: 900; font-size: 14px; text-shadow: 0 0 8px #f59e0b;">1% (초신화)</span>
+                        </div>
+                    </div>
+
+                    <!-- 3개 구매 버튼 -->
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button onclick="buyLuckyBlocks(1, 10000)" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; padding: 11px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);">
+                            🎁 럭키블럭 1개 구매 (💰 10,000 골드)
+                        </button>
+                        <button onclick="buyLuckyBlocks(10, 100000)" style="background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; border: none; padding: 11px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);">
+                            🎁 럭키블럭 10개 구매 (💰 100,000 골드)
+                        </button>
+                        <button onclick="buyLuckyBlocks(30, 500000)" style="background: linear-gradient(135deg, #ea580c, #f97316); color: white; border: none; padding: 11px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);">
+                            🔥 럭키블럭 30개 대량 구매 (💰 500,000 골드)
+                        </button>
+                    </div>
+                </div>
             </div>
             
             <button class="close-btn" onclick="document.getElementById('shop-modal').style.display='none'">닫기</button>
@@ -1378,61 +1455,53 @@
             <button class="close-btn" onclick="closeSpaceIndex()" style="background: linear-gradient(135deg, #0984e3, #00cec9); border: none; padding: 11px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 14px; color: white; cursor: pointer; box-shadow: 0 4px 14px rgba(0, 206, 201, 0.4);">닫기</button>
         </div>
 
-        <!-- 🐾 [ADMIN] 얼음 지형 고급 펫 머신 / 상점 모달 (Pet System Lab & Synthesis) -->
-        <!-- 🐾 [ADMIN] 얼음 지형 스킨 펫 융합 머신 (상점) -->
-        <div id="pet-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #0f172a, #090d16); color: white; padding: 22px 20px; border-radius: 20px; width: 94%; max-width: 480px; max-height: 88%; overflow-y: auto; display: none; border: 2px solid #f1c40f; z-index: 60; box-shadow: 0 16px 50px rgba(0,0,0,0.95), 0 0 35px rgba(241, 196, 15, 0.35); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(241, 196, 15, 0.35); padding-bottom: 12px; margin-bottom: 14px;">
+        <!-- 🧬 [고대 생명 인큐베이터] 펫 알 부화 장치 모달 -->
+        <div id="pet-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #0f172a, #090d16); color: white; padding: 22px 20px; border-radius: 20px; width: 94%; max-width: 480px; max-height: 88%; overflow-y: auto; display: none; border: 2px solid #38bdf8; z-index: 60; box-shadow: 0 16px 50px rgba(0,0,0,0.95), 0 0 35px rgba(56, 189, 248, 0.35); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.35); padding-bottom: 12px; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 28px; filter: drop-shadow(0 0 10px #f1c40f);">🦮</span>
+                    <span style="font-size: 30px; filter: drop-shadow(0 0 10px #38bdf8);">🧬</span>
                     <div>
                         <div style="display: flex; align-items: center; gap: 6px;">
-                            <h2 style="margin: 0; color: #f1c40f; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">스킨 펫 융합 머신</h2>
-                            <span style="background: rgba(241, 196, 15, 0.2); color: #f1c40f; border: 1px solid #f1c40f; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">ADMIN SHOP</span>
+                            <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">고대 생명 인큐베이터</h2>
+                            <span style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">INCUBATOR</span>
                         </div>
-                        <span style="font-size: 11px; color: #94a3b8;">신비한 목줄과 인벤토리 스킨을 융합하여 미니 펫으로 장착</span>
+                        <span style="font-size: 11px; color: #94a3b8;">고대 공룡알 제단에서 얻은 펫 알을 안치하여 부화시키는 바이오 장치</span>
                     </div>
                 </div>
                 <button onclick="closePetMachineModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
             </div>
 
-            <!-- 목줄 보유 상태 & 안내 배너 -->
-            <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 1px solid #38bdf8; border-radius: 12px; padding: 12px; margin-bottom: 14px; text-align: left;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-size: 12.5px; font-weight: bold; color: #38bdf8;">🦮 목줄 보유 현황</span>
-                    <span id="pet-machine-leash-badge" style="font-size: 10.5px; padding: 2px 8px; border-radius: 6px; font-weight: bold; background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8;">확인 중...</span>
+            <!-- 펫 알 보유 현황 & 인큐베이터 상태 -->
+            <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 1px solid #38bdf8; border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+                <div style="display: flex; justify-content: space-around; align-items: center; margin-bottom: 10px;">
+                    <div>
+                        <div style="font-size: 11px; color: #94a3b8;">보유 중인 펫 알</div>
+                        <div id="incubator-owned-eggs" style="font-size: 20px; font-weight: 900; color: #facc15;">0개</div>
+                    </div>
+                    <div style="height: 30px; width: 1px; background: rgba(255,255,255,0.15);"></div>
+                    <div>
+                        <div style="font-size: 11px; color: #94a3b8;">인큐베이터 안치 중</div>
+                        <div id="incubator-active-eggs" style="font-size: 20px; font-weight: 900; color: #38bdf8;">0개</div>
+                    </div>
                 </div>
-                <div style="font-size: 11px; color: #cbd5e1; line-height: 1.4;">
-                    얼음 협곡 [바위 2]에서 공룡 심장 화석 10개로 <b>목줄</b>을 획득하면,<br>
-                    인벤토리에 있는 스킨 중 1개를 골라 <b>미니 펫</b>으로 융합 및 동행할 수 있습니다.
-                </div>
-            </div>
 
-            <!-- 현재 동행 스킨 펫 정보 & 효과 -->
-            <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(241, 196, 15, 0.5); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
-                <div style="font-size: 11px; color: #94a3b8; margin-bottom: 4px;">현재 동행 스킨 펫</div>
-                <div id="pet-modal-active-name" style="font-size: 17px; font-weight: 900; color: #f1c40f; margin-bottom: 6px;">동행 중인 펫 없음</div>
-                <div id="pet-modal-active-buff" style="font-size: 12px; color: #4ade80; margin-bottom: 10px; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 6px; font-weight: bold;">
-                    🌲 펫 효과: 나무 캐는 속도 20% 감소 (벌목 시간 20% 단축!)
-                </div>
-                <div id="pet-modal-active-btn-area">
+                <div id="incubator-action-btn-area">
                     <!-- Dynamic button inserted by updatePetMachineModalUI() -->
                 </div>
             </div>
 
-            <!-- 인벤토리 스킨 목록 (스킨을 펫으로 융합) -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <div style="font-size: 13.5px; font-weight: bold; color: #e2e8f0; display: flex; align-items: center; gap: 6px;">
-                    <span>🎒</span> <span>인벤토리 스킨 융합실</span>
+            <!-- 부화 연구 진행 상황 박스 -->
+            <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(168, 85, 247, 0.4); border-radius: 14px; padding: 16px; margin-bottom: 14px; text-align: center;">
+                <div style="font-size: 28px; margin-bottom: 6px;">🥚✨</div>
+                <div style="font-size: 14.5px; font-weight: bold; color: #c084fc; margin-bottom: 6px;">
+                    인큐베이터 부화 시스템 가동 중
                 </div>
-                <span style="font-size: 10px; color: #4ade80; font-weight: bold;">💡 인벤토리 스킨 보존됨</span>
-            </div>
-            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 12px; line-height: 1.35; text-align: left;">
-                보유한 스킨 중 하나를 펫으로 융합하세요. (모습: 살짝 작아진 스킨 캐릭터)<br>
-                <b style="color: #4ade80;">※ 펫으로 융합/장착해도 인벤토리의 스킨은 삭제되지 않고 그대로 유지됩니다!</b>
-            </div>
-
-            <div id="pet-machine-skins-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 4px; margin-bottom: 14px;">
-                <!-- Dynamically rendered by updatePetMachineModalUI() -->
+                <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.5; margin-bottom: 8px;">
+                    현재 인큐베이터 내부에서 알이 따뜻하게 보호받으며 태고의 생명 에너지를 모으고 있습니다!
+                </div>
+                <div style="background: rgba(0,0,0,0.4); border-radius: 8px; padding: 8px; color: #facc15; font-size: 11.5px; font-weight: bold;">
+                    ✨ 인큐베이터에서 태어날 신비한 펫의 정체는 다음 업데이트에서 전격 공개됩니다!
+                </div>
             </div>
 
             <div style="text-align: center;">
@@ -1492,38 +1561,42 @@
             </div>
         </div>
 
-        <!-- 🦮 [바위 2] 펫 목줄 교환 제단 모달 -->
+        <!-- 🥚 [바위 2] 공룡알 조각 10개 -> 펫 알 교환 제단 모달 -->
         <div id="pet-leash-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 440px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 26px;">🦮</span>
+                    <span style="font-size: 26px;">🥚</span>
                     <div>
-                        <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold;">펫 목줄 바위</h2>
-                        <span style="font-size: 11px; color: #94a3b8;">얼음 협곡 고대 지층 발굴 · 공룡 심장 화석 10개로 목줄 획득</span>
+                        <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold;">공룡알 교환 제단</h2>
+                        <span style="font-size: 11px; color: #94a3b8;">공룡알 조각 10개를 합성하여 미지의 [펫 알]을 획득합니다</span>
                     </div>
                 </div>
                 <button onclick="closePetLeashModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
             </div>
 
-            <!-- 화석 채굴 섹션 -->
+            <!-- 조각 획득 방법 안내 -->
             <div style="background: rgba(30, 41, 59, 0.7); border-radius: 12px; padding: 10px 12px; margin-bottom: 14px; border: 1px solid #334155; text-align: center;">
-                <div style="font-size: 13px; font-weight: bold; color: #38bdf8; margin-bottom: 3px;">🌲 공룡 심장 화석 획득 방법</div>
-                <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.4;">나무를 벌목하면 낮은 확률로 <strong>[공룡 심장 화석]</strong>을 발굴할 수 있습니다!</div>
+                <div style="font-size: 13px; font-weight: bold; color: #38bdf8; margin-bottom: 3px;">🧩 공룡알 조각 획득 방법</div>
+                <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.4;">나무를 벌목하거나 바위를 채굴하면 낮은 확률로 <strong>[공룡알 조각]</strong>을 발굴할 수 있습니다!</div>
             </div>
 
-            <!-- 목줄 획득 섹션 -->
+            <!-- 펫 알 교환 섹션 -->
             <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95)); border: 1.5px solid #f59e0b; border-radius: 14px; padding: 16px; margin-bottom: 14px; text-align: center;">
                 <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px;">
-                    <span style="font-size: 24px;">🦮💖</span>
-                    <span style="font-weight: bold; font-size: 16px; color: #facc15;">신비한 펫 목줄 교환</span>
+                    <span style="font-size: 26px;">🧩 ➔ 🥚</span>
+                    <span style="font-weight: bold; font-size: 16px; color: #facc15;">신비한 펫 알 연성</span>
                 </div>
                 <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 12px; line-height: 1.4;">
-                    [공룡 심장 화석] 10개를 바치면<br>
-                    인벤토리 스킨을 펫으로 융합할 수 있는 <strong>'신비한 목줄'</strong>을 획득합니다!
+                    [공룡알 조각] 10개를 모아 바치면<br>
+                    고대 생명의 씨앗이 담긴 <strong>'펫 알'</strong>을 획득할 수 있습니다!
                 </div>
                 <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 12px;">
-                    <span style="font-size: 13px; color: #94a3b8;">현재 공룡 심장 화석:</span>
-                    <span id="leash-modal-heart-count" style="font-size: 16px; font-weight: bold; color: #fb7185;">0 / 10개</span>
+                    <span style="font-size: 13px; color: #94a3b8;">현재 공룡알 조각:</span>
+                    <span id="leash-modal-heart-count" style="font-size: 17px; font-weight: bold; color: #38bdf8;">0 / 10개</span>
+                </div>
+                <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 12px;">
+                    <span style="font-size: 13px; color: #94a3b8;">현재 보유 펫 알:</span>
+                    <span id="leash-modal-egg-count" style="font-size: 17px; font-weight: bold; color: #facc15;">0개</span>
                 </div>
                 <div id="leash-action-area">
                     <!-- Dynamic button inserted by updatePetLeashModalUI() -->
@@ -1921,11 +1994,11 @@
         });
         window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = false; });
 
-        // 우주 로케트 (일반 지역 상단 왼쪽 우주 발사대)
+        // 우주 로케트 (유저 요청으로 완전 제거됨)
         let rocket = {
             x: 80,
             y: 220,
-            visible: true,
+            visible: false,
             launched: false
         };
 
@@ -1963,7 +2036,7 @@
         // ❄️ 얼음의 협곡 고대 화석 바위 2개 (바위 1: 케르베로스 제작, 바위 2: 펫 목줄 & 스킨 펫 장착)
         let iceCanyonFossilRocks = [
             { id: 'cerberus_rock', name: '케르베로스 제작 바위', x: 200, y: -8340, radius: 30, hitTimer: 0 },
-            { id: 'leash_rock', name: '펫 목줄 & 스킨 펫 바위', x: 440, y: -8340, radius: 30, hitTimer: 0 }
+            { id: 'egg_rock', name: '공룡알 조각 교환 바위', x: 440, y: -8340, radius: 30, hitTimer: 0 }
         ];
 
         // 🐾 [ADMIN] 얼음 지형 고급 펫 머신 / 상점 (x: 80, y: -8540)
@@ -2061,6 +2134,7 @@
             { name: '삼엽충 화석', grade: '희귀', color: '#0984e3', icon: '🪲', desc: '고대 바다를 누비던 완벽한 형태의 삼엽충 화석.' },
             { name: '고대 조개 화석', grade: '희귀', color: '#0984e3', icon: '🐚', desc: '나선형 껍질이 고스란히 굳어버린 암모나이트 조개 화석.' },
             { name: '매머드 상아 화석', grade: '희귀', color: '#0984e3', icon: '🦣', desc: '빙하기를 호령하던 거대 매머드의 단단한 상아.' },
+            { name: '공룡알 조각', grade: '희귀', color: '#0984e3', icon: '🧩', desc: '고대 공룡알의 깨진 껍질 조각. 10개를 모으면 완전한 펫 알을 만들 수 있다.' },
             { name: '공룡 알 화석', grade: '희귀', color: '#0984e3', icon: '🥚', desc: '화석화된 신비로운 둥지 속 공룡 알.' },
 
             // 영웅 (Hero / Epic) - 4종
@@ -2231,109 +2305,61 @@
             if (modal) modal.style.display = 'none';
         }
 
+        let incubatingEggs = Number(localStorage.getItem('incubating_eggs') || 0);
+
         function updatePetMachineModalUI() {
-            const leashBadgeEl = document.getElementById('pet-machine-leash-badge');
-            const nameEl = document.getElementById('pet-modal-active-name');
-            const buffEl = document.getElementById('pet-modal-active-buff');
-            const activeBtnArea = document.getElementById('pet-modal-active-btn-area');
-            const skinsContainer = document.getElementById('pet-machine-skins-container');
+            const ownedEl = document.getElementById('incubator-owned-eggs');
+            const activeEl = document.getElementById('incubator-active-eggs');
+            const btnArea = document.getElementById('incubator-action-btn-area');
 
-            const hasLeash = hasPetLeash || (inventory['목줄'] || 0) > 0;
+            const eggCount = (inventory['펫 알'] || 0) + (inventory['공룡 알 화석'] || 0);
+            if (ownedEl) ownedEl.innerText = `${eggCount}개`;
+            if (activeEl) activeEl.innerText = `${incubatingEggs}개`;
 
-            // 목줄 뱃지 업데이트
-            if (leashBadgeEl) {
-                if (hasLeash) {
-                    leashBadgeEl.style.background = 'rgba(16, 185, 129, 0.2)';
-                    leashBadgeEl.style.color = '#34d399';
-                    leashBadgeEl.style.border = '1px solid #10b981';
-                    leashBadgeEl.innerText = '✨ 신비한 목줄 보유 중';
-                } else {
-                    leashBadgeEl.style.background = 'rgba(239, 68, 68, 0.2)';
-                    leashBadgeEl.style.color = '#f87171';
-                    leashBadgeEl.style.border = '1px solid #ef4444';
-                    leashBadgeEl.innerText = '🔒 목줄 필요 (바위 2에서 획득)';
-                }
-            }
-
-            // 현재 동행 펫 현황
-            const isPetActive = activeSkinPet && ownedSkins.includes(activeSkinPet);
-            if (nameEl) {
-                if (isPetActive) {
-                    const skin = skinsData.find(s => s.id === activeSkinPet) || { name: activeSkinPet, icon: '✨' };
-                    nameEl.innerHTML = `${skin.icon || '✨'} <span style="color: #f1c40f;">[미니 펫] ${skin.name}</span>`;
-                } else {
-                    nameEl.innerHTML = `<span style="color: #94a3b8;">동행 중인 펫 없음</span>`;
-                }
-            }
-
-            if (buffEl) {
-                buffEl.innerHTML = `🌲 펫 효과: 나무 캐는 속도 20% 감소 (벌목 시간 20% 단축!)`;
-            }
-
-            if (activeBtnArea) {
-                if (isPetActive) {
-                    activeBtnArea.innerHTML = `
-                        <button onclick="unequipSkinPet()" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; padding: 6px 18px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">
-                            🐾 동행 해제
+            if (btnArea) {
+                if (eggCount > 0) {
+                    btnArea.innerHTML = `
+                        <button onclick="placeEggInIncubator()" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 11px 22px; border: none; border-radius: 10px; font-weight: bold; font-size: 13.5px; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
+                            🥚 인큐베이터에 펫 알 넣기 (보유: ${eggCount}개)
                         </button>
                     `;
                 } else {
-                    activeBtnArea.innerHTML = `
-                        <span style="font-size: 11px; color: #94a3b8;">하단 인벤토리 스킨 중 하나를 골라 목줄과 융합하세요.</span>
+                    btnArea.innerHTML = `
+                        <button onclick="closePetMachineModal(); openPetLeashModal();" style="background: #334155; color: #94a3b8; padding: 9px 18px; border: 1px solid #475569; border-radius: 8px; font-size: 12px; cursor: pointer;">
+                            🔒 알 필요 (바위에서 공룡알 조각 10개로 교환하기 ➔)
+                        </button>
                     `;
                 }
             }
+        }
 
-            // 인벤토리 스킨 목록
-            if (skinsContainer) {
-                if (!hasLeash) {
-                    skinsContainer.innerHTML = `
-                        <div style="text-align: center; color: #94a3b8; padding: 22px 14px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1.5px dashed #475569;">
-                            <div style="font-size: 28px; margin-bottom: 6px;">🔒🦮</div>
-                            <div style="font-size: 13.5px; font-weight: bold; color: #e2e8f0; margin-bottom: 4px;">신비한 펫 목줄이 필요합니다</div>
-                            <div style="font-size: 11px; color: #94a3b8; line-height: 1.45; margin-bottom: 12px;">
-                                얼음 협곡 우측 [바위 2]에서 공룡 심장 화석 10개로 목줄을 획득하면<br>
-                                인벤토리에 보관된 스킨을 자유롭게 펫으로 융합할 수 있습니다.
-                            </div>
-                            <button onclick="closePetMachineModal(); openPetLeashModal();" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);">
-                                🦮 [바위 2] 목줄 교환하러 가기
-                            </button>
-                        </div>
-                    `;
-                } else if (!ownedSkins || ownedSkins.length === 0) {
-                    skinsContainer.innerHTML = `
-                        <div style="text-align: center; color: #94a3b8; padding: 22px 14px; background: rgba(0,0,0,0.3); border-radius: 12px;">
-                            인벤토리에 보유 중인 스킨이 없습니다.<br>
-                            스킨 상점이나 퀘스트/합성으로 스킨을 먼저 획득하세요!
-                        </div>
-                    `;
-                } else {
-                    skinsContainer.innerHTML = ownedSkins.map(skinId => {
-                        const skin = skinsData.find(s => s.id === skinId) || { id: skinId, name: skinId, icon: '✨' };
-                        const isEquippedAsPet = (activeSkinPet === skin.id);
-
-                        return `
-                            <div style="background: rgba(30, 41, 59, 0.75); border: 1.5px solid ${isEquippedAsPet ? '#f1c40f' : '#334155'}; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: ${isEquippedAsPet ? '0 0 14px rgba(241, 196, 15, 0.35)' : 'none'};">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <span style="font-size: 26px;">${skin.icon}</span>
-                                    <div style="text-align: left;">
-                                        <div style="font-size: 13.5px; font-weight: bold; color: #fff;">${skin.name}</div>
-                                        <div style="font-size: 10.5px; color: ${isEquippedAsPet ? '#f1c40f' : '#94a3b8'};">
-                                            ${isEquippedAsPet ? '🐾 융합 동행 중 (벌목 속도 20% 감소)' : '보유 스킨 (인벤토리 영구 보존)'}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    ${isEquippedAsPet 
-                                        ? `<button onclick="unequipSkinPet()" style="background: #ef4444; color: white; border: none; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">융합 해제</button>`
-                                        : `<button onclick="fuseSkinWithLeash('${skin.id}')" style="background: linear-gradient(135deg, #f59e0b, #eab308); color: #0f172a; border: none; padding: 7px 15px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 10px rgba(245, 158, 11, 0.4);">✨ 융합 장착</button>`
-                                    }
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                }
+        function placeEggInIncubator() {
+            let eggCount = (inventory['펫 알'] || 0);
+            if (eggCount <= 0 && inventory['공룡 알 화석'] > 0) {
+                inventory['펫 알'] = inventory['공룡 알 화석'];
+                delete inventory['공룡 알 화석'];
+                eggCount = inventory['펫 알'];
             }
+
+            if (eggCount <= 0) {
+                alert("인벤토리에 보유 중인 '펫 알'이 없습니다!\n우측 바위에서 공룡알 조각 10개로 펫 알을 교환해오세요.");
+                return;
+            }
+
+            inventory['펫 알']--;
+            incubatingEggs++;
+            try { localStorage.setItem('incubating_eggs', String(incubatingEggs)); } catch(e) {}
+            saveGame();
+            updatePetMachineModalUI();
+
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🥚 [인큐베이터] 펫 알을 넣었습니다!', color: '#38bdf8', life: 100, size: 20 });
+            for (let i = 0; i < 30; i++) {
+                let a = Math.random() * Math.PI * 2;
+                let sp = Math.random() * 4 + 2;
+                labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#38bdf8' : '#f1c40f'), life: 30 });
+            }
+
+            alert("🥚 [공룡 펫 알 부화 대기 중!]\n\n신비한 펫 알이 인큐베이터에 안전하게 안치되었습니다!\n\n인큐베이터 안에서 알이 따뜻하게 생명 에너지를 모으고 있습니다.\n✨ 부화 결과와 태어날 신비한 펫은 다음 업데이트에서 전격 공개됩니다!");
         }
 
         function fuseSkinWithLeash(skinId) {
@@ -2400,64 +2426,52 @@
             if (modal) modal.style.display = 'none';
         }
 
+        function getDinoFragCount() {
+            let count = 0;
+            ['공룡알 조각', '공룡알조각', '공룡 알 조각', '공룡 알 화석', '공룡알 화석'].forEach(k => {
+                if (inventory[k]) count += inventory[k];
+            });
+            return count;
+        }
+
         function updatePetLeashModalUI() {
-            const heartCountEl = document.getElementById('leash-modal-heart-count');
+            const fragCountEl = document.getElementById('leash-modal-heart-count');
+            const eggCountEl = document.getElementById('leash-modal-egg-count');
             const actionAreaEl = document.getElementById('leash-action-area');
 
-            let heartCount = 0;
-            ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'].forEach(k => {
-                if (inventory[k]) heartCount += inventory[k];
-            });
+            const fragCount = getDinoFragCount();
+            const eggCount = (inventory['펫 알'] || 0) + (inventory['공룡 알 화석'] || 0);
 
-            if (heartCountEl) heartCountEl.innerText = `${heartCount} / 10개`;
-
-            const hasLeash = hasPetLeash || (inventory['목줄'] || 0) > 0;
+            if (fragCountEl) fragCountEl.innerText = `${fragCount} / 10개`;
+            if (eggCountEl) eggCountEl.innerText = `${eggCount}개`;
 
             if (actionAreaEl) {
-                if (hasLeash) {
+                if (fragCount >= 10) {
                     actionAreaEl.innerHTML = `
-                        <div style="background: rgba(245, 158, 11, 0.15); border: 1.5px solid #f59e0b; border-radius: 8px; padding: 12px; color: #facc15; font-weight: bold; font-size: 13.5px; margin-bottom: 12px;">
-                            ✨ 🦮 신비한 펫 목줄 보유 중!
-                        </div>
-                        <button onclick="closePetLeashModal(); openPetMachineModal();" style="background: linear-gradient(135deg, #f59e0b, #eab308); color: #0f172a; padding: 10px 22px; border: none; border-radius: 8px; font-weight: bold; font-size: 13.5px; cursor: pointer; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);">
-                            🏬 펫 머신으로 이동하여 스킨 융합하기 ➔
-                        </button>
-                    `;
-                } else if (heartCount >= 10) {
-                    actionAreaEl.innerHTML = `
-                        <button onclick="buyPetLeash()" style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; padding: 11px 24px; border: none; border-radius: 8px; font-weight: bold; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.6);">
-                            🦮 목줄 교환하기 (공룡 심장 화석 10개 사용)
+                        <button onclick="craftPetEgg()" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 11px 24px; border: none; border-radius: 8px; font-weight: bold; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5);">
+                            🥚 펫 알 교환하기 (공룡알 조각 10개 소모)
                         </button>
                     `;
                 } else {
                     actionAreaEl.innerHTML = `
                         <button disabled style="background: #475569; color: #94a3b8; padding: 9px 20px; border: none; border-radius: 8px; font-weight: bold; font-size: 13px;">
-                            공룡 심장 화석 부족 (${heartCount}/10개 필요 - 상단 발굴 클릭!)
+                            공룡알 조각 부족 (${fragCount}/10개 필요 - 상단 발굴 및 벌목!)
                         </button>
                     `;
                 }
             }
         }
 
-        function buyPetLeash() {
-            let heartCount = 0;
-            const keys = ['공룡 심장 화석', '공룡심장화석', '고대 공룡 심장 화석', '심장화석'];
-            keys.forEach(k => {
-                if (inventory[k]) heartCount += inventory[k];
-            });
-
-            if (hasPetLeash || (inventory['목줄'] || 0) > 0) {
-                alert("✨ 이미 '신비한 목줄'을 보유하고 있습니다!\n좌측 [펫 머신(상점)]에서 원하는 스킨과 융합하세요.");
+        function craftPetEgg() {
+            const fragCount = getDinoFragCount();
+            if (fragCount < 10) {
+                alert(`공룡알 조각이 부족합니다!\n\n현재 보유: ${fragCount}개 / 필요: 10개\n(나무를 벌목하거나 바위를 채굴하여 공룡알 조각을 모으세요!)`);
                 return;
             }
 
-            if (heartCount < 10) {
-                alert(`공룡 심장 화석이 부족합니다!\n\n현재 보유: ${heartCount}개 / 필요: 10개\n(나무를 벌목하여 낮은 확률로 공룡 심장 화석을 발굴하세요!)`);
-                return;
-            }
-
-            // 공룡 심장 화석 10개 차감
+            // 공룡알 조각 10개 차감
             let toDeduct = 10;
+            const keys = ['공룡알 조각', '공룡알조각', '공룡 알 조각', '공룡 알 화석', '공룡알 화석'];
             for (let k of keys) {
                 if (inventory[k] && inventory[k] > 0) {
                     let take = Math.min(inventory[k], toDeduct);
@@ -2467,23 +2481,23 @@
                 }
             }
 
-            hasPetLeash = true;
-            if (!inventory['목줄']) inventory['목줄'] = 0;
-            inventory['목줄']++;
+            if (!inventory['펫 알']) inventory['펫 알'] = 0;
+            inventory['펫 알']++;
 
-            try { localStorage.setItem('has_pet_leash', 'true'); } catch(e) {}
             saveGame();
             updatePetLeashModalUI();
             if (typeof updatePetMachineModalUI === 'function') updatePetMachineModalUI();
 
-            floatTexts.push({ x: player.x, y: player.y - 90, text: `🦮 [신비한 목줄 획득!]`, color: '#f1c40f', life: 100, size: 22 });
+            floatTexts.push({ x: player.x, y: player.y - 90, text: `🥚 [펫 알 획득!]`, color: '#facc15', life: 100, size: 22 });
             for (let i = 0; i < 35; i++) {
                 let a = Math.random() * Math.PI * 2;
                 let sp = Math.random() * 5 + 2;
-                labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#f1c40f' : '#ff0055'), life: 35 });
+                labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#38bdf8' : '#facc15'), life: 35 });
             }
-            alert("🎉 [🦮 신비한 펫 목줄 획득!]\n\n공룡 심장 화석 10개의 태고 생명력으로 빚어낸 [신비한 목줄]을 얻었습니다!\n\n이제 좌측 [펫 머신(상점)]에서 인벤토리에 보유한 스킨 중 하나를 융합하여 미니 펫으로 장착할 수 있습니다.\n\n🌲 펫 효과: 나무 캐는 속도 20% 감소!\n💡 중요: 융합해도 인벤토리의 스킨은 삭제되지 않고 안전하게 보관됩니다!");
+            alert("🎉 [🥚 펫 알 획득!]\n\n공룡알 조각 10개를 합성하여 신비로운 [펫 알]을 획득했습니다!\n\n좌측의 [인큐베이터]로 가서 펫 알을 넣으세요!\n✨ 인큐베이터에서 태어날 신비한 펫은 다음 업데이트에서 전격 공개됩니다!");
         }
+
+        const buyPetLeash = craftPetEgg;
 
         function unequipSkinPet() {
             activeSkinPet = null;
@@ -2694,9 +2708,11 @@
 
             let r = Math.random();
             let picked = null;
-            if (r < 0.3) {
+            if (r < 0.28) {
+                picked = FOSSIL_ITEMS.find(f => f.name === '공룡알 조각') || { name: '공룡알 조각', grade: '희귀', color: '#0984e3', icon: '🧩', desc: '고대 공룡알의 깨진 조각.' };
+            } else if (r < 0.52) {
                 picked = FOSSIL_ITEMS.find(f => f.name === '공룡 화석') || FOSSIL_ITEMS[12];
-            } else if (r < 0.6) {
+            } else if (r < 0.72) {
                 picked = FOSSIL_ITEMS.find(f => f.name === '공룡 심장 화석') || FOSSIL_ITEMS[14];
             } else {
                 let rand = Math.random() * 100;
@@ -3177,13 +3193,9 @@
             return Date.now() >= ICE_CANYON_EVENT_START_MS;
         }
 
-        const ALIEN_EVENT_START_MS = new Date('2026-10-17T22:00:00+09:00').getTime();
         function isAlienEventStarted() {
-            if (isAdmin()) return true;
-            if (typeof window !== 'undefined' && (window.FORCE_ALIEN_EVENT || localStorage.getItem('force_alien_event') === 'true')) {
-                return true;
-            }
-            return Date.now() >= ALIEN_EVENT_START_MS;
+            // 미친박사/외계박사 스토리는 오직 최고 관리자(ADMIN) 계정에만 공개
+            return isAdmin();
         }
 
         // 🛠️ 콘솔 / 테스트용 강제 활성화 / 잠금 헬퍼
@@ -6184,7 +6196,7 @@
                 ctx.font = '16px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText("🦮", x, y - 2);
+                ctx.fillText("🥚✨", x, y - 2);
                 ctx.shadowBlur = 0;
             } else {
                 // 빛나는 불타는 늑대 심볼
@@ -6198,36 +6210,7 @@
                 ctx.shadowBlur = 0;
             }
 
-            // 상단 네온 라벨
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
-            ctx.strokeStyle = isLeashRock ? '#38bdf8' : '#ef4444';
-            ctx.lineWidth = 1.3;
-            ctx.beginPath();
-            let labelW = isLeashRock ? 116 : 110;
-            ctx.roundRect(x - labelW / 2, y - r - 34, labelW, 28, 6);
-            ctx.fill(); ctx.stroke();
-
-            if (isLeashRock) {
-                ctx.fillStyle = '#38bdf8';
-                ctx.font = 'bold 9.5px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText("🦮 펫 목줄 & 스킨 펫", x, y - r - 24);
-
-                ctx.fillStyle = '#facc15';
-                ctx.font = 'bold 8.5px Arial';
-                ctx.fillText("👆 클릭: 목줄 & 펫 장착", x, y - r - 12);
-            } else {
-                ctx.fillStyle = '#f87171';
-                ctx.font = 'bold 9.5px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText("🐺🔥 케르베로스 바위", x, y - r - 24);
-
-                ctx.fillStyle = '#facc15';
-                ctx.font = 'bold 8.5px Arial';
-                ctx.fillText("👆 클릭: 발굴 & 제작", x, y - r - 12);
-            }
+            // (상단 네온 라벨 박스 제거 - 자연스러운 바위 렌더링)
             ctx.restore();
         }
 
@@ -6396,32 +6379,7 @@
             ctx.fill();
             ctx.shadowBlur = 0;
 
-            // 7. 상단 플로팅 네온 뱃지
-            let badgeBob = Math.sin(now * 0.004) * 3;
-            ctx.save();
-            ctx.translate(x, y - 110 + badgeBob);
-
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
-            ctx.strokeStyle = '#f1c40f';
-            ctx.lineWidth = 1.8;
-            ctx.shadowColor = '#f1c40f';
-            ctx.shadowBlur = 10;
-            ctx.beginPath();
-            ctx.roundRect(-68, -16, 136, 32, 8);
-            ctx.fill();
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-
-            ctx.fillStyle = '#f1c40f';
-            ctx.font = 'bold 11px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText("👑 ADMIN 🐾 펫 상점 & 머신", 0, -3);
-
-            ctx.fillStyle = '#38bdf8';
-            ctx.font = 'bold 9px Arial';
-            ctx.fillText("✨ 클릭: 펫 관리 & 합성", 0, 9);
-            ctx.restore();
+            // (상단 네온 플로팅 뱃지 제거 - 머신 캡슐 자체 렌더링)
 
             ctx.restore();
         }
@@ -6791,76 +6749,7 @@
             }
             ctx.restore();
 
-            // 4. 상단 네온 홀로그램 전광판 간판
-            ctx.save();
-            let bob = Math.sin(time * 2) * 4;
-            ctx.translate(0, -90 + bob);
-
-            ctx.fillStyle = isDevil ? 'rgba(30, 10, 18, 0.95)' : (isIceDragon ? 'rgba(10, 25, 48, 0.95)' : 'rgba(15, 12, 34, 0.92)');
-            ctx.strokeStyle = isDevil ? '#e74c3c' : (isIceDragon ? '#38bdf8' : '#a29bfe');
-            ctx.lineWidth = 2.5;
-            ctx.shadowColor = isDevil ? '#e74c3c' : (isIceDragon ? '#38bdf8' : '#6c5ce7');
-            ctx.shadowBlur = 12;
-            ctx.beginPath();
-            ctx.roundRect(-68, -20, 136, 38, 8);
-            ctx.fill();
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-
-            if (isDevil) {
-                ctx.fillStyle = '#ff7675';
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText("😈 악마 보스전", 0, -6);
-
-                ctx.fillStyle = '#f1c40f';
-                ctx.font = 'bold 11px Arial';
-                ctx.fillText(isBossEventStarted() ? "⚔️ 전격 공개 오픈!" : "오늘 10시 공개!", 0, 9);
-            } else if (isIceDragon) {
-                ctx.fillStyle = '#38bdf8';
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText("🐉 얼음의 협곡 보스", 0, -6);
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 10.5px Arial';
-                ctx.fillText("❄️ [고대 서리룡]", 0, 9);
-            } else {
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText("🌀 고차원 텔레포트", 0, -6);
-
-                ctx.fillStyle = '#f1c40f';
-                ctx.font = 'bold 10px Arial';
-                ctx.fillText("👑 [원숭이 보스전]", 0, 9);
-            }
-            ctx.restore();
-
-            // 5. 플레이어 접근 시 터치/클릭 안내 말풍선
-            if (typeof player !== 'undefined' && Math.hypot(player.x - x, player.y - y) < 110) {
-                ctx.save();
-                ctx.fillStyle = isDevil ? 'rgba(30, 10, 18, 0.95)' : '#f1c40f';
-                ctx.strokeStyle = isDevil ? '#e74c3c' : '#d35400';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.roundRect(-80, -145, 160, 28, 8);
-                ctx.fill();
-                ctx.stroke();
-
-                ctx.fillStyle = isDevil ? '#ff7675' : '#2c3e50';
-                ctx.font = 'bold 11px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                let tipText = isDevil 
-                    ? (isBossEventStarted() ? "👆 클릭하여 악마 보스전!" : "오늘 10시 공개!") 
-                    : (isIceDragon ? "👆 클릭하여 서리룡 보스전!" : "👆 클릭하여 원숭이 보스전!");
-                ctx.fillText(tipText, 0, -131);
-                ctx.restore();
-            }
+            // (상단 네온 간판 및 말풍선 박스 제거 - 자연스러운 오브젝트 렌더링)
 
             ctx.restore();
         }
@@ -10964,6 +10853,8 @@
         document.getElementById('shop-btn').addEventListener('click', () => {
             document.getElementById('shop-modal').style.display = 'block';
             resetJoyMouse(); player.targetTree = null;
+            const luckyBtn = document.getElementById('shop-tab-lucky-btn');
+            if (luckyBtn) luckyBtn.style.display = isAdmin() ? 'inline-block' : 'none';
             updateAxeUI();
             updateShopSkinUI();
         });
@@ -11055,11 +10946,23 @@
         }
 
         function switchShopTab(tab) {
+            const luckyBtn = document.getElementById('shop-tab-lucky-btn');
+            if (luckyBtn) {
+                luckyBtn.style.display = isAdmin() ? 'inline-block' : 'none';
+            }
+
             document.getElementById('shop-axe').style.display = tab === 'axe' ? 'block' : 'none';
             document.getElementById('shop-limited').style.display = tab === 'limited' ? 'block' : 'none';
             document.getElementById('shop-skin').style.display = tab === 'skin' ? 'block' : 'none';
+            const luckySec = document.getElementById('shop-lucky');
+            if (luckySec) luckySec.style.display = (tab === 'lucky' && isAdmin()) ? 'block' : 'none';
+
             document.querySelectorAll('.shop-tab-btn').forEach((btn, idx) => {
-                btn.className = (idx === 0 && tab === 'axe') || (idx === 1 && tab === 'limited') || (idx === 2 && tab === 'skin') ? 'shop-tab-btn active' : 'shop-tab-btn';
+                if (btn.id === 'shop-tab-lucky-btn') {
+                    btn.className = (tab === 'lucky') ? 'shop-tab-btn active' : 'shop-tab-btn';
+                } else {
+                    btn.className = (idx === 0 && tab === 'axe') || (idx === 1 && tab === 'limited') || (idx === 2 && tab === 'skin') ? 'shop-tab-btn active' : 'shop-tab-btn';
+                }
             });
             if (tab === 'limited') updateLimitedUI();
         }
@@ -11150,11 +11053,100 @@
             { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true },
             { id: 'cerberus', name: '케르베로스', price: 0, icon: '🐺🔥', isReward: true },
             { id: 'astronaut', name: '우주비행사', price: 0, icon: '👨‍🚀', isReward: true },
-            { id: 'phoenix', name: '피닉스', price: 0, icon: '🔥🦅', isReward: true, desc: '서리룡 30회 처치 보상' },
+            { id: 'phoenix', name: '피닉스', price: 0, icon: '🔥🦅', isReward: true, desc: '럭키블럭 (25%) / 서리룡 30회' },
+            { id: 'jellyfish', name: '해파리', price: 0, icon: '🪼', isReward: true, adminOnly: true, desc: '전설의 럭키블럭 보상 (50%)' },
+            { id: 'angel', name: '천사', price: 0, icon: '👼', isReward: true, adminOnly: true, desc: '전설의 럭키블럭 보상 (15%)' },
+            { id: 'devil', name: '악마', price: 0, icon: '😈', isReward: true, adminOnly: true, desc: '전설의 럭키블럭 보상 (9%)' },
+            { id: 'etheron', name: '에테론 (천사반 악마반)', price: 0, icon: '🌓', isReward: true, adminOnly: true, desc: '전설의 럭키블럭 초신화 보상 (1%)' },
             { id: 'kraken', name: '크라켄', price: 0, icon: '🦑', isReward: true, desc: '크라켄의 씨앗 수확 보상 (75%)' },
             { id: 'infected_gorilla', name: '감염된 고릴라', price: 0, icon: '🦍💜', isReward: true, desc: '크라켄의 씨앗 수확 보상 (22%)' },
             { id: 'frost_dragon', name: '서리룡', price: 0, icon: '🐉❄️', isReward: true, desc: '크라켄의 씨앗 초희귀 수확 보상 (3%)' }
         ];
+
+
+        // 👑 [ADMIN 전용] 럭키블럭 구매 및 언박싱
+        function buyLuckyBlocks(count, price) {
+            if (!isAdmin()) {
+                alert('🔒 최고 관리자(ADMIN) 전용 기능입니다!');
+                return;
+            }
+            if (money < price && !isAdmin()) {
+                alert('골드가 부족합니다!');
+                return;
+            }
+
+            if (money >= price) {
+                money -= price;
+                updateMoney();
+            }
+
+            const drops = [];
+            for (let i = 0; i < count; i++) {
+                const rand = Math.random() * 100;
+                let wonId = 'jellyfish';
+                if (rand < 50) {
+                    wonId = 'jellyfish'; // 50%
+                } else if (rand < 75) {
+                    wonId = 'phoenix';   // 25%
+                } else if (rand < 90) {
+                    wonId = 'angel';     // 15%
+                } else if (rand < 99) {
+                    wonId = 'devil';     // 9%
+                } else {
+                    wonId = 'etheron';   // 1% 초신화
+                }
+                drops.push(wonId);
+                if (!ownedSkins.includes(wonId)) {
+                    ownedSkins.push(wonId);
+                }
+            }
+
+            saveGame(true);
+            updateShopSkinUI();
+            updateInvSkinUI();
+
+            // 결과 모달 띄우기
+            const modal = document.getElementById('lucky-unbox-modal');
+            const summaryEl = document.getElementById('lucky-unbox-summary');
+            const itemsEl = document.getElementById('lucky-unbox-items');
+
+            if (modal && summaryEl && itemsEl) {
+                summaryEl.innerText = `총 ${count}개의 럭키블럭을 오픈했습니다!`;
+                const countsById = {};
+                drops.forEach(id => { countsById[id] = (countsById[id] || 0) + 1; });
+
+                const skinOrder = ['etheron', 'devil', 'angel', 'phoenix', 'jellyfish'];
+                itemsEl.innerHTML = skinOrder.filter(id => countsById[id]).map(id => {
+                    const skin = skinsData.find(s => s.id === id) || { name: id, icon: '✨' };
+                    let rarityColor = '#38bdf8';
+                    let rarityName = '희귀';
+                    if (id === 'etheron') { rarityColor = '#facc15'; rarityName = '초신화 (1%)'; }
+                    else if (id === 'devil') { rarityColor = '#f87171'; rarityName = '영웅 (9%)'; }
+                    else if (id === 'angel') { rarityColor = '#fef08a'; rarityName = '영웅 (15%)'; }
+                    else if (id === 'phoenix') { rarityColor = '#fb923c'; rarityName = '전설 (25%)'; }
+                    else if (id === 'jellyfish') { rarityColor = '#38bdf8'; rarityName = '일반 (50%)'; }
+
+                    return `
+                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid ${rarityColor}; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 0 12px ${rarityColor}44;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 26px;">${skin.icon}</span>
+                                <div style="text-align: left;">
+                                    <div style="font-size: 14px; font-weight: bold; color: #fff;">${skin.name}</div>
+                                    <div style="font-size: 10.5px; color: ${rarityColor}; font-weight: bold;">${rarityName}</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 16px; font-weight: 900; color: #facc15;">
+                                x ${countsById[id]}개
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                modal.style.display = 'block';
+            }
+
+            floatTexts.push({ x: player.x, y: player.y - 100, text: `🎁 럭키블럭 ${count}개 개봉 완료!`, color: '#facc15', life: 100, size: 22 });
+        }
 
         function updateShopSkinUI() {
             const list = document.getElementById('skin-list');
@@ -11282,6 +11274,18 @@
             } else if (skinId === 'frost_dragon') {
                 scale = (pCanvas.width < 60) ? 0.38 : 0.44;
                 yOffset = 15;
+            } else if (skinId === 'jellyfish') {
+                scale = (pCanvas.width < 60) ? 0.65 : 0.72;
+                yOffset = 14;
+            } else if (skinId === 'angel') {
+                scale = (pCanvas.width < 60) ? 0.52 : 0.58;
+                yOffset = 14;
+            } else if (skinId === 'devil') {
+                scale = (pCanvas.width < 60) ? 0.52 : 0.58;
+                yOffset = 14;
+            } else if (skinId === 'etheron') {
+                scale = (pCanvas.width < 60) ? 0.50 : 0.56;
+                yOffset = 14;
             }
             pCtx.save();
             pCtx.translate(pCanvas.width / 2, pCanvas.height / 2 + yOffset);
@@ -11325,7 +11329,7 @@
             let est = 1;
 
             // 1. treeUnlocked 배열 기준 복구 (0: 일반, 1: 불, 2: 뒤틀림, 3: 전기, 4: 얼음, 5: 방사능, 6: 심해, 7: 동굴, 8: 우주)
-            const tu = gData.treeUnlocked || (typeof trees !== 'undefined' ? trees.map(t => t.unlocked) : []);
+            const tu = gData.treeUnlocked || [];
             if (Array.isArray(tu)) {
                 if (tu[8]) est = Math.max(est, 105);
                 else if (tu[7]) est = Math.max(est, 85);
@@ -11447,7 +11451,7 @@
             {
                 id: 'space', type: 'space', x: GAME_WIDTH / 2, y: -7650, radius: 200, trunkRadius: 75,
                 progress: 0, maxProgress: 500, shakeAngle: 0,
-                unlocked: true, price: 0, reqLevel: 105, color1: '#000000', color2: '#2c003e', drops: [10, 16] 
+                unlocked: false, price: 50000000, reqLevel: 105, color1: '#000000', color2: '#2c003e', drops: [10, 16] 
             },
             {
                 id: 'ice_canyon', type: 'ice_canyon', x: 320, y: -8620, radius: 140, trunkRadius: 48,
@@ -13988,8 +13992,10 @@
 
         function resetGameToDefault() {
             player.x = GAME_WIDTH / 2;
-            player.y = GAME_HEIGHT / 2;
+            player.y = 500;
             cameraY = 0;
+            player.vx = 0;
+            player.vy = 0;
             player.targetTree = null;
             farmPlots = [
                 { id: 0, seed: null, plantedAt: 0, duration: 300000 },
@@ -14000,8 +14006,15 @@
                 { id: 5, seed: null, plantedAt: 0, duration: 300000 }
             ];
             try { localStorage.removeItem('tb_farm_plots'); } catch(e) {}
-            applyLoadedGameData(getDefaultGameData());
             localStorage.removeItem('treeGameSave');
+            if (typeof trees !== 'undefined' && Array.isArray(trees)) {
+                trees.forEach((t, idx) => {
+                    t.unlocked = (idx === 0);
+                });
+            }
+            const defData = getDefaultGameData();
+            defData.isDefault = true;
+            applyLoadedGameData(defData);
         }
 
         async function handleTreeGameLogout() {
@@ -14023,9 +14036,16 @@
             }
             currentUser = null;
             localStorage.removeItem('treegame_user');
+            localStorage.removeItem('treeGameSave');
             
             // 다른 계정으로 로그인하거나 새 계정을 만들 때 이전 계정 데이터가 남지 않도록 게임 상태 완전 초기화
             resetGameToDefault();
+            player.x = GAME_WIDTH / 2;
+            player.y = 500;
+            cameraY = 0;
+            player.vx = 0;
+            player.vy = 0;
+            player.targetTree = null;
             stopTradeIncomingListener();
             stopBattleIncomingListener();
             if (typeof stopGuildListeners === 'function') stopGuildListeners();
@@ -14169,6 +14189,12 @@
                     if (userData.password === password) {
                         currentUser = username;
                         localStorage.setItem('treegame_user', currentUser);
+                        player.x = GAME_WIDTH / 2;
+                        player.y = 500;
+                        cameraY = 0;
+                        player.vx = 0;
+                        player.vy = 0;
+                        player.targetTree = null;
                         if (userData.gameData) {
                             if (userData.level && Number(userData.level) > Number(userData.gameData.level || 0)) {
                                 userData.gameData.level = Number(userData.level);
@@ -14193,6 +14219,7 @@
                 } else {
                     // 신규 계정: 이전 계정의 데이터가 섞이지 않도록 순수 신규 데이터(레벨 1, 0 골드)로 계정 생성
                     const newGameSave = getDefaultGameData();
+                    newGameSave.isNewAccount = true;
                     await userDocRef.set({
                         username: username,
                         password: password,
@@ -14202,6 +14229,12 @@
                     });
                     currentUser = username;
                     localStorage.setItem('treegame_user', currentUser);
+                    player.x = GAME_WIDTH / 2;
+                    player.y = 500;
+                    cameraY = 0;
+                    player.vx = 0;
+                    player.vy = 0;
+                    player.targetTree = null;
                     applyLoadedGameData(newGameSave);
                     closeLoginModal();
                     updateUserBadgeUI();
@@ -14482,9 +14515,9 @@
                     estimated = Math.max(estimated, estimateLegitLevel(getSaveData()));
                 }
 
-                // 10000레벨이었거나, 버그로 1레벨로 떨어진 모든 일반 유저들을 본래 레벨로 완벽 복구!
-                if (level >= 10000 || maxXp >= 20000000 || (level === 1 && estimated > 1)) {
-                    level = Math.max(level >= 10000 ? 1 : level, estimated);
+                // 신규 계정이거나 정상 1레벨 계정이 105레벨로 뻥튀기되는 현상 완전 방지
+                if (!data.isNewAccount && !data.isDefault && (level >= 10000 || maxXp >= 20000000)) {
+                    level = Math.max(1, estimated);
                     maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
                     xp = 0;
                 } else {
@@ -17173,8 +17206,8 @@
                             let dropCount = Math.floor(Math.random() * (tree.drops[1] - tree.drops[0] + 1)) + tree.drops[0];
                             for(let i=0; i<dropCount; i++) spawnFruit(tree.x, tree.y, tree.type);
 
-                            // ❄️ 얼음의 협곡 얼음 나무 벌목 시 50% 확률로 고대 화석 발굴 드롭!
-                            let fossilChance = (tree.type === 'ice') ? 0.08 : 0.04;
+                            // ❄️ 벌목 시 고대 화석 및 공룡알 조각 발굴
+                            let fossilChance = (tree.type === 'ice' || tree.type === 'ice_canyon') ? 0.18 : 0.06;
                             if (Math.random() < fossilChance) {
                                 excavateFossilAtSpot(tree.x, tree.y, true);
                             }
@@ -18206,6 +18239,430 @@
                 ctx.fill();
 
                 ctx.restore();
+            } else if (useSkin === 'jellyfish') {
+                // 🪼 해파리 스킨: 투명한 네온 푸른/핑크 돔, 출렁이는 반투명 촉수
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let time = Date.now() * 0.004;
+
+                // 은은한 수중 발광 오라
+                let auraGrad = ctx.createRadialGradient(0, -5, 5, 0, -5, 30);
+                auraGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+                auraGrad.addColorStop(0.7, 'rgba(236, 72, 153, 0.2)');
+                auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = auraGrad;
+                ctx.beginPath();
+                ctx.arc(0, -5, 32, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 해파리 촉수 (6가닥이 파도치듯 움직임)
+                ctx.lineWidth = 2.2;
+                ctx.lineCap = 'round';
+                const tentacleColors = ['#38bdf8', '#a855f7', '#ec4899', '#38bdf8', '#a855f7', '#ec4899'];
+                for (let i = 0; i < 6; i++) {
+                    let tx = -15 + i * 6;
+                    let wave = Math.sin(time * 2 + i * 1.2) * 5;
+                    ctx.strokeStyle = tentacleColors[i];
+                    ctx.beginPath();
+                    ctx.moveTo(tx, 10);
+                    ctx.quadraticCurveTo(tx + wave, 22, tx - wave * 0.5, 34);
+                    ctx.stroke();
+                }
+
+                // 해파리 본체 돔 (투명 젤리 갓)
+                let domeGrad = ctx.createLinearGradient(-18, -25, 18, 12);
+                domeGrad.addColorStop(0, 'rgba(56, 189, 248, 0.88)');
+                domeGrad.addColorStop(0.5, 'rgba(168, 85, 247, 0.85)');
+                domeGrad.addColorStop(1, 'rgba(236, 72, 153, 0.9)');
+                ctx.fillStyle = domeGrad;
+                ctx.strokeStyle = '#e0f2fe';
+                ctx.lineWidth = 1.8;
+
+                ctx.beginPath();
+                ctx.moveTo(-20, 10);
+                ctx.bezierCurveTo(-22, -26, 22, -26, 20, 10);
+                ctx.bezierCurveTo(12, 14, -12, 14, -20, 10);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // 돔 내부 발광 코어
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.beginPath();
+                ctx.ellipse(0, -6, 10, 8, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 귀여운 빛나는 눈
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.arc(-5 * facing, -4, 2.5, 0, Math.PI * 2);
+                ctx.arc(5 * facing, -4, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(-5 * facing + 0.8, -5, 1, 0, Math.PI * 2);
+                ctx.arc(5 * facing + 0.8, -5, 1, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+                ctx.restore();
+                return;
+            } else if (useSkin === 'angel') {
+                // 👼 천사 스킨: 순백의 로브, 성스러운 후광, 펄럭이는 거대한 날개
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let time = Date.now() * 0.0035;
+                let wingFlap = Math.sin(time * 3) * 0.25;
+
+                // 순백 거대 날개 (좌/우)
+                ctx.save();
+                // 왼쪽 날개
+                ctx.save();
+                ctx.translate(-10, -5);
+                ctx.rotate(-0.3 + wingFlap);
+                let wingLGrad = ctx.createLinearGradient(-35, -25, 0, 15);
+                wingLGrad.addColorStop(0, '#ffffff');
+                wingLGrad.addColorStop(0.7, '#fef08a');
+                wingLGrad.addColorStop(1, '#eab308');
+                ctx.fillStyle = wingLGrad;
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-25, -30, -35, -15, -32, 5);
+                ctx.bezierCurveTo(-25, 15, -10, 10, 0, 5);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                ctx.restore();
+
+                // 오른쪽 날개
+                ctx.save();
+                ctx.translate(10, -5);
+                ctx.rotate(0.3 - wingFlap);
+                let wingRGrad = ctx.createLinearGradient(35, -25, 0, 15);
+                wingRGrad.addColorStop(0, '#ffffff');
+                wingRGrad.addColorStop(0.7, '#fef08a');
+                wingRGrad.addColorStop(1, '#eab308');
+                ctx.fillStyle = wingRGrad;
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(25, -30, 35, -15, 32, 5);
+                ctx.bezierCurveTo(25, 15, 10, 10, 0, 5);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                ctx.restore();
+                ctx.restore();
+
+                // 순백 로브 몸통
+                let robeGrad = ctx.createLinearGradient(-12, -15, 12, 25);
+                robeGrad.addColorStop(0, '#ffffff');
+                robeGrad.addColorStop(0.85, '#f8fafc');
+                robeGrad.addColorStop(1, '#e2e8f0');
+                ctx.fillStyle = robeGrad;
+                ctx.strokeStyle = '#facc15';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(-10, -10);
+                ctx.lineTo(-14, 25);
+                ctx.lineTo(14, 25);
+                ctx.lineTo(10, -10);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // 얼굴
+                ctx.fillStyle = '#ffeaa7';
+                ctx.beginPath();
+                ctx.arc(0, -16, 10, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 금빛 머리카락
+                ctx.fillStyle = '#fde047';
+                ctx.beginPath();
+                ctx.arc(0, -19, 10, Math.PI, Math.PI * 2);
+                ctx.fill();
+
+                // 눈
+                ctx.fillStyle = '#0284c7';
+                ctx.beginPath();
+                ctx.arc(-3 * facing, -16, 1.8, 0, Math.PI * 2);
+                ctx.arc(3 * facing, -16, 1.8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 성스러운 골드 후광 (Halo)
+                ctx.save();
+                ctx.translate(0, -32 + Math.sin(time * 2) * 2);
+                ctx.strokeStyle = '#facc15';
+                ctx.shadowColor = '#facc15';
+                ctx.shadowBlur = 12;
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 13, 4.5, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.restore();
+                ctx.restore();
+                return;
+            } else if (useSkin === 'devil') {
+                // 😈 악마 스킨: 암흑의 로브, 불타는 박쥐 날개, 뾰족한 붉은 뿔
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let time = Date.now() * 0.0035;
+                let wingFlap = Math.sin(time * 3) * 0.25;
+
+                // 뾰족한 악마 꼬리
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2.2;
+                ctx.beginPath();
+                ctx.moveTo(0, 18);
+                ctx.quadraticCurveTo(-18 * facing, 22, -22 * facing, 8);
+                ctx.stroke();
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.moveTo(-22 * facing, 8);
+                ctx.lineTo(-27 * facing, 12);
+                ctx.lineTo(-24 * facing, 3);
+                ctx.closePath();
+                ctx.fill();
+
+                // 박쥐 날개 (좌/우)
+                ctx.save();
+                // 왼쪽 박쥐 날개
+                ctx.save();
+                ctx.translate(-10, -5);
+                ctx.rotate(-0.3 + wingFlap);
+                ctx.fillStyle = '#450a0a';
+                ctx.strokeStyle = '#dc2626';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(-32, -22);
+                ctx.lineTo(-24, 0);
+                ctx.lineTo(-18, 12);
+                ctx.lineTo(0, 5);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                ctx.restore();
+
+                // 오른쪽 박쥐 날개
+                ctx.save();
+                ctx.translate(10, -5);
+                ctx.rotate(0.3 - wingFlap);
+                ctx.fillStyle = '#450a0a';
+                ctx.strokeStyle = '#dc2626';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(32, -22);
+                ctx.lineTo(24, 0);
+                ctx.lineTo(18, 12);
+                ctx.lineTo(0, 5);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                ctx.restore();
+                ctx.restore();
+
+                // 암흑 로브 몸통
+                let dRobeGrad = ctx.createLinearGradient(-12, -15, 12, 25);
+                dRobeGrad.addColorStop(0, '#18181b');
+                dRobeGrad.addColorStop(0.7, '#27272a');
+                dRobeGrad.addColorStop(1, '#7f1d1d');
+                ctx.fillStyle = dRobeGrad;
+                ctx.strokeStyle = '#dc2626';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(-10, -10);
+                ctx.lineTo(-14, 25);
+                ctx.lineTo(14, 25);
+                ctx.lineTo(10, -10);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // 얼굴
+                ctx.fillStyle = '#fca5a5';
+                ctx.beginPath();
+                ctx.arc(0, -16, 10, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 악마의 뿔 (좌/우)
+                ctx.fillStyle = '#dc2626';
+                ctx.strokeStyle = '#7f1d1d';
+                ctx.lineWidth = 1.2;
+                // 왼뿔
+                ctx.beginPath();
+                ctx.moveTo(-6, -23);
+                ctx.quadraticCurveTo(-14, -32, -12, -35);
+                ctx.quadraticCurveTo(-7, -30, -3, -24);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                // 오른뿔
+                ctx.beginPath();
+                ctx.moveTo(6, -23);
+                ctx.quadraticCurveTo(14, -32, 12, -35);
+                ctx.quadraticCurveTo(7, -30, 3, -24);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // 붉은 악마 눈
+                ctx.fillStyle = '#ef4444';
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.arc(-3 * facing, -16, 2.2, 0, Math.PI * 2);
+                ctx.arc(3 * facing, -16, 2.2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                ctx.restore();
+                ctx.restore();
+                return;
+            } else if (useSkin === 'etheron') {
+                // 🌓 에테론 (천사반 악마반 초신화 스킨): 좌측 순백 천사 / 우측 칠흑 악마
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let time = Date.now() * 0.0035;
+                let wingFlap = Math.sin(time * 3) * 0.25;
+
+                // 1. 날개
+                // 좌측: 천사 날개 (순백/골드)
+                ctx.save();
+                ctx.translate(-10, -5);
+                ctx.rotate(-0.3 + wingFlap);
+                let etherAngelWing = ctx.createLinearGradient(-35, -25, 0, 15);
+                etherAngelWing.addColorStop(0, '#ffffff');
+                etherAngelWing.addColorStop(0.7, '#fef08a');
+                etherAngelWing.addColorStop(1, '#eab308');
+                ctx.fillStyle = etherAngelWing;
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-28, -32, -38, -15, -34, 6);
+                ctx.bezierCurveTo(-26, 16, -10, 10, 0, 5);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                ctx.restore();
+
+                // 우측: 악마 박쥐 날개 (암흑/크림슨)
+                ctx.save();
+                ctx.translate(10, -5);
+                ctx.rotate(0.3 - wingFlap);
+                ctx.fillStyle = '#3f0c10';
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(34, -24);
+                ctx.lineTo(26, 0);
+                ctx.lineTo(20, 14);
+                ctx.lineTo(0, 5);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                ctx.restore();
+
+                // 2. 우측 악마 꼬리
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(2, 18);
+                ctx.quadraticCurveTo(18, 22, 22, 8);
+                ctx.stroke();
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.moveTo(22, 8);
+                ctx.lineTo(27, 12);
+                ctx.lineTo(24, 3);
+                ctx.closePath();
+                ctx.fill();
+
+                // 3. 로브 몸통 (좌측 백색 / 우측 흑적색)
+                // 좌측 로브
+                ctx.fillStyle = '#ffffff';
+                ctx.strokeStyle = '#facc15';
+                ctx.lineWidth = 1.3;
+                ctx.beginPath();
+                ctx.moveTo(-10, -10);
+                ctx.lineTo(-14, 25);
+                ctx.lineTo(0, 25);
+                ctx.lineTo(0, -10);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // 우측 로브
+                ctx.fillStyle = '#18181b';
+                ctx.strokeStyle = '#dc2626';
+                ctx.lineWidth = 1.3;
+                ctx.beginPath();
+                ctx.moveTo(0, -10);
+                ctx.lineTo(0, 25);
+                ctx.lineTo(14, 25);
+                ctx.lineTo(10, -10);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // 중앙 신화 분기선
+                ctx.strokeStyle = '#facc15';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(0, -10);
+                ctx.lineTo(0, 25);
+                ctx.stroke();
+
+                // 4. 머리 및 얼굴 (좌측 밝음 / 우측 암흑)
+                // 좌측 얼굴
+                ctx.fillStyle = '#ffeaa7';
+                ctx.beginPath();
+                ctx.arc(0, -16, 10, Math.PI * 0.5, Math.PI * 1.5);
+                ctx.fill();
+                // 우측 얼굴
+                ctx.fillStyle = '#fca5a5';
+                ctx.beginPath();
+                ctx.arc(0, -16, 10, Math.PI * 1.5, Math.PI * 0.5);
+                ctx.fill();
+
+                // 5. 좌측 천사 반-후광 / 우측 악마 뿔
+                // 좌측 천사 반-후광
+                ctx.save();
+                ctx.translate(-4, -32);
+                ctx.strokeStyle = '#facc15';
+                ctx.shadowColor = '#facc15';
+                ctx.shadowBlur = 10;
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 10, 4, 0, Math.PI * 0.5, Math.PI * 1.5);
+                ctx.stroke();
+                ctx.restore();
+
+                // 우측 악마 뿔
+                ctx.fillStyle = '#dc2626';
+                ctx.strokeStyle = '#7f1d1d';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(5, -23);
+                ctx.quadraticCurveTo(14, -33, 13, -36);
+                ctx.quadraticCurveTo(8, -30, 2, -24);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // 눈: 좌측 푸른 천사 눈 / 우측 불타는 붉은 악마 눈
+                ctx.fillStyle = '#0284c7';
+                ctx.beginPath();
+                ctx.arc(-3.5, -16, 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ef4444';
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.arc(3.5, -16, 2.2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                ctx.restore();
+                ctx.restore();
+                return;
             } else if (useSkin === 'phoenix') {
                 // 🔥🦅 불사조 피닉스 스킨: 타오르는 화염의 날개, 불꽃 깃털, 황금 관, 작열하는 화염 오라
                 let pTime = Date.now() * 0.005;
@@ -20593,9 +21050,7 @@
             let renderList = [];
             fruitsOnGround.forEach(f => renderList.push({ type: 'fruit', obj: f, y: f.y }));
             renderList.push({ type: 'player', obj: player, y: player.y });
-            if (rocket.visible || rocket.launched) {
-                renderList.push({ type: 'rocket', obj: rocket, y: rocket.y });
-            }
+            // 로케트 렌더링 완전 제거 (오버월드 로케트 없음)
             if (isAlienEventStarted() && !alienQuestDone && typeof alienScientist !== 'undefined') {
                 renderList.push({ type: 'alienScientist', obj: alienScientist, y: alienScientist.y });
             }
@@ -21775,5 +22230,16 @@
             checkAndInitTreeBusterIntro(false);
         }
     </script>
+
+    <!-- 🎁 럭키블럭 오픈 결과 모달 -->
+    <div id="lucky-unbox-modal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #1e1b4b, #09090b); color: white; padding: 24px 20px; border-radius: 20px; width: 92%; max-width: 440px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #f59e0b; z-index: 1000; box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 35px rgba(245, 158, 11, 0.4); text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <div style="font-size: 38px; margin-bottom: 6px;">🎁✨</div>
+        <h2 style="margin: 0 0 4px 0; color: #facc15; font-size: 21px; font-weight: 900;">럭키블럭 개봉 완료!</h2>
+        <div id="lucky-unbox-summary" style="font-size: 12px; color: #94a3b8; margin-bottom: 16px;"></div>
+        <div id="lucky-unbox-items" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; margin-bottom: 16px; padding: 4px;"></div>
+        <button onclick="document.getElementById('lucky-unbox-modal').style.display='none'" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 900; font-size: 14.5px; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);">
+            확인 (스킨 보관함으로 이동)
+        </button>
+    </div>
 </body>
 </html>
