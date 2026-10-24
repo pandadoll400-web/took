@@ -11244,39 +11244,141 @@
                 ctx.restore();
             }
 
-            // 2. 피닉스
+            // 2. 피닉스 (신화 화염 불사조: 4중 깃털 날개, 봉황 롱테일, 태양 보석 흉갑, 맹금류 부리 & 관)
             const cPhx = document.getElementById('lucky-prev-phoenix');
             if (cPhx) {
                 const ctx = cPhx.getContext('2d');
                 ctx.clearRect(0, 0, 48, 48);
                 ctx.save();
-                ctx.translate(24, 24);
-                ctx.fillStyle = '#ea580c';
-                ctx.shadowColor = '#f97316';
-                ctx.shadowBlur = 8;
-                // 날개
+                ctx.translate(24, 25);
+
+                // 태양 화염 오라
+                let pAura = ctx.createRadialGradient(0, 0, 4, 0, 0, 22);
+                pAura.addColorStop(0, 'rgba(254, 240, 138, 0.5)');
+                pAura.addColorStop(0.6, 'rgba(249, 115, 22, 0.25)');
+                pAura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = pAura;
                 ctx.beginPath();
-                ctx.ellipse(-14, -2, 10, 5, -0.4, 0, Math.PI * 2);
-                ctx.ellipse(14, -2, 10, 5, 0.4, 0, Math.PI * 2);
+                ctx.arc(0, 0, 22, 0, Math.PI * 2);
                 ctx.fill();
-                // 몸통 & 불꽃 깃털
-                ctx.fillStyle = '#f97316';
+
+                // 봉황 롱 테일 (3갈래 깃털)
+                [-0.25, 0, 0.25].forEach((ang) => {
+                    ctx.save();
+                    ctx.translate(0, 6);
+                    ctx.rotate(ang);
+                    let tGrad = ctx.createLinearGradient(0, 0, 0, 14);
+                    tGrad.addColorStop(0, '#b91c1c');
+                    tGrad.addColorStop(0.5, '#ea580c');
+                    tGrad.addColorStop(1, '#fde047');
+                    ctx.fillStyle = tGrad;
+                    ctx.beginPath();
+                    ctx.moveTo(-1.5, 0);
+                    ctx.quadraticCurveTo(-2, 7, 0, 14);
+                    ctx.quadraticCurveTo(2, 7, 1.5, 0);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                // 펼쳐진 깃털 날개 (좌/우 날개 - 3단 칼깃)
+                [-1, 1].forEach(side => {
+                    ctx.save();
+                    ctx.translate(side * 4, -2);
+                    // 칼깃 3장
+                    [
+                        { l: 15, rot: side * 0.45 },
+                        { l: 13, rot: side * 0.2 },
+                        { l: 10, rot: side * -0.1 }
+                    ].forEach(feather => {
+                        ctx.save();
+                        ctx.rotate(feather.rot);
+                        let wGrad = ctx.createLinearGradient(0, 0, side * feather.l, 0);
+                        wGrad.addColorStop(0, '#991b1b');
+                        wGrad.addColorStop(0.4, '#ea580c');
+                        wGrad.addColorStop(0.8, '#f59e0b');
+                        wGrad.addColorStop(1, '#ffffff');
+                        ctx.fillStyle = wGrad;
+                        ctx.shadowColor = '#f59e0b';
+                        ctx.shadowBlur = 4;
+                        ctx.beginPath();
+                        ctx.moveTo(0, -2.5);
+                        ctx.quadraticCurveTo(side * feather.l * 0.6, -3, side * feather.l, 0);
+                        ctx.quadraticCurveTo(side * feather.l * 0.6, 3, 0, 2.5);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.restore();
+                    });
+                    ctx.restore();
+                });
+                ctx.shadowBlur = 0;
+
+                // 날렵한 조류 몸통 & 황금 흉갑
+                let bGrad = ctx.createLinearGradient(0, -6, 0, 8);
+                bGrad.addColorStop(0, '#991b1b');
+                bGrad.addColorStop(0.5, '#ea580c');
+                bGrad.addColorStop(1, '#f59e0b');
+                ctx.fillStyle = bGrad;
                 ctx.beginPath();
-                ctx.arc(0, 0, 9, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#fef08a';
-                ctx.beginPath();
-                ctx.moveTo(0, -9);
-                ctx.lineTo(-4, -16);
-                ctx.lineTo(0, -13);
-                ctx.lineTo(4, -16);
+                ctx.moveTo(0, -7);
+                ctx.quadraticCurveTo(-5, -2, -3, 7);
+                ctx.quadraticCurveTo(0, 9, 3, 7);
+                ctx.quadraticCurveTo(5, -2, 0, -7);
                 ctx.closePath();
                 ctx.fill();
-                ctx.fillStyle = '#fff';
+
+                // 황금 흉갑
+                ctx.fillStyle = '#fde047';
                 ctx.beginPath();
-                ctx.arc(-3, -1, 1.8, 0, Math.PI * 2);
-                ctx.arc(3, -1, 1.8, 0, Math.PI * 2);
+                ctx.arc(0, 0, 2.5, 0, Math.PI * 2);
                 ctx.fill();
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(0, 0, 1.2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 머리 & 봉황 깃털 관
+                ctx.save();
+                ctx.translate(0, -8);
+                // 관 깃털
+                [-0.3, 0, 0.3].forEach((ang, idx) => {
+                    ctx.save();
+                    ctx.rotate(ang);
+                    ctx.fillStyle = (idx === 1) ? '#ffffff' : '#fde047';
+                    ctx.shadowColor = '#f59e0b';
+                    ctx.shadowBlur = 4;
+                    ctx.beginPath();
+                    ctx.moveTo(-1, 0);
+                    ctx.lineTo(0, -8);
+                    ctx.lineTo(1, 0);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                });
+                // 머리
+                ctx.fillStyle = '#ea580c';
+                ctx.beginPath();
+                ctx.arc(0, 0, 4.5, 0, Math.PI * 2);
+                ctx.fill();
+                // 황금 맹금류 부리
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath();
+                ctx.moveTo(1, -1);
+                ctx.lineTo(6, 1);
+                ctx.lineTo(1, 2.5);
+                ctx.closePath();
+                ctx.fill();
+                // 작열하는 눈
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(1, -0.5, 1.2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#dc2626';
+                ctx.beginPath();
+                ctx.arc(1.2, -0.5, 0.7, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
                 ctx.restore();
             }
 
@@ -19062,177 +19164,282 @@
                 ctx.restore();
                 return;
             } else if (useSkin === 'phoenix') {
-                // 🔥🦅 불사조 피닉스 스킨: 타오르는 화염의 날개, 불꽃 깃털, 황금 관, 작열하는 화염 오라
-                let pTime = Date.now() * 0.005;
-                let wingFlap = Math.sin(pTime * 2.5) * 0.22;
-                let floatHover = Math.sin(pTime * 1.5) * 4;
+                // 🔥🦅 [신화 개편] 황금과 화염의 신화 불사조 피닉스 (고급 4중 조류 칼깃 날개, 봉황 롱테일, 태양 보석 흉갑, 맹금류 부리 & 관)
+                let pTime = Date.now() * 0.004;
+                let wingFlap = Math.sin(pTime * 3) * 0.28;
+                let floatHover = Math.sin(pTime * 2) * 5;
 
-                // 바닥 타오르는 그림자 & 화염 링
-                ctx.fillStyle = 'rgba(234, 88, 12, 0.3)';
-                ctx.beginPath(); ctx.ellipse(0, 22, 24, 7, 0, 0, Math.PI*2); ctx.fill();
+                // 바닥 신성 화염 마법진 & 그림자
+                ctx.save();
+                ctx.fillStyle = 'rgba(234, 88, 12, 0.28)';
+                ctx.beginPath();
+                ctx.ellipse(0, 24, 26, 8, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 바닥 미세 화염 룬 링
+                ctx.strokeStyle = 'rgba(250, 204, 21, 0.4)';
+                ctx.lineWidth = 1.2;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.ellipse(0, 24, 22, 6.5, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.restore();
 
                 ctx.translate(0, -bobbing + floatHover);
 
-                // 1. 화염 아우라 글로우 (Pulsing Radiant Fire Aura)
-                let auraGrad = ctx.createRadialGradient(0, 0, 8, 0, 0, 36);
-                auraGrad.addColorStop(0, 'rgba(254, 240, 138, 0.45)');
-                auraGrad.addColorStop(0.5, 'rgba(249, 115, 22, 0.25)');
-                auraGrad.addColorStop(1, 'rgba(220, 38, 38, 0)');
+                // 1. 신성한 태양 화염 오라 (Radiant Solar Crown Aura)
+                ctx.save();
+                let auraGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, 46);
+                auraGrad.addColorStop(0, 'rgba(254, 240, 138, 0.55)');
+                auraGrad.addColorStop(0.35, 'rgba(249, 115, 22, 0.3)');
+                auraGrad.addColorStop(0.75, 'rgba(220, 38, 38, 0.12)');
+                auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
                 ctx.fillStyle = auraGrad;
-                ctx.beginPath(); ctx.arc(0, 0, 36, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath();
+                ctx.arc(0, 0, 46, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
 
-                // 2. 불타는 3갈래 꼬리 깃털 (Flaming Tail Plumage)
-                [-0.3, 0, 0.3].forEach((ang, idx) => {
-                    let tWiggle = Math.sin(pTime * 2 + idx) * 0.15;
+                // 2. 우아한 봉황의 롱 플레임 테일 (3-Strand Majestic Trailing Ribbon Plumes)
+                [-0.22, 0, 0.22].forEach((baseAng, idx) => {
+                    let tWiggle = Math.sin(pTime * 2.8 + idx * 1.4) * 0.2;
+                    let length = (idx === 1) ? 38 : 32;
                     ctx.save();
                     ctx.translate(0, 10);
-                    ctx.rotate(ang + tWiggle);
-                    let tailGrad = ctx.createLinearGradient(0, 0, 0, 26);
-                    tailGrad.addColorStop(0, '#dc2626');
-                    tailGrad.addColorStop(0.5, '#f97316');
+                    ctx.rotate(baseAng + tWiggle);
+
+                    // 꼬리 리본 그라데이션
+                    let tailGrad = ctx.createLinearGradient(0, 0, 0, length);
+                    tailGrad.addColorStop(0, '#b91c1c');
+                    tailGrad.addColorStop(0.4, '#ea580c');
+                    tailGrad.addColorStop(0.75, '#f59e0b');
                     tailGrad.addColorStop(1, '#fef08a');
                     ctx.fillStyle = tailGrad;
-                    ctx.shadowColor = '#f97316'; ctx.shadowBlur = 8;
+                    ctx.shadowColor = '#f59e0b';
+                    ctx.shadowBlur = 10;
+
+                    // 유려한 깃털 리본 패스
                     ctx.beginPath();
-                    ctx.moveTo(-3, 0);
-                    ctx.quadraticCurveTo(-5, 14, 0, 26);
-                    ctx.quadraticCurveTo(5, 14, 3, 0);
+                    ctx.moveTo(-2.5, 0);
+                    let ctrlX = Math.sin(pTime * 3 + idx) * 4;
+                    ctx.quadraticCurveTo(-4 + ctrlX, length * 0.5, 0, length);
+                    ctx.quadraticCurveTo(4 + ctrlX, length * 0.5, 2.5, 0);
                     ctx.closePath();
                     ctx.fill();
+
+                    // 꼬리 끝 불사조 태양 보석 눈 (Peacock-Phoenix Solar Eyelet)
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(0, length - 4, 2.2, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.beginPath();
+                    ctx.arc(0, length - 4, 1.2, 0, Math.PI * 2);
+                    ctx.fill();
+
                     ctx.restore();
                 });
                 ctx.shadowBlur = 0;
 
-                // 3. 거대한 불사조의 화염 날개 (좌/우 날개 - 펄럭임 애니메이션)
-                // 좌측 날개
+                // 3. 신화급 불사조 깃털 날개 (좌/우 4중 칼깃 - Avian Feathered Pinions)
+                // 좌측 날개 (Left Wing)
                 ctx.save();
-                ctx.translate(-10, -2);
-                ctx.rotate(-0.25 + wingFlap);
-                let wingGradL = ctx.createLinearGradient(0, 0, -28, -10);
-                wingGradL.addColorStop(0, '#991b1b');
-                wingGradL.addColorStop(0.4, '#ea580c');
-                wingGradL.addColorStop(0.8, '#f59e0b');
-                wingGradL.addColorStop(1, '#fef08a');
-                ctx.fillStyle = wingGradL;
-                ctx.shadowColor = '#ea580c'; ctx.shadowBlur = 12;
+                ctx.translate(-8, -4);
+                ctx.rotate(-0.35 + wingFlap);
+
+                // 어깨 황금 깃털 (Coverts)
+                ctx.fillStyle = '#f59e0b';
                 ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.quadraticCurveTo(-14, -18, -32, -12);
-                ctx.quadraticCurveTo(-26, 4, -20, 14);
-                ctx.quadraticCurveTo(-10, 8, 0, 8);
-                ctx.closePath();
+                ctx.ellipse(-6, 2, 7, 4, -0.3, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.fillStyle = '#fef08a';
-                ctx.beginPath();
-                ctx.moveTo(-4, 0); ctx.quadraticCurveTo(-12, -10, -22, -8); ctx.quadraticCurveTo(-16, 2, -10, 6); ctx.closePath();
-                ctx.fill();
+
+                // 4개의 깃털 칼깃 (4 Layered Sharp Avian Feather Blades)
+                const leftFeathers = [
+                    { dx: -38, dy: -22, w: 7, l: 32, rot: -0.55 }, // 최외측 1번 칼깃 (Primary Tip)
+                    { dx: -34, dy: -10, w: 7, l: 28, rot: -0.35 }, // 2번 칼깃
+                    { dx: -28, dy: 2,   w: 6, l: 24, rot: -0.15 }, // 3번 칼깃
+                    { dx: -20, dy: 10,  w: 5, l: 18, rot: 0.1   }  // 4번 하단 칼깃
+                ];
+                leftFeathers.forEach((f) => {
+                    ctx.save();
+                    ctx.translate(f.dx * 0.5, f.dy * 0.5);
+                    ctx.rotate(f.rot);
+                    let fGrad = ctx.createLinearGradient(0, 0, -f.l, 0);
+                    fGrad.addColorStop(0, '#991b1b');
+                    fGrad.addColorStop(0.35, '#ea580c');
+                    fGrad.addColorStop(0.7, '#f59e0b');
+                    fGrad.addColorStop(1, '#ffffff');
+                    ctx.fillStyle = fGrad;
+                    ctx.shadowColor = '#f97316';
+                    ctx.shadowBlur = 12;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -f.w * 0.5);
+                    ctx.quadraticCurveTo(-f.l * 0.6, -f.w * 0.8, -f.l, 0);
+                    ctx.quadraticCurveTo(-f.l * 0.6, f.w * 0.8, 0, f.w * 0.5);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                });
                 ctx.restore();
 
-                // 우측 날개
+                // 우측 날개 (Right Wing)
                 ctx.save();
-                ctx.translate(10, -2);
-                ctx.rotate(0.25 - wingFlap);
-                let wingGradR = ctx.createLinearGradient(0, 0, 28, -10);
-                wingGradR.addColorStop(0, '#991b1b');
-                wingGradR.addColorStop(0.4, '#ea580c');
-                wingGradR.addColorStop(0.8, '#f59e0b');
-                wingGradR.addColorStop(1, '#fef08a');
-                ctx.fillStyle = wingGradR;
-                ctx.shadowColor = '#ea580c'; ctx.shadowBlur = 12;
+                ctx.translate(8, -4);
+                ctx.rotate(0.35 - wingFlap);
+
+                // 어깨 황금 깃털
+                ctx.fillStyle = '#f59e0b';
                 ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.quadraticCurveTo(14, -18, 32, -12);
-                ctx.quadraticCurveTo(26, 4, 20, 14);
-                ctx.quadraticCurveTo(10, 8, 0, 8);
-                ctx.closePath();
+                ctx.ellipse(6, 2, 7, 4, 0.3, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.fillStyle = '#fef08a';
-                ctx.beginPath();
-                ctx.moveTo(4, 0); ctx.quadraticCurveTo(12, -10, 22, -8); ctx.quadraticCurveTo(16, 2, 10, 6); ctx.closePath();
-                ctx.fill();
+
+                const rightFeathers = [
+                    { dx: 38, dy: -22, w: 7, l: 32, rot: 0.55 },
+                    { dx: 34, dy: -10, w: 7, l: 28, rot: 0.35 },
+                    { dx: 28, dy: 2,   w: 6, l: 24, rot: 0.15 },
+                    { dx: 20, dy: 10,  w: 5, l: 18, rot: -0.1 }
+                ];
+                rightFeathers.forEach((f) => {
+                    ctx.save();
+                    ctx.translate(f.dx * 0.5, f.dy * 0.5);
+                    ctx.rotate(f.rot);
+                    let fGrad = ctx.createLinearGradient(0, 0, f.l, 0);
+                    fGrad.addColorStop(0, '#991b1b');
+                    fGrad.addColorStop(0.35, '#ea580c');
+                    fGrad.addColorStop(0.7, '#f59e0b');
+                    fGrad.addColorStop(1, '#ffffff');
+                    ctx.fillStyle = fGrad;
+                    ctx.shadowColor = '#f97316';
+                    ctx.shadowBlur = 12;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -f.w * 0.5);
+                    ctx.quadraticCurveTo(f.l * 0.6, -f.w * 0.8, f.l, 0);
+                    ctx.quadraticCurveTo(f.l * 0.6, f.w * 0.8, 0, f.w * 0.5);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                });
                 ctx.restore();
                 ctx.shadowBlur = 0;
 
-                // 4. 불사조의 유려한 몸통 (Crimson Body & Golden Chest)
-                let bodyGrad = ctx.createLinearGradient(0, -10, 0, 14);
-                bodyGrad.addColorStop(0, '#b91c1c');
-                bodyGrad.addColorStop(0.6, '#ea580c');
-                bodyGrad.addColorStop(1, '#c2410c');
+                // 4. 슬림하고 날렵한 맹금류 몸체 (Sleek Avian Torso & Solar Plate)
+                ctx.save();
+                let bodyGrad = ctx.createLinearGradient(0, -10, 0, 16);
+                bodyGrad.addColorStop(0, '#7f1d1d');
+                bodyGrad.addColorStop(0.4, '#c2410c');
+                bodyGrad.addColorStop(0.85, '#ea580c');
+                bodyGrad.addColorStop(1, '#f59e0b');
                 ctx.fillStyle = bodyGrad;
-                ctx.beginPath(); ctx.ellipse(0, 2, 11, 14, 0, 0, Math.PI*2); ctx.fill();
-
-                // 가슴 깃털 (Golden Crest on Chest)
-                let chestGrad = ctx.createLinearGradient(0, -6, 0, 10);
-                chestGrad.addColorStop(0, '#fde047');
-                chestGrad.addColorStop(1, '#ea580c');
-                ctx.fillStyle = chestGrad;
                 ctx.beginPath();
-                ctx.moveTo(0, -6);
-                ctx.quadraticCurveTo(-7, 2, 0, 10);
-                ctx.quadraticCurveTo(7, 2, 0, -6);
+                ctx.moveTo(0, -10);
+                ctx.quadraticCurveTo(-9, -2, -6, 12);
+                ctx.quadraticCurveTo(0, 17, 6, 12);
+                ctx.quadraticCurveTo(9, -2, 0, -10);
                 ctx.closePath();
                 ctx.fill();
 
-                // 5. 머리, 관(Crown), 황금 부리, 타오르는 눈
+                // 가슴 황금 태양 문양 & 루비 코어 (Solar Chest Plate & Ruby)
+                ctx.fillStyle = '#fde047';
+                ctx.shadowColor = '#facc15';
+                ctx.shadowBlur = 6;
+                ctx.beginPath();
+                ctx.moveTo(0, -6);
+                ctx.lineTo(5, -1);
+                ctx.lineTo(0, 6);
+                ctx.lineTo(-5, -1);
+                ctx.closePath();
+                ctx.fill();
+                // 중앙 루비
+                ctx.fillStyle = '#ef4444';
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 4;
+                ctx.beginPath();
+                ctx.arc(0, -0.5, 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                // 5. 고귀한 불사조 머리 & 황금 갈퀴 부리 & 봉황 깃털 관 (Royal Phoenix Crown & Raptor Beak)
                 ctx.save();
                 ctx.translate(0, -14);
 
-                // 머리 위 불꽃 벼슬 (3 Flaming Crest Feathers)
-                let crestWiggle = Math.sin(pTime * 3) * 0.1;
-                ctx.save();
-                ctx.rotate(crestWiggle);
-                ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 8;
-                ctx.fillStyle = '#f59e0b';
-                ctx.beginPath();
-                ctx.moveTo(-3, -4); ctx.lineTo(-7, -18); ctx.lineTo(-1, -8); ctx.closePath();
-                ctx.moveTo(3, -4); ctx.lineTo(7, -18); ctx.lineTo(1, -8); ctx.closePath();
-                ctx.moveTo(0, -5); ctx.lineTo(0, -22); ctx.lineTo(3, -9); ctx.closePath();
-                ctx.fill();
-                ctx.fillStyle = '#fef08a';
-                ctx.beginPath();
-                ctx.moveTo(0, -5); ctx.lineTo(0, -16); ctx.lineTo(1.5, -7); ctx.closePath();
-                ctx.fill();
-                ctx.restore();
-                ctx.shadowBlur = 0;
+                // 머리 뒤로 길게 뻗어나가는 봉황 깃털 관 (Majestic Streamlined Phoenix Plumes)
+                [-0.25, 0, 0.25].forEach((cAng, cIdx) => {
+                    let cWig = Math.sin(pTime * 3.5 + cIdx) * 0.12;
+                    let cLen = (cIdx === 1) ? 22 : 17;
+                    ctx.save();
+                    ctx.rotate(cAng * facing + cWig);
+                    let cGrad = ctx.createLinearGradient(0, 0, 0, -cLen);
+                    cGrad.addColorStop(0, '#f97316');
+                    cGrad.addColorStop(0.6, '#facc15');
+                    cGrad.addColorStop(1, '#ffffff');
+                    ctx.fillStyle = cGrad;
+                    ctx.shadowColor = '#facc15';
+                    ctx.shadowBlur = 8;
+                    ctx.beginPath();
+                    ctx.moveTo(-1.8, 0);
+                    ctx.quadraticCurveTo(-3, -cLen * 0.6, 0, -cLen);
+                    ctx.quadraticCurveTo(3, -cLen * 0.6, 1.8, 0);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                });
 
-                // 머리 구형
-                let headGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 9);
-                headGrad.addColorStop(0, '#f97316');
-                headGrad.addColorStop(0.7, '#dc2626');
+                // 머리 형태 (날렵한 매 형상)
+                let headGrad = ctx.createRadialGradient(0, 0, 1, 0, 0, 8);
+                headGrad.addColorStop(0, '#f59e0b');
+                headGrad.addColorStop(0.6, '#ea580c');
                 headGrad.addColorStop(1, '#991b1b');
                 ctx.fillStyle = headGrad;
-                ctx.beginPath(); ctx.arc(0, 0, 8.5, 0, Math.PI*2); ctx.fill();
-
-                // 황금 부리 (Golden Sharp Beak)
-                ctx.fillStyle = '#f59e0b';
-                ctx.strokeStyle = '#b45309'; ctx.lineWidth = 1;
                 ctx.beginPath();
-                ctx.moveTo(0, -1);
-                ctx.lineTo(8 * facing, 2);
-                ctx.lineTo(0, 5);
-                ctx.closePath();
-                ctx.fill(); ctx.stroke();
+                ctx.ellipse(0, 0, 7.5, 7, 0, 0, Math.PI * 2);
+                ctx.fill();
 
-                // 작열하는 눈 (Fiery Glowing Eye)
-                ctx.shadowColor = '#fef08a'; ctx.shadowBlur = 6;
-                ctx.fillStyle = '#fef08a';
-                ctx.beginPath(); ctx.arc(2 * facing, 0, 2.5, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = '#1e1b4b';
-                ctx.beginPath(); ctx.arc(2.3 * facing, 0, 1.2, 0, Math.PI*2); ctx.fill();
+                // 황금 맹금류 부리 (Raptor Hooked Beak)
+                ctx.fillStyle = '#fbbf24';
+                ctx.strokeStyle = '#b45309';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(facing * 3, -2);
+                ctx.quadraticCurveTo(facing * 9, -1, facing * 10, 3);
+                ctx.quadraticCurveTo(facing * 6, 4, facing * 3, 3);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // 작열하는 매의 눈 (Fierce Glowing Raptor Eye)
+                ctx.shadowColor = '#ffffff';
+                ctx.shadowBlur = 6;
                 ctx.fillStyle = '#ffffff';
-                ctx.beginPath(); ctx.arc(2.6 * facing, -0.6, 0.6, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath();
+                ctx.arc(facing * 2, -1.5, 2.2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#dc2626';
+                ctx.beginPath();
+                ctx.arc(facing * 2.3, -1.5, 1.2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath();
+                ctx.arc(facing * 2.5, -2, 0.6, 0, Math.PI * 2);
+                ctx.fill();
+
                 ctx.restore();
                 ctx.shadowBlur = 0;
 
-                // 6. 비산하는 미세 불씨 파티클 (Ambient Flame Embers)
-                for (let emb = 0; emb < 3; emb++) {
-                    let ep = (pTime * 2 + emb * 1.8) % 1;
-                    let ex = Math.sin(emb * 4 + pTime) * 16;
-                    let ey = 14 - ep * 34;
-                    let er = (1 - ep) * 2;
+                // 6. 비산하는 황금 불꽃 스파크 & 엠버 (Radiant Phoenix Embers)
+                for (let emb = 0; emb < 4; emb++) {
+                    let ep = (pTime * 2.2 + emb * 1.5) % 1;
+                    let ex = Math.sin(emb * 3 + pTime * 2) * 20;
+                    let ey = 16 - ep * 40;
+                    let er = (1 - ep) * 2.2;
                     ctx.fillStyle = 'rgba(254, 240, 138, ' + (1 - ep) + ')';
-                    ctx.beginPath(); ctx.arc(ex, ey, er, 0, Math.PI*2); ctx.fill();
+                    ctx.shadowColor = '#f59e0b';
+                    ctx.shadowBlur = 4;
+                    ctx.beginPath();
+                    ctx.arc(ex, ey, er, 0, Math.PI * 2);
+                    ctx.fill();
                 }
+                ctx.shadowBlur = 0;
 
             } else if (useSkin.startsWith('ghost')) {
                 let floatOffset = Math.sin(Date.now() * 0.005) * 5 - bobbing;
