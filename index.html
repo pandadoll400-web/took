@@ -4259,13 +4259,11 @@
             } catch(e) {}
         }
 
-        // 전체 서버 모든 유저에게 트레이닝 머신 공개
+        // 🔒 [유저 긴급 요청] 트레이닝 머신 즉시 임시 중단 및 점검 잠금
         function isTradeMachineActive() {
-            if (adminTradeMachineOverride !== null) return adminTradeMachineOverride;
-            return true;
+            return false;
         }
 
-        // 9:00 PM (21:00) 오픈 및 1시간마다 선착순 2명 충전 사이클
         function getTradeCycleInfo() {
             const now = new Date();
             const nowMs = now.getTime();
@@ -4346,12 +4344,10 @@
         }
 
         function openTradeMachineModal() {
-            initTradeMachineFirestoreSync();
-            checkTradeMachineRestock();
-            updateTradeMachineModalUI();
+            alert('🔒 [긴급 점검] 트레이닝 머신이 임시 점검 중입니다.\n현재 이용하실 수 없습니다.');
             const modal = document.getElementById('trade-machine-modal');
-            if (modal) modal.style.display = 'block';
-            drawTradeSkinPreviewCanvas();
+            if (modal) modal.style.display = 'none';
+            return;
         }
 
         function closeTradeMachineModal() {
@@ -4432,99 +4428,8 @@
         }
 
         async function claimTradeMachineSkin() {
-            checkTradeMachineRestock();
-            const info = getTradeCycleInfo();
-
-            // 1. 오픈 전인 경우 -> 절대 획득/장착 불가!
-            if (!info.isOpen) {
-                alert('🔒 [오픈 대기]\n\n오늘 밤 9시(21:00) 정각에 선착순 2명만 오픈됩니다!\n오픈 전에는 획득하거나 장착할 수 없습니다.');
-                return;
-            }
-
-            // 2. 오픈 후 이미 소유한 경우 -> 장착/해제 토글
-            if (ownedSkins.includes('japanese_ronin')) {
-                equippedSkin = 'japanese_ronin';
-                saveGame(true);
-                updateShopSkinUI();
-                updateInvSkinUI();
-                updateTradeMachineModalUI();
-                floatTexts.push({ x: player.x, y: player.y - 80, text: '⚔️ [일본풍 검사] 장착 완료!', color: '#38bdf8', life: 100, size: 20 });
-                return;
-            }
-
-            // 3. 재고 소진 시 -> sold out!!
-            if (tradeMachineStock <= 0) {
-                const claimBtn = document.getElementById('trade-claim-btn');
-                if (claimBtn) {
-                    claimBtn.innerText = 'sold out!!';
-                    claimBtn.style.background = 'rgba(239, 68, 68, 0.2)';
-                    claimBtn.style.color = '#ef4444';
-                    claimBtn.style.border = '2px solid #ef4444';
-                }
-                alert('sold out!!\n\n선착순 2명이 모두 소진되었습니다! 다음 1시간 뒤 충전 시 빠르게 [획득]을 눌러보세요.');
-                updateTradeMachineModalUI();
-                return;
-            }
-
-            // 4. Firestore 글로벌 동기화 (전 서버 모든 유저 중 딱 2명 한정 엄격 보장)
-            let success = false;
-            if (typeof db !== 'undefined' && db) {
-                try {
-                    const docRef = db.collection('global_events').doc('trade_machine');
-                    await db.runTransaction(async (transaction) => {
-                        const doc = await transaction.get(docRef);
-                        let data = doc.exists ? doc.data() : { cycleId: info.cycleId, stock: 2, claimedUsers: [] };
-                        if (data.cycleId !== info.cycleId) {
-                            data = { cycleId: info.cycleId, stock: 2, claimedUsers: [] };
-                        }
-                        if (data.stock <= 0 || (data.claimedUsers && data.claimedUsers.length >= 2)) {
-                            throw new Error('SOLD_OUT');
-                        }
-                        data.stock = data.stock - 1;
-                        if (!data.claimedUsers) data.claimedUsers = [];
-                        const uid = (typeof currentUser !== 'undefined' && currentUser && currentUser.uid)
-                            ? currentUser.uid
-                            : (typeof player !== 'undefined' && player.name ? player.name : ('user_' + Math.random().toString(36).substring(7)));
-                        data.claimedUsers.push(uid);
-                        transaction.set(docRef, data);
-                        tradeMachineStock = data.stock;
-                    });
-                    success = true;
-                } catch(e) {
-                    if (e && e.message === 'SOLD_OUT') {
-                        tradeMachineStock = 0;
-                        saveTradeMachineState(info.cycleId);
-                        updateTradeMachineModalUI();
-                        alert('sold out!!\n\n다른 플레이어가 먼저 획득하여 선착순 2명이 모두 마감되었습니다!');
-                        return;
-                    }
-                    console.warn('Firestore transaction error, using local/broadcast fallback:', e);
-                }
-            }
-
-            // 로컬/브로드캐스트 채널 fallback
-            if (!success && tradeMachineStock > 0) {
-                tradeMachineStock--;
-                success = true;
-            }
-
-            if (success) {
-                saveTradeMachineState(info.cycleId);
-                if (!ownedSkins.includes('japanese_ronin')) {
-                    ownedSkins.push('japanese_ronin');
-                }
-                equippedSkin = 'japanese_ronin';
-                saveGame(true);
-                updateShopSkinUI();
-                updateInvSkinUI();
-
-                floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [일본풍 검사] 선착순 획득 성공!', color: '#ff7675', life: 120, size: 24 });
-                alert('🎉 [대성공!] 전 서버 선착순 2명 한정 [일본풍 검사] 스킨을 획득하셨습니다!!\n\n버튼이 [equip!]으로 변경되었습니다.');
-                updateTradeMachineModalUI();
-            } else {
-                updateTradeMachineModalUI();
-                alert('sold out!!\n\n선착순 재고가 모두 소진되었습니다.');
-            }
+            alert('🔒 [긴급 점검] 트레이닝 머신이 임시 점검 중입니다.');
+            return;
         }
 
         function drawTradeSkinPreviewCanvas() {
@@ -15948,6 +15853,65 @@
 
         function applyLoadedGameData(data) {
             if (!data) return;
+
+            // 🌟 신규 계정(isNewAccount) 완벽 초기화: 이전 플레이어/어드민의 스킨, 인벤토리, 씨앗, 골드 일체 오염 차단
+            if (data.isNewAccount) {
+                level = 1;
+                xp = 0;
+                maxXp = 20;
+                money = 0;
+                axeLevel = 0;
+                equippedAxe = 0;
+                ownedAxes = [0];
+                ownedSkins = ['default'];
+                equippedSkin = 'default';
+                inventory = {};
+                fishCollection = [];
+                radioactiveCollection = [];
+                caveCollection = [];
+                spaceCollection = [];
+                fossilCollection = [];
+                farmPlots = [
+                    { id: 0, seed: null, plantedAt: 0, duration: 300000 },
+                    { id: 1, seed: null, plantedAt: 0, duration: 300000 },
+                    { id: 2, seed: null, plantedAt: 0, duration: 300000 },
+                    { id: 3, seed: null, plantedAt: 0, duration: 300000 }
+                ];
+                unlockedFarmPlots = 4;
+                ownedFarmEquipments = [];
+                farmShopData = {};
+                rocketLaunched = false;
+                fuseSlots = [null, null, null];
+                activeFuseStartTime = 0;
+                activeFuseResult = null;
+                trees.forEach((t, idx) => t.unlocked = (idx === 0));
+                bossKills = 0;
+                battleWins = 0;
+                frostDragonKills = 0;
+                if (typeof adminSwords !== 'undefined' && adminSwords[0]) adminSwords[0].tier = 0;
+
+                try {
+                    const uKey = currentUser ? ('treeGameSave_' + currentUser.toLowerCase()) : 'treeGameSave';
+                    localStorage.removeItem(uKey);
+                    localStorage.removeItem('tb_farm_plots');
+                    localStorage.removeItem('tb_farm_unlocked_plots');
+                    localStorage.removeItem('tb_farm_equipments');
+                    localStorage.removeItem('tb_farm_shop_data');
+                    localStorage.removeItem('synthesized_pets');
+                    localStorage.removeItem('incubator_state');
+                } catch(e) {}
+
+                document.getElementById('level-text').innerText = 'LV. 1';
+                document.getElementById('xp-bar-fill').style.width = '0%';
+                updateMoney();
+                updateAxeUI();
+                updateInvAxeUI();
+                updateShopSkinUI();
+                updateInvSkinUI();
+                if (typeof updateFuseUI === 'function') updateFuseUI();
+                if (typeof updateRouletteCooldownUI === 'function') updateRouletteCooldownUI();
+                return;
+            }
             level = data.level || 1;
             maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
             xp = Math.min(data.xp || 0, maxXp - 1);
@@ -15971,46 +15935,25 @@
             } else if (typeof loadQuestData === 'function') {
                 loadQuestData();
             }
-            // 🛡️ 스킨 목록 복원 및 안전한 병합
+            // 🛡️ 스킨 목록 복원: 현재 계정의 data.ownedSkins만 복원 (다른 계정 스킨 오염 차단)
             let skinSet = new Set(['default']);
             if (Array.isArray(data.ownedSkins)) {
                 data.ownedSkins.forEach(s => { if (s) skinSet.add(s); });
             }
-            if (typeof ownedSkins !== 'undefined' && Array.isArray(ownedSkins)) {
-                ownedSkins.forEach(s => { if (s) skinSet.add(s); });
-            }
             try {
-                const uKey = currentUser ? ('treeGameSave_' + currentUser.toLowerCase()) : 'treeGameSave';
-                const localSaved = JSON.parse(localStorage.getItem(uKey) || localStorage.getItem('treeGameSave') || '{}');
-                if (Array.isArray(localSaved.ownedSkins)) {
-                    localSaved.ownedSkins.forEach(s => { if (s) skinSet.add(s); });
+                if (currentUser) {
+                    const localSaved = JSON.parse(localStorage.getItem('treeGameSave_' + currentUser.toLowerCase()) || '{}');
+                    if (Array.isArray(localSaved.ownedSkins)) {
+                        localSaved.ownedSkins.forEach(s => { if (s) skinSet.add(s); });
+                    }
                 }
             } catch(e) {}
             ownedSkins = Array.from(skinSet);
 
             equippedSkin = (data.equippedSkin && ownedSkins.includes(data.equippedSkin)) ? data.equippedSkin : ((typeof equippedSkin !== 'undefined' && ownedSkins.includes(equippedSkin)) ? equippedSkin : 'default');
 
-            // 🌾 인벤토리 및 씨앗 복원
-            const prevSeeds = {};
-            ['크라켄의 씨앗', '할로윈의 씨앗', '어드민의 씨앗'].forEach(s => {
-                if (typeof inventory !== 'undefined' && inventory && inventory[s] !== undefined) {
-                    prevSeeds[s] = Number(inventory[s]) || 0;
-                }
-            });
+            // 🌾 인벤토리 복원: 현재 계정의 data.inventory만 복원 (이전 세션/계정 오염 차단)
             inventory = data.inventory ? { ...data.inventory } : {};
-            ['크라켄의 씨앗', '할로윈의 씨앗', '어드민의 씨앗'].forEach(s => {
-                let maxCount = Math.max(Number(inventory[s]) || 0, prevSeeds[s] || 0);
-                try {
-                    const uKey = currentUser ? ('treeGameSave_' + currentUser.toLowerCase()) : 'treeGameSave';
-                    const localSaved = JSON.parse(localStorage.getItem(uKey) || localStorage.getItem('treeGameSave') || '{}');
-                    if (localSaved && localSaved.inventory && localSaved.inventory[s] !== undefined) {
-                        maxCount = Math.max(maxCount, Number(localSaved.inventory[s]) || 0);
-                    }
-                } catch(e) {}
-                if (maxCount > 0) {
-                    inventory[s] = maxCount;
-                }
-            });
 
             // 🌾 농장 밭 및 상점, 부지 확장, 장비 복원
             if (Array.isArray(data.farmPlots)) {
