@@ -10724,9 +10724,7 @@
                 for (let shop of shops) {
                     if (cx > shop.x - 20 && cx < shop.x + 200 && cy > shop.y && cy < shop.y + 210) { isShopOrFuse = true; break; }
                 }
-                if (typeof fuseBuilding !== 'undefined') {
-                    if (cx > fuseBuilding.x - 20 && cx < fuseBuilding.x + fuseBuilding.width + 20 && cy > fuseBuilding.y && cy < fuseBuilding.y + fuseBuilding.height + 20) isShopOrFuse = true;
-                }
+                // 호박 융합 머신 삭제됨
                 if (!isShopOrFuse) {
                     halloweenTeleporterBeacon.placed = true;
                     halloweenTeleporterBeacon.x = Math.max(40, Math.min(GAME_WIDTH - 40, cx));
@@ -10829,13 +10827,7 @@
                         return;
                     }
                 }
-                // 🎃 호박 융합 (퓨즈) 건물 클릭 감지 (일반 지역 좌측)
-                if (typeof fuseBuilding !== 'undefined') {
-                    if (cx > fuseBuilding.x - 20 && cx < fuseBuilding.x + fuseBuilding.width + 20 && cy > fuseBuilding.y && cy < fuseBuilding.y + fuseBuilding.height + 20) {
-                        openFuseModal();
-                        return;
-                    }
-                }
+                // 호박 융합 머신 삭제됨
             }
             
             let target = null;
@@ -13010,14 +13002,7 @@
             radius: 46
         };
 
-        // 🎃 호박 융합 (퓨즈) 건물 (일반 지역 연장 구역 좌측으로 이동 배치)
-        const fuseBuilding = {
-            name: '호박 융합',
-            x: 70,
-            y: 840,
-            width: 170,
-            height: 180
-        };
+        // 🎃 호박 융합 머신 삭제됨 (크래프팅 머신만 유지)
 
         // 지붕/벽 색상 수동 할당 (위의 객체 리터럴 단순화를 위해)
         shops[0].roofColor = '#c0392b'; shops[0].wallColor = '#e6c280';
@@ -18787,17 +18772,7 @@
                 }
             });
 
-            // 퓨즈 브레인로트 건물 충돌 판정
-            if (typeof fuseBuilding !== 'undefined') {
-                let fx = fuseBuilding.x - 20, fy = fuseBuilding.y;
-                let fw = 270, fh = 210;
-                if (player.x > fx - player.radius && player.x < fx + fw + player.radius && player.y > fy - player.radius && player.y < fy + fh + player.radius) {
-                    if (player.x - player.vx <= fx - player.radius) player.x = fx - player.radius;
-                    else if (player.x - player.vx >= fx + fw + player.radius) player.x = fx + fw + player.radius;
-                    else if (player.y - player.vy <= fy - player.radius) player.y = fy - player.radius;
-                    else if (player.y - player.vy >= fy + fh + player.radius) player.y = fy + fh + player.radius;
-                }
-            }
+            // 호박 융합 머신 충돌 판정 삭제됨
 
             // 🔮 크래프팅 머신 충돌 판정 (원형 반경)
             if (typeof craftingMachine !== 'undefined') {
@@ -23695,7 +23670,7 @@
             });
 
             shops.forEach(shop => drawShop(ctx, shop));
-            if (typeof fuseBuilding !== 'undefined') drawFuseBuilding(ctx, fuseBuilding);
+            // 융합 호박 머신 삭제됨 (크래프팅 머신만 렌더링 유지)
 
             // 👑 어드민 스토리 퀘스트: 할로윈 지형 원숭이 10마리 & 미친 박사 렌더링
             if (isAdmin() && (adminGorillaStoryStage === 'earth_monkeys_invading' || adminGorillaStoryStage === 'earth_mad_doctor_rescues')) {
