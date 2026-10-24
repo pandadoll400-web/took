@@ -4971,8 +4971,31 @@
         function submitCode() {
             const input = document.getElementById('code-input');
             const msg = document.getElementById('code-status-msg');
+            const val = (input && input.value ? input.value.trim().toLowerCase() : '');
 
-            // 사용자 요청: 아무거나 제출하거나 지금 뭐를 입력해도 유효하지않는코드라고해줘
+            // 🎂🔨 신화 한정 스킨 [포지 케이크] 지급 쿠폰 코드 (sorryaboutvoiseroom)
+            if (val === 'sorryaboutvoiseroom') {
+                if (!ownedSkins.includes('forge_cake')) {
+                    ownedSkins.push('forge_cake');
+                }
+                equippedSkin = 'forge_cake';
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                if (typeof saveGame === 'function') saveGame(true);
+                if (msg) {
+                    msg.innerText = '🎉 포지 케이크 스킨을 획득하고 장착했습니다!';
+                    msg.style.color = '#2ecc71';
+                    msg.style.display = 'block';
+                }
+                if (input) input.style.borderColor = '#2ecc71';
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: player.x, y: player.y - 70, text: '🎂🔨 포지 케이크 스킨 획득!', color: '#2ecc71', life: 100, size: 20 });
+                }
+                alert('🎉 [쿠폰 등록 완료]\n\n신화 한정 스킨 [포지 케이크]를 획득하고 자동 장착했습니다!\n가방의 스킨 탭에서 확인하실 수 있습니다.');
+                closeCodeModal();
+                return;
+            }
+
+            // 그 외 코드는 유효하지 않는 코드 처리
             if (msg) {
                 msg.innerText = '❌ 유효하지 않는 코드입니다.';
                 msg.style.color = '#ff6b6b';
@@ -5304,7 +5327,7 @@
             ctx.fillRect(ux + 22, uy + 4, 16, 12);
             ctx.restore();
 
-            // 5. 총 9개 농장 밭 (Farm Plots - 기본 4개 해금, 최대 9개)
+            // 5. 총 9개 농장 밭 (Farm Plots - 해금된 밭은 회색으로만 렌더링, 텍스트 일체 없음)
             for (let i = 0; i < FARM_PLOT_COORDS.length; i++) {
                 const c = FARM_PLOT_COORDS[i];
                 const plot = farmPlots[i];
@@ -5313,34 +5336,28 @@
 
                 ctx.save();
                 if (isUnlocked) {
-                    // [해금된 밭] - 3D 럭셔리 목재 정원 화단 틀
+                    // [해금된 밭] - 순수 회색 모던 타일 틀 (사용자 요청: 텍스트 완전 제거, 오직 회색으로만)
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
                     ctx.beginPath(); ctx.roundRect(px - 44, py - 30, 88, 66, 10); ctx.fill();
 
-                    // 원목 화단 프레임
-                    let woodGrad = ctx.createLinearGradient(px, py - 32, px, py + 32);
-                    woodGrad.addColorStop(0, '#5c3a21');
-                    woodGrad.addColorStop(1, '#3b2314');
-                    ctx.fillStyle = woodGrad;
+                    // 외곽 회색 프레임
+                    let greyGrad = ctx.createLinearGradient(px, py - 32, px, py + 32);
+                    greyGrad.addColorStop(0, '#64748b');
+                    greyGrad.addColorStop(1, '#475569');
+                    ctx.fillStyle = greyGrad;
                     ctx.beginPath(); ctx.roundRect(px - 43, py - 31, 86, 62, 8); ctx.fill();
-                    ctx.strokeStyle = '#27170c'; ctx.lineWidth = 2; ctx.stroke();
+                    ctx.strokeStyle = '#334155'; ctx.lineWidth = 2; ctx.stroke();
 
-                    // 황금빛 모서리 브래킷 장식 (Corner Brackets)
-                    ctx.fillStyle = '#d4af37';
-                    [[-41, -29], [35, -29], [-41, 25], [35, 25]].forEach(([bx, by]) => {
-                        ctx.fillRect(px + bx, py + by, 6, 6);
-                    });
-
-                    // 비옥한 흑토양 (Rich Moist Soil)
-                    let soilGrad = ctx.createLinearGradient(px, py - 24, px, py + 24);
-                    soilGrad.addColorStop(0, '#2b170d');
-                    soilGrad.addColorStop(1, '#1a0d07');
-                    ctx.fillStyle = soilGrad;
+                    // 내부 베이스 회색 타일 / 토양
+                    let innerGrey = ctx.createLinearGradient(px, py - 24, px, py + 24);
+                    innerGrey.addColorStop(0, '#334155');
+                    innerGrey.addColorStop(1, '#1e293b');
+                    ctx.fillStyle = innerGrey;
                     ctx.beginPath(); ctx.roundRect(px - 36, py - 24, 72, 48, 6); ctx.fill();
 
-                    // 흙 고랑 (Tilled Furrows)
-                    ctx.strokeStyle = '#120804';
-                    ctx.lineWidth = 2;
+                    // 회색 고랑 라인
+                    ctx.strokeStyle = '#0f172a';
+                    ctx.lineWidth = 1.5;
                     for (let fy = -13; fy <= 13; fy += 13) {
                         ctx.beginPath();
                         ctx.moveTo(px - 30, py + fy);
@@ -5349,14 +5366,7 @@
                     }
 
                     if (!plot || !plot.seed) {
-                        // 빈 밭 상태
-                        ctx.fillStyle = '#a8a29e';
-                        ctx.font = 'bold 11px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.fillText(c.label, px, py - 8);
-                        ctx.fillStyle = '#4ade80';
-                        ctx.font = 'bold 12px Arial';
-                        ctx.fillText('+ 씨앗 심기', px, py + 12);
+                        // 빈 밭 상태: 사용자 요청에 따라 글씨 일체 없음 (순수 회색 밭만 표시)
                     } else {
                         // 작물 성장 또는 수확 가능 상태
                         const elapsed = now - plot.plantedAt;
@@ -5365,7 +5375,7 @@
                         const cfg = SEED_CONFIGS[plot.seed] || SEED_CONFIGS.kraken;
 
                         if (isReady) {
-                            // ✨ 수확 가능: 황금 아우라 펄스 & 반짝이
+                            // ✨ 수확 가능: 황금 아우라 펄스 & 작물 아이콘 (글씨 없음)
                             const pulse = Math.sin(now * 0.007) * 4;
                             let goldAura = ctx.createRadialGradient(px, py, 5, px, py, 38 + pulse);
                             goldAura.addColorStop(0, 'rgba(250, 204, 21, 0.65)');
@@ -5378,17 +5388,12 @@
                             ctx.lineWidth = 2.5;
                             ctx.beginPath(); ctx.roundRect(px - 38, py - 26, 76, 52, 6); ctx.stroke();
 
-                            ctx.font = '24px Arial';
+                            ctx.font = '26px Arial';
                             ctx.textAlign = 'center';
-                            ctx.fillText(cfg.icon, px, py + 3);
-
-                            ctx.fillStyle = '#fde047';
-                            ctx.font = 'bold 11px Arial';
-                            ctx.shadowColor = '#000'; ctx.shadowBlur = 5;
-                            ctx.fillText('✨ 수확 터치!', px, py + 20);
-                            ctx.shadowBlur = 0;
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(cfg.icon, px, py);
                         } else {
-                            // 성장 중 (새싹 / 줄기 / 열매)
+                            // 성장 중 (새싹 / 줄기 / 열매 - 글씨 없음)
                             if (progress < 0.35) {
                                 ctx.fillStyle = '#4ade80';
                                 ctx.beginPath(); ctx.arc(px, py + 2, 4, 0, Math.PI * 2); ctx.fill();
@@ -5402,38 +5407,27 @@
                                 ctx.beginPath(); ctx.arc(px, py - 10, 6, 0, Math.PI * 2); ctx.fill();
                             }
 
-                            // 타이머 프로그레스 바
+                            // 심플 진행도 바 (글씨 없음)
                             ctx.fillStyle = 'rgba(0,0,0,0.6)';
-                            ctx.fillRect(px - 28, py + 15, 56, 6);
+                            ctx.fillRect(px - 28, py + 15, 56, 5);
                             ctx.fillStyle = '#22c55e';
-                            ctx.fillRect(px - 28, py + 15, 56 * progress, 6);
-
-                            const remainSec = Math.ceil((plot.duration - elapsed) / 1000);
-                            const m = Math.floor(remainSec / 60);
-                            const s = String(remainSec % 60).padStart(2, '0');
-                            ctx.fillStyle = '#ffffff';
-                            ctx.font = 'bold 10px Arial';
-                            ctx.textAlign = 'center';
-                            ctx.fillText(m + ':' + s, px, py + 11);
+                            ctx.fillRect(px - 28, py + 15, 56 * progress, 5);
                         }
                     }
                 } else {
-                    // [잠긴 밭] - 미개간 부지 & 자물쇠 표시
+                    // [잠긴 밭] - 미개간 부지 (자물쇠 아이콘만 표시, 텍스트 없음)
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
                     ctx.beginPath(); ctx.roundRect(px - 42, py - 28, 84, 56, 8); ctx.fill();
 
-                    ctx.fillStyle = '#292524';
+                    ctx.fillStyle = '#1e293b';
                     ctx.beginPath(); ctx.roundRect(px - 40, py - 26, 80, 52, 6); ctx.fill();
-                    ctx.strokeStyle = '#57534e'; ctx.lineWidth = 1.5; ctx.stroke();
+                    ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.stroke();
 
-                    ctx.fillStyle = '#fbbf24';
-                    ctx.font = '16px Arial';
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '18px Arial';
                     ctx.textAlign = 'center';
-                    ctx.fillText('🔒', px, py - 4);
-
-                    ctx.fillStyle = '#94a3b8';
-                    ctx.font = 'bold 9.5px Arial';
-                    ctx.fillText(c.label + ' (확장 필요)', px, py + 14);
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('🔒', px, py);
                 }
                 ctx.restore();
             }
@@ -7527,6 +7521,47 @@
 
         // 🌀 고차원 텔레포트 그리기 (일반: 원숭이 / 할로윈: 악마)
         function drawTeleporter(ctx, x, y, bossType = 'monkey') {
+            if (bossType === 'devil') {
+                // 💥 사용자 요청: 완전히 산산조각 나 파괴된 악마 보스 포탈
+                ctx.save();
+                ctx.translate(x, y);
+                // 타버린 크레이터 바닥
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+                ctx.beginPath(); ctx.ellipse(0, 15, 48, 18, 0, 0, Math.PI * 2); ctx.fill();
+                // 깨진 흑요석 기둥 잔해 파편들
+                const rubble = [
+                    { x: -35, y: 10, w: 18, h: 22, rot: -0.4, color: '#1e1b24' },
+                    { x: -18, y: 16, w: 14, h: 12, rot: 0.3, color: '#2d2438' },
+                    { x: 30, y: 8, w: 20, h: 25, rot: 0.5, color: '#1e1b24' },
+                    { x: 15, y: 18, w: 12, h: 10, rot: -0.2, color: '#3b2d4a' },
+                    { x: -2, y: 5, w: 22, h: 14, rot: 0.1, color: '#18151f' }
+                ];
+                rubble.forEach(r => {
+                    ctx.save();
+                    ctx.translate(r.x, r.y);
+                    ctx.rotate(r.rot);
+                    ctx.fillStyle = r.color;
+                    ctx.fillRect(-r.w / 2, -r.h / 2, r.w, r.h);
+                    ctx.strokeStyle = '#4a0404'; ctx.lineWidth = 1.5; ctx.strokeRect(-r.w / 2, -r.h / 2, r.w, r.h);
+                    ctx.restore();
+                });
+                // 꺼져가는 보라색 불씨
+                let t = Date.now() * 0.003;
+                for (let i = 0; i < 3; i++) {
+                    let px = Math.sin(t + i * 2) * 22;
+                    let py = Math.cos(t * 1.5 + i) * 8;
+                    ctx.fillStyle = (i % 2 === 0) ? '#ef4444' : '#a855f7';
+                    ctx.beginPath(); ctx.arc(px, py, 2.5, 0, Math.PI * 2); ctx.fill();
+                }
+                // '포탈 파괴됨' 경고 팻말
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+                ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.roundRect(-55, -28, 110, 22, 6); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#f87171'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText('❌ 포탈 파괴됨', 0, -17);
+                ctx.restore();
+                return;
+            }
             ctx.save();
             ctx.translate(x, y);
 
@@ -10637,11 +10672,12 @@
                 return;
             }
 
-            // 😈 2. 할로윈 지형 고차원 텔레포트 (x: 515, y: 1360) -> 악마 보스전 모달
+            // 😈 2. 할로윈 지형 고차원 텔레포트 (x: 515, y: 1360) -> 파괴된 악마 보스전 포탈 (입장 불가)
             let tpHalDist = Math.hypot(cx - teleporterHalloween.x, cy - teleporterHalloween.y);
             let tpHalPlayerDist = Math.hypot(player.x - teleporterHalloween.x, player.y - teleporterHalloween.y);
             if (tpHalDist < 75 || (isSpacebar && tpHalPlayerDist < 90)) {
-                openBossPortalModal();
+                floatTexts.push({ x: teleporterHalloween.x, y: teleporterHalloween.y - 70, text: '💥 [포탈 파괴됨] 악마 보스 포탈이 산산조각 나 진입할 수 없습니다.', color: '#ef4444', life: 80, size: 18 });
+                alert('💥 [악마 보스전 폐쇄]\n\n보스 포탈이 완전히 산산조각 나 파괴되었습니다!\n현재 악마 보스전 차원에 진입할 수 없습니다.');
                 return;
             }
 
@@ -10719,15 +10755,7 @@
                 return;
             }
 
-            // 🎰 할로윈 행운의 룰렛 머신 클릭 감지 (할로윈 퓨즈머신 옆)
-            if (typeof rouletteMachine !== 'undefined') {
-                let rlDist = Math.hypot(cx - rouletteMachine.x, cy - rouletteMachine.y);
-                let rlPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - rouletteMachine.x, player.y - rouletteMachine.y) : 999;
-                if (rlDist < 60 || (isSpacebar && rlPlayerDist < 85)) {
-                    openRouletteModal();
-                    return;
-                }
-            }
+            // 룰렛 머신 삭제됨
 
             // 👽 우주 나무 외계 과학자 클릭 감지 (토요일 밤 10시 공개)
             if (isAlienEventStarted() && !alienQuestDone && typeof alienScientist !== 'undefined') {
@@ -10784,7 +10812,7 @@
                             openCaveIndex();
                             return;
                         } else if (shop.type === 'halloween') {
-                            openHalloweenIndex();
+                            floatTexts.push({ x: shop.x + 90, y: shop.y + 40, text: '🌫️ 폐쇄된 상점입니다. 상인이 떠났습니다.', color: '#94a3b8', life: 75, size: 18 });
                             return;
                         } else if (shop.type === 'space') {
                             openSpaceIndex();
@@ -10792,14 +10820,19 @@
                         }
                     }
                 }
-                // 호박 융합 (퓨즈) / 트레이드 머신 건물 클릭 감지 (할로윈 맵 하단 Y: 2050)
+                // 🔮 크래프팅 머신 클릭 감지 (일반 지역 중앙)
+                if (typeof craftingMachine !== 'undefined') {
+                    let cmDist = Math.hypot(cx - craftingMachine.x, cy - craftingMachine.y);
+                    let cmPlayerDist = Math.hypot(player.x - craftingMachine.x, player.y - craftingMachine.y);
+                    if (cmDist < 75 || (isSpacebar && cmPlayerDist < 100)) {
+                        openTradeMachineModal();
+                        return;
+                    }
+                }
+                // 🎃 호박 융합 (퓨즈) 건물 클릭 감지 (일반 지역 좌측)
                 if (typeof fuseBuilding !== 'undefined') {
                     if (cx > fuseBuilding.x - 20 && cx < fuseBuilding.x + fuseBuilding.width + 20 && cy > fuseBuilding.y && cy < fuseBuilding.y + fuseBuilding.height + 20) {
-                        if (isTradeMachineActive()) {
-                            openTradeMachineModal();
-                        } else {
-                            openFuseModal();
-                        }
+                        openFuseModal();
                         return;
                     }
                 }
@@ -10819,6 +10852,11 @@
             });
 
             if (target) {
+                if (target.id === 'halloween') {
+                    floatTexts.push({ x: target.x, y: target.y - 70, text: '💥 두동강 난 고목은 흔들거나 벨 수 없습니다.', color: '#94a3b8', life: 75, size: 18 });
+                    player.targetTree = null;
+                    return;
+                }
                 if (target.id === 'ice_canyon' && !isAdmin()) {
                     floatTexts.push({ x: target.x, y: target.y - 100, text: `🔒 관리자(ADMIN) 전용 나무입니다!`, color: '#38bdf8', life: 70 });
                     return;
@@ -11960,7 +11998,7 @@
             { id: 'archaeologist', name: '고고학자', price: 0, icon: '🤠', isReward: true },
             { id: 'reaper', name: '사신', price: 0, icon: '💀', isReward: true },
             { id: 'penguin', name: '꼬마 펭귄', price: 15000, icon: '🐧', adminOnly: true },
-            { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, adminOnly: true },
+            { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, desc: '쿠폰 코드 보상 [sorryaboutvoiseroom]' },
             { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true },
             { id: 'cerberus', name: '케르베로스', price: 0, icon: '🐺🔥', isReward: true },
             { id: 'astronaut', name: '우주비행사', price: 0, icon: '👨‍🚀', isReward: true },
@@ -12964,13 +13002,21 @@
             { type: 'space', name: '우주 상점', x: 420, y: -7300, frontX: shopFrontX, queueY: -7150, queue: [] }
         ];
 
-        // 호박 융합 (퓨즈) 건물 (할로윈 맵 하단 Y: 2050에 살짝 가로로 넓게 배치)
+        // 🔮 크래프팅 머신 (일반 지역 중앙 배치)
+        const craftingMachine = {
+            name: '크래프팅 머신',
+            x: GAME_WIDTH / 2, // 300 (일반 지역 중앙)
+            y: 930,
+            radius: 46
+        };
+
+        // 🎃 호박 융합 (퓨즈) 건물 (일반 지역 연장 구역 좌측으로 이동 배치)
         const fuseBuilding = {
             name: '호박 융합',
-            x: 190,
-            y: 2050,
-            width: 220,
-            height: 210
+            x: 70,
+            y: 840,
+            width: 170,
+            height: 180
         };
 
         // 지붕/벽 색상 수동 할당 (위의 객체 리터럴 단순화를 위해)
@@ -15559,7 +15605,7 @@
             closeAdminPanelModal();
             
             updateUserBadgeUI();
-            closeLoginModal();
+            closeAllModals(); closeLoginModal();
             floatTexts.push({ x: player.x, y: player.y - 100, text: `로그아웃 되었습니다. (계정 데이터 보존됨)`, color: '#e74c3c', life: 100, size: 18 });
             alert(`[${oldUser}] 계정에서 로그아웃되었습니다!\n서버에 계정 정보와 진행 데이터는 안전하게 보존되어 있으니, 언제든 다시 로그인하시면 됩니다.`);
         }
@@ -15606,7 +15652,28 @@
             if (typeof updateQuestHudBadge === 'function') updateQuestHudBadge();
         }
 
+        // 🚪 모든 열린 모달 창 일괄 닫기 & 인벤토리 DOM 초기화
+        function closeAllModals() {
+            const modalIds = [
+                'inventory-modal', 'shop-modal', 'fuse-modal', 'trade-machine-modal',
+                'pet-leash-modal', 'pet-machine-modal', 'fossil-rock-modal', 'fossil-codex-modal',
+                'quest-modal', 'seed-shop-modal', 'farm-upgrade-modal', 'plant-seed-modal',
+                'farm-harvest-modal', 'roulette-modal', 'boss-portal-modal', 'ice-dragon-portal-modal',
+                'admin-panel-modal', 'guild-modal', 'guild-member-action-modal', 'trade-request-modal',
+                'trade-incoming-modal', 'battle-incoming-modal', 'ranking-modal', 'ocean-modal',
+                'radioactive-modal', 'cave-modal', 'halloween-modal', 'space-modal', 'code-modal',
+                'trade-window-modal', 'alien-scientist-modal', 'mad-doctor-modal', 'trade-qty-dialog'
+            ];
+            modalIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+            const invGrid = document.getElementById('inventory-grid');
+            if (invGrid) invGrid.innerHTML = '';
+        }
+
         async function handleTreeGameLogin() {
+            closeAllModals(); // 계정 교체 시 열려있던 모든 창 즉시 닫기
             const idInput = document.getElementById('login-id');
             const pwInput = document.getElementById('login-pw');
             const username = idInput.value.trim();
@@ -15665,7 +15732,7 @@
                         console.warn('Admin cloud sync fail:', e);
                     }
                 }
-                closeLoginModal();
+                closeAllModals(); closeLoginModal();
                 updateUserBadgeUI();
                 startTradeIncomingListener();
                 startBattleIncomingListener();
@@ -15710,7 +15777,7 @@
                             if (userData.level) def.level = Number(userData.level);
                             applyLoadedGameData(def);
                         }
-                        closeLoginModal();
+                        closeAllModals(); closeLoginModal();
                         updateUserBadgeUI();
                         startTradeIncomingListener();
                         startBattleIncomingListener();
@@ -15741,7 +15808,7 @@
                     player.vy = 0;
                     player.targetTree = null;
                     applyLoadedGameData(newGameSave);
-                    closeLoginModal();
+                    closeAllModals(); closeLoginModal();
                     updateUserBadgeUI();
                     startTradeIncomingListener();
                     startBattleIncomingListener();
@@ -15909,6 +15976,12 @@
 
             // 🌾 인벤토리 복원: 현재 계정의 data.inventory만 복원 (이전 세션/계정 오염 차단)
             inventory = data.inventory ? { ...data.inventory } : {};
+            // 비관리자 유저가 어드민 계정의 999 아이템 복제본을 오염 상속받지 않도록 검증 정제
+            if (!isAdmin() && inventory['사과'] === 999 && inventory['불꽃 사과'] === 999 && inventory['심해 참치'] === 999) {
+                inventory = {};
+            }
+            const currentInvGrid = document.getElementById('inventory-grid');
+            if (currentInvGrid) currentInvGrid.innerHTML = '';
 
             // 🌾 농장 밭 및 상점, 부지 확장, 장비 복원
             if (Array.isArray(data.farmPlots)) {
@@ -18194,7 +18267,7 @@
             if (currentUser) {
                 saved = localStorage.getItem('treeGameSave_' + currentUser.toLowerCase());
             }
-            if (!saved) {
+            if (!saved && !currentUser) {
                 saved = localStorage.getItem('treeGameSave');
             }
             if (saved) {
@@ -18726,14 +18799,14 @@
                 }
             }
 
-            // 🎰 할로윈 룰렛 머신 충돌 판정 (원형 반경)
-            if (typeof rouletteMachine !== 'undefined') {
-                let dR = Math.hypot(player.x - rouletteMachine.x, player.y - rouletteMachine.y);
-                let minR = rouletteMachine.radius + player.radius;
-                if (dR < minR && dR > 0) {
-                    let pushAngle = Math.atan2(player.y - rouletteMachine.y, player.x - rouletteMachine.x);
-                    player.x = rouletteMachine.x + Math.cos(pushAngle) * minR;
-                    player.y = rouletteMachine.y + Math.sin(pushAngle) * minR;
+            // 🔮 크래프팅 머신 충돌 판정 (원형 반경)
+            if (typeof craftingMachine !== 'undefined') {
+                let dCm = Math.hypot(player.x - craftingMachine.x, player.y - craftingMachine.y);
+                let minCmR = (craftingMachine.radius || 45) + player.radius;
+                if (dCm < minCmR && dCm > 0) {
+                    let pushAngle = Math.atan2(player.y - craftingMachine.y, player.x - craftingMachine.x);
+                    player.x = craftingMachine.x + Math.cos(pushAngle) * minCmR;
+                    player.y = craftingMachine.y + Math.sin(pushAngle) * minCmR;
                 }
             }
 
@@ -18862,6 +18935,11 @@
             }
 
             shops.forEach(shop => {
+                // 사용자 요청: 주민도 안오고 (할로윈 상점 주민 스폰 완전 차단 및 대기열 비움)
+                if (shop.type === 'halloween') {
+                    shop.queue = [];
+                    return;
+                }
                 if (shop.queue.length < 5 && Math.random() < 0.01) {
                     let newCustomer = generateCustomer(shop.type);
                     newCustomer.y = shop.queueY;
@@ -18998,9 +19076,6 @@
             ctx.save(); ctx.translate(x, y);
             
             let skin = forceSkin ? forceSkin : ((char === player) ? equippedSkin : 'default');
-            if (skin === 'forge_cake' && !isAdmin() && !forceSkin) {
-                skin = 'default';
-            }
             let walkAngle = walkTimer ? Math.sin(walkTimer * 0.15) * 15 : 0;
             let bobbing = walkTimer ? Math.abs(Math.sin(walkTimer * 0.15)) * 3 : 0;
             if(isShaking) { bobbing = Math.random() * 2; walkAngle = 0; }
@@ -22399,6 +22474,33 @@
 
         function drawShop(ctx, shop) {
             const x = shop.x; const y = shop.y;
+            if (shop.type === 'halloween') {
+                // 🌫️ 사용자 요청: 버려지고 판자로 폐쇄된 할로윈 폐허 상점
+                ctx.fillStyle = '#2d241e'; ctx.fillRect(x - 10, y + 210, 200, 20);
+                ctx.fillStyle = '#3a312a'; ctx.fillRect(x, y + 80, 180, 130);
+                ctx.fillStyle = '#1e1814'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
+                // 어두운 폐쇄 입구
+                ctx.fillStyle = '#0f0e11'; ctx.fillRect(x + 30, y + 100, 120, 110);
+                // X자 및 가로 판자
+                ctx.fillStyle = '#5c4033';
+                ctx.fillRect(x + 20, y + 120, 140, 16);
+                ctx.fillRect(x + 20, y + 160, 140, 16);
+                ctx.save();
+                ctx.translate(x + 90, y + 155);
+                ctx.rotate(0.4); ctx.fillRect(-70, -8, 140, 16);
+                ctx.rotate(-0.8); ctx.fillRect(-70, -8, 140, 16);
+                ctx.restore();
+                // 낡은 지붕
+                ctx.fillStyle = '#2d1b36';
+                ctx.beginPath(); ctx.moveTo(x - 20, y + 80); ctx.lineTo(x + 90, y); ctx.lineTo(x + 200, y + 80); ctx.fill();
+                ctx.strokeStyle = '#120c17'; ctx.lineWidth = 4; ctx.stroke();
+                // 폐쇄 간판
+                ctx.fillStyle = '#1e1b24'; ctx.fillRect(x + 35, y + 40, 120, 35);
+                ctx.strokeStyle = '#475569'; ctx.lineWidth = 2.5; ctx.strokeRect(x + 35, y + 40, 120, 35);
+                ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
+                ctx.fillText("🚫 [폐쇄된 상점]", x + 95, y + 63);
+                return;
+            }
             ctx.fillStyle = '#5c3a21'; ctx.fillRect(x - 10, y + 210, 200, 20);
             let wallGrad = ctx.createLinearGradient(x, y, x, y + 210);
             wallGrad.addColorStop(0, shop.wallColor); wallGrad.addColorStop(1, '#94703a'); 
@@ -22417,6 +22519,170 @@
         }
 
         // 사진 2번 완벽 구현: 할로윈 호박 융합 (퓨즈) 건물 (오싹하고 정교한 할로윈 마녀/괴물 집)
+        
+        // ⚔️ 새롭게 디자인된 하이테크/신비 크래프팅 머신 (중앙 광장)
+        function drawCraftingMachine(ctx, cm) {
+            const x = cm.x;
+            const y = cm.y;
+            ctx.save();
+
+            const t = Date.now();
+            const floatY = Math.sin(t * 0.004) * 4;
+            const rot = (t * 0.002) % (Math.PI * 2);
+
+            // 1. 하단 바닥 그림자 & 네온 에너지 서클
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+            ctx.beginPath();
+            ctx.ellipse(x, y + 36, 55, 18, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 청록색 룬 링 (바닥 마법진)
+            ctx.save();
+            ctx.translate(x, y + 34);
+            ctx.scale(1.0, 0.35);
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#22d3ee';
+            ctx.shadowBlur = 12;
+            ctx.setLineDash([14, 8]);
+            ctx.beginPath();
+            ctx.arc(0, 0, 52, rot, rot + Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+
+            // 2. 다크 티타늄 / 기계 받침대 (Octagonal Base)
+            let baseGrad = ctx.createLinearGradient(x - 45, y + 10, x + 45, y + 34);
+            baseGrad.addColorStop(0, '#334155');
+            baseGrad.addColorStop(0.5, '#1e293b');
+            baseGrad.addColorStop(1, '#0f172a');
+            ctx.fillStyle = baseGrad;
+            ctx.beginPath();
+            ctx.roundRect(x - 45, y + 12, 90, 22, 6);
+            ctx.fill();
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 사이버 네온 라인 (받침대 정면)
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.moveTo(x - 38, y + 23);
+            ctx.lineTo(x + 38, y + 23);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // 3. 기계 모루 / 프레임 기둥 (Cyber Anvil & Machinery Columns)
+            let pillarGrad = ctx.createLinearGradient(x - 30, y - 25, x + 30, y + 12);
+            pillarGrad.addColorStop(0, '#475569');
+            pillarGrad.addColorStop(0.5, '#334155');
+            pillarGrad.addColorStop(1, '#1e293b');
+            ctx.fillStyle = pillarGrad;
+            // 좌우 지지 암
+            ctx.fillRect(x - 34, y - 18, 14, 32);
+            ctx.fillRect(x + 20, y - 18, 14, 32);
+            // 중앙 모루 베이스
+            ctx.beginPath();
+            ctx.roundRect(x - 24, y - 8, 48, 22, 4);
+            ctx.fill();
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // 4. 부유하는 마법 크래프팅 코어 / 크리스탈 (Floating Mystic Synthesis Crystal)
+            ctx.save();
+            ctx.translate(x, y - 18 + floatY);
+
+            // 회전하는 에너지 룬 링
+            ctx.strokeStyle = '#a855f7';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = '#c084fc';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 26, 10, rot, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#38bdf8';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 26, 10, -rot * 1.3, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 다이아몬드 크리스탈 코어
+            let coreGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 16);
+            coreGrad.addColorStop(0, '#ffffff');
+            coreGrad.addColorStop(0.4, '#38bdf8');
+            coreGrad.addColorStop(0.8, '#818cf8');
+            coreGrad.addColorStop(1, '#4f46e5');
+            ctx.fillStyle = coreGrad;
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 16;
+            ctx.beginPath();
+            ctx.moveTo(0, -18);
+            ctx.lineTo(13, 0);
+            ctx.lineTo(0, 18);
+            ctx.lineTo(-13, 0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#e0e7ff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.restore();
+
+            // 5. 사이버 포지 해머 / 크래프팅 암 (Hammer & Welder Arms)
+            ctx.save();
+            ctx.translate(x + 28, y - 10 + floatY * 0.5);
+            ctx.rotate(Math.sin(t * 0.006) * 0.25 - 0.2);
+            ctx.fillStyle = '#64748b';
+            ctx.fillRect(-3, -26, 6, 28);
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(-8, -32, 16, 10);
+            ctx.strokeStyle = '#fef08a';
+            ctx.strokeRect(-8, -32, 16, 10);
+            ctx.restore();
+
+            // 6. 하단 네온 간판 배너
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x - 56, y + 36, 112, 22, 6);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = '#0284c7';
+            ctx.shadowBlur = 6;
+            ctx.fillText("⚔️ 크레프팅 머신", x, y + 47);
+            ctx.shadowBlur = 0;
+
+            // 7. 상단 플로팅 배너: 🔒 일요일 공개!
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x - 65, y - 56 + floatY, 130, 24, 7);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#fca5a5';
+            ctx.font = '900 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = '#000';
+            ctx.shadowBlur = 4;
+            ctx.fillText("🔒 일요일 공개!", x, y - 44 + floatY);
+            ctx.shadowBlur = 0;
+
+            ctx.restore();
+        }
+
         function drawFuseBuilding(ctx, bld) {
             const x = bld.x; 
             const y = bld.y;
@@ -22619,10 +22885,9 @@
             ctx.fillStyle = '#ff9f43'; ctx.fillRect(x + 150, y - 18, 10, 12);
 
             // 8. 상단 네온 간판 배너 (어드민 트레이드 머신 / 퓨즈머신)
-            const tradeActive = isTradeMachineActive();
-            ctx.fillStyle = tradeActive ? '#7f1d1d' : '#d35400';
+            ctx.fillStyle = '#d35400';
             ctx.fillRect(x + 30, y + 52, 136, 26);
-            ctx.strokeStyle = tradeActive ? '#ef4444' : '#f39c12'; ctx.lineWidth = 2;
+            ctx.strokeStyle = '#f39c12'; ctx.lineWidth = 2;
             ctx.strokeRect(x + 30, y + 52, 136, 26);
 
             ctx.fillStyle = '#ffffff';
@@ -22630,43 +22895,8 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-            ctx.fillText(tradeActive ? "⚔️ 크레프팅 머신" : "호박 융합", x + 98, y + 65);
+            ctx.fillText("🎃 호박 융합 머신", x + 98, y + 65);
             ctx.shadowBlur = 0;
-
-            // 9. 머리 위 배너: "오늘 9시에 오픈" vs "한정수량 2명 선착순"
-            let floatY = Math.sin(Date.now() * 0.005) * 4;
-            if (tradeActive) {
-                const bannerText = "🔒 일요일 공개!";
-
-                ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
-                ctx.strokeStyle = '#ef4444'; 
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.roundRect(x + 18, y - 78 + floatY, 160, 26, 8);
-                ctx.fill(); ctx.stroke();
-
-                ctx.fillStyle = '#fca5a5';
-                ctx.font = '900 13px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-                ctx.fillText(bannerText, x + 98, y - 65 + floatY);
-                ctx.shadowBlur = 0;
-            } else {
-                ctx.fillStyle = 'rgba(220, 38, 38, 0.92)';
-                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.roundRect(x + 22, y - 78 + floatY, 152, 26, 8);
-                ctx.fill(); ctx.stroke();
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
-                ctx.fillText("⚠️ 오늘 9시에 삭제!", x + 98, y - 65 + floatY);
-                ctx.shadowBlur = 0;
-            }
 
             ctx.restore();
         }
@@ -22948,8 +23178,21 @@
             ctx.fillStyle = '#273c75'; ctx.fillRect(0, -3000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#2c3e50'; ctx.fillRect(0, -2000, GAME_WIDTH, 1000);  
             ctx.fillStyle = '#cf3a24'; ctx.fillRect(0, -1000, GAME_WIDTH, 1000); 
-            ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1000); 
-            ctx.fillStyle = '#2c124d'; ctx.fillRect(0, 1000, GAME_WIDTH, 1600); // Halloween (하단부 2600까지 확장)
+            // 🌿 일반 지역 연장 (Y: 1150까지 잔디 대지 확장)
+            ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1150); 
+            // 🌫️ 파괴된 할로윈 폐허 (잿빛 먼지와 어두운 지형)
+            ctx.fillStyle = '#1c1921'; ctx.fillRect(0, 1150, GAME_WIDTH, 1450); 
+            // 🌫️ 할로윈 폐허 먼지 & 잿빛 안개 오버레이 (사용자 요청: 먼지가 껴있음)
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.16)';
+            ctx.fillRect(0, 1150, GAME_WIDTH, 1450);
+            let dustT = Date.now() * 0.001;
+            ctx.fillStyle = 'rgba(203, 213, 225, 0.35)';
+            for (let d = 0; d < 25; d++) {
+                let dx = ((d * 97 + dustT * 30) % GAME_WIDTH);
+                let dy = 1160 + ((d * 67 + dustT * 15) % 1400);
+                let dr = (d % 3 === 0) ? 2.5 : 1.5;
+                ctx.beginPath(); ctx.arc(dx, dy, dr, 0, Math.PI * 2); ctx.fill();
+            }
 
             // ❄️ 얼음의 협곡 경계선 (Y: -8000, 관리자 전용)
             ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -8000); ctx.lineTo(GAME_WIDTH, -8000); ctx.stroke();
@@ -22962,8 +23205,8 @@
             ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -7000); ctx.lineTo(GAME_WIDTH, -7000); ctx.stroke();
             ctx.fillStyle = '#a29bfe'; ctx.fillText("🚀 미지의 영역: 우주 지역 (레벨 105 진입 가능)", GAME_WIDTH / 2, -7020);
 
-            ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1000); ctx.lineTo(GAME_WIDTH, 1000); ctx.stroke();
-            ctx.fillStyle = '#f39c12'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("🎃 축제: 할로윈 지역 (레벨 1 진입 가능)", GAME_WIDTH / 2, 1035);
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1150); ctx.lineTo(GAME_WIDTH, 1150); ctx.stroke();
+            ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("🌫️ 폐허: 파괴된 할로윈 폐허 (출입 통제 구역)", GAME_WIDTH / 2, 1185);
 
             ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(GAME_WIDTH, 0); ctx.stroke();
             ctx.fillStyle = '#d35400'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("🔥 위험: 불꽃 지역 (레벨 3 진입 가능)", GAME_WIDTH / 2, -20);
@@ -23027,7 +23270,10 @@
                 renderList.push({ type: 'halloweenBeacon', obj: halloweenTeleporterBeacon, y: halloweenTeleporterBeacon.y });
             }
             renderList.push({ type: 'rankingBoard', obj: rankingBoard, y: rankingBoard.y });
-            renderList.push({ type: 'rouletteMachine', obj: rouletteMachine, y: rouletteMachine.y });
+            if (typeof craftingMachine !== 'undefined') {
+                renderList.push({ type: 'craftingMachine', obj: craftingMachine, y: craftingMachine.y });
+            }
+            // 룰렛 머신 삭제 (사용자 요청: 룰렛은 일단 삭제해줘)
 
             renderList.sort((a, b) => a.y - b.y);
 
@@ -23189,56 +23435,57 @@
                             ctx.fill(); ctx.stroke();
                         });
                     } else if (t.type === 'halloween') {
-                        // 얼굴 있는 거대한 잭오랜턴 호박 나무
-                        // 호박 꼭지(줄기)
-                        ctx.fillStyle = '#27ae60'; ctx.beginPath();
-                        ctx.roundRect(-10, -t.radius*1.2 - 25, 20, 30, 4); ctx.fill();
-
-                        // 호박 몸통 (3단 볼륨감)
-                        ctx.fillStyle = '#d35400';
-                        ctx.beginPath(); ctx.ellipse(-t.radius*0.45, -t.radius*0.65, t.radius*0.45, t.radius*0.6, 0, 0, Math.PI*2); ctx.fill();
-                        ctx.beginPath(); ctx.ellipse(t.radius*0.45, -t.radius*0.65, t.radius*0.45, t.radius*0.6, 0, 0, Math.PI*2); ctx.fill();
-                        ctx.fillStyle = '#e67e22';
-                        ctx.beginPath(); ctx.ellipse(-t.radius*0.22, -t.radius*0.65, t.radius*0.42, t.radius*0.65, 0, 0, Math.PI*2); ctx.fill();
-                        ctx.beginPath(); ctx.ellipse(t.radius*0.22, -t.radius*0.65, t.radius*0.42, t.radius*0.65, 0, 0, Math.PI*2); ctx.fill();
-                        ctx.fillStyle = '#f39c12';
-                        ctx.beginPath(); ctx.ellipse(0, -t.radius*0.65, t.radius*0.35, t.radius*0.68, 0, 0, Math.PI*2); ctx.fill();
-
-                        // 호박 세로 골선(입체감)
-                        ctx.strokeStyle = '#ba4a00'; ctx.lineWidth = 3;
-                        ctx.beginPath(); ctx.ellipse(-t.radius*0.22, -t.radius*0.65, t.radius*0.42, t.radius*0.65, 0, 0, Math.PI*2); ctx.stroke();
-                        ctx.beginPath(); ctx.ellipse(t.radius*0.22, -t.radius*0.65, t.radius*0.42, t.radius*0.65, 0, 0, Math.PI*2); ctx.stroke();
-                        ctx.beginPath(); ctx.ellipse(0, -t.radius*0.65, t.radius*0.35, t.radius*0.68, 0, 0, Math.PI*2); ctx.stroke();
-
-                        // 호박 얼굴 조각 (빛나는 노란 눈/코/지그재그 입)
-                        ctx.shadowColor = '#f1c40f'; ctx.shadowBlur = 18;
-                        ctx.fillStyle = '#f1c40f';
-
-                        // 왼쪽 눈 (삼각형)
-                        ctx.beginPath(); ctx.moveTo(-t.radius*0.35, -t.radius*0.8); ctx.lineTo(-t.radius*0.12, -t.radius*0.8); ctx.lineTo(-t.radius*0.23, -t.radius*0.95); ctx.closePath(); ctx.fill();
-                        // 오른쪽 눈 (삼각형)
-                        ctx.beginPath(); ctx.moveTo(t.radius*0.12, -t.radius*0.8); ctx.lineTo(t.radius*0.35, -t.radius*0.8); ctx.lineTo(t.radius*0.23, -t.radius*0.95); ctx.closePath(); ctx.fill();
-                        // 코 (삼각형)
-                        ctx.beginPath(); ctx.moveTo(0, -t.radius*0.75); ctx.lineTo(-t.radius*0.08, -t.radius*0.65); ctx.lineTo(t.radius*0.08, -t.radius*0.65); ctx.closePath(); ctx.fill();
-
-                        // 지그재그 웃는 입
-                        let my = -t.radius*0.45;
+                        // 💥 사용자 요청: 두동강 난 부러진 나무 (밑동과 쓰러진 줄기)
+                        // 1. 부러진 거친 밑동 (Standing Splintered Stump)
+                        ctx.fillStyle = '#2d3436';
                         ctx.beginPath();
-                        ctx.moveTo(-t.radius*0.35, my);
-                        ctx.lineTo(-t.radius*0.22, my + 14);
-                        ctx.lineTo(-t.radius*0.12, my);
-                        ctx.lineTo(0, my + 14);
-                        ctx.lineTo(t.radius*0.12, my);
-                        ctx.lineTo(t.radius*0.22, my + 14);
-                        ctx.lineTo(t.radius*0.35, my);
-                        ctx.lineTo(t.radius*0.22, my - 10);
-                        ctx.lineTo(t.radius*0.12, my);
-                        ctx.lineTo(0, my - 10);
-                        ctx.lineTo(-t.radius*0.12, my);
-                        ctx.lineTo(-t.radius*0.22, my - 10);
+                        ctx.moveTo(-t.trunkRadius * 0.9, trunkBottom);
+                        ctx.lineTo(-t.trunkRadius * 0.8, 10);
+                        ctx.lineTo(-18, -12);
+                        ctx.lineTo(-8, 5);
+                        ctx.lineTo(5, -22);
+                        ctx.lineTo(15, -6);
+                        ctx.lineTo(t.trunkRadius * 0.8, 12);
+                        ctx.lineTo(t.trunkRadius * 0.9, trunkBottom);
                         ctx.closePath();
                         ctx.fill();
-                        ctx.shadowBlur = 0;
+                        ctx.strokeStyle = '#1b1464'; ctx.lineWidth = 2.5; ctx.stroke();
+
+                        // 2. 바닥에 쓰러진 두동강 난 호박 줄기 (Collapsed Broken Log)
+                        ctx.save();
+                        ctx.translate(65, 38);
+                        ctx.rotate(0.55);
+                        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+                        ctx.beginPath(); ctx.ellipse(0, 16, 48, 15, 0, 0, Math.PI * 2); ctx.fill();
+
+                        // 깨진 호박 조각 좌
+                        ctx.fillStyle = '#78350f';
+                        ctx.beginPath(); ctx.ellipse(-20, 0, 26, 20, -0.2, 0, Math.PI * 2); ctx.fill();
+                        ctx.strokeStyle = '#451a03'; ctx.lineWidth = 2; ctx.stroke();
+
+                        // 깨진 호박 조각 우
+                        ctx.fillStyle = '#9a3412';
+                        ctx.beginPath(); ctx.ellipse(18, -4, 25, 18, 0.25, 0, Math.PI * 2); ctx.fill();
+                        ctx.strokeStyle = '#451a03'; ctx.lineWidth = 2; ctx.stroke();
+
+                        // 부러진 금
+                        ctx.strokeStyle = '#000000'; ctx.lineWidth = 2.5;
+                        ctx.beginPath(); ctx.moveTo(-4, -20); ctx.lineTo(1, 4); ctx.lineTo(-3, 20); ctx.stroke();
+
+                        // 꺼진 잭오랜턴 눈
+                        ctx.fillStyle = '#1c1917';
+                        ctx.beginPath(); ctx.moveTo(-15, -6); ctx.lineTo(-8, -12); ctx.lineTo(-4, -5); ctx.fill();
+                        ctx.beginPath(); ctx.moveTo(8, -10); ctx.lineTo(16, -15); ctx.lineTo(19, -7); ctx.fill();
+                        ctx.restore();
+
+                        // 3. 피어오르는 연기와 먼지
+                        let smk = Date.now() * 0.002;
+                        for (let s = 0; s < 3; s++) {
+                            let sx = Math.sin(smk + s * 2) * 16 + 10;
+                            let sy = -((smk * 20 + s * 15) % 45);
+                            ctx.fillStyle = 'rgba(148, 163, 184, 0.22)';
+                            ctx.beginPath(); ctx.arc(sx, sy, 7 + s * 2, 0, Math.PI * 2); ctx.fill();
+                        }
                     } else if (t.type === 'radioactive') {
                         // 고급스러운 에메랄드 금장 방사능 나무
                         let leafGrad = ctx.createRadialGradient(0, -60, 20, 0, -50, t.radius);
@@ -23434,8 +23681,10 @@
                     drawHalloweenTeleporterBeacon(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'rankingBoard') {
                     drawRankingBoard(ctx, item.obj.x, item.obj.y);
+                } else if (item.type === 'craftingMachine') {
+                    drawCraftingMachine(ctx, item.obj);
                 } else if (item.type === 'rouletteMachine') {
-                    drawRouletteMachine(ctx, item.obj.x, item.obj.y);
+                    // 삭제됨
                 } else if (item.type === 'adminSword') {
                     drawAdminSwordInGround(ctx, item.obj);
                 } else if (item.type === 'invaderDevil') {
