@@ -4104,6 +4104,22 @@
         };
 
         let ownedFarmEquipments = [];
+        let farmEquipmentExpireTimes = {};
+        try {
+            const savedExp = localStorage.getItem('tb_farm_eq_expires');
+            if (savedExp) farmEquipmentExpireTimes = JSON.parse(savedExp) || {};
+        } catch(e) {}
+
+        function updateActiveFarmEquipments() {
+            const now = Date.now();
+            ownedFarmEquipments = Object.keys(farmEquipmentExpireTimes).filter(id => (farmEquipmentExpireTimes[id] || 0) > now);
+            try {
+                localStorage.setItem('tb_farm_equipments', JSON.stringify(ownedFarmEquipments));
+            } catch(e) {}
+        }
+        updateActiveFarmEquipments();
+        setInterval(updateActiveFarmEquipments, 1000);
+
         const FARM_EQUIPMENT_DATA = [
             {
                 id: 'golden_watering_can',
@@ -4691,10 +4707,20 @@
         // ============================================================================
         // 🛠️ 밭 & 장비 업그레이드 상점 시스템
         // ============================================================================
+        let farmUpgradeTimerInterval = null;
         function openFarmUpgradeModal() {
             updateFarmUpgradeModalUI();
             const modal = document.getElementById('farm-upgrade-modal');
             if (modal) modal.style.display = 'block';
+            if (farmUpgradeTimerInterval) clearInterval(farmUpgradeTimerInterval);
+            farmUpgradeTimerInterval = setInterval(() => {
+                const m = document.getElementById('farm-upgrade-modal');
+                if (m && m.style.display === 'block') {
+                    updateFarmUpgradeModalUI();
+                } else {
+                    clearInterval(farmUpgradeTimerInterval);
+                }
+            }, 1000);
         }
 
         function closeFarmUpgradeModal() {
@@ -4750,20 +4776,33 @@
                 eqList.style.gap = '10px';
 
                 FARM_EQUIPMENT_DATA.forEach(eq => {
-                    const isOwned = ownedFarmEquipments.includes(eq.id);
+                    const now = Date.now();
+                    const expMs = farmEquipmentExpireTimes[eq.id] || 0;
+                    const isActive = expMs > now;
+
+                    let timerBadgeHtml = '';
                     let buyBtnHtml = '';
-                    if (isOwned) {
-                        buyBtnHtml = `<button disabled style="width: 100%; background: #475569; color: #94a3b8; border: none; padding: 7px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: default;">장착 중</button>`;
+
+                    if (isActive) {
+                        const remainSec = Math.ceil((expMs - now) / 1000);
+                        const rm = Math.floor(remainSec / 60);
+                        const rs = remainSec % 60;
+                        const rsPad = rs < 10 ? '0' + rs : rs;
+                        timerBadgeHtml = `<div style="font-size: 11px; font-weight: 800; color: #4ade80; margin-bottom: 4px; background: rgba(74, 222, 128, 0.15); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 6px; padding: 2px 6px;">⏰ 적용 중: ${rm}분 ${rsPad}초</div>`;
+                        buyBtnHtml = `<button onclick="buyFarmEquipment('${eq.id}')" style="width: 100%; background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); color: white; border: none; padding: 7px; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 3px 0 #1e40af;">+5분 연장</button>`;
                     } else {
-                        buyBtnHtml = `<button onclick="buyFarmEquipment('${eq.id}')" style="width: 100%; background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%); color: white; border: none; padding: 7px; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 0 #15803d;">구매</button>`;
+                        timerBadgeHtml = `<div style="font-size: 10.5px; color: #94a3b8; margin-bottom: 4px;">⏱️ 구매 시 5분 적용</div>`;
+                        buyBtnHtml = `<button onclick="buyFarmEquipment('${eq.id}')" style="width: 100%; background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%); color: white; border: none; padding: 7px; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 0 #15803d;">구매 (5분)</button>`;
                     }
 
                     eqList.innerHTML += `
-                        <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(56, 189, 248, 0.4); border-radius: 12px; padding: 10px 8px; display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: space-between;">
+                        <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid ${isActive ? '#4ade80' : 'rgba(56, 189, 248, 0.4)'}; border-radius: 12px; padding: 10px 8px; display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: space-between; box-shadow: ${isActive ? '0 0 15px rgba(74, 222, 128, 0.25)' : 'none'};">
                             <!-- 1. 제품 사진 / 아이콘 -->
                             <div style="font-size: 34px; margin-bottom: 2px;">${eq.icon}</div>
                             <div style="font-size: 13px; font-weight: bold; color: #ffffff; margin-bottom: 2px;">${eq.name}</div>
-                            <div style="font-size: 10px; color: #38bdf8; margin-bottom: 6px;">${eq.effectText}</div>
+                            <div style="font-size: 10px; color: #38bdf8; margin-bottom: 4px;">${eq.effectText}</div>
+                            <!-- 타이머 뱃지 -->
+                            ${timerBadgeHtml}
                             <!-- 2. 돈 버튼 (가격) -->
                             <div style="background: rgba(0,0,0,0.5); border: 1px solid #facc15; border-radius: 6px; padding: 4px 8px; font-weight: 900; color: #facc15; font-size: 12px; margin-bottom: 6px; width: 85%;">💰 ${eq.price.toLocaleString()}</div>
                             <!-- 3. 밑에 사는 버튼 (구매) -->
@@ -4806,11 +4845,6 @@
             const eq = FARM_EQUIPMENT_DATA.find(e => e.id === eqId);
             if (!eq) return;
 
-            if (ownedFarmEquipments.includes(eqId)) {
-                alert('이미 보유하고 있는 장비입니다!');
-                return;
-            }
-
             if (!isAdmin() && money < eq.price) {
                 alert(`골드가 부족합니다! (필요: 💰 ${eq.price.toLocaleString()} 골드)`);
                 return;
@@ -4821,13 +4855,23 @@
                 updateMoney();
             }
 
-            ownedFarmEquipments.push(eqId);
+            const now = Date.now();
+            const DURATION_5MIN = 5 * 60 * 1000; // 5분 (300,000ms)
+            const curExp = farmEquipmentExpireTimes[eqId] || 0;
+            if (curExp > now) {
+                farmEquipmentExpireTimes[eqId] = curExp + DURATION_5MIN;
+            } else {
+                farmEquipmentExpireTimes[eqId] = now + DURATION_5MIN;
+            }
+
             try {
-                localStorage.setItem('tb_farm_equipments', JSON.stringify(ownedFarmEquipments));
+                localStorage.setItem('tb_farm_eq_expires', JSON.stringify(farmEquipmentExpireTimes));
             } catch(e) {}
+
+            updateActiveFarmEquipments();
             saveGame(true);
 
-            floatTexts.push({ x: player.x, y: player.y - 70, text: `✨ [${eq.name}] 구매 완료! 영구 적용`, color: '#38bdf8', life: 80, size: 20 });
+            floatTexts.push({ x: player.x, y: player.y - 70, text: `✨ [${eq.name}] 5분간 적용 시작!`, color: '#38bdf8', life: 80, size: 20 });
             updateFarmUpgradeModalUI();
         }
 
@@ -5816,6 +5860,34 @@
             ctx.fillText('🚪 나가기', 517, 43);
 
             ctx.restore();
+
+            // 6-1. 활성화된 5분 아이템 버프 표시 (상단 배너)
+            const activeItems = FARM_EQUIPMENT_DATA.filter(eq => (farmEquipmentExpireTimes[eq.id] || 0) > now);
+            if (activeItems.length > 0) {
+                let chipX = 25;
+                activeItems.forEach(eq => {
+                    const remainSec = Math.ceil(((farmEquipmentExpireTimes[eq.id] || 0) - now) / 1000);
+                    const rm = Math.floor(remainSec / 60);
+                    const rs = remainSec % 60;
+                    const text = `${eq.icon} ${eq.name} ${rm}:${rs < 10 ? '0' + rs : rs}`;
+                    
+                    ctx.font = 'bold 11px Arial';
+                    const tw = ctx.measureText(text).width + 16;
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+                    ctx.strokeStyle = '#38bdf8';
+                    ctx.lineWidth = 1.2;
+                    ctx.beginPath();
+                    ctx.roundRect(chipX, 68, tw, 22, 6);
+                    ctx.fill();
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = '#38bdf8';
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(text, chipX + 8, 79);
+                    chipX += tw + 8;
+                });
+            }
 
             // 7. 부유 텍스트
             floatTexts.forEach(t => {
