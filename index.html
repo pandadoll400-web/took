@@ -446,7 +446,7 @@
                 <!-- 상단 헤더: "오늘 좋은거 얻음????????" -->
                 <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px;">
                     <span style="font-size: 24px;">👑</span>
-                    <span style="font-size: 19px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">오늘 좋은거 얻음????????</span>
+                    <span id="wl-topic-title" style="font-size: 21px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">are you wate yesterday ?</span>
                 </div>
                 <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px; font-weight: 500;">
                     1인 1회 선택 가능 · <span id="wl-poll-timer-badge" style="color: #f59e0b; font-weight: 700;">30초</span> 후 자동 닫힘
@@ -499,6 +499,15 @@
         </div>
 
         <!-- 🦑 심연의 크라켄 필드 보스 최초 처치 공지 배너 (화면 가운데 노출) -->
+                <!-- 🔨 FORGE 중앙 공지 배너 (time to start abuse) -->
+        <div id="forge-announcement-banner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); z-index: 9999; display: none; opacity: 0; transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; pointer-events: none; text-align: center;">
+            <div style="background: rgba(10, 10, 18, 0.96); border: 3px solid #f59e0b; border-radius: 24px; padding: 26px 42px; min-width: 340px; max-width: 90vw; box-shadow: 0 20px 70px rgba(0, 0, 0, 0.95), 0 0 45px rgba(245, 158, 11, 0.6); backdrop-filter: blur(14px); box-sizing: border-box;">
+                <div style="font-size: 40px; margin-bottom: 8px; filter: drop-shadow(0 0 14px rgba(245, 158, 11, 0.85));">🔨 ⚡ 🔥</div>
+                <div id="forge-announcement-text" style="font-size: 26px; font-weight: 950; color: #facc15; text-shadow: 0 0 18px rgba(245, 158, 11, 0.8), 0 2px 6px #000; letter-spacing: -0.5px;">
+                    FORGE: time to start abuse
+                </div>
+            </div>
+        </div>
         <div id="kraken-kill-banner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); z-index: 9999; display: none; opacity: 0; transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif; pointer-events: auto;">
             <div style="background: linear-gradient(145deg, rgba(8, 15, 30, 0.96), rgba(4, 30, 45, 0.96)); border: 3px solid #00cec9; border-radius: 28px; padding: 28px 36px; min-width: 320px; max-width: 90vw; box-shadow: 0 25px 80px rgba(0, 0, 0, 0.95), 0 0 50px rgba(0, 206, 201, 0.6), inset 0 0 20px rgba(0, 206, 201, 0.2); backdrop-filter: blur(14px); text-align: center; color: #fff; position: relative; box-sizing: border-box;">
                 
@@ -734,6 +743,7 @@
                 <button onclick="closeAdminPanelModal()" style="background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; line-height: 1;">✕</button>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="adminTrigger830PmEventNow()" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45); grid-column: span 2;">🔥 [이벤트] 8:30 FORGE 어뷰즈&투표 즉시 실행 (테스트용)</button>
                 <button onclick="adminToggleTradeMachine()" style="padding: 10px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.45);">⚔️ [이벤트] 퓨즈 삭제 ➔ 트레이드 머신 전환 토글</button>
                 <button onclick="adminRefillTradeStock()" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);">🔄 [트레이드 머신] 선착순 재고 2개 즉시 충전</button>
                 <button onclick="adminFastForwardIncubator()" style="padding: 10px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.45);">⚡ [인큐베이터] 5분 배양 즉시 완료</button>
@@ -5112,6 +5122,13 @@
 
             // 확률 수확
             if (seedKey === 'kraken') {
+                if (typeof isFarmSkinLuckActive !== 'undefined' && isFarmSkinLuckActive) {
+                    const eventRoll = Math.random() * 100;
+                    if (eventRoll < 50) {
+                        awardFarmSkin('frost_dragon', '서리룡', '🔥 [이벤트 럭 50%] 초희귀 수확', '#38bdf8', '❄️ 전설의 혹한 수호신 고대 서리룡 스킨을 수확했습니다!!');
+                        return;
+                    }
+                }
                 const roll = Math.random() * 100;
                 if (!hasSprayer) {
                     if (roll < 75) {
@@ -5132,6 +5149,20 @@
                     }
                 }
             } else if (seedKey === 'halloween') {
+                // 🔥 8:30 이벤트: 농장 스킨 잘 뜨는 럭 활성화 (호박/악마 스킨 확률 대폭 상승)
+                if (typeof isFarmSkinLuckActive !== 'undefined' && isFarmSkinLuckActive) {
+                    const eventRoll = Math.random() * 100;
+                    if (eventRoll < 60) {
+                        awardFarmSkin('jack_fiery', '불타는 잭오랜턴', '🔥 [이벤트 럭 60%] 전설 수확', '#e67e22', '불타오르는 영혼의 잭오랜턴 스킨을 수확했습니다!');
+                        if (Math.random() < 0.4) {
+                            inventory['잭오랜턴'] = (inventory['잭오랜턴'] || 0) + 1;
+                        }
+                        return;
+                    } else if (eventRoll < 85) {
+                        awardFarmSkin('halloween_devil', '할로윈의 악마', '🔥 [이벤트 럭 25%] 신화 수확', '#ff4757', '어둠의 심연에서 강림한 할로윈의 악마 스킨을 수확했습니다!!');
+                        return;
+                    }
+                }
                 const roll = Math.random() * 100;
                 if (!hasSprayer) {
                     if (roll < 70) {
@@ -18647,33 +18678,183 @@
         }
 
         let isLuck15Active = false;
+        let isFarmSkinLuckActive = false;
+        let forgeAbuseEventStarted = false;
         let halloweenInvaderDevil = null;
+
+        // 오늘 20:30 이후 로드/새로고침 시 즉시 럭 활성화
+        try {
+            const nowCheck = new Date();
+            const targetMsCheck = new Date(nowCheck.getFullYear(), nowCheck.getMonth(), nowCheck.getDate(), 20, 30, 0, 0).getTime();
+            if (nowCheck.getTime() >= targetMsCheck) {
+                isLuck15Active = true;
+                isFarmSkinLuckActive = true;
+            }
+        } catch (e) {}
+
+        // ============================================================================
+        // 🔥 오늘 20:30 (오후 8시 30분) FORGE ABUSE & TOPIC 투표 이벤트 시스템
+        // ============================================================================
+        function checkAndTrigger830PmEvent() {
+            const now = new Date();
+            const targetMs = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 30, 0, 0).getTime();
+            
+            // 오늘 20:30 정각이 되거나 지났을 때 (새로고침 시에도 다시 재생)
+            if (now.getTime() >= targetMs) {
+                if (!forgeAbuseEventStarted) {
+                    forgeAbuseEventStarted = true;
+                    // 페이지 로드/새로고침 직후 캔버스와 DOM 안정화 후 부드럽게 재생
+                    setTimeout(() => {
+                        runForgeAbuseSequence();
+                    }, 600);
+                }
+            }
+        }
+
+        // 초기 로드 600ms 후 체크 및 매 500ms 주기적 체크
+        setTimeout(checkAndTrigger830PmEvent, 600);
+        setInterval(checkAndTrigger830PmEvent, 500);
+
+        function adminTrigger830PmEventNow() {
+            if (typeof closeAdminPanelModal === 'function') closeAdminPanelModal();
+            forgeAbuseEventStarted = true;
+            runForgeAbuseSequence();
+        }
+        window.adminTrigger830PmEventNow = adminTrigger830PmEventNow;
+        window.test830Event = adminTrigger830PmEventNow;
+
+        function runForgeAbuseSequence() {
+            // 1. 1.5배 럭 & 농장 스킨 잘 뜨는 럭 동시 발동
+            isLuck15Active = true;
+            isFarmSkinLuckActive = true;
+
+            // 2. 화면 가운데 공지 1: "FORGE: time to start abuse"
+            const banner = document.getElementById('forge-announcement-banner');
+            const textEl = document.getElementById('forge-announcement-text');
+            if (banner && textEl) {
+                textEl.innerText = 'FORGE: time to start abuse';
+                banner.style.display = 'block';
+                banner.style.opacity = '0';
+                banner.style.transform = 'translate(-50%, -50%) scale(0.9)';
+                setTimeout(() => {
+                    banner.style.opacity = '1';
+                    banner.style.transform = 'translate(-50%, -50%) scale(1.05)';
+                }, 50);
+            }
+
+            if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                floatTexts.push({ x: player.x, y: player.y - 100, text: '🔥 [FORGE] time to start abuse (1.5배 럭 & 농장스킨 럭 발동!)', color: '#facc15', life: 140, size: 22 });
+            }
+
+            // 3. 5초 뒤 바로 공지 2: "FORGE:sorry,today we have a topic"
+            setTimeout(() => {
+                if (banner && textEl) {
+                    textEl.innerText = 'FORGE:sorry,today we have a topic';
+                    banner.style.transform = 'translate(-50%, -50%) scale(1.08)';
+                }
+
+                // 4. 공지 확인 후 바로 화면에 투표 띄움
+                setTimeout(() => {
+                    if (banner) {
+                        banner.style.opacity = '0';
+                        banner.style.transform = 'translate(-50%, -50%) scale(0.9)';
+                        setTimeout(() => { banner.style.display = 'none'; }, 400);
+                    }
+                    startTopicPoll();
+                }, 1300);
+            }, 5000);
+        }
+
         // ==========================================
-        // 👑 실시간 W/L 투표 시스템 ("오늘 좋은거 얻음????????")
+        // 👑 실시간 W/L 투표 ("are you wate yesterday ?")
         // ==========================================
         let wlPollTimer = 30; // 30초 동안 띄움
         let wlPollTimerInterval = null;
         let wlFakeTickInterval = null;
-        let wlTickStep = 0;
-        let wlCountW = 1; // 1부터 시작하여 15표까지 1씩 증가
-        let wlCountL = 0; // 0부터 시작하여 5표까지 1씩 증가
+        let wlCountW = 0; // 0부터 1씩 17명까지 증가
+        let wlCountL = 0; // 0부터 1씩 7명까지 증가
         let wlUserVoted = false;
-        const WL_TARGET_W = 15;
-        const WL_TARGET_L = 5;
-        const WL_STORAGE_KEY = 'wl_user_voted_good_item_today_v1';
-        const WL_W_COUNT_KEY = 'wl_count_w_good_item_today_v1';
-        const WL_L_COUNT_KEY = 'wl_count_l_good_item_today_v1';
+        const WL_STORAGE_KEY = 'wl_user_voted_topic_are_you_wate_v1';
 
-        function startWLPoll() {
+        function startTopicPoll() {
             const overlay = document.getElementById('wl-poll-overlay');
-            if (overlay) {
-                overlay.style.display = 'none';
-                overlay.style.opacity = '0';
-            }
-            if (wlFakeTickInterval) clearInterval(wlFakeTickInterval);
-            if (wlPollTimerInterval) clearInterval(wlPollTimerInterval);
-        }
+            if (!overlay) return;
 
+            // 새로고침 재생 시에도 0부터 1씩 17, 7까지 카운트업
+            wlCountW = 0;
+            wlCountL = 0;
+            wlUserVoted = false;
+            updateWLPollUI();
+
+            const statusMsg = document.getElementById('wl-status-msg');
+            if (statusMsg) {
+                statusMsg.innerHTML = 'W 또는 L을 눌러 투표하세요!';
+            }
+            const btnW = document.getElementById('wl-btn-w');
+            const btnL = document.getElementById('wl-btn-l');
+            if (btnW) {
+                btnW.style.borderColor = '#60a5fa';
+                btnW.style.boxShadow = '0 8px 20px rgba(37, 99, 235, 0.4)';
+                btnW.style.transform = 'scale(1)';
+                btnW.style.opacity = '1';
+                btnW.style.filter = 'none';
+            }
+            if (btnL) {
+                btnL.style.borderColor = '#fb7185';
+                btnL.style.boxShadow = '0 8px 20px rgba(225, 29, 72, 0.4)';
+                btnL.style.transform = 'scale(1)';
+                btnL.style.opacity = '1';
+                btnL.style.filter = 'none';
+            }
+
+            overlay.style.display = 'block';
+            overlay.style.opacity = '0';
+            overlay.style.transform = 'translate(-50%, -50%) scale(0.95)';
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                overlay.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 50);
+
+            // 30초 타이머
+            wlPollTimer = 30;
+            const timerBadge = document.getElementById('wl-poll-timer-badge');
+            const progBar = document.getElementById('wl-poll-progress-bar');
+            if (timerBadge) timerBadge.innerText = '30초';
+            if (progBar) progBar.style.width = '100%';
+
+            if (wlPollTimerInterval) clearInterval(wlPollTimerInterval);
+            wlPollTimerInterval = setInterval(() => {
+                wlPollTimer--;
+                if (timerBadge) timerBadge.innerText = `${wlPollTimer}초`;
+                if (progBar) progBar.style.width = `${(wlPollTimer / 30) * 100}%`;
+                if (wlPollTimer <= 0) {
+                    closeWLPollOverlay();
+                }
+            }, 1000);
+
+            // 사용자 요청: W 17명, L 7명까지 1씩 증가
+            if (wlFakeTickInterval) clearInterval(wlFakeTickInterval);
+            let tickCount = 0;
+            const lTicks = [2, 4, 7, 9, 11, 14, 16];
+            wlFakeTickInterval = setInterval(() => {
+                tickCount++;
+                let changed = false;
+                if (wlCountW < 17) {
+                    wlCountW++;
+                    changed = true;
+                }
+                if (wlCountL < 7 && lTicks.includes(tickCount)) {
+                    wlCountL++;
+                    changed = true;
+                }
+                if (changed) {
+                    updateWLPollUI();
+                }
+                if (wlCountW >= 17 && wlCountL >= 7) {
+                    clearInterval(wlFakeTickInterval);
+                }
+            }, 380);
+        }
 
         function updateWLPollUI() {
             const wText = document.getElementById('wl-count-w-text');
@@ -18694,33 +18875,30 @@
                 if (lBar) lBar.style.width = `${lRatio}%`;
                 if (wPct) wPct.innerText = `${wRatio}%`;
                 if (lPct) lPct.innerText = `${lRatio}%`;
+            } else {
+                if (wBar) wBar.style.width = '50%';
+                if (lBar) lBar.style.width = '50%';
+                if (wPct) wPct.innerText = '50%';
+                if (lPct) lPct.innerText = '50%';
             }
         }
 
         function voteWLPoll(choice) {
-            // 한 사람당 1번만 가능 체크
             let votedChoice = null;
             try {
                 votedChoice = localStorage.getItem(WL_STORAGE_KEY);
             } catch (e) {}
 
-            const overlay = document.getElementById('wl-poll-overlay');
             const statusMsg = document.getElementById('wl-status-msg');
 
             if (wlUserVoted || votedChoice) {
                 const chosen = votedChoice || (choice === 'W' ? 'W' : 'L');
-                if (overlay) {
-                    overlay.style.animation = 'none';
-                    void overlay.offsetWidth;
-                    overlay.style.animation = 'wlShake 0.4s ease';
-                }
                 if (statusMsg) {
-                    statusMsg.innerHTML = `<span style="color: #f87171; font-weight: 800;">⚠️ 이미 [${chosen}]에 투표하셨습니다! (한 사람당 1번만 가능)</span>`;
+                    statusMsg.innerHTML = `<span style="color: #f87171; font-weight: 800;">⚠️ 이미 [${chosen}]에 투표하셨습니다! (1인 1회 한정)</span>`;
                 }
                 return;
             }
 
-            // 1인 1회 투표 적용
             wlUserVoted = true;
             try {
                 localStorage.setItem(WL_STORAGE_KEY, choice);
@@ -18728,14 +18906,8 @@
 
             if (choice === 'W') {
                 wlCountW++;
-                try {
-                    localStorage.setItem(WL_W_COUNT_KEY, wlCountW.toString());
-                } catch (e) {}
             } else if (choice === 'L') {
                 wlCountL++;
-                try {
-                    localStorage.setItem(WL_L_COUNT_KEY, wlCountL.toString());
-                } catch (e) {}
             }
 
             updateWLPollUI();
@@ -18770,22 +18942,23 @@
             }
 
             if (statusMsg) {
-                statusMsg.innerHTML = `<span style="color: #4ade80; font-weight: 800;">✓ [${choice}] 선택 완료!</span> <span style="color: #94a3b8; font-size: 11px;">(한 사람당 1번만 가능)</span>`;
+                statusMsg.innerHTML = `<span style="color: #4ade80; font-weight: 800;">✓ [${choice}] 투표 완료!</span>`;
             }
         }
 
         function closeWLPollOverlay() {
             const overlay = document.getElementById('wl-poll-overlay');
             if (!overlay) return;
-            clearInterval(wlPollTimerInterval);
-            clearInterval(wlFakeTickInterval);
+            if (wlPollTimerInterval) clearInterval(wlPollTimerInterval);
+            if (wlFakeTickInterval) clearInterval(wlFakeTickInterval);
             overlay.style.opacity = '0';
             overlay.style.transform = 'translate(-50%, -50%) scale(0.9)';
             setTimeout(() => {
                 overlay.style.display = 'none';
             }, 400);
         }
-        window.startWLPoll = startWLPoll;
+        window.startTopicPoll = startTopicPoll;
+        window.startWLPoll = startTopicPoll;
         window.closeWLPollOverlay = closeWLPollOverlay;
         window.voteWLPoll = voteWLPoll;
         function triggerDevilInvasion() {}
@@ -18798,7 +18971,7 @@
         function showFuseLuckBuffInfo() {}
         function triggerForgeWelcomeOnce() {}
 
-        // 뿌린 럭 전체 종료 및 로컬 스토리지 정리
+                // 뿌린 럭 전체 종료 및 로컬 스토리지 정리
         try {
             localStorage.removeItem('fruit_luck_5m_end_time');
             localStorage.removeItem('fuse_luck_8m_end_time');
