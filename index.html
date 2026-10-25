@@ -713,6 +713,12 @@
                 </div>
                 <span class="hud-tile-label">코드</span>
             </button>
+            <button id="teleport-btn" class="hud-tile-btn" onclick="openTeleportModal()" style="border-color: #38bdf8;">
+                <div class="hud-tile-icon-wrap">
+                    <span style="font-size: 16px;">🌀</span>
+                </div>
+                <span class="hud-tile-label" style="color: #38bdf8;">워프</span>
+            </button>
             <button id="admin-panel-btn" class="hud-tile-btn" onclick="openAdminPanelModal()" style="display: none; border-color: #f1c40f;">
                 <div class="hud-tile-icon-wrap">
                     <span style="font-size: 15px;">👑</span>
@@ -722,12 +728,12 @@
         </div>
 
         <!-- 👑 최고 관리자 컨트롤 패널 모달 -->
-        <div id="admin-panel-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 16, 28, 0.98); color: white; padding: 22px 20px; border-radius: 18px; width: 90%; max-width: 380px; display: none; border: 2.5px solid #f1c40f; z-index: 70; box-shadow: 0 10px 45px rgba(0,0,0,0.95), 0 0 30px rgba(241, 196, 15, 0.4); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <div id="admin-panel-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 16, 28, 0.98); color: white; padding: 20px 18px; border-radius: 20px; width: 94%; max-width: 600px; max-height: 88vh; overflow-y: auto; display: none; border: 2.5px solid #f1c40f; z-index: 70; box-shadow: 0 10px 45px rgba(0,0,0,0.95), 0 0 35px rgba(241, 196, 15, 0.4); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(241, 196, 15, 0.3); padding-bottom: 8px; margin-bottom: 14px;">
-                <h3 style="margin: 0; color: #f1c40f; font-size: 18px; font-weight: bold;">👑 최고 관리자 컨트롤 패널</h3>
+                <h3 style="margin: 0; color: #f1c40f; font-size: 18px; font-weight: bold;">👑 최고 관리자 컨트롤 패널 (2열 구성)</h3>
                 <button onclick="closeAdminPanelModal()" style="background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; line-height: 1;">✕</button>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                 <button onclick="adminToggleTradeMachine()" style="padding: 10px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.45);">⚔️ [이벤트] 퓨즈 삭제 ➔ 트레이드 머신 전환 토글</button>
                 <button onclick="adminRefillTradeStock()" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);">🔄 [트레이드 머신] 선착순 재고 2개 즉시 충전</button>
                 <button onclick="adminFastForwardIncubator()" style="padding: 10px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.45);">⚡ [인큐베이터] 5분 배양 즉시 완료</button>
@@ -1755,38 +1761,55 @@
         <!-- ⚔️ 트레이드 머신 모달 (한정 수량 2개 선착순) -->
                 <!-- ⚔️ 크레프팅 머신 모달 (한정 수량 2개 선착순) -->
                 <!-- ⚔️ 크레프팅 머신 모달 (한정 수량 2명 선착순) -->
-        <div id="trade-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 50% 20%, #1e112a 0%, #080610 100%); color: white; border-radius: 24px; width: 88%; max-width: 340px; display: none; border: 2px solid #ef4444; box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 35px rgba(239, 68, 68, 0.45); z-index: 60; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 18px 16px; box-sizing: border-box;">
-            <!-- 헤더 & 닫기 -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(239, 68, 68, 0.35); padding-bottom: 10px; margin-bottom: 14px;">
+        <div id="trade-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 50% 20%, #1e1b2e 0%, #090a12 100%); color: white; border-radius: 24px; width: 90%; max-width: 400px; display: none; border: 2.5px solid #06b6d4; box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 35px rgba(6, 182, 212, 0.45); z-index: 60; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px 18px; box-sizing: border-box;">
+            <!-- 헤더 -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(6, 182, 212, 0.35); padding-bottom: 10px; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 20px;">⚔️</span>
-                    <span style="color: #ff7675; font-size: 18px; font-weight: 900; letter-spacing: -0.5px;">크레프팅 머신</span>
+                    <span style="font-size: 22px;">⚔️</span>
+                    <span style="color: #38bdf8; font-size: 18px; font-weight: 900; letter-spacing: -0.5px;">크래프팅 머신 (스킨 합성)</span>
                 </div>
                 <button onclick="closeTradeMachineModal()" style="background: rgba(255,255,255,0.1); border: none; color: #cbd5e1; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
             </div>
 
-            <!-- 상태 정보 (남은 수량 & 타이머) -->
-            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.5); border: 1.5px solid rgba(239, 68, 68, 0.4); border-radius: 12px; padding: 9px 14px; margin-bottom: 14px;">
-                <div style="text-align: left;">
-                    <div style="font-size: 10.5px; color: #fca5a5; font-weight: bold;">남은 수량</div>
-                    <div id="trade-stock-badge" style="font-weight: 900; font-size: 15px; color: #facc15;">2 / 2명</div>
+            <!-- 레시피 안내 -->
+            <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 10px 12px; margin-bottom: 14px;">
+                <div style="font-size: 12px; color: #94a3b8; font-weight: bold;">📜 합성 레시피</div>
+                <div style="font-size: 14px; font-weight: 900; color: #facc15; margin-top: 2px;">🎃 잭오랜턴 2개 ➔ ⚔️ 일본풍 검사</div>
+            </div>
+
+            <!-- 네모난 재료 슬롯 (퓨즈 스타일 2개 슬롯) -->
+            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 16px;">
+                <!-- 슬롯 1 -->
+                <div id="craft-slot-1" style="width: 80px; height: 80px; background: rgba(30, 41, 59, 0.85); border: 2px dashed #f59e0b; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;">
+                    <span style="font-size: 30px;">🎃</span>
+                    <span style="font-size: 10.5px; color: #fde047; font-weight: bold; margin-top: 2px;">잭오랜턴</span>
                 </div>
-                <div style="height: 22px; width: 1px; background: rgba(239, 68, 68, 0.3);"></div>
-                <div style="text-align: right;">
-                    <div id="trade-timer-label" style="font-size: 10.5px; color: #94a3b8; font-weight: bold;">다음 충전</div>
-                    <div id="trade-timer-text" style="color: #38bdf8; font-weight: 900; font-size: 15px;">--:--</div>
+
+                <span style="font-size: 22px; font-weight: 900; color: #38bdf8;">+</span>
+
+                <!-- 슬롯 2 -->
+                <div id="craft-slot-2" style="width: 80px; height: 80px; background: rgba(30, 41, 59, 0.85); border: 2px dashed #f59e0b; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;">
+                    <span style="font-size: 30px;">🎃</span>
+                    <span style="font-size: 10.5px; color: #fde047; font-weight: bold; margin-top: 2px;">잭오랜턴</span>
+                </div>
+
+                <span style="font-size: 22px; font-weight: 900; color: #22c55e;">➔</span>
+
+                <!-- 결과물 슬롯 -->
+                <div style="width: 80px; height: 80px; background: rgba(8, 47, 73, 0.85); border: 2.5px solid #38bdf8; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);">
+                    <canvas id="trade-skin-preview" width="60" height="60" style="display: block;"></canvas>
+                    <span style="font-size: 10.5px; color: #38bdf8; font-weight: 900;">일본풍 검사</span>
                 </div>
             </div>
 
-            <!-- 스킨 이미지 중간 크기 프리뷰 -->
-            <div style="background: radial-gradient(circle, rgba(239, 68, 68, 0.18) 0%, rgba(0, 0, 0, 0.6) 80%); border-radius: 16px; padding: 10px; border: 1.5px solid rgba(244, 114, 182, 0.35); margin-bottom: 14px; box-shadow: inset 0 0 25px rgba(0,0,0,0.85);">
-                <canvas id="trade-skin-preview" width="140" height="150" style="display: block; margin: 0 auto;"></canvas>
-                <div style="color: #ffffff; font-size: 17px; font-weight: 900; margin-top: 6px; letter-spacing: -0.5px;">일본풍 검사</div>
+            <!-- 보유 재료 현황 -->
+            <div id="craft-material-status" style="font-size: 12.5px; color: #e2e8f0; margin-bottom: 16px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px;">
+                보유 잭오랜턴: <strong id="craft-jack-count" style="color: #f59e0b;">0</strong> / 2개
             </div>
 
-            <!-- 메인 액션 버튼: 획득 / equip! / sold out!! -->
-            <button id="trade-claim-btn" onclick="claimTradeMachineSkin()" style="width: 100%; padding: 14px; background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%); color: white; border: none; border-radius: 12px; font-weight: 900; font-size: 18px; cursor: pointer; box-shadow: 0 4px 0 #7f1d1d, 0 6px 18px rgba(239, 68, 68, 0.45); letter-spacing: 2px;">
-                획득
+            <!-- 조합 버튼 -->
+            <button id="craft-submit-btn" onclick="executeCrafting()" style="width: 100%; padding: 13px; background: linear-gradient(180deg, #06b6d4 0%, #0284c7 100%); color: white; border: none; border-radius: 12px; font-weight: 900; font-size: 17px; cursor: pointer; box-shadow: 0 4px 0 #0369a1, 0 6px 18px rgba(6, 182, 212, 0.45); letter-spacing: 2px;">
+                ✨ 조합!
             </button>
         </div>
 
@@ -1871,6 +1894,17 @@
         </div>
 
         <!-- 🎁 시크릿 코드 입력 모달 -->
+        <!-- 🌀 지역 텔레포트 (워프) 모달 -->
+        <div id="teleport-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; border-radius: 20px; width: 92%; max-width: 440px; max-height: 85vh; overflow-y: auto; display: none; border: 2.5px solid #38bdf8; box-shadow: 0 10px 45px rgba(0, 0, 0, 0.9), 0 0 30px rgba(56, 189, 248, 0.4); z-index: 65; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box; padding: 18px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 14px;">
+                <h3 style="margin: 0; color: #38bdf8; font-size: 18px; font-weight: 900; display: flex; align-items: center; gap: 8px;">
+                    <span>🌀</span> 지역 텔레포트 (워프)
+                </h3>
+                <button onclick="closeTeleportModal()" style="background: rgba(255,255,255,0.1); border: none; color: #cbd5e1; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
+            </div>
+            <div id="teleport-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;"></div>
+        </div>
+
         <div id="code-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 22, 34, 0.98); color: white; border-radius: 18px; width: 90%; max-width: 380px; display: none; border: 2.5px solid #f39c12; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(243, 156, 18, 0.35); z-index: 60; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box; overflow: hidden;">
             <div style="background: linear-gradient(90deg, #d35400, #f39c12); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -4344,10 +4378,158 @@
             }
         }
 
+        
+        // ============================================================================
+        // 🌀 지역 텔레포트 (워프) 시스템
+        // ============================================================================
+        function openTeleportModal() {
+            closeAllModals();
+            const modal = document.getElementById('teleport-modal');
+            if (!modal) return;
+            const list = document.getElementById('teleport-list');
+            if (!list) return;
+
+            const destinations = [
+                { name: '🌿 시작 마을', x: 300, y: 500, reqLv: 1, color: '#22c55e' },
+                { name: '⚔️ 크래프팅 머신', x: 300, y: 920, reqLv: 1, color: '#06b6d4' },
+                { name: '🔥 불꽃 지역', x: 300, y: -650, reqLv: 3, color: '#ef4444' },
+                { name: '🌪️ 뒤틀린 지역', x: 300, y: -1650, reqLv: 10, color: '#8b5cf6' },
+                { name: '⚡ 전기 지역', x: 300, y: -2650, reqLv: 20, color: '#eab308' },
+                { name: '❄️ 얼음 지역', x: 300, y: -3650, reqLv: 35, color: '#38bdf8' },
+                { name: '☣️ 방사능 지역', x: 300, y: -4650, reqLv: 50, color: '#10b981' },
+                { name: '🌊 바다 지역', x: 300, y: -5650, reqLv: 65, color: '#0284c7' },
+                { name: '⛏️ 동굴 지역', x: 300, y: -6650, reqLv: 85, color: '#94a3b8' },
+                { name: '🚀 우주 지역', x: 300, y: -7650, reqLv: 105, color: '#c084fc' },
+                { name: '❄️ 얼음의 협곡', x: 320, y: -8620, reqLv: 125, color: '#67e8f9' },
+                { name: '🌾 농장 차원', action: 'farm', reqLv: 10, color: '#84cc16' }
+            ];
+
+            if (isAdmin()) {
+                destinations.push({ name: '🔮 [ADMIN] 미지의 핑크 지형', x: 300, y: 3000, reqLv: 1, color: '#ec4899', adminOnly: true });
+            }
+
+            list.innerHTML = '';
+            destinations.forEach(dest => {
+                const isUnlocked = isAdmin() || (level >= dest.reqLv);
+                const btn = document.createElement('button');
+                btn.style.cssText = `padding: 12px 10px; border-radius: 10px; font-weight: bold; font-size: 12.5px; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 4px; border: 1.5px solid ${isUnlocked ? dest.color : '#475569'}; background: ${isUnlocked ? 'rgba(30, 41, 59, 0.85)' : 'rgba(15, 23, 42, 0.6)'}; color: ${isUnlocked ? '#ffffff' : '#64748b'};`;
+                
+                btn.innerHTML = `
+                    <div style="color: ${isUnlocked ? dest.color : '#94a3b8'}; font-weight: 900; font-size: 13px;">${dest.name}</div>
+                    <div style="font-size: 10.5px; color: ${isUnlocked ? '#94a3b8' : '#ef4444'};">${isUnlocked ? '즉시 워프 ➔' : `🔒 LV.${dest.reqLv} 필요`}</div>
+                `;
+
+                btn.onclick = () => {
+                    if (!isUnlocked) {
+                        alert(`🔒 레벨이 부족합니다! (요구 레벨: LV. ${dest.reqLv})`);
+                        return;
+                    }
+                    if (dest.action === 'farm') {
+                        closeTeleportModal();
+                        if (typeof enterFarmDimension === 'function') enterFarmDimension();
+                        return;
+                    }
+                    player.x = dest.x;
+                    player.y = dest.y;
+                    cameraY = dest.y - 400;
+                    player.vx = 0; player.vy = 0; player.targetTree = null;
+                    closeTeleportModal();
+                    floatTexts.push({ x: player.x, y: player.y - 80, text: `🌀 ${dest.name}으로 워프!`, color: dest.color, life: 80, size: 20 });
+                };
+                list.appendChild(btn);
+            });
+
+            modal.style.display = 'block';
+        }
+
+        function closeTeleportModal() {
+            const modal = document.getElementById('teleport-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        // ============================================================================
+        // ⚔️ 크래프팅 머신 (스킨 합성 로직: 잭오랜턴 2개 ➔ 일본풍 검사)
+        // ============================================================================
+        function getJackLanternCount() {
+            let count = 0;
+            if (typeof inventory !== 'undefined' && inventory['잭오랜턴']) {
+                count += Number(inventory['잭오랜턴']) || 0;
+            }
+            if (typeof ownedSkins !== 'undefined') {
+                if (ownedSkins.includes('jack_orange')) count += 1;
+                if (ownedSkins.includes('jack_fiery')) count += 1;
+            }
+            if (isAdmin()) count = Math.max(count, 999);
+            return count;
+        }
+
+        function updateCraftingModalUI() {
+            const countEl = document.getElementById('craft-jack-count');
+            const submitBtn = document.getElementById('craft-submit-btn');
+            const cnt = getJackLanternCount();
+            if (countEl) countEl.innerText = cnt;
+
+            const isOwned = (typeof ownedSkins !== 'undefined' && ownedSkins.includes('japanese_ronin'));
+            if (submitBtn) {
+                if (isOwned) {
+                    submitBtn.innerText = '✓ 장착하기!';
+                    submitBtn.style.background = 'linear-gradient(180deg, #10b981 0%, #059669 100%)';
+                    submitBtn.style.boxShadow = '0 4px 0 #047857';
+                } else if (cnt >= 2 || isAdmin()) {
+                    submitBtn.innerText = '✨ 조합!';
+                    submitBtn.style.background = 'linear-gradient(180deg, #06b6d4 0%, #0284c7 100%)';
+                    submitBtn.style.boxShadow = '0 4px 0 #0369a1';
+                } else {
+                    submitBtn.innerText = '재료 부족 (잭오랜턴 2개 필요)';
+                    submitBtn.style.background = 'linear-gradient(180deg, #64748b 0%, #475569 100%)';
+                    submitBtn.style.boxShadow = '0 4px 0 #334155';
+                }
+            }
+        }
+
+        function executeCrafting() {
+            const isOwned = (typeof ownedSkins !== 'undefined' && ownedSkins.includes('japanese_ronin'));
+            if (isOwned) {
+                equippedSkin = 'japanese_ronin';
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                saveGame(true);
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '⚔️ [일본풍 검사] 스킨 장착 완료!', color: '#38bdf8', life: 80, size: 20 });
+                closeTradeMachineModal();
+                return;
+            }
+
+            const cnt = getJackLanternCount();
+            if (cnt < 2 && !isAdmin()) {
+                alert('❌ 재료가 부족합니다!\n\n조합을 위해서는 잭오랜턴 2개가 필요합니다.');
+                return;
+            }
+
+            // 재료 소모
+            if (!isAdmin()) {
+                let toDeduct = 2;
+                if (inventory['잭오랜턴'] && inventory['잭오랜턴'] > 0) {
+                    let d = Math.min(inventory['잭오랜턴'], toDeduct);
+                    inventory['잭오랜턴'] -= d;
+                    toDeduct -= d;
+                }
+            }
+
+            if (!ownedSkins.includes('japanese_ronin')) {
+                ownedSkins.push('japanese_ronin');
+            }
+            equippedSkin = 'japanese_ronin';
+            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+            saveGame(true);
+            updateCraftingModalUI();
+
+            floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [일본풍 검사] 조합 성공!', color: '#38bdf8', life: 120, size: 24 });
+            alert('🎉 [조합 대성공!]\n\n잭오랜턴 2개를 합성하여 신화 스킨 [일본풍 검사]를 획득하고 자동 장착했습니다!');
+            closeTradeMachineModal();
+        }
+
         function openTradeMachineModal() {
-            initTradeMachineFirestoreSync();
-            checkTradeMachineRestock();
-            updateTradeMachineModalUI();
+            closeAllModals();
+            updateCraftingModalUI();
             const modal = document.getElementById('trade-machine-modal');
             if (modal) modal.style.display = 'block';
             drawTradeSkinPreviewCanvas();
@@ -15646,7 +15828,7 @@
                 'farm-harvest-modal', 'roulette-modal', 'boss-portal-modal', 'ice-dragon-portal-modal',
                 'admin-panel-modal', 'guild-modal', 'guild-member-action-modal', 'trade-request-modal',
                 'trade-incoming-modal', 'battle-incoming-modal', 'ranking-modal', 'ocean-modal',
-                'radioactive-modal', 'cave-modal', 'halloween-modal', 'space-modal', 'code-modal',
+                'radioactive-modal', 'cave-modal', 'halloween-modal', 'space-modal', 'code-modal', 'teleport-modal',
                 'trade-window-modal', 'alien-scientist-modal', 'mad-doctor-modal', 'trade-qty-dialog'
             ];
             modalIds.forEach(id => {
@@ -18786,7 +18968,7 @@
             }
 
             let targetCamY = player.y - GAME_HEIGHT / 2 + 100;
-            targetCamY = Math.max(-9000, Math.min(1800, targetCamY));
+            targetCamY = Math.max(-9000, Math.min(isAdmin() ? 2850 : 1800, targetCamY));
             cameraY += (targetCamY - cameraY) * 0.1;
 
             trees.forEach(tree => {
@@ -23167,6 +23349,44 @@
                 let dy = 1160 + ((d * 67 + dustT * 15) % 1400);
                 let dr = (d % 3 === 0) ? 2.5 : 1.5;
                 ctx.beginPath(); ctx.arc(dx, dy, dr, 0, Math.PI * 2); ctx.fill();
+            }
+
+            // 🔮 [어드민 전용] 할로윈 폐허 하단 핑크색 물음표 미지의 지형 (Y: 2600 ~ 3600)
+            if (isAdmin()) {
+                let pinkGrad = ctx.createLinearGradient(0, 2600, 0, 3600);
+                pinkGrad.addColorStop(0, '#2d0938');
+                pinkGrad.addColorStop(0.5, '#4a0e4e');
+                pinkGrad.addColorStop(1, '#6b117b');
+                ctx.fillStyle = pinkGrad;
+                ctx.fillRect(0, 2600, GAME_WIDTH, 1000);
+
+                // 핑크 네온 사이버 바닥 격자선
+                ctx.strokeStyle = 'rgba(244, 114, 182, 0.3)';
+                ctx.lineWidth = 1.5;
+                for (let py = 2600; py <= 3600; py += 80) {
+                    ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(GAME_WIDTH, py); ctx.stroke();
+                }
+                for (let px = 0; px <= GAME_WIDTH; px += 80) {
+                    ctx.beginPath(); ctx.moveTo(px, 2600); ctx.lineTo(px, 3600); ctx.stroke();
+                }
+
+                // 핑크 네온 경계선 & 배너
+                ctx.strokeStyle = '#ec4899'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 2600); ctx.lineTo(GAME_WIDTH, 2600); ctx.stroke();
+                ctx.fillStyle = '#f472b6'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
+                ctx.fillText("🔮 [ADMIN] 미지의 차원: ??? (비밀 연구 구역)", GAME_WIDTH / 2, 2635);
+
+                // 거대한 부유 핑크빛 네온 물음표 (Y: 3050)
+                let qFloat = Math.sin(Date.now() * 0.003) * 14;
+                ctx.save();
+                ctx.translate(GAME_WIDTH / 2, 3050 + qFloat);
+                ctx.shadowColor = '#f43f5e'; ctx.shadowBlur = 35;
+                ctx.fillStyle = '#fda4af';
+                ctx.font = '900 120px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText("❓", 0, 0);
+                ctx.shadowBlur = 0;
+                ctx.restore();
             }
 
             // ❄️ 얼음의 협곡 경계선 (Y: -8000, 관리자 전용)
