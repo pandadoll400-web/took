@@ -1774,7 +1774,7 @@
             <!-- 레시피 안내 -->
             <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 9px 12px; margin-bottom: 14px;">
                 <div style="font-size: 11.5px; color: #94a3b8; font-weight: bold;">📜 합성 레시피</div>
-                <div style="font-size: 13.5px; font-weight: 900; color: #facc15; margin-top: 2px;">🎃 잭오랜턴 2개 ➔ ⚔️ 일본풍 검사</div>
+                <div style="font-size: 13.5px; font-weight: 900; color: #facc15; margin-top: 2px;">🎃 잭오랜턴 스킨 2개 ➔ ⚔️ 일본풍 검사 (계정당 1회)</div>
             </div>
 
             <!-- 네모난 재료 슬롯 (클릭 시 인벤토리 오픈) -->
@@ -4452,8 +4452,18 @@
         }
 
         // ============================================================================
-        // ⚔️ 크래프팅 머신 (인터랙티브 스킨 인벤토리 선택 & 조합 로직)
+        // ⚔️ 크래프팅 머신 (20:30 오픈, 호박 스킨만 사용, 계정당 1회 한정 제작)
         // ============================================================================
+        
+        // ⚔️ 크래프팅 머신 20:30 (오후 8시 30분) 오픈 여부 체크
+        function isCraftingMachineOpen() {
+            if (isAdmin()) return true;
+            const now = new Date();
+            const openTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 30, 0, 0).getTime();
+            return now.getTime() >= openTime;
+        }
+
+
         let craftSelectedSlot1 = null;
         let craftSelectedSlot2 = null;
         let activeCraftSlotNum = 1;
@@ -4469,60 +4479,59 @@
             if (pickerBox) pickerBox.style.display = 'block';
         }
 
-        // 인벤토리 목록 렌더링
+        // 인벤토리 목록 렌더링: 사용자 요청에 따라 "스킨만" 넣을 수 있음 (아이템 제외)
         function renderCraftSkinPickerList() {
             const listEl = document.getElementById('craft-skin-picker-list');
             if (!listEl) return;
             listEl.innerHTML = '';
 
-            const availableItems = [];
+            const availableSkins = [];
 
-            // 1. 보유 스킨 체크 (주황 잭오랜턴, 불타는 잭오랜턴)
+            // 오직 호박 스킨만 등록 (주황 잭오랜턴, 불타는 잭오랜턴)
             if (typeof ownedSkins !== 'undefined' && ownedSkins.includes('jack_orange')) {
-                availableItems.push({ type: 'skin', id: 'jack_orange', name: '주황 잭오랜턴', icon: '🎃', color: '#f97316' });
+                availableSkins.push({ type: 'skin', id: 'jack_orange', name: '주황 잭오랜턴', icon: '🎃', color: '#f97316' });
             }
             if (typeof ownedSkins !== 'undefined' && ownedSkins.includes('jack_fiery')) {
-                availableItems.push({ type: 'skin', id: 'jack_fiery', name: '불타는 잭오랜턴', icon: '🎃🔥', color: '#ef4444' });
+                availableSkins.push({ type: 'skin', id: 'jack_fiery', name: '불타는 잭오랜턴', icon: '🎃🔥', color: '#ef4444' });
             }
 
-            // 2. 보유 인벤토리 호박 아이템 체크 (잭오랜턴)
-            if (typeof inventory !== 'undefined' && inventory['잭오랜턴'] && inventory['잭오랜턴'] > 0) {
-                availableItems.push({ type: 'item', id: '잭오랜턴', name: `잭오랜턴 호박 (x${inventory['잭오랜턴']})`, icon: '🎃', count: inventory['잭오랜턴'], color: '#eab308' });
+            // 관리자는 무조건 후보 제공
+            if (isAdmin()) {
+                if (!availableSkins.some(s => s.id === 'jack_orange')) {
+                    availableSkins.push({ type: 'skin', id: 'jack_orange', name: '주황 잭오랜턴 (ADMIN)', icon: '🎃', color: '#f97316' });
+                }
+                if (!availableSkins.some(s => s.id === 'jack_fiery')) {
+                    availableSkins.push({ type: 'skin', id: 'jack_fiery', name: '불타는 잭오랜턴 (ADMIN)', icon: '🎃🔥', color: '#ef4444' });
+                }
             }
 
-            // 관리자는 무조건 전체 후보 제공
-            if (isAdmin() && availableItems.length === 0) {
-                availableItems.push({ type: 'skin', id: 'jack_orange', name: '주황 잭오랜턴 (ADMIN)', icon: '🎃', color: '#f97316' });
-                availableItems.push({ type: 'skin', id: 'jack_fiery', name: '불타는 잭오랜턴 (ADMIN)', icon: '🎃🔥', color: '#ef4444' });
-            }
-
-            if (availableItems.length === 0) {
-                listEl.innerHTML = '<div style="grid-column: span 2; font-size: 11.5px; color: #94a3b8; text-align: center; padding: 15px 0;">가방에 잭오랜턴 스킨 또는 호박이 없습니다.</div>';
+            if (availableSkins.length === 0) {
+                listEl.innerHTML = '<div style="grid-column: span 2; font-size: 11.5px; color: #94a3b8; text-align: center; padding: 15px 0;">가방에 잭오랜턴 "스킨"이 없습니다.<br><span style="color:#ef4444; font-size:10px;">(오직 호박 스킨만 등록 가능)</span></div>';
                 return;
             }
 
-            availableItems.forEach(item => {
+            availableSkins.forEach(skin => {
                 const itemBtn = document.createElement('button');
-                itemBtn.style.cssText = `display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: rgba(30, 41, 59, 0.9); border: 1.5px solid ${item.color}; border-radius: 10px; color: white; cursor: pointer; text-align: left;`;
+                itemBtn.style.cssText = `display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: rgba(30, 41, 59, 0.9); border: 1.5px solid ${skin.color}; border-radius: 10px; color: white; cursor: pointer; text-align: left;`;
                 itemBtn.innerHTML = `
-                    <span style="font-size: 22px;">${item.icon}</span>
+                    <span style="font-size: 22px;">${skin.icon}</span>
                     <div style="overflow: hidden;">
-                        <div style="font-size: 11.5px; font-weight: bold; color: ${item.color}; white-space: nowrap; text-overflow: ellipsis;">${item.name}</div>
+                        <div style="font-size: 11.5px; font-weight: bold; color: ${skin.color}; white-space: nowrap; text-overflow: ellipsis;">${skin.name}</div>
                         <div style="font-size: 9.5px; color: #38bdf8;">슬롯 ${activeCraftSlotNum}에 장착 ➔</div>
                     </div>
                 `;
                 itemBtn.onclick = () => {
-                    selectCraftItemForSlot(activeCraftSlotNum, item);
+                    selectCraftItemForSlot(activeCraftSlotNum, skin);
                 };
                 listEl.appendChild(itemBtn);
             });
         }
 
-        function selectCraftItemForSlot(slotNum, item) {
+        function selectCraftItemForSlot(slotNum, skin) {
             if (slotNum === 1) {
-                craftSelectedSlot1 = item;
+                craftSelectedSlot1 = skin;
             } else {
-                craftSelectedSlot2 = item;
+                craftSelectedSlot2 = skin;
             }
             updateCraftingSlotsUI();
         }
@@ -4577,31 +4586,47 @@
             // 버튼 상태 갱신
             const submitBtn = document.getElementById('craft-submit-btn');
             const isOwned = (typeof ownedSkins !== 'undefined' && ownedSkins.includes('japanese_ronin'));
+            const isOpen = isCraftingMachineOpen();
 
             if (submitBtn) {
-                if (isOwned) {
-                    submitBtn.innerText = '✓ 장착하기!';
+                if (!isOpen) {
+                    submitBtn.innerText = '🔒 오늘 20:30 (오후 8시 30분) 오픈!';
+                    submitBtn.style.background = 'linear-gradient(180deg, #475569 0%, #334155 100%)';
+                    submitBtn.style.boxShadow = 'none';
+                    submitBtn.style.cursor = 'pointer';
+                } else if (isOwned) {
+                    // 사용자 요청: 1번만 만들 수 있음
+                    submitBtn.innerText = '✓ 제작 완료 (계정당 1회 한정 / 장착하기)';
                     submitBtn.style.background = 'linear-gradient(180deg, #10b981 0%, #059669 100%)';
                     submitBtn.style.boxShadow = '0 4px 0 #047857';
+                    submitBtn.style.cursor = 'pointer';
                 } else if ((craftSelectedSlot1 && craftSelectedSlot2) || isAdmin()) {
-                    submitBtn.innerText = '✨ 조합!';
+                    submitBtn.innerText = '✨ 조합! (1회 한정)';
                     submitBtn.style.background = 'linear-gradient(180deg, #06b6d4 0%, #0284c7 100%)';
                     submitBtn.style.boxShadow = '0 4px 0 #0369a1';
+                    submitBtn.style.cursor = 'pointer';
                 } else {
                     submitBtn.innerText = '슬롯에 호박 스킨 2개를 채워주세요';
                     submitBtn.style.background = 'linear-gradient(180deg, #64748b 0%, #475569 100%)';
                     submitBtn.style.boxShadow = '0 4px 0 #334155';
+                    submitBtn.style.cursor = 'pointer';
                 }
             }
         }
 
         function executeCrafting() {
+            if (!isCraftingMachineOpen()) {
+                alert('🔒 아직 오픈되지 않았습니다!\n\n오픈 시각: 오늘 20:30 (오후 8시 30분)');
+                return;
+            }
+
             const isOwned = (typeof ownedSkins !== 'undefined' && ownedSkins.includes('japanese_ronin'));
             if (isOwned) {
                 equippedSkin = 'japanese_ronin';
                 if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
                 saveGame(true);
                 floatTexts.push({ x: player.x, y: player.y - 80, text: '⚔️ [일본풍 검사] 스킨 장착 완료!', color: '#38bdf8', life: 80, size: 20 });
+                alert('✓ 이미 1회 제작을 완료한 스킨입니다!\n(계정당 1회만 제작 가능합니다. 스킨이 즉시 장착되었습니다.)');
                 closeTradeMachineModal();
                 return;
             }
@@ -4611,15 +4636,7 @@
                 return;
             }
 
-            // 재료 소모 처리
-            if (!isAdmin()) {
-                [craftSelectedSlot1, craftSelectedSlot2].forEach(slot => {
-                    if (slot && slot.type === 'item' && inventory['잭오랜턴']) {
-                        inventory['잭오랜턴'] = Math.max(0, inventory['잭오랜턴'] - 1);
-                    }
-                });
-            }
-
+            // 계정당 1회 한정 제작 성공
             if (!ownedSkins.includes('japanese_ronin')) {
                 ownedSkins.push('japanese_ronin');
             }
@@ -4631,8 +4648,8 @@
             craftSelectedSlot2 = null;
             updateCraftingSlotsUI();
 
-            floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [일본풍 검사] 조합 성공!', color: '#38bdf8', life: 120, size: 24 });
-            alert('🎉 [조합 대성공!]\n\n잭오랜턴 2개를 합성하여 신화 스킨 [일본풍 검사]를 획득하고 자동 장착했습니다!');
+            floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [일본풍 검사] 1회 제작 성공!', color: '#38bdf8', life: 120, size: 24 });
+            alert('🎉 [조합 대성공!]\n\n잭오랜턴 스킨 2개를 합성하여 신화 스킨 [일본풍 검사]를 획득하고 자동 장착했습니다!\n(※ 계정당 1회 한정 제작 완료)');
             closeTradeMachineModal();
         }
 
@@ -22893,22 +22910,27 @@
             ctx.fillText("⚔️ 크레프팅 머신", x, y + 47);
             ctx.shadowBlur = 0;
 
-            // 7. 상단 플로팅 배너: 🔒 일요일 공개!
+            // 7. 상단 플로팅 배너: 🔒 오늘 20:30 공개! vs ✨ 크래프팅 머신 오픈!
+            const isCraftOpen = (typeof isCraftingMachineOpen === 'function') ? isCraftingMachineOpen() : false;
+            const bannerText = isCraftOpen ? "✨ 크래프팅 머신 오픈!" : "🔒 오늘 20:30 공개!";
+            const bannerStroke = isCraftOpen ? '#06b6d4' : '#ef4444';
+            const bannerTextColor = isCraftOpen ? '#38bdf8' : '#fca5a5';
+
             ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
-            ctx.strokeStyle = '#ef4444';
+            ctx.strokeStyle = bannerStroke;
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.roundRect(x - 65, y - 56 + floatY, 130, 24, 7);
+            ctx.roundRect(x - 72, y - 56 + floatY, 144, 24, 7);
             ctx.fill();
             ctx.stroke();
 
-            ctx.fillStyle = '#fca5a5';
+            ctx.fillStyle = bannerTextColor;
             ctx.font = '900 12px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.shadowColor = '#000';
             ctx.shadowBlur = 4;
-            ctx.fillText("🔒 일요일 공개!", x, y - 44 + floatY);
+            ctx.fillText(bannerText, x, y - 44 + floatY);
             ctx.shadowBlur = 0;
 
             ctx.restore();
