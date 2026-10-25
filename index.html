@@ -743,7 +743,6 @@
                 <button onclick="closeAdminPanelModal()" style="background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; line-height: 1;">✕</button>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button onclick="adminTrigger830PmEventNow()" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45); grid-column: span 2;">🔥 [이벤트] 8:30 FORGE 어뷰즈&투표 즉시 실행 (테스트용)</button>
                 <button onclick="adminToggleTradeMachine()" style="padding: 10px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.45);">⚔️ [이벤트] 퓨즈 삭제 ➔ 트레이드 머신 전환 토글</button>
                 <button onclick="adminRefillTradeStock()" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);">🔄 [트레이드 머신] 선착순 재고 2개 즉시 충전</button>
                 <button onclick="adminFastForwardIncubator()" style="padding: 10px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.45);">⚡ [인큐베이터] 5분 배양 즉시 완료</button>
@@ -18699,14 +18698,28 @@
             const now = new Date();
             const targetMs = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 30, 0, 0).getTime();
             
-            // 오늘 20:30 정각이 되거나 지났을 때 (새로고침 시에도 다시 재생)
+            // 오늘 20:30 정각이 되거나 지났을 때
             if (now.getTime() >= targetMs) {
-                if (!forgeAbuseEventStarted) {
+                // 1.5배 럭 및 농장 스킨 럭은 20:30 이후 계속 활성화
+                isLuck15Active = true;
+                isFarmSkinLuckActive = true;
+
+                // 세로고침 시 재실행 방지 (한 번 실행된 후에는 새로고침해도 다시 뜨지 않음)
+                const todayKey = now.toDateString();
+                let alreadyShown = false;
+                try {
+                    alreadyShown = (localStorage.getItem('forge_abuse_shown_date') === todayKey);
+                } catch (e) {}
+
+                if (!forgeAbuseEventStarted && !alreadyShown) {
                     forgeAbuseEventStarted = true;
-                    // 페이지 로드/새로고침 직후 캔버스와 DOM 안정화 후 부드럽게 재생
+                    try {
+                        localStorage.setItem('forge_abuse_shown_date', todayKey);
+                    } catch (e) {}
+                    // 20:30 도달 시 1회만 시퀀스 실행
                     setTimeout(() => {
                         runForgeAbuseSequence();
-                    }, 600);
+                    }, 500);
                 }
             }
         }
@@ -18715,13 +18728,7 @@
         setTimeout(checkAndTrigger830PmEvent, 600);
         setInterval(checkAndTrigger830PmEvent, 500);
 
-        function adminTrigger830PmEventNow() {
-            if (typeof closeAdminPanelModal === 'function') closeAdminPanelModal();
-            forgeAbuseEventStarted = true;
-            runForgeAbuseSequence();
-        }
-        window.adminTrigger830PmEventNow = adminTrigger830PmEventNow;
-        window.test830Event = adminTrigger830PmEventNow;
+
 
         function runForgeAbuseSequence() {
             // 1. 1.5배 럭 & 농장 스킨 잘 뜨는 럭 동시 발동
