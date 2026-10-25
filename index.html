@@ -1406,6 +1406,7 @@
                 <button class="shop-tab-btn active" onclick="switchInvTab('items')">과일</button>
                 <button class="shop-tab-btn" onclick="switchInvTab('skins')">스킨</button>
                 <button class="shop-tab-btn" onclick="switchInvTab('axes')">도끼</button>
+                <button class="shop-tab-btn" onclick="switchInvTab('pets')">🐾 펫</button>
             </div>
             
             <div id="inv-items" style="display: block;">
@@ -1418,6 +1419,11 @@
 
             <div id="inv-axes" style="display: none;">
                 <div id="inv-axe-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+            </div>
+
+            <div id="inv-pets" style="display: none;">
+                <div style="font-size: 11.5px; color: #94a3b8; margin-bottom: 8px; text-align: center;">🐾 펫은 캐릭터 외형 스킨과 분리되어 동행하며 고유 버프를 제공합니다.</div>
+                <div id="inv-pet-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 360px; overflow-y: auto; padding-right: 2px;"></div>
             </div>
 
             <button class="close-btn" id="close-modal-btn">닫기</button>
@@ -2285,8 +2291,12 @@
 
                 let actionBtn = '';
                 if (isOwned) {
-                    const isEquipped = (equippedSkin === pet.id) || (activeSkinPet === pet.id);
-                    actionBtn = `<button onclick="equipPetSkin('${pet.id}')" style="width: 100%; margin-top: 6px; padding: 5px; font-size: 11px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; background: ${isEquipped ? '#10b981' : '#38bdf8'}; color: white;">${isEquipped ? '✓ 장착 중' : '장착하기'}</button>`;
+                    const isEquipped = (activeSkinPet === pet.id);
+                    if (isEquipped) {
+                        actionBtn = `<button onclick="unequipPet()" style="width: 100%; margin-top: 6px; padding: 5px; font-size: 11px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; background: #10b981; color: white;">✓ 동행 중 (해제)</button>`;
+                    } else {
+                        actionBtn = `<button onclick="equipPet('${pet.id}')" style="width: 100%; margin-top: 6px; padding: 5px; font-size: 11px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; background: #38bdf8; color: white;">동행하기</button>`;
+                    }
                 } else {
                     actionBtn = `<div style="font-size: 10px; color: #64748b; margin-top: 6px;">🔒 미보유 (인큐베이터)</div>`;
                 }
@@ -2308,18 +2318,11 @@
         }
 
         function equipPetSkin(id) {
-            if (!ownedSkins.includes(id)) ownedSkins.push(id);
-            useSkin = id;
-            equippedSkin = id;
-            activeSkinPet = id;
-            adminPetFollowEnabled = true;
-            try {
-                localStorage.setItem('equipped_skin', id);
-                localStorage.setItem('active_skin_pet', id);
-            } catch(e) {}
-            saveGame(true);
-            floatTexts.push({ x: player.x, y: player.y - 80, text: '🐧 [펫 장착 완료!]', color: '#38bdf8', life: 70, size: 20 });
-            renderPenguinCodex();
+            if (!isPetOwned(id)) {
+                if (!ownedPets.includes(id)) ownedPets.push(id);
+                try { localStorage.setItem('owned_pets', JSON.stringify(ownedPets)); } catch(e) {}
+            }
+            equipPet(id);
         }
         window.equipPetSkin = equipPetSkin;
 
@@ -2867,11 +2870,12 @@
                 petRarity = '초희귀 (10%)';
             }
 
+            if (!ownedPets.includes(petId)) {
+                ownedPets.push(petId);
+                try { localStorage.setItem('owned_pets', JSON.stringify(ownedPets)); } catch(e) {}
+            }
             if (!synthesizedPets.includes(petId)) {
                 synthesizedPets.push(petId);
-            }
-            if (!ownedSkins.includes(petId)) {
-                ownedSkins.push(petId);
             }
             activeSkinPet = petId;
             adminPetFollowEnabled = true;
@@ -7901,10 +7905,12 @@
             let petColor = '#f59e0b';
             let isSkinPet = false;
 
-            if (activeSkinPet && ownedSkins.includes(activeSkinPet)) {
-                const s = skinsData.find(skin => skin.id === activeSkinPet) || { name: activeSkinPet, icon: '✨' };
-                petName = s.name;
-                petColor = '#f59e0b';
+            const curPetInfo = (typeof PETS_DATA !== 'undefined' ? PETS_DATA.find(p => p.id === activeSkinPet) : null) ||
+                               (typeof PENGUIN_PET_CODEX_DATA !== 'undefined' ? PENGUIN_PET_CODEX_DATA.find(p => p.id === activeSkinPet) : null) ||
+                               skinsData.find(skin => skin.id === activeSkinPet);
+            if (activeSkinPet && (curPetInfo || isPetOwned(activeSkinPet))) {
+                petName = curPetInfo ? curPetInfo.name : activeSkinPet;
+                petColor = '#38bdf8';
                 isSkinPet = true;
             } else if (isAdmin() && adminPetFollowEnabled) {
                 const petInfo = adminPetsData.find(p => p.id === adminActivePet) || adminPetsData[0];
@@ -11617,6 +11623,15 @@
             { chance: 0.05, name: '영원한', price: 20000, xp: 3000, color: '#ff9ff3', items: I_ETE }
         ];
 
+        // 🦴 [얼음의 협곡 고대 지층] 20종 고대 화석 드롭 테이블 (멜론 등 과일 대신 20종 화석 드롭!)
+        const iceCanyonDropTables = [
+            { chance: 0.40, name: '일반', price: 8000, xp: 150, color: '#b2bec3', items: ['작은 뼛조각', '부서진 화석', '고대 이빨 화석', '발톱 화석'] },
+            { chance: 0.25, name: '희귀', price: 20000, xp: 400, color: '#0984e3', items: ['삼엽충 화석', '고대 조개 화석', '매머드 상아 화석', '공룡 알 화석', '공룡알 조각'] },
+            { chance: 0.18, name: '영웅', price: 50000, xp: 1000, color: '#a29bfe', items: ['랩터 두개골 화석', '검룡 꼬리뼈 화석', '익룡 날개 화석', '고대 포식자 턱뼈'] },
+            { chance: 0.12, name: '전설', price: 120000, xp: 3000, color: '#f1c40f', items: ['공룡 화석', '거대 용각류 화석', '공룡 심장 화석', '황금 공룡 발톱'] },
+            { chance: 0.05, name: '신화', price: 300000, xp: 8000, color: '#ff0055', items: ['태초의 공룡 화석', '멸종의 군주 화석', '창세의 생명체 화석', '세계수호룡 완전체 화석'] }
+        ];
+
         const radioactiveDropTables = [
             { chance: 0.10, name: '일반', price: 1500, xp: 2, color: '#ecf0f1', items: I_COM },
             { chance: 0.15, name: '희귀', price: 3000, xp: 8, color: '#3498db', items: I_RAR },
@@ -12384,7 +12399,7 @@
                 if (fossil) return fossil.color;
             }
             let baseName = itemName.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '').replace('동굴 ', '').replace('할로윈 ', '');
-            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables, ...spaceDropTables];
+            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...iceCanyonDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables, ...spaceDropTables];
             for (let t of tables) {
                 if (t.items.includes(baseName)) return t.color;
             }
@@ -12598,7 +12613,6 @@
             { id: 'mad_scientist', name: '매드 사이언티스트', price: 0, icon: '🥼', isReward: true },
             { id: 'archaeologist', name: '고고학자', price: 0, icon: '🤠', isReward: true },
             { id: 'reaper', name: '사신', price: 0, icon: '💀', isReward: true },
-            { id: 'penguin', name: '꼬마 펭귄', price: 15000, icon: '🐧', isReward: true, desc: '인큐베이터 부화 획득 펭귄 스킨' },
             { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, desc: '쿠폰 코드 보상 [sorryaboutvoiseroom]' },
             { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true },
             { id: 'cerberus', name: '케르베로스', price: 0, icon: '🐺🔥', isReward: true },
@@ -12609,9 +12623,6 @@
             { id: 'devil', name: '악마', price: 0, icon: '😈', isReward: true, adminOnly: true, desc: '전설의 럭키블럭 보상 (9%)' },
             { id: 'etheron', name: '에테론 (천사반 악마반)', price: 0, icon: '🌓', isReward: true, adminOnly: true, desc: '전설의 럭키블럭 초신화 보상 (1%)' },
             { id: 'japanese_ronin', name: '일본풍 검사', price: 0, icon: '⚔️🌸', isReward: true, desc: '트레이드 머신 선착순 한정판 스킨 (시간당 2명)' },
-            { id: 'pet_gorilla', name: '일반 고릴라', price: 0, icon: '🦍', isReward: true, desc: '인큐베이터 부화 펫 (벌목 속도 +20%)' },
-            { id: 'pet_wolf', name: '일반 늑대', price: 0, icon: '🐺', isReward: true, desc: '인큐베이터 부화 펫 (벌목 속도 +20%)' },
-            { id: 'pet_cat', name: '일반 고양이', price: 0, icon: '🐱', isReward: true, desc: '인큐베이터 부화 펫 (벌목 속도 +20%)' },
             { id: 'kraken', name: '크라켄', price: 0, icon: '🦑', isReward: true, desc: '크라켄의 씨앗 수확 보상 (75%)' },
             { id: 'infected_gorilla', name: '감염된 고릴라', price: 0, icon: '🦍💜', isReward: true, desc: '크라켄의 씨앗 수확 보상 (22%)' },
             { id: 'frost_dragon', name: '서리룡', price: 0, icon: '🐉❄️', isReward: true, desc: '크라켄의 씨앗 초희귀 수확 보상 (3%)' }
@@ -13417,14 +13428,127 @@
             pCtx.restore();
         }
 
+        // 🐾 [펫 전용 데이터] 캐릭터 스킨과 분리된 독립 동행 펫 데이터베이스
+        const PETS_DATA = [
+            { id: 'penguin', name: '꼬마 펭귄', icon: '🐧', grade: '스페셜', desc: '인큐베이터에서 부화한 사랑스러운 꼬마 펭귄!', buff: '이동속도 +15% 증가' },
+            { id: 'pet_gorilla', name: '일반 고릴라', icon: '🦍', grade: '일반', desc: '인큐베이터 부화 고릴라. 우직하게 나무를 벱니다.', buff: '벌목 속도 +20% 단축' },
+            { id: 'pet_wolf', name: '일반 늑대', icon: '🐺', grade: '희귀', desc: '인큐베이터 부화 늑대. 날카로운 발톱을 지녔습니다.', buff: '벌목 속도 +20% 단축' },
+            { id: 'pet_cat', name: '일반 고양이', icon: '🐱', grade: '초희귀', desc: '인큐베이터 부화 고양이. 민첩하게 나무를 벱니다.', buff: '벌목 속도 +20% 단축' },
+            { id: 'penguin_butler', name: '황제 펭귄 집사', icon: '🐧🎩', grade: '희귀', desc: '정중한 집사 펭귄. 상점 판매 시 골드를 추가로 획득합니다.', buff: '상점 판매 골드 +50%' },
+            { id: 'frost_wolf', name: '칠흑의 눈꽃 늑대', icon: '🐺❄️', grade: '신화', desc: '태고의 만년설 속 영수. 혹한의 한기로 수확량을 늘립니다.', buff: '과일 수확량 +50% / 빙결 오라' },
+            { id: 'baby_ice_dragon', name: '빙룡 베이비', icon: '🐉❄️', grade: '전설', desc: '고대 서리룡의 새끼. 적에게 얼음 브레스를 뿜습니다.', buff: '보스전 피해량 +35%' },
+            { id: 'aurora_fox', name: '오로라 구미호', icon: '🦊✨', grade: '고대', desc: '극광의 빛을 품은 신비로운 9개의 꼬리를 지닌 여우.', buff: '15초마다 황금 과일 자동 드랍' }
+        ];
+
+        let ownedPets = [];
+        try {
+            ownedPets = JSON.parse(localStorage.getItem('owned_pets') || '[]');
+        } catch(e) { ownedPets = []; }
+
+        function isPetOwned(petId) {
+            if (!petId) return false;
+            if (ownedPets && ownedPets.includes(petId)) return true;
+            if (typeof synthesizedPets !== 'undefined' && Array.isArray(synthesizedPets) && synthesizedPets.includes(petId)) return true;
+            if (typeof ownedSkins !== 'undefined' && Array.isArray(ownedSkins) && ownedSkins.includes(petId)) return true;
+            return false;
+        }
+
+        function hasActivePet() {
+            return !!(activeSkinPet && isPetOwned(activeSkinPet));
+        }
+
+        function equipPet(petId) {
+            if (!isPetOwned(petId)) {
+                alert("보유하지 않은 펫입니다!");
+                return;
+            }
+            activeSkinPet = petId;
+            adminPetFollowEnabled = true;
+            try {
+                localStorage.setItem('active_skin_pet', petId);
+                localStorage.setItem('admin_pet_follow', 'true');
+            } catch(e) {}
+            saveGame(true);
+            const petInfo = PETS_DATA.find(p => p.id === petId) || { name: petId, icon: '🐾' };
+            floatTexts.push({ x: player.x, y: player.y - 80, text: `🐾 ${petInfo.icon} [${petInfo.name}] 동행 시작!`, color: '#38bdf8', life: 70, size: 20 });
+            updateInvPetUI();
+            if (typeof renderPenguinCodex === 'function') renderPenguinCodex();
+        }
+
+        function unequipPet() {
+            activeSkinPet = null;
+            try {
+                localStorage.removeItem('active_skin_pet');
+            } catch(e) {}
+            saveGame(true);
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🐾 펫 동행을 해제했습니다.', color: '#94a3b8', life: 60, size: 18 });
+            updateInvPetUI();
+            if (typeof renderPenguinCodex === 'function') renderPenguinCodex();
+        }
+
+        function updateInvPetUI() {
+            const list = document.getElementById('inv-pet-list');
+            if (!list) return;
+            list.innerHTML = '';
+
+            PETS_DATA.forEach(pet => {
+                const owned = isPetOwned(pet.id);
+                const isEquipped = (activeSkinPet === pet.id);
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'axe-item';
+                itemDiv.style.cssText = `display: flex; justify-content: space-between; align-items: center; background: ${isEquipped ? 'rgba(56, 189, 248, 0.15)' : 'rgba(30, 41, 59, 0.7)'}; border: 1.5px solid ${isEquipped ? '#38bdf8' : (owned ? '#334155' : '#1e293b')}; border-radius: 10px; padding: 10px 14px; opacity: ${owned ? '1' : '0.55'};`;
+
+                let actionHtml = '';
+                if (owned) {
+                    if (isEquipped) {
+                        actionHtml = `
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <span style="font-size: 11px; font-weight: bold; color: #10b981; background: rgba(16, 185, 129, 0.2); padding: 4px 8px; border-radius: 6px; border: 1px solid #10b981;">✓ 동행 중</span>
+                                <button onclick="unequipPet()" style="padding: 5px 10px; font-size: 11px; font-weight: bold; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;">해제</button>
+                            </div>
+                        `;
+                    } else {
+                        actionHtml = `<button onclick="equipPet('${pet.id}')" style="padding: 6px 14px; font-size: 11.5px; font-weight: bold; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 8px rgba(56, 189, 248, 0.35);">동행하기</button>`;
+                    }
+                } else {
+                    actionHtml = `<span style="font-size: 10.5px; color: #64748b; font-weight: bold;">🔒 미보유 (인큐베이터)</span>`;
+                }
+
+                itemDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="font-size: 32px; filter: ${owned ? 'none' : 'grayscale(100%) opacity(40%)'}; min-width: 42px; text-align: center;">${pet.icon}</div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <h4 style="margin: 0; color: ${owned ? '#ffffff' : '#94a3b8'}; font-size: 13.5px;">${pet.name}</h4>
+                                <span style="font-size: 10px; color: #38bdf8; background: rgba(56, 189, 248, 0.15); padding: 1px 5px; border-radius: 4px; font-weight: bold;">${pet.grade}</span>
+                            </div>
+                            <div style="font-size: 11px; color: #cbd5e1; margin-top: 3px;">${pet.desc}</div>
+                            <div style="font-size: 10.5px; color: #facc15; font-weight: bold; margin-top: 2px;">⚡ 효과: ${pet.buff}</div>
+                        </div>
+                    </div>
+                    <div>${actionHtml}</div>
+                `;
+                list.appendChild(itemDiv);
+            });
+        }
+
         function switchInvTab(tab) {
             document.getElementById('inv-items').style.display = tab === 'items' ? 'block' : 'none';
             document.getElementById('inv-skins').style.display = tab === 'skins' ? 'block' : 'none';
             document.getElementById('inv-axes').style.display = tab === 'axes' ? 'block' : 'none';
+            const petEl = document.getElementById('inv-pets');
+            if (petEl) petEl.style.display = tab === 'pets' ? 'block' : 'none';
             document.querySelectorAll('#inventory-modal .shop-tab-btn').forEach((btn, idx) => {
-                btn.className = (idx === 0 && tab === 'items') || (idx === 1 && tab === 'skins') || (idx === 2 && tab === 'axes') ? 'shop-tab-btn active' : 'shop-tab-btn';
+                btn.className = (
+                    (idx === 0 && tab === 'items') ||
+                    (idx === 1 && tab === 'skins') ||
+                    (idx === 2 && tab === 'axes') ||
+                    (idx === 3 && tab === 'pets')
+                ) ? 'shop-tab-btn active' : 'shop-tab-btn';
             });
             if (tab === 'axes') updateInvAxeUI();
+            if (tab === 'pets') updateInvPetUI();
         }
 
         // 동적 인벤토리 UI 구성
@@ -13442,6 +13566,7 @@
             
             updateInvSkinUI();
             updateInvAxeUI();
+            updateInvPetUI();
         });
         document.getElementById('close-modal-btn').addEventListener('click', () => { document.getElementById('inventory-modal').style.display = 'none'; });
 
@@ -16460,6 +16585,7 @@
                 adminSwordTier: (typeof adminSwords !== 'undefined' && adminSwords[0]) ? adminSwords[0].tier : 0,
                 hasPetLeash: !!hasPetLeash,
                 activeSkinPet: activeSkinPet || null,
+                ownedPets: Array.isArray(ownedPets) ? ownedPets : [],
                 adminActivePet: adminActivePet || 'frost_wolf',
                 adminPetFollowEnabled: !!adminPetFollowEnabled,
                 synthesizedPets: Array.isArray(synthesizedPets) ? synthesizedPets : [],
@@ -16664,6 +16790,10 @@
             if (data.hasPetLeash !== undefined) {
                 hasPetLeash = !!data.hasPetLeash;
                 try { localStorage.setItem('has_pet_leash', hasPetLeash ? 'true' : 'false'); } catch(e) {}
+            }
+            if (Array.isArray(data.ownedPets)) {
+                ownedPets = [...data.ownedPets];
+                try { localStorage.setItem('owned_pets', JSON.stringify(ownedPets)); } catch(e) {}
             }
             if (data.activeSkinPet !== undefined) {
                 activeSkinPet = data.activeSkinPet;
@@ -19049,6 +19179,21 @@
         isFuseLuck25Active = false;
 
         loadGame(); 
+
+        // 🐾 [펫-스킨 분리 마이그레이션] 이전 버전에서 펫을 스킨으로 장착했던 유저 복구
+        const ALL_PET_IDS = ['penguin', 'pet_gorilla', 'pet_wolf', 'pet_cat', 'penguin_butler', 'frost_wolf', 'baby_ice_dragon', 'aurora_fox'];
+        ALL_PET_IDS.forEach(pid => {
+            if ((ownedSkins.includes(pid) || synthesizedPets.includes(pid)) && !ownedPets.includes(pid)) {
+                ownedPets.push(pid);
+            }
+        });
+        if (ALL_PET_IDS.includes(equippedSkin)) {
+            if (!activeSkinPet) activeSkinPet = equippedSkin;
+            equippedSkin = 'default';
+            try { localStorage.setItem('equipped_skin', 'default'); } catch(e) {}
+        }
+        try { localStorage.setItem('owned_pets', JSON.stringify(ownedPets)); } catch(e) {}
+
         setTimeout(checkAndShowFrostCanyonNotice, 1500);
         setInterval(saveGame, 1000);
 
@@ -19058,7 +19203,8 @@
             if (type === 'ocean') return oceanDropTables;
             if (type === 'radioactive') return radioactiveDropTables;
             if (type === 'cave') return caveDropTables;
-            if (type === 'ice' || type === 'ice_canyon') return iceDropTables;
+            if (type === 'ice') return iceDropTables;
+            if (type === 'ice_canyon') return iceCanyonDropTables;
             if (type === 'electric') return electricDropTables;
             if (type === 'twisted') return twistedDropTables;
             if (type === 'fire') return fireDropTables;
@@ -19155,14 +19301,13 @@
             if(data) {
                 let trait = '';
                 let traitType = null;
-                // 일반, 할로윈, 우주 지형 빼고 나무에서 떨어질 때 35% 확률로 특성 부여
-                if (type !== 'normal' && type !== 'halloween' && type !== 'space' && Math.random() < 0.35) {
+                // 일반, 할로윈, 우주, 빙하(얼음의 협곡) 지형 제외 특성 부여 (빙하 나무는 20종 고대 화석 원형 드롭)
+                if (type !== 'normal' && type !== 'halloween' && type !== 'space' && type !== 'ice_canyon' && Math.random() < 0.35) {
                     traitType = type;
                     if (type === 'fire') trait = '불꽃 ';
                     else if (type === 'twisted') trait = '뒤틀린 ';
                     else if (type === 'electric') trait = '전기 ';
                     else if (type === 'ice') trait = '얼음 ';
-                    else if (type === 'ice_canyon') trait = '빙하 ';
                     else if (type === 'radioactive') trait = '방사능 ';
                     else if (type === 'ocean') trait = '심해 ';
                     else if (type === 'cave') trait = '동굴 ';
@@ -19321,7 +19466,7 @@
                         else if (equippedAxe === 2) maxP = Math.floor(tree.maxProgress * (3.5 / 5.0)); // 3.5초
                         else if (equippedAxe === 3) maxP = Math.floor(tree.maxProgress * (3.2 / 5.0)); // 3.2초
                         else if (equippedAxe === 4) maxP = Math.floor(tree.maxProgress * (2.7 / 5.0)); // 2.7초 (고대 도끼)
-                        if (activeSkinPet && ownedSkins.includes(activeSkinPet)) {
+                        if (hasActivePet()) {
                             maxP = Math.floor(maxP * 0.8); // 🌲 미니 스킨 펫 효과: 나무 캐는 속도 20% 감소 (벌목 시간 20% 단축)
                         }
 
@@ -19418,6 +19563,14 @@
                             try { localStorage.setItem('space_collection', JSON.stringify(spaceCollection)); } catch(e) {}
                             floatTexts.push({ x: player.x, y: player.y - 80, text: `🚀 우주 도감 등록: ${baseName}!`, color: '#00f2fe', life: 70 });
                         }
+                        if (typeof FOSSIL_ITEMS !== 'undefined') {
+                            let fItem = FOSSIL_ITEMS.find(item => item.name === baseName || item.name === f.fruit);
+                            if (fItem && !fossilCollection.includes(fItem.name)) {
+                                fossilCollection.push(fItem.name);
+                                try { localStorage.setItem('fossil_collection', JSON.stringify(fossilCollection)); } catch(e) {}
+                                floatTexts.push({ x: player.x, y: player.y - 80, text: `🦴 고대 화석 도감 등록: ${fItem.name}!`, color: fItem.color, life: 70 });
+                            }
+                        }
                         floatTexts.push({ x: player.x, y: player.y - 40, text: `+${f.fruit}`, color: f.color, life: 40 });
                         addXp(f.xp, player.x + 20, player.y - 60);
                         fruitsOnGround.splice(i, 1); continue;
@@ -19488,7 +19641,7 @@
                             
                             // 주울 때와 완전히 동일한 XP 지급!
                             let baseItemXp = 2; // 기본값
-                            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables, ...spaceDropTables];
+                            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...iceCanyonDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables, ...spaceDropTables];
                             for (let t of tables) { if (t.items.includes(baseName)) { baseItemXp = t.xp; break; } }
                             let earnedXp = firstC.amount * baseItemXp;
                             
@@ -23914,7 +24067,7 @@
                         else if (equippedAxe === 2) maxP = Math.floor(t.maxProgress * (3.5 / 5.0));
                         else if (equippedAxe === 3) maxP = Math.floor(t.maxProgress * (3.2 / 5.0));
                         else if (equippedAxe === 4) maxP = Math.floor(t.maxProgress * (2.7 / 5.0));
-                        if (activeSkinPet && ownedSkins.includes(activeSkinPet)) {
+                        if (hasActivePet()) {
                             maxP = Math.floor(maxP * 0.8); // 🌲 미니 스킨 펫 효과
                         }
                         ctx.fillStyle = '#3498db'; ctx.fillRect(-38, -143, 76 * (t.progress / maxP), 8);
