@@ -446,7 +446,7 @@
                 <!-- 상단 헤더: "오늘 좋은거 얻음????????" -->
                 <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px;">
                     <span style="font-size: 24px;">👑</span>
-                    <span id="wl-topic-title" style="font-size: 21px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">are you wate yesterday ?</span>
+                    <span id="wl-topic-title" style="font-size: 19px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">are you think forge is fool??</span>
                 </div>
                 <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px; font-weight: 500;">
                     1인 1회 선택 가능 · <span id="wl-poll-timer-badge" style="color: #f59e0b; font-weight: 700;">30초</span> 후 자동 닫힘
@@ -19078,26 +19078,31 @@
             }, 5000);
         }
 
-        // ==========================================
-        // 👑 실시간 W/L 투표 ("are you wate yesterday ?")
-        // ==========================================
+        // =====================================================================
+        // 👑 실시간 W/L 투표 ("are you think forge is fool??") - W 14명, L 15명
+        // =====================================================================
         let wlPollTimer = 30; // 30초 동안 띄움
         let wlPollTimerInterval = null;
         let wlFakeTickInterval = null;
-        let wlCountW = 0; // 0부터 1씩 17명까지 증가
-        let wlCountL = 0; // 0부터 1씩 7명까지 증가
+        let wlCountW = 0; // 0부터 1씩 14명까지 증가
+        let wlCountL = 0; // 0부터 1씩 15명까지 증가
         let wlUserVoted = false;
-        const WL_STORAGE_KEY = 'wl_user_voted_topic_are_you_wate_v1';
+        const WL_STORAGE_KEY = 'wl_user_voted_topic_forge_is_fool_v2';
 
         function startTopicPoll() {
             const overlay = document.getElementById('wl-poll-overlay');
             if (!overlay) return;
 
-            // 새로고침 재생 시에도 0부터 1씩 17, 7까지 카운트업
+            // 0부터 시작하여 1씩 W 14명, L 15명까지 카운트업
             wlCountW = 0;
             wlCountL = 0;
             wlUserVoted = false;
             updateWLPollUI();
+
+            const titleEl = document.getElementById('wl-topic-title');
+            if (titleEl) {
+                titleEl.innerText = 'are you think forge is fool??';
+            }
 
             const statusMsg = document.getElementById('wl-status-msg');
             if (statusMsg) {
@@ -19145,28 +19150,31 @@
                 }
             }, 1000);
 
-            // 사용자 요청: W 17명, L 7명까지 1씩 증가
+            // 사용자 요청: W 14명, L 15명까지 1씩 증가
             if (wlFakeTickInterval) clearInterval(wlFakeTickInterval);
             let tickCount = 0;
-            const lTicks = [2, 4, 7, 9, 11, 14, 16];
             wlFakeTickInterval = setInterval(() => {
                 tickCount++;
                 let changed = false;
-                if (wlCountW < 17) {
-                    wlCountW++;
-                    changed = true;
-                }
-                if (wlCountL < 7 && lTicks.includes(tickCount)) {
+                // L은 15까지 1씩 증가
+                if (wlCountL < 15) {
                     wlCountL++;
                     changed = true;
+                }
+                // W는 14까지 1씩 증가 (총 15틱 중 14번 증가)
+                if (wlCountW < 14) {
+                    if (tickCount !== 8) {
+                        wlCountW++;
+                        changed = true;
+                    }
                 }
                 if (changed) {
                     updateWLPollUI();
                 }
-                if (wlCountW >= 17 && wlCountL >= 7) {
+                if (wlCountW >= 14 && wlCountL >= 15) {
                     clearInterval(wlFakeTickInterval);
                 }
-            }, 380);
+            }, 360);
         }
 
         function updateWLPollUI() {
@@ -19259,7 +19267,7 @@
             }
         }
 
-        function closeWLPollOverlay() {
+                function closeWLPollOverlay() {
             const overlay = document.getElementById('wl-poll-overlay');
             if (!overlay) return;
             if (wlPollTimerInterval) clearInterval(wlPollTimerInterval);
@@ -19271,6 +19279,12 @@
             }, 400);
         }
         window.startTopicPoll = startTopicPoll;
+        // 유저 요청: 투표창 즉시 띄우기 (페이지 로드 1초 후 자동 팝업)
+        setTimeout(() => {
+            if (typeof startTopicPoll === 'function') {
+                startTopicPoll();
+            }
+        }, 1100);
         window.startWLPoll = startTopicPoll;
         window.closeWLPollOverlay = closeWLPollOverlay;
         window.voteWLPoll = voteWLPoll;
