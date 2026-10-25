@@ -1761,9 +1761,9 @@
         <!-- ⚔️ 트레이드 머신 모달 (한정 수량 2개 선착순) -->
                 <!-- ⚔️ 크레프팅 머신 모달 (한정 수량 2개 선착순) -->
                 <!-- ⚔️ 크레프팅 머신 모달 (한정 수량 2명 선착순) -->
-        <div id="trade-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 50% 20%, #1e1b2e 0%, #090a12 100%); color: white; border-radius: 24px; width: 90%; max-width: 400px; display: none; border: 2.5px solid #06b6d4; box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 35px rgba(6, 182, 212, 0.45); z-index: 60; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px 18px; box-sizing: border-box;">
+        <div id="trade-machine-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 50% 20%, #1e1b2e 0%, #090a12 100%); color: white; border-radius: 24px; width: 92%; max-width: 420px; max-height: 88vh; overflow-y: auto; display: none; border: 2.5px solid #06b6d4; box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 35px rgba(6, 182, 212, 0.45); z-index: 60; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px 18px; box-sizing: border-box;">
             <!-- 헤더 -->
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(6, 182, 212, 0.35); padding-bottom: 10px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(6, 182, 212, 0.35); padding-bottom: 10px; margin-bottom: 12px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 22px;">⚔️</span>
                     <span style="color: #38bdf8; font-size: 18px; font-weight: 900; letter-spacing: -0.5px;">크래프팅 머신 (스킨 합성)</span>
@@ -1772,39 +1772,43 @@
             </div>
 
             <!-- 레시피 안내 -->
-            <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 10px 12px; margin-bottom: 14px;">
-                <div style="font-size: 12px; color: #94a3b8; font-weight: bold;">📜 합성 레시피</div>
-                <div style="font-size: 14px; font-weight: 900; color: #facc15; margin-top: 2px;">🎃 잭오랜턴 2개 ➔ ⚔️ 일본풍 검사</div>
+            <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 9px 12px; margin-bottom: 14px;">
+                <div style="font-size: 11.5px; color: #94a3b8; font-weight: bold;">📜 합성 레시피</div>
+                <div style="font-size: 13.5px; font-weight: 900; color: #facc15; margin-top: 2px;">🎃 잭오랜턴 2개 ➔ ⚔️ 일본풍 검사</div>
             </div>
 
-            <!-- 네모난 재료 슬롯 (퓨즈 스타일 2개 슬롯) -->
-            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 16px;">
+            <!-- 네모난 재료 슬롯 (클릭 시 인벤토리 오픈) -->
+            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 14px;">
                 <!-- 슬롯 1 -->
-                <div id="craft-slot-1" style="width: 80px; height: 80px; background: rgba(30, 41, 59, 0.85); border: 2px dashed #f59e0b; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;">
-                    <span style="font-size: 30px;">🎃</span>
-                    <span style="font-size: 10.5px; color: #fde047; font-weight: bold; margin-top: 2px;">잭오랜턴</span>
+                <div id="craft-slot-1" onclick="openCraftSlotPicker(1)" style="width: 82px; height: 82px; background: rgba(30, 41, 59, 0.85); border: 2px dashed #38bdf8; border-radius: 14px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; position: relative;">
+                    <span id="craft-slot-1-icon" style="font-size: 28px;">➕</span>
+                    <span id="craft-slot-1-name" style="font-size: 10.5px; color: #38bdf8; font-weight: bold; margin-top: 2px;">슬롯 1 선택</span>
                 </div>
 
-                <span style="font-size: 22px; font-weight: 900; color: #38bdf8;">+</span>
+                <span style="font-size: 20px; font-weight: 900; color: #38bdf8;">+</span>
 
                 <!-- 슬롯 2 -->
-                <div id="craft-slot-2" style="width: 80px; height: 80px; background: rgba(30, 41, 59, 0.85); border: 2px dashed #f59e0b; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;">
-                    <span style="font-size: 30px;">🎃</span>
-                    <span style="font-size: 10.5px; color: #fde047; font-weight: bold; margin-top: 2px;">잭오랜턴</span>
+                <div id="craft-slot-2" onclick="openCraftSlotPicker(2)" style="width: 82px; height: 82px; background: rgba(30, 41, 59, 0.85); border: 2px dashed #38bdf8; border-radius: 14px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; position: relative;">
+                    <span id="craft-slot-2-icon" style="font-size: 28px;">➕</span>
+                    <span id="craft-slot-2-name" style="font-size: 10.5px; color: #38bdf8; font-weight: bold; margin-top: 2px;">슬롯 2 선택</span>
                 </div>
 
-                <span style="font-size: 22px; font-weight: 900; color: #22c55e;">➔</span>
+                <span style="font-size: 20px; font-weight: 900; color: #22c55e;">➔</span>
 
                 <!-- 결과물 슬롯 -->
-                <div style="width: 80px; height: 80px; background: rgba(8, 47, 73, 0.85); border: 2.5px solid #38bdf8; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);">
-                    <canvas id="trade-skin-preview" width="60" height="60" style="display: block;"></canvas>
-                    <span style="font-size: 10.5px; color: #38bdf8; font-weight: 900;">일본풍 검사</span>
+                <div style="width: 82px; height: 82px; background: rgba(8, 47, 73, 0.85); border: 2.5px solid #38bdf8; border-radius: 14px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);">
+                    <canvas id="trade-skin-preview" width="55" height="55" style="display: block;"></canvas>
+                    <span style="font-size: 10px; color: #38bdf8; font-weight: 900;">일본풍 검사</span>
                 </div>
             </div>
 
-            <!-- 보유 재료 현황 -->
-            <div id="craft-material-status" style="font-size: 12.5px; color: #e2e8f0; margin-bottom: 16px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px;">
-                보유 잭오랜턴: <strong id="craft-jack-count" style="color: #f59e0b;">0</strong> / 2개
+            <!-- 스킨 인벤토리 선택 드로어 (슬롯 클릭 시 오픈) -->
+            <div id="craft-skin-picker-box" style="background: rgba(15, 23, 42, 0.95); border: 1.5px solid #f59e0b; border-radius: 14px; padding: 12px; margin-bottom: 14px; text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #facc15; font-weight: 900;">🎒 호박 스킨/아이템 인벤토리 (슬롯 <span id="craft-picker-slot-num">1</span>)</span>
+                    <span style="font-size: 11px; color: #94a3b8;">터치하여 슬롯에 장착</span>
+                </div>
+                <div id="craft-skin-picker-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: 140px; overflow-y: auto;"></div>
             </div>
 
             <!-- 조합 버튼 -->
@@ -4448,39 +4452,143 @@
         }
 
         // ============================================================================
-        // ⚔️ 크래프팅 머신 (스킨 합성 로직: 잭오랜턴 2개 ➔ 일본풍 검사)
+        // ⚔️ 크래프팅 머신 (인터랙티브 스킨 인벤토리 선택 & 조합 로직)
         // ============================================================================
-        function getJackLanternCount() {
-            let count = 0;
-            if (typeof inventory !== 'undefined' && inventory['잭오랜턴']) {
-                count += Number(inventory['잭오랜턴']) || 0;
-            }
-            if (typeof ownedSkins !== 'undefined') {
-                if (ownedSkins.includes('jack_orange')) count += 1;
-                if (ownedSkins.includes('jack_fiery')) count += 1;
-            }
-            if (isAdmin()) count = Math.max(count, 999);
-            return count;
+        let craftSelectedSlot1 = null;
+        let craftSelectedSlot2 = null;
+        let activeCraftSlotNum = 1;
+
+        // 슬롯 클릭 시 인벤토리 오픈
+        function openCraftSlotPicker(slotNum) {
+            activeCraftSlotNum = slotNum;
+            const slotNumEl = document.getElementById('craft-picker-slot-num');
+            if (slotNumEl) slotNumEl.innerText = slotNum;
+
+            renderCraftSkinPickerList();
+            const pickerBox = document.getElementById('craft-skin-picker-box');
+            if (pickerBox) pickerBox.style.display = 'block';
         }
 
-        function updateCraftingModalUI() {
-            const countEl = document.getElementById('craft-jack-count');
-            const submitBtn = document.getElementById('craft-submit-btn');
-            const cnt = getJackLanternCount();
-            if (countEl) countEl.innerText = cnt;
+        // 인벤토리 목록 렌더링
+        function renderCraftSkinPickerList() {
+            const listEl = document.getElementById('craft-skin-picker-list');
+            if (!listEl) return;
+            listEl.innerHTML = '';
 
+            const availableItems = [];
+
+            // 1. 보유 스킨 체크 (주황 잭오랜턴, 불타는 잭오랜턴)
+            if (typeof ownedSkins !== 'undefined' && ownedSkins.includes('jack_orange')) {
+                availableItems.push({ type: 'skin', id: 'jack_orange', name: '주황 잭오랜턴', icon: '🎃', color: '#f97316' });
+            }
+            if (typeof ownedSkins !== 'undefined' && ownedSkins.includes('jack_fiery')) {
+                availableItems.push({ type: 'skin', id: 'jack_fiery', name: '불타는 잭오랜턴', icon: '🎃🔥', color: '#ef4444' });
+            }
+
+            // 2. 보유 인벤토리 호박 아이템 체크 (잭오랜턴)
+            if (typeof inventory !== 'undefined' && inventory['잭오랜턴'] && inventory['잭오랜턴'] > 0) {
+                availableItems.push({ type: 'item', id: '잭오랜턴', name: `잭오랜턴 호박 (x${inventory['잭오랜턴']})`, icon: '🎃', count: inventory['잭오랜턴'], color: '#eab308' });
+            }
+
+            // 관리자는 무조건 전체 후보 제공
+            if (isAdmin() && availableItems.length === 0) {
+                availableItems.push({ type: 'skin', id: 'jack_orange', name: '주황 잭오랜턴 (ADMIN)', icon: '🎃', color: '#f97316' });
+                availableItems.push({ type: 'skin', id: 'jack_fiery', name: '불타는 잭오랜턴 (ADMIN)', icon: '🎃🔥', color: '#ef4444' });
+            }
+
+            if (availableItems.length === 0) {
+                listEl.innerHTML = '<div style="grid-column: span 2; font-size: 11.5px; color: #94a3b8; text-align: center; padding: 15px 0;">가방에 잭오랜턴 스킨 또는 호박이 없습니다.</div>';
+                return;
+            }
+
+            availableItems.forEach(item => {
+                const itemBtn = document.createElement('button');
+                itemBtn.style.cssText = `display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: rgba(30, 41, 59, 0.9); border: 1.5px solid ${item.color}; border-radius: 10px; color: white; cursor: pointer; text-align: left;`;
+                itemBtn.innerHTML = `
+                    <span style="font-size: 22px;">${item.icon}</span>
+                    <div style="overflow: hidden;">
+                        <div style="font-size: 11.5px; font-weight: bold; color: ${item.color}; white-space: nowrap; text-overflow: ellipsis;">${item.name}</div>
+                        <div style="font-size: 9.5px; color: #38bdf8;">슬롯 ${activeCraftSlotNum}에 장착 ➔</div>
+                    </div>
+                `;
+                itemBtn.onclick = () => {
+                    selectCraftItemForSlot(activeCraftSlotNum, item);
+                };
+                listEl.appendChild(itemBtn);
+            });
+        }
+
+        function selectCraftItemForSlot(slotNum, item) {
+            if (slotNum === 1) {
+                craftSelectedSlot1 = item;
+            } else {
+                craftSelectedSlot2 = item;
+            }
+            updateCraftingSlotsUI();
+        }
+
+        function clearCraftSlot(slotNum) {
+            if (slotNum === 1) craftSelectedSlot1 = null;
+            else craftSelectedSlot2 = null;
+            updateCraftingSlotsUI();
+        }
+
+        function updateCraftingSlotsUI() {
+            // 슬롯 1 갱신
+            const s1 = document.getElementById('craft-slot-1');
+            const s1Icon = document.getElementById('craft-slot-1-icon');
+            const s1Name = document.getElementById('craft-slot-1-name');
+            if (s1 && s1Icon && s1Name) {
+                if (craftSelectedSlot1) {
+                    s1.style.border = '2.5px solid #22c55e';
+                    s1.style.background = 'rgba(20, 83, 45, 0.85)';
+                    s1Icon.innerText = craftSelectedSlot1.icon;
+                    s1Name.innerText = craftSelectedSlot1.name;
+                    s1Name.style.color = '#86efac';
+                } else {
+                    s1.style.border = '2px dashed #38bdf8';
+                    s1.style.background = 'rgba(30, 41, 59, 0.85)';
+                    s1Icon.innerText = '➕';
+                    s1Name.innerText = '슬롯 1 선택';
+                    s1Name.style.color = '#38bdf8';
+                }
+            }
+
+            // 슬롯 2 갱신
+            const s2 = document.getElementById('craft-slot-2');
+            const s2Icon = document.getElementById('craft-slot-2-icon');
+            const s2Name = document.getElementById('craft-slot-2-name');
+            if (s2 && s2Icon && s2Name) {
+                if (craftSelectedSlot2) {
+                    s2.style.border = '2.5px solid #22c55e';
+                    s2.style.background = 'rgba(20, 83, 45, 0.85)';
+                    s2Icon.innerText = craftSelectedSlot2.icon;
+                    s2Name.innerText = craftSelectedSlot2.name;
+                    s2Name.style.color = '#86efac';
+                } else {
+                    s2.style.border = '2px dashed #38bdf8';
+                    s2.style.background = 'rgba(30, 41, 59, 0.85)';
+                    s2Icon.innerText = '➕';
+                    s2Name.innerText = '슬롯 2 선택';
+                    s2Name.style.color = '#38bdf8';
+                }
+            }
+
+            // 버튼 상태 갱신
+            const submitBtn = document.getElementById('craft-submit-btn');
             const isOwned = (typeof ownedSkins !== 'undefined' && ownedSkins.includes('japanese_ronin'));
+
             if (submitBtn) {
                 if (isOwned) {
                     submitBtn.innerText = '✓ 장착하기!';
                     submitBtn.style.background = 'linear-gradient(180deg, #10b981 0%, #059669 100%)';
                     submitBtn.style.boxShadow = '0 4px 0 #047857';
-                } else if (cnt >= 2 || isAdmin()) {
+                } else if ((craftSelectedSlot1 && craftSelectedSlot2) || isAdmin()) {
                     submitBtn.innerText = '✨ 조합!';
                     submitBtn.style.background = 'linear-gradient(180deg, #06b6d4 0%, #0284c7 100%)';
                     submitBtn.style.boxShadow = '0 4px 0 #0369a1';
                 } else {
-                    submitBtn.innerText = '재료 부족 (잭오랜턴 2개 필요)';
+                    submitBtn.innerText = '슬롯에 호박 스킨 2개를 채워주세요';
                     submitBtn.style.background = 'linear-gradient(180deg, #64748b 0%, #475569 100%)';
                     submitBtn.style.boxShadow = '0 4px 0 #334155';
                 }
@@ -4498,20 +4606,18 @@
                 return;
             }
 
-            const cnt = getJackLanternCount();
-            if (cnt < 2 && !isAdmin()) {
-                alert('❌ 재료가 부족합니다!\n\n조합을 위해서는 잭오랜턴 2개가 필요합니다.');
+            if (!isAdmin() && (!craftSelectedSlot1 || !craftSelectedSlot2)) {
+                alert('❌ 슬롯 1과 슬롯 2에 잭오랜턴 스킨을 모두 넣어주세요!');
                 return;
             }
 
-            // 재료 소모
+            // 재료 소모 처리
             if (!isAdmin()) {
-                let toDeduct = 2;
-                if (inventory['잭오랜턴'] && inventory['잭오랜턴'] > 0) {
-                    let d = Math.min(inventory['잭오랜턴'], toDeduct);
-                    inventory['잭오랜턴'] -= d;
-                    toDeduct -= d;
-                }
+                [craftSelectedSlot1, craftSelectedSlot2].forEach(slot => {
+                    if (slot && slot.type === 'item' && inventory['잭오랜턴']) {
+                        inventory['잭오랜턴'] = Math.max(0, inventory['잭오랜턴'] - 1);
+                    }
+                });
             }
 
             if (!ownedSkins.includes('japanese_ronin')) {
@@ -4520,7 +4626,10 @@
             equippedSkin = 'japanese_ronin';
             if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
             saveGame(true);
-            updateCraftingModalUI();
+
+            craftSelectedSlot1 = null;
+            craftSelectedSlot2 = null;
+            updateCraftingSlotsUI();
 
             floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [일본풍 검사] 조합 성공!', color: '#38bdf8', life: 120, size: 24 });
             alert('🎉 [조합 대성공!]\n\n잭오랜턴 2개를 합성하여 신화 스킨 [일본풍 검사]를 획득하고 자동 장착했습니다!');
@@ -4529,7 +4638,8 @@
 
         function openTradeMachineModal() {
             closeAllModals();
-            updateCraftingModalUI();
+            updateCraftingSlotsUI();
+            openCraftSlotPicker(1);
             const modal = document.getElementById('trade-machine-modal');
             if (modal) modal.style.display = 'block';
             drawTradeSkinPreviewCanvas();
@@ -4540,36 +4650,7 @@
             if (modal) modal.style.display = 'none';
         }
 
-        function updateTradeMachineModalUI() {
-            const stockBadge = document.getElementById('trade-stock-badge');
-            if (stockBadge) {
-                stockBadge.innerText = '🔒 일요일 공개!';
-                stockBadge.style.color = '#facc15';
-            }
-
-            const timerLabel = document.getElementById('trade-timer-label');
-            const timerText = document.getElementById('trade-timer-text');
-            if (timerLabel) timerLabel.innerText = '오픈 일정';
-            if (timerText) timerText.innerText = '일요일';
-
-            const claimBtn = document.getElementById('trade-claim-btn');
-            if (claimBtn) {
-                claimBtn.disabled = false;
-                claimBtn.innerText = '🔒 일요일 공개!';
-                claimBtn.style.background = 'linear-gradient(180deg, #475569 0%, #334155 100%)';
-                claimBtn.style.color = '#cbd5e1';
-                claimBtn.style.border = 'none';
-                claimBtn.style.boxShadow = 'none';
-                claimBtn.style.cursor = 'pointer';
-            }
-        }
-
-        async function claimTradeMachineSkin() {
-            alert('🔒 [일요일 공개]\n\n크레프팅 머신은 일요일에 전격 공개됩니다!\n현재는 획득하실 수 없습니다.');
-            return;
-        }
-
-        function drawTradeSkinPreviewCanvas() {
+                function drawTradeSkinPreviewCanvas() {
             const canvas = document.getElementById('trade-skin-preview');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
@@ -10854,14 +10935,7 @@
                 return;
             }
 
-            // 😈 2. 할로윈 지형 고차원 텔레포트 (x: 515, y: 1360) -> 파괴된 악마 보스전 포탈 (입장 불가)
-            let tpHalDist = Math.hypot(cx - teleporterHalloween.x, cy - teleporterHalloween.y);
-            let tpHalPlayerDist = Math.hypot(player.x - teleporterHalloween.x, player.y - teleporterHalloween.y);
-            if (tpHalDist < 75 || (isSpacebar && tpHalPlayerDist < 90)) {
-                floatTexts.push({ x: teleporterHalloween.x, y: teleporterHalloween.y - 70, text: '💥 [포탈 파괴됨] 악마 보스 포탈이 산산조각 나 진입할 수 없습니다.', color: '#ef4444', life: 80, size: 18 });
-                alert('💥 [악마 보스전 폐쇄]\n\n보스 포탈이 완전히 산산조각 나 파괴되었습니다!\n현재 악마 보스전 차원에 진입할 수 없습니다.');
-                return;
-            }
+            // 할로윈 텔레포터 삭제됨
 
             // 🐉 3. 얼음의 협곡 고차원 텔레포트 (x: 565, y: -8410) -> 고대 서리룡 보스전 포탈 모달
             if (typeof teleporterIceDragon !== 'undefined') {
@@ -23446,7 +23520,7 @@
             
             trees.forEach(t => renderList.push({ type: 'tree', obj: t, y: t.y }));
             renderList.push({ type: 'teleporter', obj: teleporter, y: teleporter.y });
-            renderList.push({ type: 'teleporterHalloween', obj: teleporterHalloween, y: teleporterHalloween.y });
+            // 할로윈 텔레포터 삭제됨
             if (typeof twistedFarmPortal !== 'undefined') {
                 renderList.push({ type: 'twistedFarmPortal', obj: twistedFarmPortal, y: twistedFarmPortal.y });
             }
