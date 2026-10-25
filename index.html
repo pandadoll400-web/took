@@ -1612,7 +1612,58 @@
             </button>
         </div>
 
-        <!-- 🦴 고대 화석 도감 모달 (얼음의 협곡 20종 화석 수집) -->
+        <!-- 🐧 펭귄 & 펫 도감 모달 -->
+        <div id="penguin-codex-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 480px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 26px;">🐧</span>
+                    <div>
+                        <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold;">펭귄 & 얼음 펫 도감</h2>
+                        <span style="font-size: 11px; color: #94a3b8;">얼음의 협곡 주민 발굴 도감</span>
+                    </div>
+                </div>
+                <button onclick="closePenguinCodexModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
+            </div>
+
+            <!-- 수집 진행도 바 -->
+            <div style="background: rgba(30, 41, 59, 0.8); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; border: 1px solid #334155;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; margin-bottom: 6px;">
+                    <span style="color: #cbd5e1;">펭귄/펫 도감 수집 진행도</span>
+                    <span id="penguin-progress-text" style="color: #38bdf8;">0 / 8 (0%)</span>
+                </div>
+                <div style="background: #0f172a; height: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #1e293b;">
+                    <div id="penguin-progress-bar" style="background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6); height: 100%; width: 0%; transition: width 0.4s ease;"></div>
+                </div>
+            </div>
+
+            <!-- 펫 그리드 -->
+            <div id="penguin-codex-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px;"></div>
+
+            <!-- 다른 도감 바로가기 링크 버튼 -->
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;">
+                <button onclick="closePenguinCodexModal(); openFossilCodexModal();" style="padding: 4px 8px; font-size: 10px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 5px; cursor: pointer;">🦴 화석 도감</button>
+                <button onclick="closePenguinCodexModal(); document.getElementById('radioactive-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; color: #2ecc71; border-radius: 5px; cursor: pointer;">🍏 과일 도감</button>
+                <button onclick="closePenguinCodexModal(); document.getElementById('ocean-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(9, 132, 227, 0.2); border: 1px solid #0984e3; color: #74b9ff; border-radius: 5px; cursor: pointer;">🐟 해양 도감</button>
+                <button onclick="closePenguinCodexModal(); openSpaceIndex();" style="padding: 4px 8px; font-size: 10px; background: rgba(0, 242, 254, 0.2); border: 1px solid #00f2fe; color: #00f2fe; border-radius: 5px; cursor: pointer;">🚀 우주 도감</button>
+            </div>
+        </div>
+
+        <!-- ❄️ 얼음 주민 NPC 대화 모달 -->
+        <div id="ice-villager-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 50% 20%, #1e293b 0%, #0f172a 100%); color: white; padding: 24px 20px; border-radius: 20px; width: 90%; max-width: 420px; display: none; border: 2.5px solid #38bdf8; z-index: 60; box-shadow: 0 10px 40px rgba(0,0,0,0.95), 0 0 30px rgba(56, 189, 248, 0.35); text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box;">
+            <div style="font-size: 46px; margin-bottom: 6px; filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.6));">🐧 ❄️ ⛄</div>
+            <h3 style="margin: 0 0 6px 0; color: #38bdf8; font-size: 20px; font-weight: 900;">얼음 주민 [펭구]</h3>
+            <p style="color: #cbd5e1; font-size: 13.5px; line-height: 1.6; margin: 0 0 18px 0; background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                "안녕! 혹한의 얼음 협곡에 온 걸 환영해! 펭귄 친구들과 인큐베이터 알들이 무럭무럭 자라고 있어. 무엇을 도와줄까?"
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button onclick="closeIceVillagerModal(); openPenguinCodexModal();" style="padding: 12px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);">🐧 펭귄 & 펫 도감 확인하기</button>
+                <button onclick="closeIceVillagerModal(); openPetMachineModal();" style="padding: 11px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 13.5px; cursor: pointer;">🥚 인큐베이터(알 배양기) 열기</button>
+                <button onclick="closeIceVillagerModal(); openFossilCodexModal();" style="padding: 11px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 13.5px; cursor: pointer;">🦴 고대 화석 도감 보기</button>
+                <button onclick="closeIceVillagerModal()" style="margin-top: 4px; padding: 10px; background: rgba(255,255,255,0.1); color: #94a3b8; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">닫기</button>
+            </div>
+        </div>
+
+                <!-- 🦴 고대 화석 도감 모달 (얼음의 협곡 20종 화석 수집) -->
         <div id="fossil-codex-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 460px; max-height: 85%; overflow-y: auto; display: none; border: 2px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.35); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -1655,6 +1706,7 @@
                 <button onclick="closeFossilCodexModal(); document.getElementById('ocean-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(9, 132, 227, 0.2); border: 1px solid #0984e3; color: #74b9ff; border-radius: 5px; cursor: pointer;">🐟 해양 도감</button>
                 <button onclick="closeFossilCodexModal(); document.getElementById('cave-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(178, 190, 195, 0.2); border: 1px solid #b2bec3; color: #dfe6e9; border-radius: 5px; cursor: pointer;">🪨 암석 도감</button>
                 <button onclick="closeFossilCodexModal(); document.getElementById('halloween-modal').style.display='block';" style="padding: 4px 8px; font-size: 10px; background: rgba(243, 156, 18, 0.2); border: 1px solid #f39c12; color: #f1c40f; border-radius: 5px; cursor: pointer;">🎃 할로윈 도감</button>
+                <button onclick="closeFossilCodexModal(); openPenguinCodexModal();" style="padding: 4px 8px; font-size: 10px; background: rgba(56, 189, 248, 0.25); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 5px; cursor: pointer; font-weight: bold;">🐧 펭귄 도감</button>
                 <button onclick="closeFossilCodexModal(); openSpaceIndex();" style="padding: 4px 8px; font-size: 10px; background: rgba(0, 242, 254, 0.2); border: 1px solid #00f2fe; color: #00f2fe; border-radius: 5px; cursor: pointer;">🚀 우주 도감</button>
             </div>
         </div>
@@ -2171,6 +2223,198 @@
             { id: 'egg_rock', name: '공룡알 조각 교환 바위', x: 440, y: -8340, radius: 30, hitTimer: 0 }
         ];
 
+        // 🐧 얼음 지형 주민 NPC 객체 (x: 480, y: -8520)
+        const iceVillager = {
+            x: 480,
+            y: -8520,
+            radius: 30,
+            name: '얼음 주민 [펭구]'
+        };
+
+        function openIceVillagerModal() {
+            closeAllModals();
+            const modal = document.getElementById('ice-villager-modal');
+            if (modal) modal.style.display = 'block';
+        }
+        function closeIceVillagerModal() {
+            const modal = document.getElementById('ice-villager-modal');
+            if (modal) modal.style.display = 'none';
+        }
+        window.openIceVillagerModal = openIceVillagerModal;
+        window.closeIceVillagerModal = closeIceVillagerModal;
+
+        // 🐧 펭귄 & 펫 도감 데이터 및 로직
+        const PENGUIN_PET_CODEX_DATA = [
+            { id: 'penguin', name: '꼬마 펭귄', icon: '🐧', grade: '스페셜', desc: '인큐베이터에서 부화한 사랑스러운 꼬마 펭귄. 이동속도 +15% 증가!' },
+            { id: 'penguin_butler', name: '황제 펭귄 집사', icon: '🐧🎩', grade: '희귀', desc: '얼음 왕국의 정중한 집사 펭귄. 상점 판매 시 골드 +50% 보너스 정산!' },
+            { id: 'frost_wolf', name: '칠흑의 눈꽃 늑대', icon: '🐺❄️', grade: '신화', desc: '태고의 만년설 속 영수. 과일 수확량 +50% 및 빙결 오라 발동!' },
+            { id: 'baby_ice_dragon', name: '빙룡 베이비', icon: '🐉❄️', grade: '전설', desc: '고대 서리룡의 새끼. 보스전 피해량 +35% 증가!' },
+            { id: 'aurora_fox', name: '오로라 구미호', icon: '🦊✨', grade: '고대', desc: '극광의 빛을 품은 신비로운 여우. 15초마다 황금 과일 자동 드랍!' },
+            { id: 'pet_gorilla', name: '일반 고릴라', icon: '🦍', grade: '일반', desc: '인큐베이터 부화 고릴라. 벌목 속도 +20% 증가!' },
+            { id: 'pet_wolf', name: '일반 늑대', icon: '🐺', grade: '희귀', desc: '인큐베이터 부화 늑대. 벌목 속도 +20% 증가!' },
+            { id: 'pet_cat', name: '일반 고양이', icon: '🐱', grade: '초희귀', desc: '인큐베이터 부화 고양이. 벌목 속도 +20% 증가!' }
+        ];
+
+        function openPenguinCodexModal() {
+            closeAllModals();
+            renderPenguinCodex();
+            const modal = document.getElementById('penguin-codex-modal');
+            if (modal) modal.style.display = 'block';
+        }
+        function closePenguinCodexModal() {
+            const modal = document.getElementById('penguin-codex-modal');
+            if (modal) modal.style.display = 'none';
+        }
+        window.openPenguinCodexModal = openPenguinCodexModal;
+        window.closePenguinCodexModal = closePenguinCodexModal;
+
+        function renderPenguinCodex() {
+            const grid = document.getElementById('penguin-codex-grid');
+            const progressText = document.getElementById('penguin-progress-text');
+            const progressBar = document.getElementById('penguin-progress-bar');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            let collectedCount = 0;
+            PENGUIN_PET_CODEX_DATA.forEach(pet => {
+                const isOwned = ownedSkins.includes(pet.id) || synthesizedPets.includes(pet.id) || (activeSkinPet === pet.id);
+                if (isOwned) collectedCount++;
+
+                const card = document.createElement('div');
+                card.style.cssText = `background: ${isOwned ? 'rgba(30, 41, 59, 0.9)' : 'rgba(15, 23, 42, 0.6)'}; border: 1.5px solid ${isOwned ? '#38bdf8' : '#334155'}; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative;`;
+
+                let actionBtn = '';
+                if (isOwned) {
+                    const isEquipped = (equippedSkin === pet.id) || (activeSkinPet === pet.id);
+                    actionBtn = `<button onclick="equipPetSkin('${pet.id}')" style="width: 100%; margin-top: 6px; padding: 5px; font-size: 11px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; background: ${isEquipped ? '#10b981' : '#38bdf8'}; color: white;">${isEquipped ? '✓ 장착 중' : '장착하기'}</button>`;
+                } else {
+                    actionBtn = `<div style="font-size: 10px; color: #64748b; margin-top: 6px;">🔒 미보유 (인큐베이터)</div>`;
+                }
+
+                card.innerHTML = `
+                    <div style="font-size: 34px; margin-bottom: 4px; filter: ${isOwned ? 'none' : 'grayscale(100%) opacity(40%)'};">${pet.icon}</div>
+                    <div style="font-weight: 900; font-size: 13px; color: ${isOwned ? '#ffffff' : '#64748b'};">${pet.name}</div>
+                    <div style="font-size: 10px; color: #38bdf8; margin: 2px 0;">[${pet.grade}]</div>
+                    <div style="font-size: 9.5px; color: ${isOwned ? '#cbd5e1' : '#475569'}; line-height: 1.3;">${pet.desc}</div>
+                    ${actionBtn}
+                `;
+                grid.appendChild(card);
+            });
+
+            const total = PENGUIN_PET_CODEX_DATA.length;
+            const pct = Math.round((collectedCount / total) * 100);
+            if (progressText) progressText.innerText = `${collectedCount} / ${total} (${pct}%)`;
+            if (progressBar) progressBar.style.width = `${pct}%`;
+        }
+
+        function equipPetSkin(id) {
+            if (!ownedSkins.includes(id)) ownedSkins.push(id);
+            useSkin = id;
+            equippedSkin = id;
+            activeSkinPet = id;
+            adminPetFollowEnabled = true;
+            try {
+                localStorage.setItem('equipped_skin', id);
+                localStorage.setItem('active_skin_pet', id);
+            } catch(e) {}
+            saveGame(true);
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🐧 [펫 장착 완료!]', color: '#38bdf8', life: 70, size: 20 });
+            renderPenguinCodex();
+        }
+        window.equipPetSkin = equipPetSkin;
+
+        function drawIceVillager(ctx, x, y) {
+            ctx.save();
+            const now = Date.now() * 0.003;
+            const breathe = Math.sin(now * 3) * 2;
+
+            // 바닥 부드러운 그림자
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+            ctx.beginPath();
+            ctx.ellipse(x, y + 26, 22, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 몸체 (따뜻한 겨울 털 파카)
+            ctx.fillStyle = '#0284c7';
+            ctx.beginPath();
+            ctx.roundRect(x - 16, y - 10 + breathe, 32, 34, 10);
+            ctx.fill();
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // 파카 하단 흰색 털 트림
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            ctx.roundRect(x - 18, y + 20 + breathe, 36, 6, 3);
+            ctx.fill();
+
+            // 얼굴
+            ctx.fillStyle = '#fde047';
+            ctx.beginPath();
+            ctx.arc(x, y - 18 + breathe, 14, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 눈 & 홍조
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath();
+            ctx.arc(x - 4, y - 19 + breathe, 2, 0, Math.PI * 2);
+            ctx.arc(x + 4, y - 19 + breathe, 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#f87171';
+            ctx.beginPath();
+            ctx.arc(x - 8, y - 15 + breathe, 2.5, 0, Math.PI * 2);
+            ctx.arc(x + 8, y - 15 + breathe, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 펭귄 모자 (파카 후드)
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath();
+            ctx.arc(x, y - 24 + breathe, 15, Math.PI, Math.PI * 2);
+            ctx.fill();
+            // 주황색 펭귄 부리
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath();
+            ctx.moveTo(x - 4, y - 22 + breathe);
+            ctx.lineTo(x + 4, y - 22 + breathe);
+            ctx.lineTo(x, y - 17 + breathe);
+            ctx.fill();
+
+            // 들고 있는 랜턴
+            const lx = x + 18, ly = y + 8 + breathe;
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(x + 10, y + 5 + breathe); ctx.lineTo(lx, ly); ctx.stroke();
+            ctx.fillStyle = 'rgba(250, 204, 21, 0.85)';
+            ctx.shadowColor = '#facc15';
+            ctx.shadowBlur = 12;
+            ctx.beginPath(); ctx.arc(lx, ly + 6, 6, 0, Math.PI * 2); ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 머리 위 타이틀 배너
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = 'bold 12.5px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#000';
+            ctx.shadowBlur = 4;
+            ctx.fillText('🐧 얼음 주민 [펭구]', x, y - 48);
+
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.roundRect(x - 72, y - 40, 144, 20, 6);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#fde047';
+            ctx.font = 'bold 10px Arial';
+            ctx.fillText('💬 클릭하여 대화 & 펭귄 도감', x, y - 26);
+            ctx.shadowBlur = 0;
+
+            ctx.restore();
+        }
+
         // 🐾 [ADMIN] 얼음 지형 고급 펫 머신 / 상점 (x: 80, y: -8540)
         let petMachine = {
             x: 80,
@@ -2295,10 +2539,6 @@
         let currentFossilFilter = 'all';
 
         function openFossilCodexModal() {
-            if (!isAdmin()) {
-                alert("🔒 [고대 화석 도감]\n\n현재 최고 관리자(ADMIN) 전용 선행 공개 중입니다!\n정식 업데이트 때 공개될 예정입니다.");
-                return;
-            }
             const modal = document.getElementById('fossil-codex-modal');
             if (!modal) return;
             renderFossilCodex();
@@ -2455,10 +2695,6 @@
         loadIncubatorState();
 
         function openPetMachineModal() {
-            if (!isAdmin()) {
-                alert('🔒 관리자(Admin) 전용 머신입니다!');
-                return;
-            }
             loadIncubatorState();
             const modal = document.getElementById('pet-machine-modal');
             if (!modal) return;
@@ -2602,15 +2838,21 @@
                 return;
             }
 
-            // 🐣 [유저 요구] 펫 알 부화 확률: 일반 고릴라 75%, 일반 늑대 15%, 일반 고양이 10%
+            // 🐣 [유저 요구] 펫 알 부화 확률: 꼬마 펭귄 30%, 일반 고릴라 45%, 일반 늑대 15%, 일반 고양이 10%
             const roll = Math.random() * 100;
             let petId, petName, petIcon, petColor, petRarity;
-            if (roll < 75) {
+            if (roll < 30) {
+                petId = 'penguin';
+                petName = '꼬마 펭귄';
+                petIcon = '🐧';
+                petColor = '#38bdf8';
+                petRarity = '스페셜 펭귄 (30%)';
+            } else if (roll < 75) {
                 petId = 'pet_gorilla';
                 petName = '일반 고릴라';
                 petIcon = '🦍';
                 petColor = '#a855f7';
-                petRarity = '일반 (75%)';
+                petRarity = '일반 (45%)';
             } else if (roll < 90) {
                 petId = 'pet_wolf';
                 petName = '일반 늑대';
@@ -11069,8 +11311,17 @@
                 }
             }
 
+            // 🐧 얼음 지형 주민 NPC 클릭 판정
+            if (typeof iceVillager !== 'undefined') {
+                let ivDist = Math.hypot(cx - iceVillager.x, cy - iceVillager.y);
+                let ivPlayerDist = Math.hypot(player.x - iceVillager.x, player.y - iceVillager.y);
+                if (ivDist < iceVillager.radius + 35 || (isSpacebar && ivPlayerDist < 85)) {
+                    openIceVillagerModal();
+                    return;
+                }
+            }
             // 🐾 [ADMIN] 얼음 지형 고급 펫 머신 클릭 감지 (x: 130, y: -3450)
-            if (isAdmin() && typeof petMachine !== 'undefined') {
+            if (typeof petMachine !== 'undefined') {
                 let pDist = Math.hypot(cx - petMachine.x, cy - petMachine.y);
                 let pPlayerDist = Math.hypot(player.x - petMachine.x, player.y - petMachine.y);
                 if (pDist < petMachine.radius + 35 || (isSpacebar && pPlayerDist < 95)) {
@@ -11210,10 +11461,7 @@
                     player.targetTree = null;
                     return;
                 }
-                if (target.id === 'ice_canyon' && !isAdmin()) {
-                    floatTexts.push({ x: target.x, y: target.y - 100, text: `🔒 관리자(ADMIN) 전용 나무입니다!`, color: '#38bdf8', life: 70 });
-                    return;
-                }
+
                 if (player.targetTree === target) {
                     player.targetTree = null;
                 } else {
@@ -12350,7 +12598,7 @@
             { id: 'mad_scientist', name: '매드 사이언티스트', price: 0, icon: '🥼', isReward: true },
             { id: 'archaeologist', name: '고고학자', price: 0, icon: '🤠', isReward: true },
             { id: 'reaper', name: '사신', price: 0, icon: '💀', isReward: true },
-            { id: 'penguin', name: '꼬마 펭귄', price: 15000, icon: '🐧', adminOnly: true },
+            { id: 'penguin', name: '꼬마 펭귄', price: 15000, icon: '🐧', isReward: true, desc: '인큐베이터 부화 획득 펭귄 스킨' },
             { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, desc: '쿠폰 코드 보상 [sorryaboutvoiseroom]' },
             { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true },
             { id: 'cerberus', name: '케르베로스', price: 0, icon: '🐺🔥', isReward: true },
@@ -19116,6 +19364,9 @@
                 let r = Math.random(), cum = 0, tier = tables[0];
                 for (let t of tables) { cum += t.chance; if (r <= cum) { tier = t; break; } }
                 
+                if (type === 'ice' || type === 'ice_canyon') {
+                    customerSkin = (Math.random() < 0.6) ? 'penguin' : 'penguin_butler';
+                }
                 fruit = tier.items[Math.floor(Math.random() * tier.items.length)];
                 amount = Math.floor(Math.random() * 3) + 1;
                 reward = tier.price * amount; // 유저 요청 기준가 적용
@@ -23792,8 +24043,11 @@
                     renderList.push({ type: 'fossilRock', obj: rock, y: rock.y });
                 });
             }
-            if (isAdmin() && typeof petMachine !== 'undefined') {
+            if (typeof petMachine !== 'undefined') {
                 renderList.push({ type: 'petMachine', obj: petMachine, y: petMachine.y });
+            }
+            if (typeof iceVillager !== 'undefined') {
+                renderList.push({ type: 'iceVillager', obj: iceVillager, y: iceVillager.y });
             }
             if (typeof hasHalloweenTeleporter !== 'undefined' && hasHalloweenTeleporter && typeof halloweenTeleporterBeacon !== 'undefined' && halloweenTeleporterBeacon.placed && isAdmin()) {
                 renderList.push({ type: 'halloweenBeacon', obj: halloweenTeleporterBeacon, y: halloweenTeleporterBeacon.y });
@@ -24148,7 +24402,7 @@
                         ctx.fillStyle = 'black'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center';
                         let label = t.unlocked ? "👆 클릭!" : "👆 잠금 해제";
                         if (t.type === 'space') label = t.unlocked ? "👆 벌목하기 (클릭)" : "👆 잠금 해제";
-                        if (t.id === 'ice_canyon' && !isAdmin()) label = "🔒 관리자 전용";
+                        if (t.id === 'ice_canyon') label = t.unlocked ? "👆 벌목하기 (클릭)" : "👆 잠금 해제";
                         ctx.fillText(label, t.x, t.y - t.radius - 60);
                     }
 
@@ -24253,6 +24507,8 @@
                 } else if (item.type === 'fossilRock') {
                     drawFossilRock(ctx, item.obj.x, item.obj.y, item.obj.radius, item.obj.hitTimer || 0, item.obj);
                     if (item.obj.hitTimer > 0) item.obj.hitTimer--;
+                } else if (item.type === 'iceVillager') {
+                    drawIceVillager(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'petMachine') {
                     drawPetMachine(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'halloweenBeacon') {
