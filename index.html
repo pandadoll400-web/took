@@ -3976,7 +3976,7 @@
                 ctx.stroke();
             }
 
-            // 4. 머리 위 라벨 (10월 25일 일요일 오후 8시 오픈 예고)
+            // 4. 머리 위 라벨 (전체 서버 오픈)
             ctx.fillStyle = '#2ecc71';
             ctx.font = 'bold 15px Arial';
             ctx.textAlign = 'center';
@@ -3984,24 +3984,22 @@
             ctx.shadowBlur = 5;
             ctx.fillText('🌀 신비한 차원 포탈 (농장)', x, y - 62);
 
-            // 네온 오픈 예고 배너
-            ctx.fillStyle = 'rgba(231, 76, 60, 0.25)';
-            ctx.strokeStyle = '#e74c3c';
+            // 네온 오픈 배너
+            ctx.fillStyle = 'rgba(46, 204, 113, 0.25)';
+            ctx.strokeStyle = '#2ecc71';
             ctx.lineWidth = 1.5;
             ctx.beginPath();
             ctx.roundRect(x - 110, y - 50, 220, 24, 6);
             ctx.fill();
             ctx.stroke();
 
-            ctx.fillStyle = '#ff7675';
+            ctx.fillStyle = '#a8e6cf';
             ctx.font = 'bold 12px Arial';
-            ctx.fillText('🔒 10월 25일(일) 오후 8시 오픈!', x, y - 34);
+            ctx.fillText('✨ 차원 농장 전격 오픈!', x, y - 34);
 
-            if (isAdmin()) {
-                ctx.fillStyle = '#f1c40f';
-                ctx.font = 'bold 11px Arial';
-                ctx.fillText('👑 [ADMIN] 클릭하여 즉시 진입', x, y - 16);
-            }
+            ctx.fillStyle = '#f1c40f';
+            ctx.font = 'bold 11px Arial';
+            ctx.fillText('👆 클릭하여 농장 즉시 입장', x, y - 16);
             ctx.shadowBlur = 0;
 
             ctx.restore();
@@ -4170,12 +4168,6 @@
         } catch(e) {}
 
         function enterFarmDimension() {
-            if (!isAdmin()) {
-                floatTexts.push({ x: player.x, y: player.y - 70, text: '🔒 10월 25일(일) 오후 8시에 오픈됩니다!', color: '#e74c3c', life: 80, size: 18 });
-                alert("🔒 [신비한 농장 차원 포탈 예고]\n\n이 신비로운 차원 포탈은 10월 25일 일요일 오후 8시(20:00)에 전격 오픈됩니다!\n새로운 농장 차원과 씨앗 상점을 기대해주세요!");
-                return;
-            }
-
             savedOverworldPos = { x: player.x, y: player.y, cameraY: cameraY };
             inFarmDimension = true;
             player.x = 300;
@@ -4414,7 +4406,7 @@
                 { name: '⛏️ 동굴 지역', x: 300, y: -6650, reqLv: 85, color: '#94a3b8' },
                 { name: '🚀 우주 지역', x: 300, y: -7650, reqLv: 105, color: '#c084fc' },
                 { name: '❄️ 얼음의 협곡', x: 320, y: -8620, reqLv: 125, color: '#67e8f9' },
-                { name: '🌾 농장 차원', action: 'farm', reqLv: 10, color: '#84cc16' }
+                { name: '🌾 농장 차원', action: 'farm', reqLv: 1, color: '#84cc16' }
             ];
 
             if (isAdmin()) {
@@ -10959,17 +10951,12 @@
             }
 
 
-            // 🌀 [ADMIN] 뒤틀린 지형 농장 차원 포탈 (x: 130, y: -1400)
+            // 🌀 뒤틀린 지형 농장 차원 포탈 (x: 130, y: -1400) - 전체 서버 오픈
             if (typeof twistedFarmPortal !== 'undefined') {
                 let tfDist = Math.hypot(cx - twistedFarmPortal.x, cy - twistedFarmPortal.y);
                 let tfPlayerDist = Math.hypot(player.x - twistedFarmPortal.x, player.y - twistedFarmPortal.y);
                 if (tfDist < twistedFarmPortal.radius + 35 || (isSpacebar && tfPlayerDist < 85)) {
-                    if (isAdmin()) {
-                        enterFarmDimension();
-                    } else {
-                        floatTexts.push({ x: twistedFarmPortal.x, y: twistedFarmPortal.y - 70, text: '🔒 10월 25일(일) 오후 8시에 오픈됩니다!', color: '#2ecc71', life: 90, size: 18 });
-                        alert("🔒 [신비한 농장 차원 포탈 예고]\n\n이 신비로운 차원 포탈은 10월 25일 일요일 오후 8시(20:00)에 전격 오픈됩니다!\n새로운 농장 차원과 씨앗 상점을 기대해주세요!");
-                    }
+                    enterFarmDimension();
                     return;
                 }
             }
