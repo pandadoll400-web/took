@@ -24095,6 +24095,55 @@
                     }
 
                     // 쪽지가 심어진 일반 나무: 글씨 제거 및 신비로운 황금빛 오라 & 반짝이 파티클만 렌더링
+                    // ⏱️ 유저 요청: 일반 나무 8시 40분 이벤트 시작 카운트다운 (0분 0초 시 완전 사라짐)
+                    if (t.id === 'normal') {
+                        const nowMs = Date.now();
+                        const today = new Date(nowMs);
+                        const target840 = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 20, 40, 0, 0).getTime();
+                        const diff840 = target840 - nowMs;
+                        if (diff840 > 0) {
+                            const m = Math.floor(diff840 / 60000);
+                            const s = Math.floor((diff840 % 60000) / 1000);
+                            const sPad = s < 10 ? '0' + s : s;
+
+                            ctx.save();
+                            // 일반 나무 중앙 하단(트렁크/잎 경계, 스크린샷 위치)
+                            ctx.translate(t.x, t.y + 40);
+
+                            // 가벼운 부유 효과
+                            const bob = Math.sin(nowMs * 0.005) * 3;
+                            ctx.translate(0, bob);
+
+                            // 스타일리시한 네온 배경 배너 (나무 사이즈에 최적화)
+                            const boxW = 166;
+                            const boxH = 46;
+                            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+                            ctx.strokeStyle = '#f59e0b';
+                            ctx.lineWidth = 2.5;
+                            ctx.shadowColor = 'rgba(245, 158, 11, 0.7)';
+                            ctx.shadowBlur = 12;
+                            ctx.beginPath();
+                            ctx.roundRect(-boxW / 2, -boxH / 2, boxW, boxH, 12);
+                            ctx.fill();
+                            ctx.stroke();
+                            ctx.shadowBlur = 0;
+
+                            // 1행: 8시 40분 이벤트 시작
+                            ctx.font = 'bold 12.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                            ctx.fillStyle = '#fde047';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText('8시 40분 이벤트 시작', 0, -10);
+
+                            // 2행: 몇분 몇초 카운트다운
+                            ctx.font = '900 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillText(`${m}분 ${sPad}초`, 0, 11);
+
+                            ctx.restore();
+                        }
+                    }
+
                     if (t.id === 'normal' && noteEmbedded) {
                         ctx.save();
                         let nowTime = Date.now() * 0.003;
