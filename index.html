@@ -437,7 +437,17 @@
         </div>
 
         <!-- 👑 실시간 투표 모달 (오늘 플레이 하나요? - 30초 한정) -->
-        <div id="wl-poll-overlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); z-index: 920; display: none !important; opacity: 0; transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;">
+                <!-- 🍀 행운 1.5배 버프 위젯 (우측 하단) -->
+        <div id="luck-buffs-wrapper" style="position: absolute; bottom: 20px; right: 20px; z-index: 25; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: none;">
+            <div id="luck-container" style="pointer-events: auto; text-align: center; display: none; flex-direction: column; align-items: center; cursor: pointer; user-select: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                <div id="luck-icon" style="font-size: 28px; filter: drop-shadow(0 0 10px #2ecc71); animation: luckFloat 2s ease-in-out infinite;">🍀</div>
+                <div id="luck-timer" style="color: #2ecc71; font-weight: 800; background: rgba(15, 23, 42, 0.94); padding: 5px 12px; border-radius: 14px; font-size: 12px; margin-top: 2px; border: 1.5px solid #2ecc71; box-shadow: 0 4px 14px rgba(46, 204, 113, 0.45); white-space: nowrap; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
+                    행운 1.5배 [10:00]
+                </div>
+            </div>
+        </div>
+
+<div id="wl-poll-overlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); z-index: 920; display: none; opacity: 0; transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;">
             <div style="background: rgba(15, 20, 32, 0.95); border: 2px solid rgba(245, 158, 11, 0.6); border-radius: 24px; padding: 22px 24px; width: 340px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(245, 158, 11, 0.35); backdrop-filter: blur(12px); text-align: center; position: relative; box-sizing: border-box; color: #fff;">
                 
                 <!-- 닫기 X 버튼 -->
@@ -500,7 +510,7 @@
 
         <!-- 🦑 심연의 크라켄 필드 보스 최초 처치 공지 배너 (화면 가운데 노출) -->
                 <!-- 🔨 FORGE 중앙 공지 배너 (time to start abuse) -->
-        <div id="forge-announcement-banner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); z-index: 9999; display: none !important; opacity: 0; transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; pointer-events: none; text-align: center;">
+        <div id="forge-announcement-banner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); z-index: 9999; display: none; opacity: 0; transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; pointer-events: none; text-align: center;">
             <div style="background: rgba(10, 10, 18, 0.96); border: 3px solid #f59e0b; border-radius: 24px; padding: 26px 42px; min-width: 340px; max-width: 90vw; box-shadow: 0 20px 70px rgba(0, 0, 0, 0.95), 0 0 45px rgba(245, 158, 11, 0.6); backdrop-filter: blur(14px); box-sizing: border-box;">
                 <div style="font-size: 40px; margin-bottom: 8px; filter: drop-shadow(0 0 14px rgba(245, 158, 11, 0.85));">🔨 ⚡ 🔥</div>
                 <div id="forge-announcement-text" style="font-size: 26px; font-weight: 950; color: #facc15; text-shadow: 0 0 18px rgba(245, 158, 11, 0.8), 0 2px 6px #000; letter-spacing: -0.5px;">
@@ -751,6 +761,14 @@
                         <button onclick="startDodgeFarmersGame()" style="padding: 11px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 12.5px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); text-align: center;">👨‍🌾 [미니게임 2]<br>농부 피하기 테스트<br><span style="font-size: 10.5px; opacity: 0.9;">(🤺 서양 검사 탈출)</span></button>
                     </div>
                     <button onclick="stopAllMinigames()" style="width: 100%; margin-top: 8px; padding: 7px; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">🛑 미니게임 강제 종료</button>
+                </div>
+                <div style="grid-column: span 2; margin-top: 4px; padding: 10px; background: rgba(15, 23, 42, 0.85); border: 2px solid #f59e0b; border-radius: 12px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.25);">
+                    <div style="font-size: 13.5px; font-weight: 900; color: #f59e0b; margin-bottom: 8px; text-align: center;">⏰ [8시 30분 이벤트] Forge 연출 & 미니게임 테스트</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <button onclick="adminStartForge830Event(true)" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; text-align: center;">⚡ 빠른 테스트 (5초 후 미니게임)<br><span style="font-size: 10px; opacity: 0.9;">(대화 ➔ 럭 ➔ 미니게임1 ➔ 투표 ➔ 미니게임2)</span></button>
+                        <button onclick="adminStartForge830Event(false)" style="padding: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; text-align: center;">⏰ 정규 테스트 (5분 대기 풀코스)<br><span style="font-size: 10px; opacity: 0.9;">(실제 8:30~8:40과 동일하게 진행)</span></button>
+                    </div>
+                    <button onclick="adminTerminateForge830Event()" style="width: 100%; margin-top: 8px; padding: 7px; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">🛑 8:30 이벤트 강제 종료</button>
                 </div>
                 <button onclick="adminToggleTradeMachine()" style="padding: 10px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.45);">⚔️ [이벤트] 퓨즈 삭제 ➔ 트레이드 머신 전환 토글</button>
                 <button onclick="adminRefillTradeStock()" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);">🔄 [트레이드 머신] 선착순 재고 2개 즉시 충전</button>
@@ -14177,8 +14195,8 @@
         window.stopAllMinigames = stopAllMinigames;
 
         // 🚦 [미니게임 1] 빨간불 초록불 시작
-        function startRedLightGreenLightGame() {
-            if (!isAdmin()) {
+        function startRedLightGreenLightGame(force = false) {
+            if (!isAdmin() && !force) {
                 alert("🔒 관리자 전용 미니게임입니다!");
                 return;
             }
@@ -14204,8 +14222,8 @@
         window.startRedLightGreenLightGame = startRedLightGreenLightGame;
 
         // 👨‍🌾 [미니게임 2] 농부 피하기 시작
-        function startDodgeFarmersGame() {
-            if (!isAdmin()) {
+        function startDodgeFarmersGame(force = false) {
+            if (!isAdmin() && !force) {
                 alert("🔒 관리자 전용 미니게임입니다!");
                 return;
             }
@@ -14236,6 +14254,7 @@
                 state.active = false;
                 state.carryingSkin = false;
                 alert("⏱️ [시간 초과]\n\n3분이 모두 경과하여 미니게임이 종료되었습니다.\n해커 스킨 탈출에 실패했습니다!");
+                if (typeof onMinigame1Completed === 'function') onMinigame1Completed();
                 return;
             }
 
@@ -14319,6 +14338,7 @@
                     labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i%2===0?'#22c55e':'#ffffff'), life: 40 });
                 }
                 alert("🎉 [미니게임 1 클리어! 탈출 성공!]\n\n빨간불의 감시를 뚫고 우주에서부터 해커 스킨을 무사히 일반 지형으로 탈출시켰습니다!\n\n💻 '사이버 해커' 스킨이 계정에 영구 지급 및 자동 장착되었습니다!");
+                if (typeof onMinigame1Completed === 'function') onMinigame1Completed();
             }
         }
 
@@ -14334,6 +14354,7 @@
                 state.carryingSkin = false;
                 state.farmers = [];
                 alert("⏱️ [시간 초과]\n\n3분이 모두 경과하여 미니게임이 종료되었습니다.\n서양 검사 스킨 탈출에 실패했습니다!");
+                if (typeof onMinigame2Completed === 'function') onMinigame2Completed();
                 return;
             }
 
@@ -14430,6 +14451,7 @@
                     labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i%2===0?'#38bdf8':'#facc15'), life: 40 });
                 }
                 alert("🎉 [미니게임 2 클리어! 탈출 성공!]\n\n성난 농부들을 모두 따돌리고 우주에서부터 서양 검사 스킨을 무사히 일반 지형으로 탈출시켰습니다!\n\n🤺 '서양 검사' 스킨이 계정에 영구 지급 및 자동 장착되었습니다!");
+                if (typeof onMinigame2Completed === 'function') onMinigame2Completed();
             }
         }
 
@@ -19975,6 +19997,305 @@
         isLuck15Active = false;
         isFuseLuck25Active = false;
 
+
+        // ============================================================================
+        // 🔨 [FORGE 8시 30분 ~ 8시 40분 정기 이벤트 시퀀스 엔진]
+        // ============================================================================
+        let forge830EventActive = false;
+        let forge830EventTimers = [];
+        let forge830PollInterval = null;
+        let luck15EndTime = 0;
+        let pollWCount = 13;
+        let pollLCount = 9;
+        let pollUserVoted = false;
+
+        // 중앙 Forge 공지 배너 노출 함수
+        function showForgeAnnouncement(text, durationMs = 4500) {
+            const banner = document.getElementById('forge-announcement-banner');
+            const textEl = document.getElementById('forge-announcement-text');
+            if (banner && textEl) {
+                textEl.innerText = text;
+                banner.style.display = 'block';
+                banner.style.opacity = '1';
+                banner.style.transform = 'translate(-50%, -50%) scale(1)';
+                banner.style.pointerEvents = 'none';
+
+                setTimeout(() => {
+                    if (textEl.innerText === text) {
+                        banner.style.opacity = '0';
+                        banner.style.transform = 'translate(-50%, -50%) scale(0.9)';
+                        setTimeout(() => {
+                            if (banner.style.opacity === '0') banner.style.display = 'none';
+                        }, 400);
+                    }
+                }, durationMs);
+            }
+            floatTexts.push({ x: player.x, y: player.y - 85, text: text, color: '#facc15', life: 100, size: 21 });
+        }
+        window.showForgeAnnouncement = showForgeAnnouncement;
+
+        // 8시 30분 ~ 8시 40분 시간 체크 (8시 41분 이상이면 절대 불가)
+        function is830EventWindow() {
+            const now = new Date();
+            const h = now.getHours();
+            const m = now.getMinutes();
+            // 20:30 <= 현재 시각 < 20:41 (8시 30분 00초 ~ 8시 40분 59초)
+            return (h === 20 && m >= 30 && m < 41);
+        }
+        window.is830EventWindow = is830EventWindow;
+
+        // 타이머 및 시퀀스 정리
+        function clearForge830EventTimers() {
+            forge830EventTimers.forEach(t => clearTimeout(t));
+            forge830EventTimers = [];
+            if (forge830PollInterval) {
+                clearInterval(forge830PollInterval);
+                forge830PollInterval = null;
+            }
+        }
+
+        // 8:30 이벤트 완전 종료 함수 (8시 41분이 되거나 강제 종료 시)
+        function terminateForge830Event() {
+            forge830EventActive = false;
+            clearForge830EventTimers();
+            closeWLPollOverlay();
+            const banner = document.getElementById('forge-announcement-banner');
+            if (banner) {
+                banner.style.opacity = '0';
+                banner.style.display = 'none';
+            }
+            stopAllMinigames();
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '⏰ 8시 40분이 종료되어 이벤트가 마감되었습니다.', color: '#ef4444', life: 90, size: 18 });
+        }
+        window.terminateForge830Event = terminateForge830Event;
+        window.adminTerminateForge830Event = terminateForge830Event;
+
+        // 🍀 1.5배 럭 타이머 업데이트 (10분 동안 유지)
+        function updateLuck15Timer() {
+            const container = document.getElementById('luck-container');
+            const timerEl = document.getElementById('luck-timer');
+            if (!container || !timerEl) return;
+
+            const now = Date.now();
+            if (isLuck15Active && luck15EndTime > now) {
+                container.style.display = 'flex';
+                const remainSec = Math.ceil((luck15EndTime - now) / 1000);
+                const m = String(Math.floor(remainSec / 60)).padStart(2, '0');
+                const s = String(remainSec % 60).padStart(2, '0');
+                timerEl.innerText = `행운 1.5배 [${m}:${s}]`;
+            } else if (isLuck15Active && luck15EndTime <= now) {
+                isLuck15Active = false;
+                container.style.display = 'none';
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '🍀 1.5배 행운 버프가 종료되었습니다.', color: '#94a3b8', life: 75 });
+            }
+        }
+        window.updateLuck15Timer = updateLuck15Timer;
+
+        // 👑 실시간 W/L 투표창 ('did you get that?' 토픽, W: 13, L: 9 시작)
+        function startWLPollDidYouGetThat() {
+            pollWCount = 13;
+            pollLCount = 9;
+            pollUserVoted = false;
+
+            const overlay = document.getElementById('wl-poll-overlay');
+            if (!overlay) return;
+
+            const titleEl = document.getElementById('wl-topic-title');
+            if (titleEl) titleEl.innerText = "did you get that?";
+
+            overlay.style.display = 'block';
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                overlay.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 50);
+
+            updatePollDisplay();
+
+            // 1씩 올라가게 타이머 (2.2초마다 W 또는 L 1 증가)
+            if (forge830PollInterval) clearInterval(forge830PollInterval);
+            forge830PollInterval = setInterval(() => {
+                if (!forge830EventActive) {
+                    clearInterval(forge830PollInterval);
+                    return;
+                }
+                if (Math.random() < 0.58) {
+                    pollWCount++;
+                } else {
+                    pollLCount++;
+                }
+                updatePollDisplay();
+            }, 2200);
+        }
+
+        function updatePollDisplay() {
+            const wText = document.getElementById('wl-count-w-text');
+            const lText = document.getElementById('wl-count-l-text');
+            const pctWText = document.getElementById('wl-percent-w');
+            const pctLText = document.getElementById('wl-percent-l');
+            const barW = document.getElementById('wl-bar-w');
+            const barL = document.getElementById('wl-bar-l');
+            const timerBadge = document.getElementById('wl-poll-timer-badge');
+
+            if (wText) wText.innerText = pollWCount;
+            if (lText) lText.innerText = pollLCount;
+
+            let total = pollWCount + pollLCount;
+            let pctW = Math.round((pollWCount / total) * 100);
+            let pctL = 100 - pctW;
+
+            if (pctWText) pctWText.innerText = pctW + '%';
+            if (pctLText) pctLText.innerText = pctL + '%';
+            if (barW) barW.style.width = pctW + '%';
+            if (barL) barL.style.width = pctL + '%';
+            if (timerBadge) timerBadge.innerText = '실시간 투표 중';
+        }
+
+        function voteWLPoll(choice) {
+            if (pollUserVoted) {
+                alert("이미 투표에 참여하셨습니다!");
+                return;
+            }
+            pollUserVoted = true;
+            if (choice === 'W') {
+                pollWCount++;
+                document.getElementById('wl-status-msg').innerText = '✅ W에 투표하셨습니다!';
+            } else {
+                pollLCount++;
+                document.getElementById('wl-status-msg').innerText = '✅ L에 투표하셨습니다!';
+            }
+            updatePollDisplay();
+            floatTexts.push({ x: player.x, y: player.y - 80, text: `투표 완료: ${choice}`, color: '#f59e0b', life: 70 });
+        }
+        window.voteWLPoll = voteWLPoll;
+
+        function closeWLPollOverlay() {
+            const overlay = document.getElementById('wl-poll-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                overlay.style.transform = 'translate(-50%, -50%) scale(0.95)';
+                setTimeout(() => {
+                    if (overlay.style.opacity === '0') overlay.style.display = 'none';
+                }, 400);
+            }
+            if (forge830PollInterval) {
+                clearInterval(forge830PollInterval);
+                forge830PollInterval = null;
+            }
+        }
+        window.closeWLPollOverlay = closeWLPollOverlay;
+
+        // 🔨 [전체 시퀀스 실행기]
+        // isFastTest = false: 정규 풀코스 (5분 후 미니게임)
+        // isFastTest = true: 관리자 빠른 테스트 (5초 후 미니게임)
+        function startForge830Event(isFastTest = false) {
+            // 8시 41분 이상이면 시작 금지 (관리자 테스트 제외)
+            if (!isFastTest) {
+                const now = new Date();
+                if (now.getHours() === 20 && now.getMinutes() >= 41) {
+                    console.log("[8:30 이벤트] 8시 41분 이후이므로 이벤트를 시작하지 않습니다.");
+                    return;
+                }
+            }
+
+            clearForge830EventTimers();
+            forge830EventActive = true;
+
+            // 1. (0초) Forge: hello everyone!
+            showForgeAnnouncement("Forge: hello everyone!", 4500);
+
+            // 2. (5초 후) Forge: we have many thing to update this week
+            forge830EventTimers.push(setTimeout(() => {
+                if (!forge830EventActive) return;
+                showForgeAnnouncement("Forge: we have many thing to update this week", 4500);
+            }, 5000));
+
+            // 3. (5초 후 = 10초) Forge: Let's start! we have new mini game!
+            forge830EventTimers.push(setTimeout(() => {
+                if (!forge830EventActive) return;
+                showForgeAnnouncement("Forge: Let's start! we have new mini game!", 4500);
+            }, 10000));
+
+            // 4. (5초 후 = 15초) 럭을 뿌린다 1.5배럭만 그리고 밑에 럭이랑 타이머 10분동안 1.5배럭
+            forge830EventTimers.push(setTimeout(() => {
+                if (!forge830EventActive) return;
+                // 럭 파티클 폭발
+                for (let i = 0; i < 45; i++) {
+                    let a = Math.random() * Math.PI * 2;
+                    let sp = Math.random() * 8 + 3;
+                    labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, color: '#2ecc71', life: 60 });
+                }
+                showForgeAnnouncement("🍀 [Forge] 1.5배 행운이 10분 동안 적용됩니다! 🍀", 4500);
+                floatTexts.push({ x: player.x, y: player.y - 70, text: '🍀 1.5배 행운 발동! (10분 카운트다운 시작)', color: '#2ecc71', life: 100, size: 21 });
+
+                isLuck15Active = true;
+                luck15EndTime = Date.now() + 10 * 60 * 1000; // 10분
+                try { localStorage.setItem('luck15_10m_end_time', luck15EndTime.toString()); } catch(e) {}
+                updateLuck15Timer();
+            }, 15000));
+
+            // 5. (5분 후 = 300초; 빠른 테스트 모드 시 5초 후)
+            // Forge: lets start first mini game & 빨간불 초록불 게임 활성화 & 투표창 did you get that?
+            const waitToMinigame = isFastTest ? 5000 : (5 * 60 * 1000); // 5분
+            forge830EventTimers.push(setTimeout(() => {
+                if (!forge830EventActive) return;
+                showForgeAnnouncement("Forge: lets start first mini game", 4000);
+
+                setTimeout(() => {
+                    if (!forge830EventActive) return;
+                    startRedLightGreenLightGame(true); // 빨간불 초록불 시작
+                    startWLPollDidYouGetThat(); // 투표창 시작
+                }, 2000);
+            }, 15000 + waitToMinigame));
+        }
+        window.startForge830Event = startForge830Event;
+        window.adminStartForge830Event = function(isFast) { startForge830Event(isFast); };
+
+        // 6. 미니게임 1 종료 콜백 -> Forge: last mini game -> 3초 후 농부 피하기 미니게임 시작
+        function onMinigame1Completed() {
+            if (!forge830EventActive) return;
+            closeWLPollOverlay(); // 투표창 닫기
+
+            setTimeout(() => {
+                if (!forge830EventActive) return;
+                showForgeAnnouncement("Forge: last mini game", 4000);
+
+                setTimeout(() => {
+                    if (!forge830EventActive) return;
+                    startDodgeFarmersGame(true); // 미니게임 2 (농부 피하기) 시작
+                }, 3000);
+            }, 1500);
+        }
+        window.onMinigame1Completed = onMinigame1Completed;
+
+        // 7. 미니게임 2 종료 콜백 -> Forge: bye every body
+        function onMinigame2Completed() {
+            if (!forge830EventActive) return;
+            setTimeout(() => {
+                showForgeAnnouncement("Forge: bye every body", 5500);
+                forge830EventActive = false;
+            }, 1500);
+        }
+        window.onMinigame2Completed = onMinigame2Completed;
+
+        // 8. 새로고침 시 8시 30분 ~ 8시 40분 판별 및 자동 재생
+        function checkAndTrigger830EventOnRefresh() {
+            if (is830EventWindow()) {
+                console.log("[8:30 이벤트] 8시 30분 ~ 8시 40분 시간 감지! Forge 이벤트 시퀀스를 재생합니다.");
+                startForge830Event(false);
+            }
+        }
+        window.checkAndTrigger830EventOnRefresh = checkAndTrigger830EventOnRefresh;
+
+        // 9. 8시 41분 도래 시 강제 차단 워치독
+        setInterval(() => {
+            const now = new Date();
+            if (now.getHours() === 20 && now.getMinutes() >= 41) {
+                if (forge830EventActive) {
+                    terminateForge830Event();
+                }
+            }
+        }, 3000);
+
         loadGame(); 
 
         // 🐾 [펫-스킨 분리 마이그레이션] 이전 버전에서 펫을 스킨으로 장착했던 유저 복구
@@ -20121,6 +20442,7 @@
         function update() {
             if (typeof updateRedLightGreenLightLoop === 'function') updateRedLightGreenLightLoop();
             if (typeof updateDodgeFarmersLoop === 'function') updateDodgeFarmersLoop();
+            if (typeof updateLuck15Timer === 'function') updateLuck15Timer();
             if (inFarmDimension) {
                 updateFarmDimension();
                 return;
@@ -26033,6 +26355,7 @@
             if (!isGameLoopRunning) {
                 isGameLoopRunning = true;
                 gameLoop();
+                setTimeout(checkAndTrigger830EventOnRefresh, 1000);
             }
         }
 
