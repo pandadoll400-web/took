@@ -784,7 +784,7 @@
                 <button onclick="adminEnterDevilBoss()" style="padding: 10px; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">😈 할로윈 악마 보스전 바로 입장</button>
                 <button onclick="adminEnterMonkeyBoss()" style="padding: 10px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🐵 원숭이 보스전 바로 입장</button>
                 <button onclick="adminStartGorillaStoryQuest()" style="padding: 10px; background: linear-gradient(135deg, #a29bfe, #6c5ce7); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(108, 92, 231, 0.45);">🦍🧪 [스토리] 고릴라&미친박사 퀘스트 시작</button>
-                <button onclick="adminToggleHalloweenTeleporter()" style="padding: 10px; background: linear-gradient(135deg, #8e44ad, #9b59b6); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🔮 [관리자] 할로윈 텔레포터 도구 즉시 획득</button>
+
                 <!-- 🍭🎃 [어드민 전용] 사탕 나무 & 캔디콘 상점 버튼 4종 -->
                 <button onclick="adminWarpToCandyTree()" style="padding: 10px; background: linear-gradient(135deg, #ec4899, #f43f5e); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.45);">🍭 [신규] 사탕 나무로 즉시 이동 (Y: 1350)</button>
                 <button onclick="adminToggleCandyCornShop()" style="padding: 10px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.45);">🏪 [신규] 캔디콘 상점 생성 토글 (맨 밑 Y: 3600)</button>
@@ -3825,9 +3825,10 @@
             shootCooldown: 0
         };
 
-        // 🔮 미친 박사의 할로윈 텔레포터 상태
-        let hasHalloweenTeleporter = (localStorage.getItem('has_halloween_teleporter') === 'true') || false;
-        let halloweenTeleporterBeacon = JSON.parse(localStorage.getItem('halloween_teleporter_beacon') || '{"placed":false,"x":300,"y":1350}');
+        // 🔮 할로윈 텔레포터 완전 삭제됨 (유저 요청)
+        let hasHalloweenTeleporter = false;
+        let halloweenTeleporterBeacon = { placed: false, x: 300, y: 1350 };
+        try { localStorage.removeItem('has_halloween_teleporter'); localStorage.removeItem('halloween_teleporter_beacon'); } catch(e) {}
         let monkeyAttackWave = 0;
         let monkeyAttackTimer = 0;
 
@@ -10553,15 +10554,10 @@
         }
 
         function adminToggleHalloweenTeleporter() {
-            if (!isAdmin()) return;
-            hasHalloweenTeleporter = true;
-            try { localStorage.setItem('has_halloween_teleporter', 'true'); } catch(e) {}
-            if (!inventory['미친 박사의 할로윈 텔레포터']) inventory['미친 박사의 할로윈 텔레포터'] = 0;
-            inventory['미친 박사의 할로윈 텔레포터'] = 1;
-            saveGame();
-            closeAdminPanelModal();
-            floatTexts.push({ x: player.x, y: player.y - 80, text: '🔮 [관리자] 미친 박사의 할로윈 텔레포터 도구 획득!', color: '#f1c40f', life: 100, size: 20 });
-            alert("🔮 [미친 박사의 할로윈 텔레포터 획득 완료!]\n\n하단 버튼 [🔮 할로윈 텔레포터]를 누르거나 할로윈 지형(Y: 1000~1700)으로 가면 도구를 설치할 수 있으며,\n할로윈 지형 아무 곳이나 클릭하면 그 좌표로 즉시 순간이동합니다!");
+            // 유저 요청: 할로윈 텔레포터 완전 삭제
+            hasHalloweenTeleporter = false;
+            try { localStorage.removeItem("has_halloween_teleporter"); localStorage.removeItem("halloween_teleporter_beacon"); } catch(e) {}
+            if (inventory["미친 박사의 할로윈 텔레포터"]) delete inventory["미친 박사의 할로윈 텔레포터"];
         }
 
         function adminStartGorillaStoryQuest() {
@@ -11377,32 +11373,7 @@
                 }
             }
 
-            // 🔮 미친 박사의 할로윈 텔레포터: 할로윈 지형 아무데나 클릭 시 순간이동 및 비콘 설치 (어드민 전용)
-            if (isAdmin() && hasHalloweenTeleporter && !isSpacebar && cy >= 950 && cy <= 2600) {
-                let isShopOrFuse = false;
-                for (let shop of shops) {
-                    if (cx > shop.x - 20 && cx < shop.x + 200 && cy > shop.y && cy < shop.y + 210) { isShopOrFuse = true; break; }
-                }
-                // 호박 융합 머신 삭제됨
-                if (!isShopOrFuse) {
-                    halloweenTeleporterBeacon.placed = true;
-                    halloweenTeleporterBeacon.x = Math.max(40, Math.min(GAME_WIDTH - 40, cx));
-                    halloweenTeleporterBeacon.y = cy;
-                    try { localStorage.setItem('halloween_teleporter_beacon', JSON.stringify(halloweenTeleporterBeacon)); } catch(e) {}
-                    
-                    player.x = halloweenTeleporterBeacon.x;
-                    player.y = halloweenTeleporterBeacon.y;
-                    cameraY = halloweenTeleporterBeacon.y - 400;
-                    player.vx = 0; player.vy = 0; player.targetTree = null;
-                    for (let i = 0; i < 20; i++) {
-                        let a = Math.random() * Math.PI * 2;
-                        let sp = Math.random() * 5 + 2;
-                        labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: '#f1c40f', life: 30 });
-                    }
-                    floatTexts.push({ x: player.x, y: player.y - 80, text: `🔮 [할로윈 도구] 클릭 좌표로 즉시 순간이동!`, color: '#f1c40f', life: 80, size: 20 });
-                    return;
-                }
-            }
+            // 🔮 할로윈 텔레포터 클릭 순간이동 완전 삭제 (유저 요청: 자꾸 클릭 시 이동되어 제거)
 
             // 💻 [미니게임 1] 해커 스킨 클릭 / 들기 감지
             if (typeof redLightGreenLightState !== 'undefined' && redLightGreenLightState.active && !redLightGreenLightState.carryingSkin) {
@@ -14092,7 +14063,7 @@
             });
             // 쪽지 조각 99개
             adminInventory['쪽지 조각'] = 99;
-            adminInventory['미친 박사의 할로윈 텔레포터'] = 1;
+            // 할로윈 텔레포터 삭제됨
 
             // 모든 20종 고대 화석 각 99개 충전
             if (typeof FOSSIL_ITEMS !== 'undefined') {
@@ -20110,11 +20081,8 @@
 
         // 8시 30분 ~ 8시 40분 시간 체크 (8시 41분 이상이면 절대 불가)
         function is830EventWindow() {
-            const now = new Date();
-            const h = now.getHours();
-            const m = now.getMinutes();
-            // 20:30 <= 현재 시각 < 20:41 (8시 30분 00초 ~ 8시 40분 59초)
-            return (h === 20 && m >= 30 && m < 41);
+            // 유저 요청: 오늘 하루로 이벤트 종료되어 비활성화 (삭제)
+            return false;
         }
         window.is830EventWindow = is830EventWindow;
 
@@ -20361,10 +20329,8 @@
 
         // 8. 새로고침 시 8시 30분 ~ 8시 40분 시간 감지 시 자동 재생
         function checkAndTrigger830EventOnRefresh() {
-            if (is830EventWindow()) {
-                console.log("[8:30 이벤트] 8시 30분 ~ 8시 40분 시간 감지! Forge 이벤트 시퀀스를 재생합니다.");
-                startForge830Event();
-            }
+            // 유저 요청: 포지 이벤트 완전 종료
+            return;
         }
         window.checkAndTrigger830EventOnRefresh = checkAndTrigger830EventOnRefresh;
 
@@ -20380,65 +20346,9 @@
         // ============================================================
         // ⏱️ [카운트다운 HUD] 게임 화면 4분의 3 지점 위 (Y ≈ 240) 관리자남용까지 카운트다운
         // ============================================================
+        // ⏱️ [포지 이벤트 카운터 완전 삭제 완료]
         function drawAdminAbuseCountdownHUD(ctx) {
-            const now = new Date();
-            // 오늘 20시 30분 00초
-            const target2030 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 30, 0, 0);
-            const diff = target2030.getTime() - now.getTime();
-
-            // 8시 41분 이후면 완전히 종료되어 표시 안 함
-            if (now.getHours() === 20 && now.getMinutes() >= 41) return;
-            if (now.getHours() > 20) return;
-
-            ctx.save();
-            const cx = GAME_WIDTH / 2; // 300
-            const cy = 240; // 게임 화면 4분의 3 지점 위
-
-            const w = 230;
-            const h = 56;
-
-            // 반투명 다크 골드 네온 배너
-            ctx.fillStyle = 'rgba(15, 20, 32, 0.90)';
-            ctx.strokeStyle = '#f59e0b';
-            ctx.lineWidth = 2.5;
-            ctx.shadowColor = '#000000';
-            ctx.shadowBlur = 12;
-            ctx.beginPath();
-            ctx.roundRect(cx - w / 2, cy - h / 2, w, h, 14);
-            ctx.fill();
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            if (diff > 0) {
-                const totalSec = Math.floor(diff / 1000);
-                const hours = Math.floor(totalSec / 3600);
-                const minutes = Math.floor((totalSec % 3600) / 60);
-                const seconds = totalSec % 60;
-
-                // 1행: 관리자남용까지
-                ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-                ctx.fillStyle = '#fde047';
-                ctx.fillText("관리자남용까지", cx, cy - 12);
-
-                // 2행: 몇시간 몇분 몇초
-                ctx.font = '900 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-                ctx.fillStyle = '#ffffff';
-                ctx.fillText(`${hours}시간 ${minutes}분 ${seconds}초`, cx, cy + 12);
-            } else if (now.getHours() === 20 && now.getMinutes() < 41) {
-                // 8시 30분 ~ 8시 40분: 0분 0초 도달 (새로고침 시 재생)
-                ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-                ctx.fillStyle = '#fde047';
-                ctx.fillText("🔥 관리자남용 진행 중! 🔥", cx, cy - 12);
-
-                ctx.font = '900 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-                ctx.fillStyle = '#22c55e';
-                ctx.fillText("0시간 0분 0초 (새로고침 시 재생)", cx, cy + 12);
-            }
-
-            ctx.restore();
+            // 유저 요청: 오늘 하루로 이벤트 종료되어 카운터 및 배너 완전 삭제
         }
         window.drawAdminAbuseCountdownHUD = drawAdminAbuseCountdownHUD;
 
@@ -26194,9 +26104,7 @@
             if (typeof iceVillager !== 'undefined') {
                 renderList.push({ type: 'iceVillager', obj: iceVillager, y: iceVillager.y });
             }
-            if (typeof hasHalloweenTeleporter !== 'undefined' && hasHalloweenTeleporter && typeof halloweenTeleporterBeacon !== 'undefined' && halloweenTeleporterBeacon.placed && isAdmin()) {
-                renderList.push({ type: 'halloweenBeacon', obj: halloweenTeleporterBeacon, y: halloweenTeleporterBeacon.y });
-            }
+            // 할로윈 텔레포터 비콘 렌더링 삭제됨
             renderList.push({ type: 'rankingBoard', obj: rankingBoard, y: rankingBoard.y });
             if (typeof craftingMachine !== 'undefined') {
                 renderList.push({ type: 'craftingMachine', obj: craftingMachine, y: craftingMachine.y });
@@ -26748,8 +26656,7 @@
             // 🎮 [미니게임 2종] 화면 고정 HUD (화면 위 타이머 & 화면 가운데 신호등 색상 변경 표시) 렌더링
             if (typeof drawMinigameHUD === 'function') drawMinigameHUD(ctx);
 
-            // ⏱️ 관리자남용까지 카운트다운 배너 (화면 4분의 3 지점 위 / y ≈ 240)
-            if (typeof drawAdminAbuseCountdownHUD === 'function') drawAdminAbuseCountdownHUD(ctx);
+
             if (typeof screenRedFlashTimer !== 'undefined' && screenRedFlashTimer > 0) {
                 ctx.fillStyle = `rgba(239, 68, 68, ${Math.min(0.42, screenRedFlashTimer / 50)})`;
                 ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
