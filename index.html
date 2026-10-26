@@ -425,6 +425,10 @@
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
         <div id="money-display">💰 0</div>
+        <!-- 🍬 캔디콘 HUD (어드민 접속 시 좌측 상단에 머니 디스플레이 바로 아래 표시) -->
+        <div id="candy-corn-hud" style="position: absolute; top: 62px; left: 15px; background: rgba(15, 23, 42, 0.92); color: #facc15; border: 1.5px solid #f59e0b; padding: 6px 14px; border-radius: 18px; font-size: 13px; font-weight: 900; z-index: 15; display: none; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(0,0,0,0.7); pointer-events: none;">
+            🍬 캔디콘: 0개
+        </div>
         <div id="level-container">
             <div id="level-text">LV. 1</div>
             <div id="xp-bar-bg"><div id="xp-bar-fill"></div></div>
@@ -781,6 +785,11 @@
                 <button onclick="adminEnterMonkeyBoss()" style="padding: 10px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🐵 원숭이 보스전 바로 입장</button>
                 <button onclick="adminStartGorillaStoryQuest()" style="padding: 10px; background: linear-gradient(135deg, #a29bfe, #6c5ce7); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(108, 92, 231, 0.45);">🦍🧪 [스토리] 고릴라&미친박사 퀘스트 시작</button>
                 <button onclick="adminToggleHalloweenTeleporter()" style="padding: 10px; background: linear-gradient(135deg, #8e44ad, #9b59b6); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🔮 [관리자] 할로윈 텔레포터 도구 즉시 획득</button>
+                <!-- 🍭🎃 [어드민 전용] 사탕 나무 & 캔디콘 상점 버튼 4종 -->
+                <button onclick="adminWarpToCandyTree()" style="padding: 10px; background: linear-gradient(135deg, #ec4899, #f43f5e); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.45);">🍭 [신규] 사탕 나무로 즉시 이동 (Y: 1350)</button>
+                <button onclick="adminToggleCandyCornShop()" style="padding: 10px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.45);">🏪 [신규] 캔디콘 상점 생성 토글 (맨 밑 Y: 3600)</button>
+                <button onclick="adminAddCandyCorn()" style="padding: 10px; background: linear-gradient(135deg, #eab308, #ca8a04); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.45);">🍬 [신규] 캔디콘 +1,000개 즉시 충전</button>
+                <button onclick="adminRefillAllCandies()" style="padding: 10px; background: linear-gradient(135deg, #a855f7, #9333ea); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.45);">🍬 [신규] 사탕 6종 각 30개씩 충전</button>
                 <button onclick="adminResetAlienQuest()" style="padding: 10px; background: linear-gradient(135deg, #00cec9, #0984e3); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🧪 외계인 퀘스트 리셋 (재테스트)</button>
                 <button onclick="adminRefillAll()" style="padding: 10px; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🎒 모든 과일/암석/물고기 999개 충전</button>
                 <button onclick="adminWarpToEarth()" style="padding: 10px; background: rgba(255,255,255,0.12); color: #ddd; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🌍 지상 마을(시작점)로 이동</button>
@@ -11472,6 +11481,30 @@
                         }
                     }
                 }
+                // 🏘️ [할로윈 캔디 마을] 집 10채 클릭 감지 (트릭 오어 트릿 & 사탕 교환)
+                if (isAdmin() && typeof candyVillageHouses !== 'undefined') {
+                    for (let h of candyVillageHouses) {
+                        let hDist = Math.hypot(cx - h.x, cy - h.y);
+                        let hPlayerDist = Math.hypot(player.x - h.x, player.y - h.y);
+                        if (hDist < 85 || (isSpacebar && hPlayerDist < 100)) {
+                            openTrickOrTreatModal(h.id);
+                            return;
+                        }
+                    }
+                }
+
+                // 🏪 [캔디콘 비밀 상점] 클릭 감지 (맨 밑 Y: 3600)
+                if (isAdmin() && adminCandyCornShopSpawned) {
+                    let shopX = GAME_WIDTH / 2;
+                    let shopY = 3600;
+                    let sDist = Math.hypot(cx - shopX, cy - shopY);
+                    let spDist = Math.hypot(player.x - shopX, player.y - shopY);
+                    if (sDist < 110 || (isSpacebar && spDist < 125)) {
+                        openCandyCornShopModal();
+                        return;
+                    }
+                }
+
                 // 🔮 크래프팅 머신 클릭 감지 (일반 지역 중앙)
                 if (typeof craftingMachine !== 'undefined') {
                     let cmDist = Math.hypot(cx - craftingMachine.x, cy - craftingMachine.y);
@@ -11499,9 +11532,12 @@
 
             if (target) {
                 if (target.id === 'halloween') {
-                    floatTexts.push({ x: target.x, y: target.y - 70, text: '💥 두동강 난 고목은 흔들거나 벨 수 없습니다.', color: '#94a3b8', life: 75, size: 18 });
-                    player.targetTree = null;
-                    return;
+                    if (!isAdmin()) {
+                        floatTexts.push({ x: target.x, y: target.y - 70, text: '💥 두동강 난 고목은 흔들거나 벨 수 없습니다.', color: '#94a3b8', life: 75, size: 18 });
+                        player.targetTree = null;
+                        return;
+                    }
+                    // 어드민 계정은 사탕 나무 벌목 가능!
                 }
 
                 if (player.targetTree === target) {
@@ -11695,12 +11731,15 @@
             { chance: 0.04, name: '불멸', price: 150000, xp: 6000, color: '#ff4757', items: ['오팔', '다이아몬드', '운석', '몰다바이트'] }
         ];
 
+        // 🍭 [사탕 나무 드롭 테이블] (유저 지정 확률 100% 완벽 반영)
+        // 일반60%: 알사탕, 희귀15%: 롤리팝, 초희귀10%: 초콜릿, 영웅8%: 과일젤리, 전설5%: 마시멜로우, 신화2%: 별사탕 킹캔디
         const halloweenDropTables = [
-            { chance: 0.30, name: '일반', price: 2000, xp: 50, color: '#e67e22', items: ['주황호박'] },
-            { chance: 0.30, name: '일반', price: 2000, xp: 50, color: '#27ae60', items: ['초록호박'] },
-            { chance: 0.30, name: '일반', price: 2000, xp: 50, color: '#ecf0f1', items: ['하얀호박'] },
-            { chance: 0.09, name: '전설', price: 15000, xp: 300, color: '#f1c40f', items: ['잭오랜턴'] },
-            { chance: 0.01, name: '불멸', price: 300000, xp: 5000, color: '#95a5a6', items: ['깨진호박'] }
+            { chance: 0.60, name: '일반', price: 3000, xp: 80, color: '#ff7675', items: ['알사탕'] },
+            { chance: 0.15, name: '희귀', price: 10000, xp: 200, color: '#e84393', items: ['롤리팝'] },
+            { chance: 0.10, name: '초희귀', price: 30000, xp: 500, color: '#795548', items: ['초콜릿'] },
+            { chance: 0.08, name: '영웅', price: 70000, xp: 1200, color: '#2ecc71', items: ['과일젤리'] },
+            { chance: 0.05, name: '전설', price: 180000, xp: 3000, color: '#fdcb6e', items: ['마시멜로우'] },
+            { chance: 0.02, name: '신화', price: 500000, xp: 8000, color: '#a29bfe', items: ['별사탕 킹캔디'] }
         ];
 
         // 🌌 우주 지형 드롭 테이블 (외계인 부품 6종: 60%, 15%, 10%, 9%, 3%, 3% = 100%)
@@ -11719,6 +11758,40 @@
 
         let level = 1; let xp = 0; let maxXp = 20;
         let money = 0;
+        let candyCorn = (function() {
+            try { return parseInt(localStorage.getItem('player_candy_corn') || '0', 10) || 0; } catch(e) { return 0; }
+        })();
+        window.candyCorn = candyCorn;
+        function updateCandyCorn(amount = 0) {
+            candyCorn = Math.max(0, candyCorn + amount);
+            window.candyCorn = candyCorn;
+            try { localStorage.setItem('player_candy_corn', candyCorn.toString()); } catch(e) {}
+            const hud = document.getElementById('candy-corn-hud');
+            if (hud) {
+                hud.innerText = `🍬 캔디콘: ${candyCorn.toLocaleString()}개`;
+                hud.style.display = isAdmin() ? 'flex' : 'none';
+            }
+        }
+        window.updateCandyCorn = updateCandyCorn;
+
+        // 🏘️ [할로윈 캔디 마을] 집 10채 데이터
+        let candyVillageHouses = [
+            { id: 1, x: 115, y: 2050, name: '🎃 펌킨 코티지', resident: '잭오랜턴', icon: '🎃', roofCol: '#ea580c', wallCol: '#7c2d12', giftTime: 0 },
+            { id: 2, x: 485, y: 2050, name: '🍬 롤리팝 하우스', resident: '페도라 유령', icon: '👻', roofCol: '#ec4899', wallCol: '#831843', giftTime: 0 },
+            { id: 3, x: 115, y: 2350, name: '🍫 초코 롯지', resident: '클래식 유령', icon: '🍫', roofCol: '#78350f', wallCol: '#451a03', giftTime: 0 },
+            { id: 4, x: 485, y: 2350, name: '👻 팬텀 빌라', resident: '보라빛 유령', icon: '🔮', roofCol: '#8b5cf6', wallCol: '#4c1d95', giftTime: 0 },
+            { id: 5, x: 115, y: 2650, name: '🍮 젤리 저택', resident: '불타는 잭', icon: '🔥', roofCol: '#10b981', wallCol: '#064e3b', giftTime: 0 },
+            { id: 6, x: 485, y: 2650, name: '🍥 마시멜로 쉼터', resident: '달콤한 마녀', icon: '🧙‍♀️', roofCol: '#f59e0b', wallCol: '#78350f', giftTime: 0 },
+            { id: 7, x: 115, y: 2950, name: '⭐ 별사탕 타워', resident: '흡혈귀 백작', icon: '🧛', roofCol: '#a855f7', wallCol: '#581c87', giftTime: 0 },
+            { id: 8, x: 485, y: 2950, name: '🧙 마법사의 오두막', resident: '할로윈 위저드', icon: '🧙', roofCol: '#3b82f6', wallCol: '#1e3a8a', giftTime: 0 },
+            { id: 9, x: 115, y: 3250, name: '🦇 박쥐 성채', resident: '박쥐 신사', icon: '🦇', roofCol: '#475569', wallCol: '#1e293b', giftTime: 0 },
+            { id: 10, x: 485, y: 3250, name: '👑 킹캔디 팰리스', resident: '캔디 국왕', icon: '👑', roofCol: '#eab308', wallCol: '#713f12', giftTime: 0 }
+        ];
+        window.candyVillageHouses = candyVillageHouses;
+
+        // 🏪 어드민 전용 캔디콘 상점 생성 여부 플래그
+        let adminCandyCornShopSpawned = false;
+        window.adminCandyCornShopSpawned = adminCandyCornShopSpawned;
         let axeLevel = 0; // 0:기본, 1:나무도끼, 2:철(은)도끼, 3:금도끼, 4:고대도끼
         let equippedAxe = 0; // 현재 손에 장착 중인 도끼
         let ownedAxes = []; // 보유 중인 도끼 목록 (레벨 배열: [1, 2, 3, 4])
@@ -12409,6 +12482,7 @@
             document.getElementById('xp-bar-fill').style.width = `${Math.min(100, (xp / maxXp) * 100)}%`;
         }
         function updateMoney() {
+            if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
             if (isAdmin()) {
                 money = 999999999999;
                 const el = document.getElementById('money-display');
@@ -12663,7 +12737,9 @@
             { id: 'japanese_ronin', name: '일본풍 검사', price: 0, icon: '⚔️🌸', isReward: true, desc: '트레이드 머신 선착순 한정판 스킨 (시간당 2명)' },
             { id: 'kraken', name: '크라켄', price: 0, icon: '🦑', isReward: true, desc: '크라켄의 씨앗 수확 보상 (75%)' },
             { id: 'infected_gorilla', name: '감염된 고릴라', price: 0, icon: '🦍💜', isReward: true, desc: '크라켄의 씨앗 수확 보상 (22%)' },
-            { id: 'frost_dragon', name: '서리룡', price: 0, icon: '🐉❄️', isReward: true, desc: '크라켄의 씨앗 초희귀 수확 보상 (3%)' }
+            { id: 'frost_dragon', name: '서리룡', price: 0, icon: '🐉❄️', isReward: true, desc: '크라켄의 씨앗 초희귀 수확 보상 (3%)' },
+            { id: 'pumpkin_winged_demon', name: '호박 날개 대악마', price: 0, icon: '🎃🪽', isReward: true, desc: '캔디콘 1,000개 할로윈 럭키블록 초신화 보상' },
+            { id: 'candy_king', name: '별사탕 캔디 국왕', price: 0, icon: '👑🍬', isReward: true, desc: '캔디콘 1,000개 할로윈 럭키블록 신화 보상' }
         ];
 
 
@@ -13749,8 +13825,8 @@
             },
             {
                 id: 'halloween', type: 'halloween', x: GAME_WIDTH / 2, y: 1350, radius: 140, trunkRadius: 40,
-                progress: 0, maxProgress: 300, shakeAngle: 0,
-                unlocked: true, price: 0, reqLevel: 1, color1: '#d35400', color2: '#e67e22', drops: [2, 4]
+                name: '사탕 나무', progress: 0, maxProgress: 300, shakeAngle: 0,
+                unlocked: true, price: 0, reqLevel: 1, color1: '#ff7675', color2: '#fd79a8', drops: [2, 4]
             }
         ];
 
@@ -17364,6 +17440,7 @@
             }
             return {
                 level: level, xp: xp, maxXp: maxXp, money: money, inventory: inventory,
+                candyCorn: (typeof candyCorn === 'number') ? candyCorn : 0,
                 axeLevel: axeLevel,
                 equippedAxe: equippedAxe,
                 ownedAxes: getOwnedAxesList(),
@@ -17508,6 +17585,10 @@
 
             // 🌾 인벤토리 복원: 현재 계정의 data.inventory만 복원 (이전 세션/계정 오염 차단)
             inventory = data.inventory ? { ...data.inventory } : {};
+            if (typeof data.candyCorn === 'number') {
+                candyCorn = data.candyCorn;
+                if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
+            }
             // 비관리자 유저가 어드민 계정의 999 아이템 복제본을 오염 상속받지 않도록 검증 정제
             if (!isAdmin() && inventory['사과'] === 999 && inventory['불꽃 사과'] === 999 && inventory['심해 참치'] === 999) {
                 inventory = {};
@@ -20296,6 +20377,480 @@
                 }
             }
         }, 3000);
+        // ============================================================
+        // ⏱️ [카운트다운 HUD] 게임 화면 4분의 3 지점 위 (Y ≈ 240) 관리자남용까지 카운트다운
+        // ============================================================
+        function drawAdminAbuseCountdownHUD(ctx) {
+            const now = new Date();
+            // 오늘 20시 30분 00초
+            const target2030 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 30, 0, 0);
+            const diff = target2030.getTime() - now.getTime();
+
+            // 8시 41분 이후면 완전히 종료되어 표시 안 함
+            if (now.getHours() === 20 && now.getMinutes() >= 41) return;
+            if (now.getHours() > 20) return;
+
+            ctx.save();
+            const cx = GAME_WIDTH / 2; // 300
+            const cy = 240; // 게임 화면 4분의 3 지점 위
+
+            const w = 230;
+            const h = 56;
+
+            // 반투명 다크 골드 네온 배너
+            ctx.fillStyle = 'rgba(15, 20, 32, 0.90)';
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2.5;
+            ctx.shadowColor = '#000000';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.roundRect(cx - w / 2, cy - h / 2, w, h, 14);
+            ctx.fill();
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            if (diff > 0) {
+                const totalSec = Math.floor(diff / 1000);
+                const hours = Math.floor(totalSec / 3600);
+                const minutes = Math.floor((totalSec % 3600) / 60);
+                const seconds = totalSec % 60;
+
+                // 1행: 관리자남용까지
+                ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                ctx.fillStyle = '#fde047';
+                ctx.fillText("관리자남용까지", cx, cy - 12);
+
+                // 2행: 몇시간 몇분 몇초
+                ctx.font = '900 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(`${hours}시간 ${minutes}분 ${seconds}초`, cx, cy + 12);
+            } else if (now.getHours() === 20 && now.getMinutes() < 41) {
+                // 8시 30분 ~ 8시 40분: 0분 0초 도달 (새로고침 시 재생)
+                ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                ctx.fillStyle = '#fde047';
+                ctx.fillText("🔥 관리자남용 진행 중! 🔥", cx, cy - 12);
+
+                ctx.font = '900 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                ctx.fillStyle = '#22c55e';
+                ctx.fillText("0시간 0분 0초 (새로고침 시 재생)", cx, cy + 12);
+            }
+
+            ctx.restore();
+        }
+        window.drawAdminAbuseCountdownHUD = drawAdminAbuseCountdownHUD;
+
+        // ============================================================
+        // 🎃🪽 [천악풍] 날개 달린 호박 럭키블록 캔버스 렌더러
+        // ============================================================
+        function drawHalloweenWingedLuckyBlock(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            const time = Date.now() * 0.003;
+            const bob = Math.sin(time * 2) * 5;
+            const cx = w / 2;
+            const cy = h / 2 + bob;
+
+            ctx.save();
+            ctx.translate(cx, cy);
+
+            // 1. 호박빛 & 보랏빛 신비 아우라
+            const auraGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, 60);
+            auraGrad.addColorStop(0, 'rgba(249, 115, 22, 0.7)');
+            auraGrad.addColorStop(0.4, 'rgba(168, 85, 247, 0.4)');
+            auraGrad.addColorStop(0.8, 'rgba(234, 88, 12, 0.2)');
+            auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = auraGrad;
+            ctx.beginPath(); ctx.arc(0, 0, 60, 0, Math.PI * 2); ctx.fill();
+
+            // 회전하는 캔디 룬 링
+            ctx.save();
+            ctx.rotate(time * 0.6);
+            ctx.strokeStyle = 'rgba(250, 204, 21, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([6, 6]);
+            ctx.beginPath(); ctx.arc(0, 0, 52, 0, Math.PI * 2); ctx.stroke();
+            ctx.restore();
+
+            // 2. 좌측 천사 날개 (순백/골드 펄럭임)
+            ctx.save();
+            ctx.translate(-34, -4);
+            let flapL = Math.sin(time * 2.8) * 0.12;
+            ctx.rotate(-0.2 + flapL);
+            [
+                { l: 24, w: 10, ang: -0.4, col: '#ffffff' },
+                { l: 20, w: 8, ang: -0.15, col: '#fef08a' },
+                { l: 15, w: 6, ang: 0.1, col: '#f97316' }
+            ].forEach((f, fi) => {
+                ctx.save();
+                ctx.rotate(f.ang);
+                ctx.fillStyle = f.col;
+                ctx.shadowColor = '#facc15'; ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.ellipse(-f.l * 0.6, -fi * 3, f.l * 0.6, f.w * 0.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+            ctx.restore();
+
+            // 3. 우측 악마 박쥐 날개 (흑요석 & 불타는 용암 리브)
+            ctx.save();
+            ctx.translate(34, -4);
+            let flapR = -Math.sin(time * 2.8) * 0.12;
+            ctx.rotate(0.2 + flapR);
+            ctx.fillStyle = '#18181b';
+            ctx.strokeStyle = '#c026d3';
+            ctx.lineWidth = 2;
+            ctx.shadowColor = '#e11d48'; ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.moveTo(0, 0); ctx.lineTo(26, -20); ctx.lineTo(18, 0); ctx.lineTo(26, 12); ctx.lineTo(10, 18);
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+            ctx.restore();
+
+            // 4. 큐브 몸체 (호박 잭오랜턴 큐브 68x68)
+            const sz = 68;
+            const half = sz / 2;
+            let pGrad = ctx.createLinearGradient(-half, -half, half, half);
+            pGrad.addColorStop(0, '#ea580c');
+            pGrad.addColorStop(0.5, '#c2410c');
+            pGrad.addColorStop(1, '#7c2d12');
+            ctx.fillStyle = pGrad;
+            ctx.beginPath(); ctx.roundRect(-half, -half, sz, sz, 12); ctx.fill();
+            ctx.strokeStyle = '#facc15'; ctx.lineWidth = 3; ctx.stroke();
+
+            // 5. 조각된 호박 눈과 입 (불타오르는 황금빛)
+            ctx.fillStyle = '#fef08a';
+            ctx.shadowColor = '#fde047'; ctx.shadowBlur = 12;
+            ctx.beginPath(); ctx.moveTo(-18, -12); ctx.lineTo(-8, -12); ctx.lineTo(-13, -2); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(18, -12); ctx.lineTo(8, -12); ctx.lineTo(13, -2); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(0, -3); ctx.lineTo(-4, 3); ctx.lineTo(4, 3); ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(-18, 12); ctx.lineTo(-12, 18); ctx.lineTo(-6, 12); ctx.lineTo(0, 18); ctx.lineTo(6, 12); ctx.lineTo(12, 18); ctx.lineTo(18, 12);
+            ctx.lineTo(12, 22); ctx.lineTo(-12, 22);
+            ctx.closePath();
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 6. 꼭대기 초록 줄기
+            ctx.fillStyle = '#15803d';
+            ctx.fillRect(-4, -half - 8, 8, 8);
+
+            ctx.restore();
+        }
+        window.drawHalloweenWingedLuckyBlock = drawHalloweenWingedLuckyBlock;
+
+        // ============================================================
+        // 🎃 [트릭 오어 트릿 & 사탕 교환 모달 제어]
+        // ============================================================
+        let currentHouseId = null;
+        function openTrickOrTreatModal(houseId) {
+            currentHouseId = houseId;
+            const h = candyVillageHouses.find(item => item.id === houseId);
+            if (!h) return;
+
+            const modal = document.getElementById('trick-or-treat-modal');
+            if (!modal) return;
+
+            document.getElementById('tot-title').innerText = `${h.name} (주민: ${h.resident})`;
+            document.getElementById('tot-house-icon').innerText = h.icon;
+            updateTrickOrTreatUI(h);
+            modal.style.display = 'block';
+        }
+        window.openTrickOrTreatModal = openTrickOrTreatModal;
+
+        function closeTrickOrTreatModal() {
+            const modal = document.getElementById('trick-or-treat-modal');
+            if (modal) modal.style.display = 'none';
+        }
+        window.closeTrickOrTreatModal = closeTrickOrTreatModal;
+
+        function updateTrickOrTreatUI(h) {
+            if (!h && currentHouseId) h = candyVillageHouses.find(item => item.id === currentHouseId);
+            if (!h) return;
+
+            const now = Date.now();
+            const canGift = (!h.giftTime || now - h.giftTime > 45000);
+            const giftBtn = document.getElementById('tot-gift-btn');
+            if (giftBtn) {
+                if (canGift) {
+                    giftBtn.disabled = false;
+                    giftBtn.style.opacity = '1';
+                    giftBtn.style.cursor = 'pointer';
+                    giftBtn.innerText = '🎁 [트릭 오어 트릿!] 공짜 캔디콘 (10~15개) 받기';
+                } else {
+                    const remain = Math.ceil((45000 - (now - h.giftTime)) / 1000);
+                    giftBtn.disabled = true;
+                    giftBtn.style.opacity = '0.6';
+                    giftBtn.style.cursor = 'not-allowed';
+                    giftBtn.innerText = `⏳ 쿨타임 중... (${remain}초 후 다시 방문 가능)`;
+                }
+            }
+
+            const candies = [
+                { id: '알사탕', rate: 1 },
+                { id: '롤리팝', rate: 3 },
+                { id: '초콜릿', rate: 8 },
+                { id: '과일젤리', rate: 20 },
+                { id: '마시멜로우', rate: 50 },
+                { id: '별사탕 킹캔디', rate: 150 }
+            ];
+            candies.forEach(c => {
+                const el = document.getElementById(`tot-cnt-${c.id}`);
+                if (el) el.innerText = (inventory[c.id] || 0) + '개';
+            });
+            const cornEl = document.getElementById('tot-my-corn');
+            if (cornEl) cornEl.innerText = candyCorn.toLocaleString();
+        }
+        window.updateTrickOrTreatUI = updateTrickOrTreatUI;
+
+        function claimTrickOrTreatGift() {
+            if (!currentHouseId) return;
+            const h = candyVillageHouses.find(item => item.id === currentHouseId);
+            if (!h) return;
+
+            const now = Date.now();
+            if (h.giftTime && now - h.giftTime <= 45000) {
+                alert('아직 사탕을 주신 지 얼마 안 됐어요! 잠시 후 다시 찾아와 주세요.');
+                return;
+            }
+
+            h.giftTime = now;
+            const freeCount = Math.floor(Math.random() * 6) + 10; // 10~15개
+            updateCandyCorn(freeCount);
+            saveGame(true);
+
+            floatTexts.push({ x: player.x, y: player.y - 80, text: `🎉 [트릭 오어 트릿!] 캔디콘 +${freeCount}개 획득! 🍬`, color: '#f59e0b', life: 90, size: 21 });
+            updateTrickOrTreatUI(h);
+        }
+        window.claimTrickOrTreatGift = claimTrickOrTreatGift;
+
+        function exchangeCandyForCorn(candyName, count) {
+            const rateMap = {
+                '알사탕': 1,
+                '롤리팝': 3,
+                '초콜릿': 8,
+                '과일젤리': 20,
+                '마시멜로우': 50,
+                '별사탕 킹캔디': 150
+            };
+            const rate = rateMap[candyName] || 1;
+            const available = inventory[candyName] || 0;
+            if (available < count) {
+                alert(`${candyName}이(가) 부족합니다! (보유: ${available}개)`);
+                return;
+            }
+
+            inventory[candyName] -= count;
+            const earned = count * rate;
+            updateCandyCorn(earned);
+            saveGame(true);
+
+            floatTexts.push({ x: player.x, y: player.y - 75, text: `🍬 ${candyName} ${count}개 ➔ 캔디콘 +${earned}개 교환!`, color: '#2ecc71', life: 75, size: 18 });
+            updateTrickOrTreatUI();
+        }
+        window.exchangeCandyForCorn = exchangeCandyForCorn;
+
+        function exchangeAllCandiesForCorn() {
+            const rateMap = {
+                '알사탕': 1,
+                '롤리팝': 3,
+                '초콜릿': 8,
+                '과일젤리': 20,
+                '마시멜로우': 50,
+                '별사탕 킹캔디': 150
+            };
+            let totalEarned = 0;
+            let exchangedCount = 0;
+
+            for (let c in rateMap) {
+                let count = inventory[c] || 0;
+                if (count > 0) {
+                    inventory[c] = 0;
+                    totalEarned += count * rateMap[c];
+                    exchangedCount += count;
+                }
+            }
+
+            if (exchangedCount === 0) {
+                alert('교환할 사탕을 가지고 있지 않습니다! 사탕 나무를 흔들어 사탕을 모아보세요.');
+                return;
+            }
+
+            updateCandyCorn(totalEarned);
+            saveGame(true);
+
+            floatTexts.push({ x: player.x, y: player.y - 85, text: `✨ 사탕 ${exchangedCount}개 일괄 판매 ➔ 캔디콘 +${totalEarned.toLocaleString()}개 획득! 🍬`, color: '#facc15', life: 100, size: 20 });
+            updateTrickOrTreatUI();
+        }
+        window.exchangeAllCandiesForCorn = exchangeAllCandiesForCorn;
+
+        // ============================================================
+        // 🏪 [캔디콘 비밀 상점 모달 제어]
+        // ============================================================
+        let candyCornLuckyAnimInterval = null;
+        function openCandyCornShopModal() {
+            const modal = document.getElementById('candycorn-shop-modal');
+            if (!modal) return;
+            const myCornEl = document.getElementById('cc-shop-my-corn');
+            if (myCornEl) myCornEl.innerText = candyCorn.toLocaleString();
+
+            modal.style.display = 'block';
+
+            if (candyCornLuckyAnimInterval) clearInterval(candyCornLuckyAnimInterval);
+            candyCornLuckyAnimInterval = setInterval(() => {
+                if (modal.style.display === 'block') {
+                    drawHalloweenWingedLuckyBlock('halloween-winged-lucky-canvas');
+                } else {
+                    clearInterval(candyCornLuckyAnimInterval);
+                    candyCornLuckyAnimInterval = null;
+                }
+            }, 40);
+        }
+        window.openCandyCornShopModal = openCandyCornShopModal;
+
+        function closeCandyCornShopModal() {
+            const modal = document.getElementById('candycorn-shop-modal');
+            if (modal) modal.style.display = 'none';
+            if (candyCornLuckyAnimInterval) {
+                clearInterval(candyCornLuckyAnimInterval);
+                candyCornLuckyAnimInterval = null;
+            }
+        }
+        window.closeCandyCornShopModal = closeCandyCornShopModal;
+
+        function buyHalloweenWingedLuckyBlock() {
+            if (!isAdmin() && candyCorn < 1000) {
+                alert('캔디콘이 부족합니다! 1,000개의 캔디콘이 필요합니다.');
+                return;
+            }
+
+            if (candyCorn >= 1000) {
+                updateCandyCorn(-1000);
+            }
+
+            const rand = Math.random() * 100;
+            let wonTitle = '';
+            let wonDesc = '';
+            let wonIcon = '🎁';
+            let wonColor = '#38bdf8';
+
+            if (rand < 5) {
+                const wonId = 'pumpkin_winged_demon';
+                wonTitle = '호박 날개 대악마 (초신화 5%)';
+                wonDesc = '천사와 악마 날개가 달린 전설의 호박 대마왕 스킨 획득!';
+                wonIcon = '🎃🪽';
+                wonColor = '#facc15';
+                if (!ownedSkins.includes(wonId)) ownedSkins.push(wonId);
+            } else if (rand < 15) {
+                const wonId = 'candy_king';
+                wonTitle = '별사탕 캔디 국왕 (신화 10%)';
+                wonDesc = '사탕 왕국의 국왕 스킨 획득!';
+                wonIcon = '👑🍬';
+                wonColor = '#c084fc';
+                if (!ownedSkins.includes(wonId)) ownedSkins.push(wonId);
+            } else if (rand < 35) {
+                wonTitle = '🍬 캔디콘 대박 꾸러미 (전설 20%)';
+                wonDesc = '캔디콘 +1,200개 즉시 환급!';
+                wonIcon = '🍬';
+                wonColor = '#fb923c';
+                updateCandyCorn(1200);
+            } else if (rand < 65) {
+                wonTitle = '💰 500,000 골드 대박 (영웅 30%)';
+                wonDesc = '황금 코인 500,000 골드 획득!';
+                wonIcon = '💰';
+                wonColor = '#38bdf8';
+                money += 500000;
+                updateMoney();
+            } else {
+                wonTitle = '🍀 1.5배 행운 20분 + 200,000 골드 (희귀 35%)';
+                wonDesc = '1.5배 행운 20분 발동 & 200,000 골드 획득!';
+                wonIcon = '🍀';
+                wonColor = '#4ade80';
+                money += 200000;
+                updateMoney();
+                isLuck15Active = true;
+                luck15EndTime = Math.max(Date.now(), luck15EndTime) + 20 * 60 * 1000;
+                updateLuck15Timer();
+            }
+
+            saveGame(true);
+            updateShopSkinUI();
+            updateInvSkinUI();
+
+            const modal = document.getElementById('lucky-unbox-modal');
+            const summaryEl = document.getElementById('lucky-unbox-summary');
+            const itemsEl = document.getElementById('lucky-unbox-items');
+            if (modal && summaryEl && itemsEl) {
+                summaryEl.innerText = `🎃 할로윈 날개 달린 럭키블록 개봉 결과!`;
+                itemsEl.innerHTML = `
+                    <div style="background: rgba(30, 41, 59, 0.95); border: 2px solid ${wonColor}; border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 0 20px ${wonColor}55;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 34px;">${wonIcon}</span>
+                            <div style="text-align: left;">
+                                <div style="font-size: 16px; font-weight: 900; color: #fff;">${wonTitle}</div>
+                                <div style="font-size: 11.5px; color: ${wonColor}; margin-top: 2px;">${wonDesc}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                modal.style.display = 'block';
+            }
+
+            floatTexts.push({ x: player.x, y: player.y - 90, text: `🎁 할로윈 럭키블록 개봉 완료!`, color: wonColor, life: 100, size: 21 });
+            const myCornEl = document.getElementById('cc-shop-my-corn');
+            if (myCornEl) myCornEl.innerText = candyCorn.toLocaleString();
+        }
+        window.buyHalloweenWingedLuckyBlock = buyHalloweenWingedLuckyBlock;
+
+        // ============================================================
+        // 👑 [어드민 패널 전용 캔디 마을 & 상점 컨트롤 함수]
+        // ============================================================
+        function adminWarpToCandyTree() {
+            player.x = GAME_WIDTH / 2;
+            player.y = 1350;
+            player.targetTree = null;
+            closeAdminPanelModal();
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🍭 사탕 나무로 즉시 이동했습니다!', color: '#ff7675', life: 75, size: 20 });
+        }
+        window.adminWarpToCandyTree = adminWarpToCandyTree;
+
+        function adminToggleCandyCornShop() {
+            adminCandyCornShopSpawned = !adminCandyCornShopSpawned;
+            window.adminCandyCornShopSpawned = adminCandyCornShopSpawned;
+            if (adminCandyCornShopSpawned) {
+                alert('🏪 캔디 지형 맨 밑(Y: 3600)에 캔디콘 상점이 생성되었습니다!');
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '🏪 캔디콘 상점 생성 완료! (Y: 3600)', color: '#f59e0b', life: 85, size: 20 });
+            } else {
+                alert('🏪 캔디콘 상점이 제거되었습니다.');
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '🏪 캔디콘 상점 제거 완료.', color: '#94a3b8', life: 75 });
+            }
+        }
+        window.adminToggleCandyCornShop = adminToggleCandyCornShop;
+
+        function adminAddCandyCorn() {
+            updateCandyCorn(1000);
+            saveGame(true);
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🍬 캔디콘 +1,000개 즉시 지급 완료!', color: '#f59e0b', life: 85, size: 20 });
+        }
+        window.adminAddCandyCorn = adminAddCandyCorn;
+
+        function adminRefillAllCandies() {
+            const list = ['알사탕', '롤리팝', '초콜릿', '과일젤리', '마시멜로우', '별사탕 킹캔디'];
+            list.forEach(item => {
+                inventory[item] = (inventory[item] || 0) + 30;
+            });
+            saveGame(true);
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🍭 사탕 6종 각 30개씩 충전 완료!', color: '#ff7675', life: 85, size: 20 });
+        }
+        window.adminRefillAllCandies = adminRefillAllCandies;
+
         loadGame(); 
 
         // 🐾 [펫-스킨 분리 마이그레이션] 이전 버전에서 펫을 스킨으로 장착했던 유저 복구
@@ -20365,17 +20920,41 @@
                 reward = tier.price * amount;
                 customerSkin = 'astronaut'; // "상점 주민들은 우주복 입고"
             } else if (type === 'halloween') {
-                const pumpkinChoices = [
-                    { item: '주황호박', price: 2000 },
-                    { item: '초록호박', price: 2000 },
-                    { item: '하얀호박', price: 2000 }
-                ];
-                let chosen = pumpkinChoices[Math.floor(Math.random() * pumpkinChoices.length)];
-                fruit = chosen.item;
-                amount = Math.floor(Math.random() * 3) + 1; // 주황, 초록, 하얀 호박만 1~3개 구매
-                reward = chosen.price * amount;
+                if (isAdmin()) {
+                    // 🍭 사탕 나무 과일(사탕 6종) 구매 손님
+                    const candyChoices = [
+                        { item: '알사탕', price: 3000 },
+                        { item: '롤리팝', price: 10000 },
+                        { item: '초콜릿', price: 30000 },
+                        { item: '과일젤리', price: 70000 },
+                        { item: '마시멜로우', price: 180000 },
+                        { item: '별사탕 킹캔디', price: 500000 }
+                    ];
+                    let r = Math.random();
+                    let chosen = candyChoices[0];
+                    if (r < 0.60) chosen = candyChoices[0];
+                    else if (r < 0.75) chosen = candyChoices[1];
+                    else if (r < 0.85) chosen = candyChoices[2];
+                    else if (r < 0.93) chosen = candyChoices[3];
+                    else if (r < 0.98) chosen = candyChoices[4];
+                    else chosen = candyChoices[5];
 
-                // 할로윈 스킨들로 줄서기
+                    fruit = chosen.item;
+                    amount = (chosen.item === '별사탕 킹캔디') ? 1 : (Math.floor(Math.random() * 2) + 1);
+                    reward = chosen.price * amount;
+                } else {
+                    const pumpkinChoices = [
+                        { item: '주황호박', price: 2000 },
+                        { item: '초록호박', price: 2000 },
+                        { item: '하얀호박', price: 2000 }
+                    ];
+                    let chosen = pumpkinChoices[Math.floor(Math.random() * pumpkinChoices.length)];
+                    fruit = chosen.item;
+                    amount = Math.floor(Math.random() * 3) + 1;
+                    reward = chosen.price * amount;
+                }
+
+                // 똑같이 할로윈 스킨 주민이 옴
                 const hwSkins = ['ghost_fedora', 'ghost_classic', 'ghost_purple', 'jack_orange', 'jack_fiery'];
                 customerSkin = hwSkins[Math.floor(Math.random() * hwSkins.length)];
             } else {
@@ -20503,7 +21082,8 @@
             } else { player.walkTimer = 0; }
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
-            player.y = Math.max(-8950, Math.min(2600 - player.radius, player.y));
+            const maxBottomLimit = isAdmin() ? 3950 : 2600;
+            player.y = Math.max(-8950, Math.min(maxBottomLimit - player.radius, player.y));
             
             // 🔒 맨 마지막 지역: 얼음의 협곡(Y: -8000 이하) 이번주 토요일 21:30 공개 및 레벨 125 체크
             if (!isIceCanyonEventStarted() && player.y <= -7970 && player.y >= -9000) {
@@ -20701,10 +21281,12 @@
             }
 
             shops.forEach(shop => {
-                // 사용자 요청: 주민도 안오고 (할로윈 상점 주민 스폰 완전 차단 및 대기열 비움)
+                // 어드민 계정일 때는 할로윈 사탕 상점에 할로윈 스킨 손님 방문 허용!
                 if (shop.type === 'halloween') {
-                    shop.queue = [];
-                    return;
+                    if (!isAdmin()) {
+                        shop.queue = [];
+                        return;
+                    }
                 }
                 if (shop.queue.length < 5 && Math.random() < 0.01) {
                     let newCustomer = generateCustomer(shop.type);
@@ -20848,6 +21430,95 @@
             let facing = char.facing || 1;
 
             let useSkin = (skin === 'snorkeling_fisher' || skin === 'mad_scientist' || skin === 'archaeologist') ? 'default' : skin;
+            if (useSkin === 'pumpkin_winged_demon') {
+                // 🎃🪽 호박 날개 대악마 스킨 (초신화 스킨: 좌측 천사날개 / 우측 악마날개 / 불타는 잭오랜턴 헤드)
+                ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(0, 24, 22, 9, 0, 0, Math.PI*2); ctx.fill();
+                ctx.translate(0, -bobbing);
+
+                let animT = Date.now() * 0.003;
+                let flap = Math.sin(animT * 3) * 0.15;
+
+                // 좌측 천사 날개 (순백/골드)
+                ctx.save();
+                ctx.translate(-16, -10);
+                ctx.rotate(-0.25 + flap);
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = '#facc15'; ctx.shadowBlur = 12;
+                ctx.beginPath(); ctx.ellipse(-20, 0, 24, 9, -0.2, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath(); ctx.ellipse(-16, 4, 18, 6, -0.1, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.restore();
+
+                // 우측 악마 날개 (흑요석/용암)
+                ctx.save();
+                ctx.translate(16, -10);
+                ctx.rotate(0.25 - flap);
+                ctx.fillStyle = '#18181b';
+                ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 1.8;
+                ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 12;
+                ctx.beginPath();
+                ctx.moveTo(0, 0); ctx.lineTo(26, -16); ctx.lineTo(18, 0); ctx.lineTo(26, 14); ctx.lineTo(8, 16);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+                ctx.shadowBlur = 0;
+                ctx.restore();
+
+                // 대악마 로브
+                ctx.fillStyle = '#2e1065';
+                ctx.beginPath(); ctx.roundRect(-14, -8, 28, 28, 6); ctx.fill();
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2; ctx.stroke();
+
+                // 불타는 잭오랜턴 호박 머리
+                ctx.fillStyle = '#ea580c';
+                ctx.beginPath(); ctx.arc(0, -22, 17, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#7c2d12'; ctx.lineWidth = 2; ctx.stroke();
+                // 눈 & 입 (황금빛)
+                ctx.fillStyle = '#fef08a';
+                ctx.shadowColor = '#fde047'; ctx.shadowBlur = 8;
+                ctx.beginPath(); ctx.moveTo(-9, -25); ctx.lineTo(-3, -25); ctx.lineTo(-6, -19); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(9, -25); ctx.lineTo(3, -25); ctx.lineTo(6, -19); ctx.fill();
+                ctx.beginPath(); ctx.arc(0, -16, 7, 0, Math.PI); ctx.fill();
+                ctx.shadowBlur = 0;
+
+                ctx.restore();
+                return;
+            } else if (useSkin === 'candy_king') {
+                // 👑🍬 별사탕 캔디 국왕 스킨 (스위트 로열 로브 & 별사탕 왕관)
+                ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(0, 24, 20, 8, 0, 0, Math.PI*2); ctx.fill();
+                ctx.translate(0, -bobbing);
+
+                let animT = Date.now() * 0.003;
+
+                // 스위트 로열 로브 (로열 핑크/골드)
+                ctx.fillStyle = '#be185d';
+                ctx.beginPath(); ctx.roundRect(-15, -8, 30, 28, 6); ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5; ctx.stroke();
+
+                // 사탕 지팡이 홀 (오른손)
+                ctx.save();
+                ctx.translate(16, -2);
+                ctx.strokeStyle = '#ff4757'; ctx.lineWidth = 3.5;
+                ctx.beginPath(); ctx.moveTo(0, 20); ctx.lineTo(0, -20); ctx.stroke();
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(-5, -20, 5, Math.PI, 0); ctx.stroke();
+                ctx.restore();
+
+                // 머리 (부드러운 피부톤)
+                ctx.fillStyle = '#ffeaa7';
+                ctx.beginPath(); ctx.arc(0, -22, 15, 0, Math.PI * 2); ctx.fill();
+
+                // 별사탕 킹캔디 황금 왕관
+                ctx.fillStyle = '#facc15';
+                ctx.shadowColor = '#fef08a'; ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.moveTo(-14, -33); ctx.lineTo(-14, -43); ctx.lineTo(-7, -37); ctx.lineTo(0, -46); ctx.lineTo(7, -37); ctx.lineTo(14, -43); ctx.lineTo(14, -33);
+                ctx.closePath(); ctx.fill();
+                ctx.shadowBlur = 0;
+
+                ctx.restore();
+                return;
+            }
+
             if (useSkin === 'reaper') {
                 // 사신 스킨: 검정색 로브, 해골 얼굴, 낫
                 ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
@@ -24400,7 +25071,34 @@
         function drawShop(ctx, shop) {
             const x = shop.x; const y = shop.y;
             if (shop.type === 'halloween') {
-                // 🌫️ 사용자 요청: 버려지고 판자로 폐쇄된 할로윈 폐허 상점
+                if (isAdmin()) {
+                    // 🍭 [어드민 전용] 할로윈 달콤한 사탕 상점
+                    ctx.fillStyle = '#3b1d54'; ctx.fillRect(x - 10, y + 210, 200, 20);
+                    let wallGrad = ctx.createLinearGradient(x, y, x, y + 210);
+                    wallGrad.addColorStop(0, '#581c87'); wallGrad.addColorStop(1, '#3b0764');
+                    ctx.fillStyle = wallGrad; ctx.fillRect(x, y + 80, 180, 130);
+                    ctx.fillStyle = '#7e22ce'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
+                    
+                    // 따뜻하게 빛나는 캔디 진열 창문
+                    ctx.fillStyle = '#fef08a'; ctx.fillRect(x + 35, y + 105, 110, 75);
+                    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3; ctx.strokeRect(x + 35, y + 105, 110, 75);
+                    ctx.fillStyle = '#ea580c'; ctx.font = '22px Arial'; ctx.textAlign = 'center'; ctx.fillText("🍬🍭🍫", x + 90, y + 150);
+
+                    // 주황 & 보라 줄무늬 할로윈 차양
+                    let roofGrad = ctx.createLinearGradient(x - 20, y, x + 200, y + 80);
+                    roofGrad.addColorStop(0, '#f97316'); roofGrad.addColorStop(1, '#c026d3');
+                    ctx.fillStyle = roofGrad;
+                    ctx.beginPath(); ctx.moveTo(x - 20, y + 80); ctx.lineTo(x + 90, y); ctx.lineTo(x + 200, y + 80); ctx.fill();
+                    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 3.5; ctx.stroke();
+
+                    // 간판
+                    ctx.fillStyle = '#1e1b24'; ctx.fillRect(x + 30, y + 40, 125, 36);
+                    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.strokeRect(x + 30, y + 40, 125, 36);
+                    ctx.fillStyle = '#facc15'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
+                    ctx.fillText("🍭 사탕 상점 🍬", x + 92, y + 63);
+                    return;
+                }
+                // 🌫️ 사용자 요청: 버려지고 판자로 폐쇄된 할로윈 폐허 상점 (일반 유저)
                 ctx.fillStyle = '#2d241e'; ctx.fillRect(x - 10, y + 210, 200, 20);
                 ctx.fillStyle = '#3a312a'; ctx.fillRect(x, y + 80, 180, 130);
                 ctx.fillStyle = '#1e1814'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
@@ -24445,6 +25143,218 @@
 
         // 사진 2번 완벽 구현: 할로윈 호박 융합 (퓨즈) 건물 (오싹하고 정교한 할로윈 마녀/괴물 집)
         
+        // 🏘️ [할로윈 캔디 마을] 집 10채 렌더러
+        function drawCandyVillageHouse(ctx, h) {
+            ctx.save();
+            ctx.translate(h.x, h.y);
+
+            // 1. 그림자
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.beginPath();
+            ctx.ellipse(0, 50, 65, 22, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 2. 굴뚝 & 피어오르는 캔디 하트 연기
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(25, -60, 18, 30);
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fillRect(23, -64, 22, 6);
+            let smkTime = Date.now() * 0.0025;
+            for (let s = 0; s < 3; s++) {
+                let sy = -70 - ((smkTime * 35 + s * 22) % 60);
+                let sx = 34 + Math.sin(smkTime * 2 + s) * 12;
+                ctx.fillStyle = 'rgba(244, 114, 182, ' + Math.max(0, 0.45 - (-sy - 70) / 90) + ')';
+                ctx.beginPath();
+                ctx.arc(sx, sy, 5 + s * 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 3. 본체 벽면 (아늑하고 동화 같은 캔디 하우스)
+            ctx.fillStyle = h.wallCol || '#581c87';
+            ctx.beginPath();
+            ctx.roundRect(-55, -20, 110, 68, 10);
+            ctx.fill();
+            ctx.strokeStyle = '#1e1b4b'; ctx.lineWidth = 3; ctx.stroke();
+
+            // 4. 세모/곡선 지붕 (과자/사탕 기와 + 하얀 설탕 아이싱)
+            ctx.fillStyle = h.roofCol || '#ea580c';
+            ctx.beginPath();
+            ctx.moveTo(-68, -15);
+            ctx.lineTo(0, -65);
+            ctx.lineTo(68, -15);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#fde047'; ctx.lineWidth = 3.5; ctx.stroke();
+
+            // 하얀 슈가 프로스팅 (아이싱 흘러내림)
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.moveTo(-68, -15);
+            for (let ix = -68; ix <= 68; ix += 17) {
+                let dropY = (Math.abs(ix) % 34 === 0) ? -7 : -12;
+                ctx.lineTo(ix, dropY);
+            }
+            ctx.lineTo(68, -15);
+            ctx.closePath();
+            ctx.fill();
+
+            // 5. 따뜻하게 빛나는 호박빛 창문
+            ctx.fillStyle = '#fef08a';
+            ctx.shadowColor = '#facc15'; ctx.shadowBlur = 10;
+            ctx.fillRect(-42, -5, 26, 26);
+            ctx.fillRect(16, -5, 26, 26);
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = '#78350f'; ctx.lineWidth = 2.5;
+            ctx.strokeRect(-42, -5, 26, 26);
+            ctx.strokeRect(16, -5, 26, 26);
+            // 십자 창틀
+            ctx.beginPath();
+            ctx.moveTo(-29, -5); ctx.lineTo(-29, 21);
+            ctx.moveTo(-42, 8); ctx.lineTo(-16, 8);
+            ctx.moveTo(29, -5); ctx.lineTo(29, 21);
+            ctx.moveTo(16, 8); ctx.lineTo(42, 8);
+            ctx.stroke();
+
+            // 6. 초콜릿 문 & 잭오랜턴 손잡이
+            ctx.fillStyle = '#451a03';
+            ctx.beginPath(); ctx.roundRect(-14, 10, 28, 38, 5); ctx.fill();
+            ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2; ctx.stroke();
+            // 호박 손잡이
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath(); ctx.arc(7, 28, 3.5, 0, Math.PI * 2); ctx.fill();
+
+            // 7. 집 앞마당 잭오랜턴 & 롤리팝 장식
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath(); ctx.arc(-42, 38, 8, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#fef08a';
+            ctx.beginPath(); ctx.arc(-42, 37, 2, 0, Math.PI * 2); ctx.fill();
+
+            // 8. 상단 팻말 (집 이름)
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+            ctx.beginPath(); ctx.roundRect(-60, -88, 120, 20, 6); ctx.fill();
+            ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.5; ctx.stroke();
+            ctx.fillStyle = '#fde047';
+            ctx.font = 'bold 11px -apple-system, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(h.name, 0, -74);
+
+            // 9. 플레이어가 가까이 오면 상호작용 말풍선 표시
+            let distToPlayer = Math.hypot(player.x - h.x, player.y - h.y);
+            if (distToPlayer < 90) {
+                let now = Date.now();
+                let canGift = (!h.giftTime || now - h.giftTime > 45000);
+                let label = canGift ? "🎃 [트릭오어트릿! 클릭]" : "🍭 [사탕 교환소 클릭]";
+                let badgeCol = canGift ? '#f97316' : '#a855f7';
+
+                ctx.save();
+                ctx.translate(0, -98 + Math.sin(Date.now() * 0.005) * 4);
+                ctx.fillStyle = badgeCol;
+                ctx.beginPath(); ctx.roundRect(-65, -16, 130, 22, 6); ctx.fill();
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif';
+                ctx.fillText(label, 0, -2);
+                ctx.restore();
+            }
+
+            ctx.restore();
+        }
+        window.drawCandyVillageHouse = drawCandyVillageHouse;
+
+        // 🏪 [캔디콘 비밀 상점] 렌더러 (맨 밑 Y: 3600)
+        function drawCandyCornShop(ctx, shop) {
+            ctx.save();
+            ctx.translate(shop.x, shop.y);
+
+            let time = Date.now() * 0.003;
+            let flap = Math.sin(time * 3) * 0.12;
+
+            // 1. 거대한 신비 보랏빛 바닥 마법진
+            ctx.save();
+            ctx.rotate(time * 0.4);
+            ctx.strokeStyle = 'rgba(234, 88, 12, 0.6)'; ctx.lineWidth = 3;
+            ctx.setLineDash([12, 8]);
+            ctx.beginPath(); ctx.arc(0, 40, 90, 0, Math.PI * 2); ctx.stroke();
+            ctx.restore();
+
+            // 2. 좌측 천사 날개 (순백/골드)
+            ctx.save();
+            ctx.translate(-70, -30);
+            ctx.rotate(-0.25 + flap);
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = '#facc15'; ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.ellipse(-25, 0, 45, 18, -0.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.restore();
+
+            // 3. 우측 악마 박쥐 날개 (흑요석/용암)
+            ctx.save();
+            ctx.translate(70, -30);
+            ctx.rotate(0.25 - flap);
+            ctx.fillStyle = '#18181b';
+            ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3;
+            ctx.shadowColor = '#dc2626'; ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.moveTo(0, 0); ctx.lineTo(55, -25); ctx.lineTo(35, 10); ctx.lineTo(55, 30); ctx.lineTo(15, 25);
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+            ctx.shadowBlur = 0;
+            ctx.restore();
+
+            // 4. 캔디콘 상점 건물 본체 (초호화 호박 캐슬)
+            ctx.fillStyle = '#3b0764';
+            ctx.beginPath(); ctx.roundRect(-65, -35, 130, 85, 14); ctx.fill();
+            ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3.5; ctx.stroke();
+
+            // 화려한 금빛 지붕
+            ctx.fillStyle = 'linear-gradient(135deg, #f97316, #ea580c)';
+            let rfGrad = ctx.createLinearGradient(-80, -35, 80, -85);
+            rfGrad.addColorStop(0, '#f97316'); rfGrad.addColorStop(1, '#c026d3');
+            ctx.fillStyle = rfGrad;
+            ctx.beginPath();
+            ctx.moveTo(-80, -35); ctx.lineTo(0, -90); ctx.lineTo(80, -35);
+            ctx.closePath(); ctx.fill();
+            ctx.strokeStyle = '#fde047'; ctx.lineWidth = 4; ctx.stroke();
+
+            // 지붕 위 회전하는 거대한 호박 럭키블록 심볼
+            ctx.save();
+            ctx.translate(0, -98 + Math.sin(time * 2.5) * 6);
+            ctx.font = '36px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.shadowColor = '#facc15'; ctx.shadowBlur = 16;
+            ctx.fillText("🎃🪽", 0, 0);
+            ctx.restore();
+
+            // 진열장 (캔디콘과 날개 달린 호박)
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(-45, -15, 90, 55);
+            ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2; ctx.strokeRect(-45, -15, 90, 55);
+            ctx.font = '24px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText("🍬 🎁 🍬", 0, 12);
+
+            // 5. 상점 간판 배너
+            ctx.fillStyle = '#09090b';
+            ctx.beginPath(); ctx.roundRect(-100, -135, 200, 30, 8); ctx.fill();
+            ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.stroke();
+            ctx.fillStyle = '#fde047'; ctx.font = '900 13px sans-serif';
+            ctx.fillText("🎃 캔디콘 비밀 상점 🍬", 0, -115);
+
+            // 6. 플레이어가 가까이 오면 입장 안내
+            let pDist = Math.hypot(player.x - shop.x, player.y - shop.y);
+            if (pDist < 110) {
+                ctx.save();
+                ctx.translate(0, -150 + Math.sin(time * 4) * 4);
+                ctx.fillStyle = '#f97316';
+                ctx.beginPath(); ctx.roundRect(-80, -14, 160, 24, 6); ctx.fill();
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12px sans-serif';
+                ctx.fillText("👆 캔디콘 상점 열기 (클릭)", 0, 2);
+                ctx.restore();
+            }
+
+            ctx.restore();
+        }
+        window.drawCandyCornShop = drawCandyCornShop;
+
         // ⚔️ 새롭게 디자인된 하이테크/신비 크래프팅 머신 (중앙 광장)
         function drawCraftingMachine(ctx, cm) {
             const x = cm.x;
@@ -25109,18 +26019,60 @@
             ctx.fillStyle = '#cf3a24'; ctx.fillRect(0, -1000, GAME_WIDTH, 1000); 
             // 🌿 일반 지역 연장 (Y: 1150까지 잔디 대지 확장)
             ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1150); 
-            // 🌫️ 파괴된 할로윈 폐허 (잿빛 먼지와 어두운 지형)
-            ctx.fillStyle = '#1c1921'; ctx.fillRect(0, 1150, GAME_WIDTH, 1450); 
-            // 🌫️ 할로윈 폐허 먼지 & 잿빛 안개 오버레이 (사용자 요청: 먼지가 껴있음)
-            ctx.fillStyle = 'rgba(148, 163, 184, 0.16)';
-            ctx.fillRect(0, 1150, GAME_WIDTH, 1450);
-            let dustT = Date.now() * 0.001;
-            ctx.fillStyle = 'rgba(203, 213, 225, 0.35)';
-            for (let d = 0; d < 25; d++) {
-                let dx = ((d * 97 + dustT * 30) % GAME_WIDTH);
-                let dy = 1160 + ((d * 67 + dustT * 15) % 1400);
-                let dr = (d % 3 === 0) ? 2.5 : 1.5;
-                ctx.beginPath(); ctx.arc(dx, dy, dr, 0, Math.PI * 2); ctx.fill();
+            if (isAdmin()) {
+                // 🍭🎃 [어드민 전용] 할로윈 캔디 마을 & 사탕 나무 지형 (Y: 1150 ~ 4000)
+                let candyBgGrad = ctx.createLinearGradient(0, 1150, 0, 4000);
+                candyBgGrad.addColorStop(0, '#1c132b');
+                candyBgGrad.addColorStop(0.3, '#2a1645');
+                candyBgGrad.addColorStop(0.7, '#1f1035');
+                candyBgGrad.addColorStop(1, '#130924');
+                ctx.fillStyle = candyBgGrad;
+                ctx.fillRect(0, 1150, GAME_WIDTH, 2850);
+
+                // 중앙 캔디 조약돌 길 (Cobblestone Street: X 230 ~ 370)
+                ctx.fillStyle = 'rgba(45, 25, 75, 0.85)';
+                ctx.fillRect(230, 1150, 140, 2850);
+                ctx.strokeStyle = '#f472b6';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([8, 12]);
+                ctx.beginPath(); ctx.moveTo(230, 1150); ctx.lineTo(230, 4000); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(370, 1150); ctx.lineTo(370, 4000); ctx.stroke();
+                ctx.setLineDash([]);
+
+                // 길 위 조약돌 패턴
+                ctx.fillStyle = 'rgba(244, 114, 182, 0.15)';
+                for (let ry = 1170; ry < 3980; ry += 65) {
+                    let rx1 = 260 + (Math.sin(ry * 0.05) * 20);
+                    let rx2 = 330 + (Math.cos(ry * 0.04) * 20);
+                    ctx.beginPath(); ctx.ellipse(rx1, ry, 16, 10, 0.2, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.ellipse(rx2, ry + 25, 18, 11, -0.2, 0, Math.PI * 2); ctx.fill();
+                }
+
+                // 반짝이는 별사탕 마법 입자 효과
+                let candyTime = Date.now() * 0.002;
+                for (let cp = 0; cp < 40; cp++) {
+                    let cpx = ((cp * 97 + candyTime * 25) % GAME_WIDTH);
+                    let cpy = 1160 + ((cp * 73 + cp * cp * 19) % 2700);
+                    let ccol = (cp % 4 === 0) ? '#f472b6' : (cp % 4 === 1 ? '#facc15' : (cp % 4 === 2 ? '#38bdf8' : '#c084fc'));
+                    let calpha = 0.3 + Math.sin(candyTime * 3 + cp) * 0.35;
+                    ctx.fillStyle = ccol;
+                    ctx.globalAlpha = Math.max(0.1, calpha);
+                    ctx.beginPath(); ctx.arc(cpx, cpy, (cp % 3 === 0) ? 3 : 2, 0, Math.PI * 2); ctx.fill();
+                }
+                ctx.globalAlpha = 1.0;
+            } else {
+                // 🌫️ 파괴된 할로윈 폐허 (일반 유저)
+                ctx.fillStyle = '#1c1921'; ctx.fillRect(0, 1150, GAME_WIDTH, 1450); 
+                ctx.fillStyle = 'rgba(148, 163, 184, 0.16)';
+                ctx.fillRect(0, 1150, GAME_WIDTH, 1450);
+                let dustT = Date.now() * 0.001;
+                ctx.fillStyle = 'rgba(203, 213, 225, 0.35)';
+                for (let d = 0; d < 25; d++) {
+                    let dx = ((d * 97 + dustT * 30) % GAME_WIDTH);
+                    let dy = 1160 + ((d * 67 + dustT * 15) % 1400);
+                    let dr = (d % 3 === 0) ? 2.5 : 1.5;
+                    ctx.beginPath(); ctx.arc(dx, dy, dr, 0, Math.PI * 2); ctx.fill();
+                }
             }
 
             // 🔮 [어드민 전용] 할로윈 폐허 하단 핑크색 물음표 미지의 지형 (Y: 2600 ~ 3600)
@@ -25172,8 +26124,14 @@
             ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -7000); ctx.lineTo(GAME_WIDTH, -7000); ctx.stroke();
             ctx.fillStyle = '#a29bfe'; ctx.fillText("🚀 미지의 영역: 우주 지역 (레벨 105 진입 가능)", GAME_WIDTH / 2, -7020);
 
-            ctx.strokeStyle = '#475569'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1150); ctx.lineTo(GAME_WIDTH, 1150); ctx.stroke();
-            ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("🌫️ 폐허: 파괴된 할로윈 폐허 (출입 통제 구역)", GAME_WIDTH / 2, 1185);
+            ctx.strokeStyle = isAdmin() ? '#ec4899' : '#475569'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1150); ctx.lineTo(GAME_WIDTH, 1150); ctx.stroke();
+            if (isAdmin()) {
+                ctx.fillStyle = '#f472b6'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
+                ctx.fillText("🍭 달콤한 사탕 나무 & 캔디 마을 (Trick-or-Treat)", GAME_WIDTH / 2, 1185);
+            } else {
+                ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
+                ctx.fillText("🌫️ 폐허: 파괴된 할로윈 폐허 (출입 통제 구역)", GAME_WIDTH / 2, 1185);
+            }
 
             ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(GAME_WIDTH, 0); ctx.stroke();
             ctx.fillStyle = '#d35400'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("🔥 위험: 불꽃 지역 (레벨 3 진입 가능)", GAME_WIDTH / 2, -20);
@@ -25242,6 +26200,18 @@
             renderList.push({ type: 'rankingBoard', obj: rankingBoard, y: rankingBoard.y });
             if (typeof craftingMachine !== 'undefined') {
                 renderList.push({ type: 'craftingMachine', obj: craftingMachine, y: craftingMachine.y });
+            }
+
+            // 🏘️ [할로윈 캔디 마을] 집 10채 렌더 목록 등록
+            if (isAdmin() && typeof candyVillageHouses !== 'undefined') {
+                candyVillageHouses.forEach(h => {
+                    renderList.push({ type: 'candyHouse', obj: h, y: h.y });
+                });
+            }
+
+            // 🏪 [캔디콘 비밀 상점] 렌더 목록 등록 (맨 밑 Y: 3600)
+            if (isAdmin() && adminCandyCornShopSpawned) {
+                renderList.push({ type: 'candyCornShop', obj: { x: GAME_WIDTH / 2, y: 3600 }, y: 3600 });
             }
             // 룰렛 머신 삭제 (사용자 요청: 룰렛은 일단 삭제해줘)
 
@@ -25324,7 +26294,12 @@
                     } else if (t.type === 'cave') {
                         trunkGrad.addColorStop(0, '#2d3436'); trunkGrad.addColorStop(0.5, '#636e72'); trunkGrad.addColorStop(1, '#1e272e');
                     } else if (t.type === 'halloween') {
-                        trunkGrad.addColorStop(0, '#2d3436'); trunkGrad.addColorStop(0.5, '#4a235a'); trunkGrad.addColorStop(1, '#1b1464');
+                        if (isAdmin()) {
+                            // 🍭 페퍼민트 사탕 지팡이 나무 기둥 (Candy Cane Peppermint)
+                            trunkGrad.addColorStop(0, '#ff4757'); trunkGrad.addColorStop(0.3, '#ffffff'); trunkGrad.addColorStop(0.6, '#ff6b81'); trunkGrad.addColorStop(1, '#ffffff');
+                        } else {
+                            trunkGrad.addColorStop(0, '#2d3436'); trunkGrad.addColorStop(0.5, '#4a235a'); trunkGrad.addColorStop(1, '#1b1464');
+                        }
                     } else if (t.type === 'space') {
                         trunkGrad.addColorStop(0, '#090a0f'); trunkGrad.addColorStop(0.5, '#2d1345'); trunkGrad.addColorStop(1, '#050508');
                     } else {
@@ -25405,56 +26380,121 @@
                             ctx.fill(); ctx.stroke();
                         });
                     } else if (t.type === 'halloween') {
-                        // 💥 사용자 요청: 두동강 난 부러진 나무 (밑동과 쓰러진 줄기)
-                        // 1. 부러진 거친 밑동 (Standing Splintered Stump)
-                        ctx.fillStyle = '#2d3436';
-                        ctx.beginPath();
-                        ctx.moveTo(-t.trunkRadius * 0.9, trunkBottom);
-                        ctx.lineTo(-t.trunkRadius * 0.8, 10);
-                        ctx.lineTo(-18, -12);
-                        ctx.lineTo(-8, 5);
-                        ctx.lineTo(5, -22);
-                        ctx.lineTo(15, -6);
-                        ctx.lineTo(t.trunkRadius * 0.8, 12);
-                        ctx.lineTo(t.trunkRadius * 0.9, trunkBottom);
-                        ctx.closePath();
-                        ctx.fill();
-                        ctx.strokeStyle = '#1b1464'; ctx.lineWidth = 2.5; ctx.stroke();
+                        if (isAdmin()) {
+                            // 🍭✨ [어드민 전용] 초호화 마법 사탕 나무 (Candy Tree) 렌더링!
+                            let candyTime = Date.now() * 0.003;
+                            
+                            // 1. 달콤한 솜사탕/젤리 다층 수관
+                            let cloudGrad1 = ctx.createRadialGradient(-35, -70, 15, -35, -70, t.radius * 0.85);
+                            cloudGrad1.addColorStop(0, '#ff9ff3'); cloudGrad1.addColorStop(1, '#f368e0');
+                            ctx.fillStyle = cloudGrad1;
+                            ctx.beginPath(); ctx.arc(-55, -45, t.radius * 0.75, 0, Math.PI * 2); ctx.fill();
 
-                        // 2. 바닥에 쓰러진 두동강 난 호박 줄기 (Collapsed Broken Log)
-                        ctx.save();
-                        ctx.translate(65, 38);
-                        ctx.rotate(0.55);
-                        ctx.fillStyle = 'rgba(0,0,0,0.35)';
-                        ctx.beginPath(); ctx.ellipse(0, 16, 48, 15, 0, 0, Math.PI * 2); ctx.fill();
+                            let cloudGrad2 = ctx.createRadialGradient(45, -65, 15, 45, -65, t.radius * 0.85);
+                            cloudGrad2.addColorStop(0, '#54a0ff'); cloudGrad2.addColorStop(1, '#2e86de');
+                            ctx.fillStyle = cloudGrad2;
+                            ctx.beginPath(); ctx.arc(55, -45, t.radius * 0.75, 0, Math.PI * 2); ctx.fill();
 
-                        // 깨진 호박 조각 좌
-                        ctx.fillStyle = '#78350f';
-                        ctx.beginPath(); ctx.ellipse(-20, 0, 26, 20, -0.2, 0, Math.PI * 2); ctx.fill();
-                        ctx.strokeStyle = '#451a03'; ctx.lineWidth = 2; ctx.stroke();
+                            let cloudGrad3 = ctx.createRadialGradient(0, -110, 20, 0, -110, t.radius * 0.95);
+                            cloudGrad3.addColorStop(0, '#feca57'); cloudGrad3.addColorStop(0.5, '#ff6b6b'); cloudGrad3.addColorStop(1, '#ee5253');
+                            ctx.fillStyle = cloudGrad3;
+                            ctx.beginPath(); ctx.arc(0, -100, t.radius * 0.9, 0, Math.PI * 2); ctx.fill();
 
-                        // 깨진 호박 조각 우
-                        ctx.fillStyle = '#9a3412';
-                        ctx.beginPath(); ctx.ellipse(18, -4, 25, 18, 0.25, 0, Math.PI * 2); ctx.fill();
-                        ctx.strokeStyle = '#451a03'; ctx.lineWidth = 2; ctx.stroke();
+                            let cloudGrad4 = ctx.createRadialGradient(0, -50, 20, 0, -50, t.radius * 1.05);
+                            cloudGrad4.addColorStop(0, '#1dd1a1'); cloudGrad4.addColorStop(1, '#10ac84');
+                            ctx.fillStyle = cloudGrad4;
+                            ctx.beginPath(); ctx.arc(0, -45, t.radius * 0.95, 0, Math.PI * 2); ctx.fill();
 
-                        // 부러진 금
-                        ctx.strokeStyle = '#000000'; ctx.lineWidth = 2.5;
-                        ctx.beginPath(); ctx.moveTo(-4, -20); ctx.lineTo(1, 4); ctx.lineTo(-3, 20); ctx.stroke();
+                            // 2. 나무에 매달린 거대한 소용돌이 롤리팝 2개
+                            // 좌측 롤리팝
+                            ctx.save();
+                            ctx.translate(-75, -95);
+                            ctx.rotate(candyTime);
+                            let lpGrad1 = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
+                            lpGrad1.addColorStop(0, '#ffffff'); lpGrad1.addColorStop(0.5, '#ff4757'); lpGrad1.addColorStop(1, '#ff6b81');
+                            ctx.fillStyle = lpGrad1;
+                            ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
+                            ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
+                            ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 1.5); ctx.stroke();
+                            ctx.restore();
 
-                        // 꺼진 잭오랜턴 눈
-                        ctx.fillStyle = '#1c1917';
-                        ctx.beginPath(); ctx.moveTo(-15, -6); ctx.lineTo(-8, -12); ctx.lineTo(-4, -5); ctx.fill();
-                        ctx.beginPath(); ctx.moveTo(8, -10); ctx.lineTo(16, -15); ctx.lineTo(19, -7); ctx.fill();
-                        ctx.restore();
+                            // 우측 롤리팝
+                            ctx.save();
+                            ctx.translate(75, -95);
+                            ctx.rotate(-candyTime);
+                            let lpGrad2 = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
+                            lpGrad2.addColorStop(0, '#ffffff'); lpGrad2.addColorStop(0.5, '#2ed573'); lpGrad2.addColorStop(1, '#1e90ff');
+                            ctx.fillStyle = lpGrad2;
+                            ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
+                            ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
+                            ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 1.5); ctx.stroke();
+                            ctx.restore();
 
-                        // 3. 피어오르는 연기와 먼지
-                        let smk = Date.now() * 0.002;
-                        for (let s = 0; s < 3; s++) {
-                            let sx = Math.sin(smk + s * 2) * 16 + 10;
-                            let sy = -((smk * 20 + s * 15) % 45);
-                            ctx.fillStyle = 'rgba(148, 163, 184, 0.22)';
-                            ctx.beginPath(); ctx.arc(sx, sy, 7 + s * 2, 0, Math.PI * 2); ctx.fill();
+                            // 3. 나무 꼭대기 빛나는 신화 별사탕 킹캔디 장식 (Star Candy King Crown)
+                            ctx.save();
+                            ctx.translate(0, -195 + Math.sin(candyTime * 3) * 6);
+                            ctx.shadowColor = '#facc15'; ctx.shadowBlur = 18;
+                            ctx.fillStyle = '#fef08a';
+                            ctx.font = '34px Arial';
+                            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                            ctx.fillText("⭐👑", 0, 0);
+                            ctx.restore();
+
+                            // 4. 반짝이는 달콤한 설탕 가루 & 젤리 방울
+                            for (let sp = 0; sp < 8; sp++) {
+                                let spAngle = candyTime * 2 + (sp * Math.PI / 4);
+                                let spDist = (t.radius * 0.7) + Math.sin(candyTime * 3 + sp) * 20;
+                                let spx = Math.cos(spAngle) * spDist;
+                                let spy = -70 + Math.sin(spAngle) * (spDist * 0.55);
+                                let spCol = (sp % 3 === 0) ? '#fde047' : ((sp % 3 === 1) ? '#ffffff' : '#f472b6');
+                                ctx.fillStyle = spCol;
+                                ctx.beginPath(); ctx.arc(spx, spy, 3.5, 0, Math.PI * 2); ctx.fill();
+                            }
+                        } else {
+                            // 💥 [일반 유저] 두동강 난 부러진 나무
+                            ctx.fillStyle = '#2d3436';
+                            ctx.beginPath();
+                            ctx.moveTo(-t.trunkRadius * 0.9, trunkBottom);
+                            ctx.lineTo(-t.trunkRadius * 0.8, 10);
+                            ctx.lineTo(-18, -12);
+                            ctx.lineTo(-8, 5);
+                            ctx.lineTo(5, -22);
+                            ctx.lineTo(15, -6);
+                            ctx.lineTo(t.trunkRadius * 0.8, 12);
+                            ctx.lineTo(t.trunkRadius * 0.9, trunkBottom);
+                            ctx.closePath();
+                            ctx.fill();
+                            ctx.strokeStyle = '#1b1464'; ctx.lineWidth = 2.5; ctx.stroke();
+
+                            ctx.save();
+                            ctx.translate(65, 38);
+                            ctx.rotate(0.55);
+                            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+                            ctx.beginPath(); ctx.ellipse(0, 16, 48, 15, 0, 0, Math.PI * 2); ctx.fill();
+
+                            ctx.fillStyle = '#78350f';
+                            ctx.beginPath(); ctx.ellipse(-20, 0, 26, 20, -0.2, 0, Math.PI * 2); ctx.fill();
+                            ctx.strokeStyle = '#451a03'; ctx.lineWidth = 2; ctx.stroke();
+
+                            ctx.fillStyle = '#9a3412';
+                            ctx.beginPath(); ctx.ellipse(18, -4, 25, 18, 0.25, 0, Math.PI * 2); ctx.fill();
+                            ctx.strokeStyle = '#451a03'; ctx.lineWidth = 2; ctx.stroke();
+
+                            ctx.strokeStyle = '#000000'; ctx.lineWidth = 2.5;
+                            ctx.beginPath(); ctx.moveTo(-4, -20); ctx.lineTo(1, 4); ctx.lineTo(-3, 20); ctx.stroke();
+
+                            ctx.fillStyle = '#1c1917';
+                            ctx.beginPath(); ctx.moveTo(-15, -6); ctx.lineTo(-8, -12); ctx.lineTo(-4, -5); ctx.fill();
+                            ctx.beginPath(); ctx.moveTo(8, -10); ctx.lineTo(16, -15); ctx.lineTo(19, -7); ctx.fill();
+                            ctx.restore();
+
+                            let smk = Date.now() * 0.002;
+                            for (let s = 0; s < 3; s++) {
+                                let sx = Math.sin(smk + s * 2) * 16 + 10;
+                                let sy = -((smk * 20 + s * 15) % 45);
+                                ctx.fillStyle = 'rgba(148, 163, 184, 0.22)';
+                                ctx.beginPath(); ctx.arc(sx, sy, 7 + s * 2, 0, Math.PI * 2); ctx.fill();
+                            }
                         }
                     } else if (t.type === 'radioactive') {
                         // 고급스러운 에메랄드 금장 방사능 나무
@@ -25654,6 +26694,10 @@
                     drawHalloweenTeleporterBeacon(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'rankingBoard') {
                     drawRankingBoard(ctx, item.obj.x, item.obj.y);
+                } else if (item.type === 'candyHouse') {
+                    drawCandyVillageHouse(ctx, item.obj);
+                } else if (item.type === 'candyCornShop') {
+                    drawCandyCornShop(ctx, item.obj);
                 } else if (item.type === 'craftingMachine') {
                     drawCraftingMachine(ctx, item.obj);
                 } else if (item.type === 'rouletteMachine') {
@@ -25703,6 +26747,9 @@
 
             // 🎮 [미니게임 2종] 화면 고정 HUD (화면 위 타이머 & 화면 가운데 신호등 색상 변경 표시) 렌더링
             if (typeof drawMinigameHUD === 'function') drawMinigameHUD(ctx);
+
+            // ⏱️ 관리자남용까지 카운트다운 배너 (화면 4분의 3 지점 위 / y ≈ 240)
+            if (typeof drawAdminAbuseCountdownHUD === 'function') drawAdminAbuseCountdownHUD(ctx);
             if (typeof screenRedFlashTimer !== 'undefined' && screenRedFlashTimer > 0) {
                 ctx.fillStyle = `rgba(239, 68, 68, ${Math.min(0.42, screenRedFlashTimer / 50)})`;
                 ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
@@ -26368,6 +27415,105 @@
             checkAndInitTreeBusterIntro(false);
         }
     </script>
+
+    <!-- 🎃 트릭 오어 트릿 & 사탕 교환 모달 -->
+    <div id="trick-or-treat-modal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #2e1065, #09090b); color: white; padding: 22px 20px; border-radius: 20px; width: 92%; max-width: 440px; max-height: 88vh; overflow-y: auto; display: none; border: 2.5px solid #f97316; z-index: 950; box-shadow: 0 20px 65px rgba(0,0,0,0.95), 0 0 35px rgba(249, 115, 22, 0.4); text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <div style="font-size: 38px; margin-bottom: 4px;" id="tot-house-icon">🎃</div>
+        <h2 id="tot-title" style="margin: 0 0 4px 0; color: #facc15; font-size: 19px; font-weight: 900;">🎃 펌킨 코티지</h2>
+        <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 14px;">"사탕을 주지 않으면 장난칠 테야! 트릭 오어 트릿!"</div>
+
+        <!-- 1. 공짜 캔디콘 방문 선물 섹션 -->
+        <div style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #f59e0b; border-radius: 14px; padding: 12px; margin-bottom: 14px; text-align: center;">
+            <div style="font-size: 13px; font-weight: bold; color: #fde047; margin-bottom: 6px;">🎁 주민의 깜짝 방문 선물</div>
+            <div style="font-size: 11.5px; color: #94a3b8; margin-bottom: 10px;">집을 방문한 모험가에게 공짜 캔디콘 10~15개를 선물합니다!</div>
+            <button id="tot-gift-btn" onclick="claimTrickOrTreatGift()" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; font-weight: 900; font-size: 13px; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);">
+                🎁 [트릭 오어 트릿!] 공짜 캔디콘 받기
+            </button>
+        </div>
+
+        <!-- 2. 사탕 ➔ 캔디콘 교환소 섹션 -->
+        <div style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #a855f7; border-radius: 14px; padding: 12px; margin-bottom: 14px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 13px; font-weight: bold; color: #d8b4fe;">🍭 사탕 ➡️ 캔디콘 교환소</span>
+                <span style="font-size: 11.5px; color: #facc15; font-weight: 800;">내 캔디콘: <span id="tot-my-corn">0</span> 🍬</span>
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">사탕 나무에서 수확한 사탕을 주민에게 판매하여 캔디콘을 획득하세요!</div>
+
+            <!-- 사탕 목록 6종 -->
+            <div style="display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 6px 10px; border-radius: 8px; font-size: 12px;">
+                    <span style="color: #ff7675; font-weight: bold;">🍬 알사탕 (<span id="tot-cnt-알사탕">0개</span>) ➔ 1 캔디콘</span>
+                    <button onclick="exchangeCandyForCorn('알사탕', 1)" style="padding: 4px 10px; background: #334155; color: #fff; border: 1px solid #ff7675; border-radius: 6px; cursor: pointer; font-size: 11px;">1개 교환</button>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 6px 10px; border-radius: 8px; font-size: 12px;">
+                    <span style="color: #e84393; font-weight: bold;">🍭 롤리팝 (<span id="tot-cnt-롤리팝">0개</span>) ➔ 3 캔디콘</span>
+                    <button onclick="exchangeCandyForCorn('롤리팝', 1)" style="padding: 4px 10px; background: #334155; color: #fff; border: 1px solid #e84393; border-radius: 6px; cursor: pointer; font-size: 11px;">1개 교환</button>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 6px 10px; border-radius: 8px; font-size: 12px;">
+                    <span style="color: #fdcb6e; font-weight: bold;">🍫 초콜릿 (<span id="tot-cnt-초콜릿">0개</span>) ➔ 8 캔디콘</span>
+                    <button onclick="exchangeCandyForCorn('초콜릿', 1)" style="padding: 4px 10px; background: #334155; color: #fff; border: 1px solid #fdcb6e; border-radius: 6px; cursor: pointer; font-size: 11px;">1개 교환</button>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 6px 10px; border-radius: 8px; font-size: 12px;">
+                    <span style="color: #2ecc71; font-weight: bold;">🍮 과일젤리 (<span id="tot-cnt-과일젤리">0개</span>) ➔ 20 캔디콘</span>
+                    <button onclick="exchangeCandyForCorn('과일젤리', 1)" style="padding: 4px 10px; background: #334155; color: #fff; border: 1px solid #2ecc71; border-radius: 6px; cursor: pointer; font-size: 11px;">1개 교환</button>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 6px 10px; border-radius: 8px; font-size: 12px;">
+                    <span style="color: #f39c12; font-weight: bold;">🍥 마시멜로우 (<span id="tot-cnt-마시멜로우">0개</span>) ➔ 50 캔디콘</span>
+                    <button onclick="exchangeCandyForCorn('마시멜로우', 1)" style="padding: 4px 10px; background: #334155; color: #fff; border: 1px solid #f39c12; border-radius: 6px; cursor: pointer; font-size: 11px;">1개 교환</button>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 6px 10px; border-radius: 8px; font-size: 12px;">
+                    <span style="color: #a29bfe; font-weight: bold;">⭐ 별사탕 킹캔디 (<span id="tot-cnt-별사탕 킹캔디">0개</span>) ➔ 150 캔디콘</span>
+                    <button onclick="exchangeCandyForCorn('별사탕 킹캔디', 1)" style="padding: 4px 10px; background: #334155; color: #fff; border: 1px solid #a29bfe; border-radius: 6px; cursor: pointer; font-size: 11px;">1개 교환</button>
+                </div>
+            </div>
+
+            <button onclick="exchangeAllCandiesForCorn()" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #a855f7, #7c3aed); color: white; font-weight: 900; font-size: 13px; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);">
+                ✨ 보유한 모든 사탕 일괄 교환하기
+            </button>
+        </div>
+
+        <button onclick="closeTrickOrTreatModal()" style="width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.12); color: #cbd5e1; font-weight: bold; font-size: 13px; border: none; border-radius: 8px; cursor: pointer;">
+            닫기
+        </button>
+    </div>
+
+    <!-- 🏪 캔디콘 비밀 상점 모달 (맨 밑 Y: 3600) -->
+    <div id="candycorn-shop-modal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #1e1b4b, #09090b); color: white; padding: 22px 20px; border-radius: 20px; width: 92%; max-width: 440px; max-height: 88vh; overflow-y: auto; display: none; border: 2.5px solid #f59e0b; z-index: 960; box-shadow: 0 20px 70px rgba(0,0,0,0.95), 0 0 40px rgba(245, 158, 11, 0.4); text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <div style="font-size: 34px; margin-bottom: 2px;">🎃 🍬 🪽</div>
+        <h2 style="margin: 0 0 4px 0; color: #facc15; font-size: 20px; font-weight: 900;">캔디콘 비밀 상점</h2>
+        <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">보유한 캔디콘으로 초신화 날개 달린 호박 럭키블록을 구매하세요!</div>
+
+        <div style="background: rgba(15, 23, 42, 0.85); border: 2px solid #f59e0b; border-radius: 16px; padding: 14px; margin-bottom: 16px; text-align: center;">
+            <div style="font-size: 12px; color: #fde047; font-weight: bold; margin-bottom: 4px;">🍬 내 보유 캔디콘</div>
+            <div style="font-size: 24px; font-weight: 950; color: #facc15; text-shadow: 0 0 12px rgba(245, 158, 11, 0.6);" id="cc-shop-my-corn">0</div>
+        </div>
+
+        <!-- 🎃🪽 날개 달린 호박 럭키블록 카드 -->
+        <div style="background: rgba(30, 41, 59, 0.8); border: 2px solid #a855f7; border-radius: 16px; padding: 14px; margin-bottom: 16px; text-align: center;">
+            <h3 style="margin: 0 0 4px 0; color: #fde047; font-size: 17px; font-weight: 900;">🎃🪽 날개 달린 호박 럭키블록</h3>
+            <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 10px;">순백의 천사 날개와 흑요석 악마 날개가 달린 초호화 할로윈 럭키블록!</div>
+
+            <!-- 실시간 3D 캔버스 렌더러 -->
+            <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+                <canvas id="halloween-winged-lucky-canvas" width="160" height="135" style="display: block; filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));"></canvas>
+            </div>
+
+            <div style="background: rgba(0, 0, 0, 0.35); border-radius: 10px; padding: 8px; margin-bottom: 12px; font-size: 11px; color: #94a3b8; line-height: 1.5;">
+                🏆 <strong>초신화 (5%):</strong> 호박 날개 대악마 스킨<br>
+                💎 <strong>신화 (10%):</strong> 별사탕 캔디 국왕 스킨<br>
+                🍬 <strong>전설 (20%):</strong> 캔디콘 1,200개 대박 환급<br>
+                💰 <strong>영웅 (30%):</strong> 500,000 골드 / <strong>희귀 (35%):</strong> 1.5배 행운+골드
+            </div>
+
+            <button onclick="buyHalloweenWingedLuckyBlock()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 950; font-size: 14.5px; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.5);">
+                🎁 1,000 캔디콘으로 구매 및 개봉
+            </button>
+        </div>
+
+        <button onclick="closeCandyCornShopModal()" style="width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.12); color: #cbd5e1; font-weight: bold; font-size: 13px; border: none; border-radius: 8px; cursor: pointer;">
+            닫기
+        </button>
+    </div>
 
     <!-- 🎁 럭키블럭 오픈 결과 모달 -->
     <div id="lucky-unbox-modal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #1e1b4b, #09090b); color: white; padding: 24px 20px; border-radius: 20px; width: 92%; max-width: 440px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #f59e0b; z-index: 1000; box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 35px rgba(245, 158, 11, 0.4); text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
