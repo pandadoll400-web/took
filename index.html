@@ -14132,12 +14132,13 @@
             active: false,
             light: 'green', // 'green' | 'red'
             timer: 0,
-            switchInterval: 3000,
+            switchInterval: 3500,
             lives: 2,
             timeLeft: 180, // 3분 = 180초
             carryingSkin: false,
             skinPos: { x: 300, y: -7650 }, // 우주 지역 (x: 300, y: -7650)
             lastPlayerPos: { x: 300, y: 500 },
+            graceTimer: 0, // 초록불->빨간불 전환 시 1초 유예 시간 (60프레임)
             cooldown: 0
         };
 
@@ -14149,7 +14150,7 @@
             skinPos: { x: 300, y: -7650 }, // 우주 지역 (x: 300, y: -7650)
             farmers: [],
             waveTimer: 0,
-            waveInterval: 1300 // 1.3초마다 1줄씩 웨이브 스폰
+            waveInterval: 2800 // 2.8초마다 웨이브 스폰 (간격을 넓게 벌려 충분한 회피 시간 제공)
         };
 
         let screenRedFlashTimer = 0;
@@ -14164,6 +14165,7 @@
             let wasActive = isMinigameActive();
             redLightGreenLightState.active = false;
             redLightGreenLightState.carryingSkin = false;
+            redLightGreenLightState.graceTimer = 0;
             dodgeFarmersState.active = false;
             dodgeFarmersState.carryingSkin = false;
             dodgeFarmersState.farmers = [];
@@ -14187,16 +14189,17 @@
             redLightGreenLightState.active = true;
             redLightGreenLightState.light = 'green';
             redLightGreenLightState.timer = 0;
-            redLightGreenLightState.switchInterval = 3200;
+            redLightGreenLightState.switchInterval = 4000; // 첫 시작 초록불 4초
             redLightGreenLightState.lives = 2;
             redLightGreenLightState.timeLeft = 180;
             redLightGreenLightState.carryingSkin = false;
             redLightGreenLightState.skinPos = { x: 300, y: -7650 }; // 우주 지역
             redLightGreenLightState.lastPlayerPos = { x: player.x, y: player.y };
+            redLightGreenLightState.graceTimer = 0;
             redLightGreenLightState.cooldown = 0;
 
             floatTexts.push({ x: player.x, y: player.y - 80, text: '🚦 [미니게임 1] 빨간불 초록불 가동! 우주 지역으로 가세요!', color: '#22c55e', life: 100, size: 20 });
-            alert("🚦 [미니게임 1: 빨간불 초록불 시작!]\n\n1. 화면 상단에 남은 시간(타이머)과 목숨이 고정 표시됩니다!\n2. 화면 정가운데 신호등이 [초록불]일 때만 움직일 수 있습니다!\n3. 화면 정가운데가 [빨간불]일 때 움직이면 목숨이 1개 깎이며, 2번 실수하면 일반 지형으로 강제 후퇴됩니다!\n4. 우주 지역(맨 위)으로 올라가 '사이버 해커' 스킨을 클릭해 들어 올리세요.\n5. 스킨을 들고 무사히 일반 지형으로 내려오면 스킨을 영구 획득합니다!\n6. 도중에 걸리면 스킨은 그 자리에 떨어지며, 미니게임 중에는 워프를 쓸 수 없습니다.\n\n⏱️ 제한 시간: 3분 (180초) / 목숨: 2개");
+            alert("🚦 [미니게임 1: 빨간불 초록불 시작!]\n\n1. 화면 상단에 남은 시간(타이머)과 목숨이 고정 표시됩니다!\n2. 화면 정가운데 신호등이 [초록불]일 때 마음껏 움직이세요!\n3. [빨간불]로 바뀔 때 1초 동안 유예 시간(노란불)이 주어집니다! 1초 안에 멈추면 목숨이 깎이지 않습니다!\n4. 1초 유예가 끝난 뒤 빨간불에 움직이면 목숨이 차감되며, 2회 실수 시 일반 지형으로 강제 후퇴됩니다.\n5. 우주 지역(맨 위)으로 올라가 '사이버 해커' 스킨을 클릭해 들고 일반 지형으로 무사히 내려오세요!\n\n⏱️ 제한 시간: 3분 (180초) / 목숨: 2개 (1초 멈춤 유예 적용)");
         }
         window.startRedLightGreenLightGame = startRedLightGreenLightGame;
 
@@ -14218,7 +14221,7 @@
             dodgeFarmersState.waveTimer = 0;
 
             floatTexts.push({ x: player.x, y: player.y - 80, text: '👨‍🌾 [미니게임 2] 성난 거대 농부 피하기 가동! 우주 지역으로 가세요!', color: '#f59e0b', life: 100, size: 20 });
-            alert("👨‍🌾 [미니게임 2: 농부 피하기 시작!]\n\n1. 맵 가로(4열)를 메우며 돌진해 내려오는 성난 거대 농부들을 피해야 합니다!\n2. 농부들은 한 줄에 2~3명씩 일자로 오며, 뚫려있는 빈틈으로 통과해야 합니다.\n3. 거대 농부는 통과할 수 없으며, 농부와 충돌하면 즉시 일반 지형으로 강제 후퇴됩니다!\n4. 우주 지역(맨 위)에서 '서양 검사' 스킨을 클릭해 들고 일반 지형으로 탈출하세요.\n5. 도중에 농부와 부딪히면 스킨을 그 자리에 떨어뜨립니다.\n6. 미니게임 중에는 워프를 쓸 수 없습니다.\n\n⏱️ 제한 시간: 3분 (180초)");
+            alert("👨‍🌾 [미니게임 2: 농부 피하기 시작!]\n\n1. 거대 농부들이 적당한 세로 간격을 두고 여유있게 다가옵니다!\n2. 농부와 농부 사이 좁은 틈은 완전히 통과 불가능한 벽입니다! 농부 사이 틈으로 비집고 들어갈 수 없습니다.\n3. 오직 농부가 없는 '비어있는 열(빈 통로)'로만 안전하게 피해서 통과해야 합니다!\n4. 우주 지역(맨 위)에서 '서양 검사' 스킨을 클릭해 들고 일반 지형으로 탈출하세요.\n5. 도중에 농부와 부딪히면 스킨을 그 자리에 떨어뜨리고 일반 지형으로 후퇴됩니다.\n\n⏱️ 제한 시간: 3분 (180초)");
         }
         window.startDodgeFarmersGame = startDodgeFarmersGame;
 
@@ -14242,21 +14245,30 @@
                 state.timer = 0;
                 if (state.light === 'green') {
                     state.light = 'red';
-                    state.switchInterval = 1800 + Math.random() * 1600; // 빨간불 지속: 1.8~3.4초
+                    state.graceTimer = 60; // ✨ 1초(60프레임) 유예 시간: 1초 동안은 움직여도 봐줌!
+                    state.switchInterval = 2000 + Math.random() * 1500; // 빨간불 지속: 2.0~3.5초
                     state.lastPlayerPos = { x: player.x, y: player.y };
-                    floatTexts.push({ x: player.x, y: player.y - 80, text: '🔴 빨간불! 즉시 멈추세요!', color: '#ef4444', life: 60, size: 22 });
+                    floatTexts.push({ x: player.x, y: player.y - 80, text: '⚠️ 빨간불 전환! 1초 안에 멈추세요!', color: '#f59e0b', life: 60, size: 20 });
                 } else {
                     state.light = 'green';
-                    state.switchInterval = 2500 + Math.random() * 2000; // 초록불 지속: 2.5~4.5초
+                    state.graceTimer = 0;
+                    state.switchInterval = 3200 + Math.random() * 2000; // 초록불 지속: 3.2~5.2초
+                    state.lastPlayerPos = { x: player.x, y: player.y };
                     floatTexts.push({ x: player.x, y: player.y - 80, text: '🟢 초록불! 이동하세요!', color: '#22c55e', life: 60, size: 22 });
                 }
             }
 
-            // 3. 빨간불 움직임 감지
+            // 3. 빨간불 감지 (1초 유예 시간 적용)
             if (state.light === 'red') {
-                if (state.cooldown > 0) {
+                if (state.graceTimer > 0) {
+                    // ✨ 1초 동안 유예 (봐주기): 이 동안 이동해도 페널티 없음 & 위치를 계속 갱신하여 감속 허용!
+                    state.graceTimer--;
+                    state.lastPlayerPos = { x: player.x, y: player.y };
+                } else if (state.cooldown > 0) {
                     state.cooldown--;
+                    state.lastPlayerPos = { x: player.x, y: player.y };
                 } else {
+                    // 유예 시간 1초 종료 후 엄격 감지
                     let dx = Math.abs(player.x - state.lastPlayerPos.x);
                     let dy = Math.abs(player.y - state.lastPlayerPos.y);
                     let moved = Math.hypot(dx, dy);
@@ -14264,7 +14276,7 @@
                     if (moved > 0.45) {
                         state.lives--;
                         screenRedFlashTimer = 35;
-                        state.cooldown = 40;
+                        state.cooldown = 45;
 
                         if (state.lives <= 0) {
                             if (state.carryingSkin) {
@@ -14278,6 +14290,7 @@
                             player.vx = 0; player.vy = 0;
                             state.lives = 2;
                             state.light = 'green';
+                            state.graceTimer = 0;
                             state.timer = 0;
                             floatTexts.push({ x: 300, y: 420, text: '💥 2회 적발! 일반 지형으로 강제 후퇴되었습니다! (목숨 충전)', color: '#ef4444', life: 100, size: 22 });
                         } else {
@@ -14326,25 +14339,26 @@
 
             state.waveTimer += 16.6;
 
-            // 웨이브 스폰: 플레이어 기준 위쪽(player.y - 500)에서 1줄 스폰
+            // 웨이브 스폰: 세로 간격을 충분히 벌려서 (2.8초 간격) 플레이어 머리 위 700px 위에서 스폰
             if (state.waveTimer >= state.waveInterval) {
                 state.waveTimer = 0;
                 // 4개 열 (각 열 150px 폭, 정중앙 좌표: 75, 225, 375, 525)
                 const colXs = [75, 225, 375, 525];
-                const numFarmers = (Math.random() < 0.65) ? 3 : 2; // 한 줄에 2~3명 거대 농부 일자로 배치
+                // 2명 위주 (70%) 또는 3명 (30%) 스폰하여 넉넉한 회피 공간 제공
+                const numFarmers = (Math.random() < 0.3) ? 3 : 2;
                 let cols = [0, 1, 2, 3];
                 cols.sort(() => Math.random() - 0.5);
                 let chosenCols = cols.slice(0, numFarmers);
 
-                let spawnY = player.y - 520;
+                let spawnY = player.y - 700; // 충분히 먼 위쪽에서 여유있게 다가옴
                 chosenCols.forEach(col => {
                     state.farmers.push({
+                        col: col,
                         x: colXs[col],
                         y: spawnY,
-                        width: 140, // 4명이 일자로 서면 600px 화면이 꽉 참!
+                        width: 150, // 열 150px 전체를 빈틈없이 커버
                         height: 150,
-                        radius: 56, // 단단한 충돌 반경
-                        speed: 4.8, // 거대 농부가 아래로 성큼성큼 다가옴
+                        speed: 3.2, // 적당하고 피하기 수월한 속도로 조정
                         animTimer: Math.random() * 10
                     });
                 });
@@ -14354,24 +14368,28 @@
             for (let i = state.farmers.length - 1; i >= 0; i--) {
                 let f = state.farmers[i];
                 f.y += f.speed;
-                f.animTimer += 0.22;
+                f.animTimer += 0.16;
 
                 // 화면 밖으로 멀어진 농부 제거
-                if (f.y > player.y + 800 || f.y > 1200) {
+                if (f.y > player.y + 850 || f.y > 1200) {
                     state.farmers.splice(i, 1);
                     continue;
                 }
 
-                // 플레이어와의 충돌 판정 (농부는 통과 불가 벽 판정!)
+                // 플레이어와의 충돌 판정
+                // 🔒 [유저 요청 완벽 반영] 농부와 농부 사이 좁은 틈(150px 간격)은 완전히 막아서 못 지나가게 처리!
+                // 각 농부가 좌우 75px(총 150px 폭)을 빈틈없이 벽처럼 완전히 커버하므로,
+                // 인접한 두 농부 사이로는 절대 비집고 들어갈 수 없으며,
+                // 오직 농부가 없는 '비어있는 열'로만 통과할 수 있습니다!
                 let dx = Math.abs(player.x - f.x);
                 let dy = Math.abs(player.y - f.y);
 
-                // 가로 65px, 세로 62px 이내 진입 시 충돌
-                if (dx < 65 && dy < 62) {
+                // 가로 75px(완전 밀착 벽), 세로 65px 이내 진입 시 충돌
+                if (dx <= 75 && dy < 65) {
                     // 밀쳐내기
                     let angle = Math.atan2(player.y - f.y, player.x - f.x);
-                    player.x = f.x + Math.cos(angle) * 75;
-                    player.y = f.y + Math.sin(angle) * 75;
+                    player.x = f.x + Math.cos(angle) * 80;
+                    player.y = f.y + Math.sin(angle) * 80;
 
                     screenRedFlashTimer = 35;
                     if (state.carryingSkin) {
@@ -14525,7 +14543,7 @@
             ctx.restore();
         }
 
-        // 👨‍🌾 성난 거대 농부(Big Farmer) 렌더링 - 가로 폭 140px, 높이 150px
+        // 👨‍🌾 성난 거대 농부(Big Farmer) 렌더링 - 150px 열을 꽉 채워 틈새 통과 방지
         function drawBigFarmerEnemyObj(ctx, f) {
             ctx.save();
             ctx.translate(f.x, f.y);
@@ -14534,130 +14552,130 @@
             let stompL = Math.sin(anim * 2.5) * 8;
             let stompR = Math.sin(anim * 2.5 + Math.PI) * 8;
 
-            // 1. 바닥 거대 그림자 & 쿵쿵 진동 먼지
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            // 1. 바닥 거대 그림자 & 쿵쿵 진동 먼지 (가로 140px로 틈새 완전 차단)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
             ctx.beginPath();
-            ctx.ellipse(0, 42, 60, 16, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 42, 70, 18, 0, 0, Math.PI * 2);
             ctx.fill();
 
             // 먼지 구름 효과
             ctx.fillStyle = 'rgba(226, 232, 240, 0.45)';
             ctx.beginPath();
-            ctx.arc(-35 + Math.sin(anim * 3) * 5, 42 + stompL * 0.3, 10, 0, Math.PI * 2);
-            ctx.arc(35 - Math.sin(anim * 3) * 5, 42 + stompR * 0.3, 10, 0, Math.PI * 2);
+            ctx.arc(-45 + Math.sin(anim * 3) * 5, 42 + stompL * 0.3, 11, 0, Math.PI * 2);
+            ctx.arc(45 - Math.sin(anim * 3) * 5, 42 + stompR * 0.3, 11, 0, Math.PI * 2);
             ctx.fill();
 
             // 2. 묵직한 가죽 워커 부츠 (Stomping Boots)
             ctx.fillStyle = '#78350f';
-            ctx.beginPath(); ctx.roundRect(-42, 22 + stompL, 26, 20, 6); ctx.fill();
-            ctx.beginPath(); ctx.roundRect(16, 22 + stompR, 26, 20, 6); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(-46, 22 + stompL, 28, 20, 6); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(18, 22 + stompR, 28, 20, 6); ctx.fill();
             ctx.fillStyle = '#451a03';
-            ctx.fillRect(-44, 38 + stompL, 30, 6);
-            ctx.fillRect(14, 38 + stompR, 30, 6);
+            ctx.fillRect(-48, 38 + stompL, 32, 6);
+            ctx.fillRect(16, 38 + stompR, 32, 6);
 
             // 3. 멜빵 청바지 하의 (Denim Dungarees)
             ctx.fillStyle = '#1e3a8a';
-            ctx.fillRect(-38, 2, 24, 24 + stompL * 0.5);
-            ctx.fillRect(14, 2, 24, 24 + stompR * 0.5);
-            ctx.beginPath(); ctx.roundRect(-42, -18, 84, 26, [8, 8, 4, 4]); ctx.fill();
+            ctx.fillRect(-42, 2, 26, 24 + stompL * 0.5);
+            ctx.fillRect(16, 2, 26, 24 + stompR * 0.5);
+            ctx.beginPath(); ctx.roundRect(-48, -18, 96, 26, [8, 8, 4, 4]); ctx.fill();
 
-            // 4. 성난 붉은 체크 플란넬 셔츠 (Buffalo Plaid Flannel)
+            // 4. 성난 붉은 체크 플란넬 셔츠 (Buffalo Plaid Flannel) - 가로 110px
             ctx.fillStyle = '#dc2626';
-            ctx.beginPath(); ctx.roundRect(-48, -44, 96, 32, 8); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(-55, -44, 110, 32, 8); ctx.fill();
             // 체크무늬 격자
             ctx.strokeStyle = '#7f1d1d';
             ctx.lineWidth = 2.5;
             ctx.beginPath();
-            ctx.moveTo(-48, -32); ctx.lineTo(48, -32);
-            ctx.moveTo(-48, -20); ctx.lineTo(48, -20);
-            ctx.moveTo(-20, -44); ctx.lineTo(-20, -12);
-            ctx.moveTo(20, -44); ctx.lineTo(20, -12);
+            ctx.moveTo(-55, -32); ctx.lineTo(55, -32);
+            ctx.moveTo(-55, -20); ctx.lineTo(55, -20);
+            ctx.moveTo(-25, -44); ctx.lineTo(-25, -12);
+            ctx.moveTo(25, -44); ctx.lineTo(25, -12);
             ctx.stroke();
 
             // 멜빵 끈 & 황동 버클
             ctx.fillStyle = '#1e3a8a';
-            ctx.fillRect(-26, -44, 12, 34);
-            ctx.fillRect(14, -44, 12, 34);
+            ctx.fillRect(-30, -44, 14, 34);
+            ctx.fillRect(16, -44, 14, 34);
             ctx.fillStyle = '#facc15';
-            ctx.fillRect(-25, -20, 10, 8);
-            ctx.fillRect(15, -20, 10, 8);
+            ctx.fillRect(-29, -20, 12, 8);
+            ctx.fillRect(17, -20, 12, 8);
 
-            // 5. 우측 손에 쥔 거대 쇠스랑 (Giant Steel Pitchfork)
+            // 5. 양쪽으로 뻗은 거대 쇠스랑 & 어깨 (가로 150px 열 전체를 완전히 가로막음)
             ctx.save();
-            ctx.translate(46, -20);
-            ctx.rotate(0.15 + Math.sin(anim * 2) * 0.08);
+            ctx.translate(55, -20);
+            ctx.rotate(0.12 + Math.sin(anim * 2) * 0.08);
             // 나무 자루
             ctx.strokeStyle = '#92400e';
             ctx.lineWidth = 6;
-            ctx.beginPath(); ctx.moveTo(0, 55); ctx.lineTo(0, -68); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, 55); ctx.lineTo(0, -70); ctx.stroke();
             // 쇠스랑 갈퀴 3날
             ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 3.5;
             ctx.beginPath();
-            ctx.moveTo(-16, -65); ctx.lineTo(16, -65);
-            ctx.moveTo(-14, -65); ctx.lineTo(-14, -92);
-            ctx.moveTo(0, -65); ctx.lineTo(0, -96);
-            ctx.moveTo(14, -65); ctx.lineTo(14, -92);
+            ctx.moveTo(-18, -68); ctx.lineTo(18, -68);
+            ctx.moveTo(-16, -68); ctx.lineTo(-16, -95);
+            ctx.moveTo(0, -68); ctx.lineTo(0, -100);
+            ctx.moveTo(16, -68); ctx.lineTo(16, -95);
             ctx.stroke();
             // 갈퀴 뾰족한 끝 반짝임
             ctx.fillStyle = '#ffffff';
-            ctx.beginPath(); ctx.arc(0, -96, 3, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(0, -100, 3.5, 0, Math.PI * 2); ctx.fill();
             ctx.restore();
 
             // 6. 거대한 성난 얼굴 (Angry Giant Face)
             ctx.fillStyle = '#fbd38d';
-            ctx.beginPath(); ctx.arc(0, -52, 24, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(0, -52, 26, 0, Math.PI * 2); ctx.fill();
 
             // 이글거리는 붉은 눈 (Fury Red Eyes)
             ctx.fillStyle = '#dc2626';
             ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 10;
-            ctx.beginPath(); ctx.arc(-9, -56, 5, 0, Math.PI * 2); ctx.fill();
-            ctx.beginPath(); ctx.arc(9, -56, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(-10, -56, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(10, -56, 5, 0, Math.PI * 2); ctx.fill();
             ctx.shadowBlur = 0;
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(-8, -58, 3, 3);
-            ctx.fillRect(10, -58, 3, 3);
+            ctx.fillRect(-9, -58, 3, 3);
+            ctx.fillRect(11, -58, 3, 3);
 
             // 성난 찌푸린 눈썹
             ctx.strokeStyle = '#78350f';
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 4.5;
             ctx.beginPath();
-            ctx.moveTo(-16, -64); ctx.lineTo(-4, -60);
-            ctx.moveTo(16, -64); ctx.lineTo(4, -60);
+            ctx.moveTo(-18, -64); ctx.lineTo(-4, -60);
+            ctx.moveTo(18, -64); ctx.lineTo(4, -60);
             ctx.stroke();
 
             // 덥수룩한 갈색 콧수염 (Giant Mustache)
             ctx.fillStyle = '#78350f';
             ctx.beginPath();
-            ctx.ellipse(0, -44, 18, 8, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, -44, 20, 8, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // 7. 거대 밀짚모자 (Giant Straw Hat)
+            // 7. 거대 밀짚모자 (Giant Straw Hat - 폭 140px로 인접 농부와 빈틈없이 밀착)
             ctx.fillStyle = '#facc15';
             ctx.strokeStyle = '#ca8a04';
             ctx.lineWidth = 2.5;
-            // 챙 (넓은 가로 115px)
-            ctx.beginPath(); ctx.ellipse(0, -70, 58, 14, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            // 챙 (넓은 가로 140px)
+            ctx.beginPath(); ctx.ellipse(0, -70, 70, 16, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
             // 크라운 (모자 윗동)
             ctx.fillStyle = '#eab308';
-            ctx.beginPath(); ctx.roundRect(-24, -92, 48, 24, [10, 10, 0, 0]); ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.roundRect(-28, -94, 56, 26, [10, 10, 0, 0]); ctx.fill(); ctx.stroke();
             // 붉은 모자 띠
             ctx.fillStyle = '#dc2626';
-            ctx.fillRect(-24, -74, 48, 7);
+            ctx.fillRect(-28, -75, 56, 7);
 
             // 8. 상단 네온 위험 라벨 배너
             ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
             ctx.strokeStyle = '#ef4444';
             ctx.lineWidth = 1.5;
             ctx.beginPath();
-            ctx.roundRect(-65, -114, 130, 20, 5);
+            ctx.roundRect(-68, -116, 136, 20, 5);
             ctx.fill(); ctx.stroke();
 
             ctx.fillStyle = '#fca5a5';
             ctx.font = '900 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('👨‍🌾 성난 거대 농부', 0, -104);
+            ctx.fillText('👨‍🌾 성난 거대 농부 (밀착 벽)', 0, -106);
 
             ctx.restore();
         }
@@ -14696,7 +14714,7 @@
         // ============================================================================
         // 🖥️ [미니게임 화면 고정 HUD] 
         // 1. 화면 위: 타이머, 목숨, 스킨 운반 상태
-        // 2. 화면 가운데: 빨간불 / 초록불 색상 전환 신호등 고정 표시
+        // 2. 화면 가운데: 빨간불 / 초록불 색상 전환 신호등 (1초 유예 노란불 지원) 고정 표시
         // ============================================================================
         function drawMinigameHUD(ctx) {
             // ----------------------------------------------------
@@ -14708,6 +14726,7 @@
                 let s = Math.floor(state.timeLeft % 60);
                 let sPad = s < 10 ? '0' + s : s;
                 let isRed = (state.light === 'red');
+                let inGrace = (isRed && state.graceTimer > 0);
 
                 // A. [화면 위]: 고정 타이머 & 목숨 & 미션 정보 HUD (y = 40)
                 ctx.save();
@@ -14716,7 +14735,7 @@
                 let topW = 340;
                 let topH = 48;
                 ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+                ctx.strokeStyle = inGrace ? '#f59e0b' : (isRed ? '#ef4444' : '#10b981');
                 ctx.lineWidth = 2;
                 ctx.shadowColor = '#000000';
                 ctx.shadowBlur = 12;
@@ -14756,14 +14775,25 @@
 
                 let centerW = 260;
                 let centerH = 76;
-                let pulseScale = isRed ? (1 + Math.sin(Date.now() * 0.02) * 0.04) : 1.0;
+                let pulseScale = inGrace ? 1.05 : (isRed ? (1 + Math.sin(Date.now() * 0.02) * 0.04) : 1.0);
                 ctx.scale(pulseScale, pulseScale);
 
                 // 신호등 배경 & 네온 글로우
-                ctx.fillStyle = isRed ? 'rgba(127, 29, 29, 0.94)' : 'rgba(6, 78, 59, 0.92)';
-                ctx.strokeStyle = isRed ? '#ef4444' : '#10b981';
+                // ✨ 1초 유예 기간 중에는 노란색(호박색) 경고등으로 표시!
+                if (inGrace) {
+                    ctx.fillStyle = 'rgba(180, 83, 9, 0.94)';
+                    ctx.strokeStyle = '#f59e0b';
+                    ctx.shadowColor = '#f59e0b';
+                } else if (isRed) {
+                    ctx.fillStyle = 'rgba(127, 29, 29, 0.94)';
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.shadowColor = '#ef4444';
+                } else {
+                    ctx.fillStyle = 'rgba(6, 78, 59, 0.92)';
+                    ctx.strokeStyle = '#10b981';
+                    ctx.shadowColor = '#10b981';
+                }
                 ctx.lineWidth = 3.5;
-                ctx.shadowColor = isRed ? '#ef4444' : '#10b981';
                 ctx.shadowBlur = isRed ? 32 : 24;
                 ctx.beginPath();
                 ctx.roundRect(-centerW / 2, -centerH / 2, centerW, centerH, 16);
@@ -14775,19 +14805,35 @@
                 ctx.font = '36px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(isRed ? '🔴' : '🟢', -centerW / 2 + 38, 0);
+                let iconChar = inGrace ? '🟡' : (isRed ? '🔴' : '🟢');
+                ctx.fillText(iconChar, -centerW / 2 + 38, 0);
 
                 // 우측 상태 텍스트
                 ctx.textAlign = 'left';
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '900 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-                ctx.shadowColor = isRed ? '#7f1d1d' : '#064e3b';
+                ctx.font = '900 19px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
                 ctx.shadowBlur = 6;
-                ctx.fillText(isRed ? '빨간불! [멈춤!]' : '초록불! [이동!]', -centerW / 2 + 76, -11);
-
-                ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-                ctx.fillStyle = isRed ? '#fca5a5' : '#a7f3d0';
-                ctx.fillText(isRed ? '움직이면 즉시 목숨 차감!' : '마음껏 달리세요!', -centerW / 2 + 76, 14);
+                
+                if (inGrace) {
+                    let graceSec = (state.graceTimer / 60).toFixed(1);
+                    ctx.shadowColor = '#b45309';
+                    ctx.fillText(`멈추세요! [유예 ${graceSec}초]`, -centerW / 2 + 74, -11);
+                    ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                    ctx.fillStyle = '#fde68a';
+                    ctx.fillText('1초 안에 멈추면 생존!', -centerW / 2 + 74, 14);
+                } else if (isRed) {
+                    ctx.shadowColor = '#7f1d1d';
+                    ctx.fillText('빨간불! [완전 멈춤!]', -centerW / 2 + 74, -11);
+                    ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                    ctx.fillStyle = '#fca5a5';
+                    ctx.fillText('움직이면 즉시 목숨 차감!', -centerW / 2 + 74, 14);
+                } else {
+                    ctx.shadowColor = '#064e3b';
+                    ctx.fillText('초록불! [이동 가능!]', -centerW / 2 + 74, -11);
+                    ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                    ctx.fillStyle = '#a7f3d0';
+                    ctx.fillText('마음껏 달리세요!', -centerW / 2 + 74, 14);
+                }
 
                 ctx.restore();
             }
@@ -14826,12 +14872,12 @@
 
                 ctx.font = 'bold 12px Arial';
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText('👨‍🌾 거대 농부 피하기 (충돌 시 후퇴)', -topW / 2 + 82, -8);
+                ctx.fillText('👨‍🌾 거대 농부 피하기 (빈 통로로 회피)', -topW / 2 + 82, -8);
 
                 ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
                 if (state.carryingSkin) {
                     ctx.fillStyle = '#38bdf8';
-                    ctx.fillText('🤺 서양 검사 운반 중! ➔ 빈틈으로 피하며 탈출!', -topW / 2 + 14, 12);
+                    ctx.fillText('🤺 서양 검사 운반 중! ➔ 빈 통로로 내려가세요!', -topW / 2 + 14, 12);
                 } else {
                     ctx.fillStyle = '#cbd5e1';
                     ctx.fillText('🚀 우주 지역(맨 위)으로 올라가 서양 검사 스킨을 들으세요!', -topW / 2 + 14, 12);
@@ -14840,7 +14886,6 @@
                 ctx.restore();
             }
         }
-
         function adminWarpToSpace() {
             if (!isAdmin()) return;
             if (isMinigameActive()) {
