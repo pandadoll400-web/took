@@ -2195,8 +2195,8 @@
 
         // 우주 로케트 (유저 요청으로 완전 제거됨)
         let rocket = {
-            x: 80,
-            y: 220,
+            x: -9999,
+            y: -9999,
             visible: false,
             launched: false
         };
@@ -6155,8 +6155,6 @@
             }
 
             // 7. 부유 텍스트
-            // 🎮 [미니게임 2종] 월드 요소 (스킨 오브젝트, 농부 군단, 스킨 운반 뱃지) 렌더링
-            if (typeof drawMinigameWorld === 'function') drawMinigameWorld(ctx);
 
             floatTexts.forEach(t => {
                 ctx.fillStyle = t.color;
@@ -6172,14 +6170,6 @@
             ctx.globalAlpha = 1.0;
 
             // 8. 모바일 가상 조이스틱
-            // 🎮 [미니게임 2종] 상단 고정 HUD 렌더링
-            if (typeof drawMinigameHUD === 'function') drawMinigameHUD(ctx);
-
-            if (screenRedFlashTimer > 0) {
-                ctx.fillStyle = `rgba(239, 68, 68, ${Math.min(0.42, screenRedFlashTimer / 50)})`;
-                ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-                screenRedFlashTimer--;
-            }
 
             if (joystick.active) {
                 ctx.beginPath(); ctx.arc(joystick.originX, joystick.originY, 60, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.2)'; ctx.fill();
@@ -11436,25 +11426,7 @@
                 }
             }
 
-            // 🚀 로케트 / 우주 워프 패드 클릭 감지
-            let rocketClickDist = Math.hypot(cx - rocket.x, cy - rocket.y);
-            let rocketPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - rocket.x, player.y - rocket.y) : 999;
-            if (rocketClickDist < 55 || (isSpacebar && rocketPlayerDist < 75)) {
-                if (!isAlienEventStarted()) {
-                    floatTexts.push({ x: rocket.x, y: rocket.y - 65, text: `🔒 오늘 밤 10시 공개!`, color: '#00e5ff', life: 75, size: 18 });
-                    alert("🚀 [우주 로켓 발사대]\n\n우주 탐사와 외계박사/미친박사 스토리 이벤트는\n오늘 10시(밤 10시)에 전격 공개됩니다!");
-                    return;
-                }
-                if (!rocket.launched) {
-                    triggerRocketLaunch();
-                } else {
-                    player.x = 300;
-                    player.y = -7520;
-                    cameraY = -7650;
-                    floatTexts.push({ x: player.x, y: player.y - 80, text: '🌌 우주 나무로 워프했습니다!', color: '#00e5ff', life: 75 });
-                }
-                return;
-            }
+            // 🚀 로케트 / 우주 워프 패드 (유저 요청으로 완전 삭제됨 - 허공 클릭 순간이동 방지)
 
             // 🌍 우주에서 지구 귀환 워프 패드 클릭 감지
             if (typeof spaceReturnPad !== 'undefined') {
@@ -14155,13 +14127,10 @@
         // ============================================================================
         // 🎮 [어드민 전용 미니게임 2종] 빨간불 초록불 & 농부 피하기 엔진
         // ============================================================================
-
-        let screenRedFlashTimer = 0;
-
         // 미니게임 1: 빨간불 초록불 상태
         let redLightGreenLightState = {
             active: false,
-            light: 'green', // 'green' or 'red'
+            light: 'green', // 'green' | 'red'
             timer: 0,
             switchInterval: 3000,
             lives: 2,
@@ -14180,8 +14149,10 @@
             skinPos: { x: 300, y: -7650 }, // 우주 지역 (x: 300, y: -7650)
             farmers: [],
             waveTimer: 0,
-            waveInterval: 1400 // 1.4초마다 1줄씩 웨이브 스폰
+            waveInterval: 1300 // 1.3초마다 1줄씩 웨이브 스폰
         };
+
+        let screenRedFlashTimer = 0;
 
         function isMinigameActive() {
             return (typeof redLightGreenLightState !== 'undefined' && redLightGreenLightState.active) ||
@@ -14209,32 +14180,23 @@
                 alert("🔒 관리자 전용 미니게임입니다!");
                 return;
             }
-            stopAllMinigames();
             closeAdminPanelModal();
 
-            // 일반 지형 출발 위치로 이동
-            player.x = 300;
-            player.y = 500;
-            cameraY = 100;
-            player.vx = 0;
-            player.vy = 0;
-            player.targetTree = null;
+            stopAllMinigames();
 
-            redLightGreenLightState = {
-                active: true,
-                light: 'green',
-                timer: 0,
-                switchInterval: Math.floor(Math.random() * 2000) + 2500, // 2.5~4.5초
-                lives: 2,
-                timeLeft: 180,
-                carryingSkin: false,
-                skinPos: { x: 300, y: -7650 }, // 우주 지역
-                lastPlayerPos: { x: player.x, y: player.y },
-                cooldown: 30
-            };
+            redLightGreenLightState.active = true;
+            redLightGreenLightState.light = 'green';
+            redLightGreenLightState.timer = 0;
+            redLightGreenLightState.switchInterval = 3200;
+            redLightGreenLightState.lives = 2;
+            redLightGreenLightState.timeLeft = 180;
+            redLightGreenLightState.carryingSkin = false;
+            redLightGreenLightState.skinPos = { x: 300, y: -7650 }; // 우주 지역
+            redLightGreenLightState.lastPlayerPos = { x: player.x, y: player.y };
+            redLightGreenLightState.cooldown = 0;
 
-            floatTexts.push({ x: player.x, y: player.y - 100, text: '🚦 [빨간불 초록불 시작!] 우주로 올라가 해커 스킨을 들고 탈출하세요!', color: '#10b981', life: 120, size: 20 });
-            alert("🚦 [미니게임 1: 빨간불 초록불 시작!]\n\n1. 화면 상단의 신호등이 [초록불]일 때만 움직일 수 있습니다!\n2. [빨간불]일 때 움직이면 목숨이 1개 깎이며, 2번 실수하면 일반 지형으로 강제 후퇴됩니다!\n3. 우주 지역(맨 위)으로 올라가 '사이버 해커' 스킨을 클릭해 들어 올리세요.\n4. 스킨을 들고 무사히 일반 지형으로 내려오면 스킨을 영구 획득합니다!\n5. 도중에 걸리면 스킨은 그 자리에 떨어지며, 미니게임 중에는 워프를 쓸 수 없습니다.\n\n⏱️ 제한 시간: 3분 (180초) / 목숨: 2개");
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🚦 [미니게임 1] 빨간불 초록불 가동! 우주 지역으로 가세요!', color: '#22c55e', life: 100, size: 20 });
+            alert("🚦 [미니게임 1: 빨간불 초록불 시작!]\n\n1. 화면 상단에 남은 시간(타이머)과 목숨이 고정 표시됩니다!\n2. 화면 정가운데 신호등이 [초록불]일 때만 움직일 수 있습니다!\n3. 화면 정가운데가 [빨간불]일 때 움직이면 목숨이 1개 깎이며, 2번 실수하면 일반 지형으로 강제 후퇴됩니다!\n4. 우주 지역(맨 위)으로 올라가 '사이버 해커' 스킨을 클릭해 들어 올리세요.\n5. 스킨을 들고 무사히 일반 지형으로 내려오면 스킨을 영구 획득합니다!\n6. 도중에 걸리면 스킨은 그 자리에 떨어지며, 미니게임 중에는 워프를 쓸 수 없습니다.\n\n⏱️ 제한 시간: 3분 (180초) / 목숨: 2개");
         }
         window.startRedLightGreenLightGame = startRedLightGreenLightGame;
 
@@ -14244,109 +14206,83 @@
                 alert("🔒 관리자 전용 미니게임입니다!");
                 return;
             }
-            stopAllMinigames();
             closeAdminPanelModal();
 
-            player.x = 300;
-            player.y = 500;
-            cameraY = 100;
-            player.vx = 0;
-            player.vy = 0;
-            player.targetTree = null;
+            stopAllMinigames();
 
-            dodgeFarmersState = {
-                active: true,
-                timeLeft: 180,
-                carryingSkin: false,
-                skinPos: { x: 300, y: -7650 }, // 우주 지역
-                farmers: [],
-                waveTimer: 0,
-                waveInterval: 1400
-            };
+            dodgeFarmersState.active = true;
+            dodgeFarmersState.timeLeft = 180;
+            dodgeFarmersState.carryingSkin = false;
+            dodgeFarmersState.skinPos = { x: 300, y: -7650 }; // 우주 지역
+            dodgeFarmersState.farmers = [];
+            dodgeFarmersState.waveTimer = 0;
 
-            floatTexts.push({ x: player.x, y: player.y - 100, text: '👨‍🌾 [농부 피하기 시작!] 농부들을 피해 우주에서 서양 검사 스킨을 탈출시키세요!', color: '#f59e0b', life: 120, size: 20 });
-            alert("👨‍🌾 [미니게임 2: 농부 피하기 시작!]\n\n1. 맵 가로를 메우며 돌진해 내려오는 성난 농부들을 피해야 합니다!\n2. 농부들은 한 줄에 2~3명씩 무리지어 오며, 뚫려있는 빈틈으로 통과해야 합니다.\n3. 농부는 통과할 수 없으며, 농부와 충돌하면 즉시 일반 지형으로 강제 후퇴됩니다!\n4. 우주 지역(맨 위)에서 '서양 검사' 스킨을 클릭해 들고 일반 지형으로 탈출하세요.\n5. 도중에 농부와 부딪히면 스킨을 그 자리에 떨어뜨립니다.\n6. 미니게임 중에는 워프를 쓸 수 없습니다.\n\n⏱️ 제한 시간: 3분 (180초)");
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '👨‍🌾 [미니게임 2] 성난 거대 농부 피하기 가동! 우주 지역으로 가세요!', color: '#f59e0b', life: 100, size: 20 });
+            alert("👨‍🌾 [미니게임 2: 농부 피하기 시작!]\n\n1. 맵 가로(4열)를 메우며 돌진해 내려오는 성난 거대 농부들을 피해야 합니다!\n2. 농부들은 한 줄에 2~3명씩 일자로 오며, 뚫려있는 빈틈으로 통과해야 합니다.\n3. 거대 농부는 통과할 수 없으며, 농부와 충돌하면 즉시 일반 지형으로 강제 후퇴됩니다!\n4. 우주 지역(맨 위)에서 '서양 검사' 스킨을 클릭해 들고 일반 지형으로 탈출하세요.\n5. 도중에 농부와 부딪히면 스킨을 그 자리에 떨어뜨립니다.\n6. 미니게임 중에는 워프를 쓸 수 없습니다.\n\n⏱️ 제한 시간: 3분 (180초)");
         }
         window.startDodgeFarmersGame = startDodgeFarmersGame;
-
-        // 1초 단위 타이머 (미니게임 시간 차감)
-        setInterval(() => {
-            if (redLightGreenLightState.active) {
-                redLightGreenLightState.timeLeft--;
-                if (redLightGreenLightState.timeLeft <= 0) {
-                    redLightGreenLightState.active = false;
-                    redLightGreenLightState.carryingSkin = false;
-                    player.x = 300; player.y = 500; cameraY = 100;
-                    alert("⏱️ [시간 초과]\n\n3분이 모두 경과하여 미니게임이 종료되었습니다.\n해커 스킨 탈출에 실패했습니다!");
-                }
-            }
-            if (dodgeFarmersState.active) {
-                dodgeFarmersState.timeLeft--;
-                if (dodgeFarmersState.timeLeft <= 0) {
-                    dodgeFarmersState.active = false;
-                    dodgeFarmersState.carryingSkin = false;
-                    dodgeFarmersState.farmers = [];
-                    player.x = 300; player.y = 500; cameraY = 100;
-                    alert("⏱️ [시간 초과]\n\n3분이 모두 경과하여 미니게임이 종료되었습니다.\n서양 검사 스킨 탈출에 실패했습니다!");
-                }
-            }
-        }, 1000);
 
         // 프레임 루프 업데이트: 빨간불 초록불
         function updateRedLightGreenLightLoop() {
             if (!redLightGreenLightState.active) return;
             const state = redLightGreenLightState;
 
-            state.timer += 16.6;
-
-            // 신호 전환
-            if (state.light === 'green' && state.timer >= state.switchInterval) {
-                state.light = 'red';
-                state.timer = 0;
-                state.switchInterval = Math.floor(Math.random() * 1500) + 2000; // 빨간불 2.0~3.5초 유지
-                state.lastPlayerPos = { x: player.x, y: player.y };
-                state.cooldown = 20; // 0.3초 여유
-                floatTexts.push({ x: player.x, y: player.y - 70, text: '🔴 빨간불! [정지!]', color: '#ef4444', life: 60, size: 22 });
-            } else if (state.light === 'red' && state.timer >= state.switchInterval) {
-                state.light = 'green';
-                state.timer = 0;
-                state.switchInterval = Math.floor(Math.random() * 2000) + 2500; // 초록불 2.5~4.5초 유지
-                floatTexts.push({ x: player.x, y: player.y - 70, text: '🟢 초록불! [이동!]', color: '#10b981', life: 60, size: 22 });
+            // 1. 타이머 감소
+            state.timeLeft -= 1 / 60;
+            if (state.timeLeft <= 0) {
+                state.active = false;
+                state.carryingSkin = false;
+                alert("⏱️ [시간 초과]\n\n3분이 모두 경과하여 미니게임이 종료되었습니다.\n해커 스킨 탈출에 실패했습니다!");
+                return;
             }
 
-            // 빨간불일 때 움직임 감지 판정
+            // 2. 신호등 전환 타이머
+            state.timer += 16.6;
+            if (state.timer >= state.switchInterval) {
+                state.timer = 0;
+                if (state.light === 'green') {
+                    state.light = 'red';
+                    state.switchInterval = 1800 + Math.random() * 1600; // 빨간불 지속: 1.8~3.4초
+                    state.lastPlayerPos = { x: player.x, y: player.y };
+                    floatTexts.push({ x: player.x, y: player.y - 80, text: '🔴 빨간불! 즉시 멈추세요!', color: '#ef4444', life: 60, size: 22 });
+                } else {
+                    state.light = 'green';
+                    state.switchInterval = 2500 + Math.random() * 2000; // 초록불 지속: 2.5~4.5초
+                    floatTexts.push({ x: player.x, y: player.y - 80, text: '🟢 초록불! 이동하세요!', color: '#22c55e', life: 60, size: 22 });
+                }
+            }
+
+            // 3. 빨간불 움직임 감지
             if (state.light === 'red') {
                 if (state.cooldown > 0) {
                     state.cooldown--;
-                    state.lastPlayerPos = { x: player.x, y: player.y };
                 } else {
-                    let moveDist = Math.hypot(player.x - state.lastPlayerPos.x, player.y - state.lastPlayerPos.y);
-                    if (moveDist > 2.0) {
-                        // 빨간불에 움직임 감지!
-                        screenRedFlashTimer = 35;
+                    let dx = Math.abs(player.x - state.lastPlayerPos.x);
+                    let dy = Math.abs(player.y - state.lastPlayerPos.y);
+                    let moved = Math.hypot(dx, dy);
+
+                    if (moved > 0.45) {
                         state.lives--;
+                        screenRedFlashTimer = 35;
                         state.cooldown = 40;
 
-                        if (state.carryingSkin) {
-                            state.skinPos = { x: player.x, y: player.y };
-                            state.carryingSkin = false;
-                            floatTexts.push({ x: player.x, y: player.y - 90, text: '⚠️ 해커 스킨을 놓쳤습니다! (현재 위치에 떨어짐)', color: '#f59e0b', life: 80, size: 18 });
-                        }
-
                         if (state.lives <= 0) {
-                            // 2번 실수 시 일반 지형으로 강제 후퇴
+                            if (state.carryingSkin) {
+                                state.skinPos = { x: player.x, y: player.y };
+                                state.carryingSkin = false;
+                                floatTexts.push({ x: player.x, y: player.y - 110, text: '⚠️ 해커 스킨을 떨어뜨렸습니다! (현재 위치에 떨어짐)', color: '#f59e0b', life: 90, size: 20 });
+                            }
                             player.x = 300;
                             player.y = 500;
                             cameraY = 100;
                             player.vx = 0; player.vy = 0;
-                            state.lives = 2; // 목숨 리필 (시간 내 재도전 가능)
-                            floatTexts.push({ x: player.x, y: player.y - 80, text: '💀 목숨 소진! 일반 지형으로 강제 후퇴되었습니다!', color: '#ef4444', life: 90, size: 20 });
+                            state.lives = 2;
+                            state.light = 'green';
+                            state.timer = 0;
+                            floatTexts.push({ x: 300, y: 420, text: '💥 2회 적발! 일반 지형으로 강제 후퇴되었습니다! (목숨 충전)', color: '#ef4444', life: 100, size: 22 });
                         } else {
                             floatTexts.push({ x: player.x, y: player.y - 80, text: `❌ 빨간불 움직임 감지! (남은 목숨: ${state.lives}개)`, color: '#ef4444', life: 70, size: 20 });
                         }
-                        state.lastPlayerPos = { x: player.x, y: player.y };
-                    } else {
-                        state.lastPlayerPos = { x: player.x, y: player.y };
                     }
                 }
             } else {
@@ -14373,62 +14309,75 @@
             }
         }
 
-        // 프레임 루프 업데이트: 농부 피하기
+        // 프레임 루프 업데이트: 거대 농부 피하기
         function updateDodgeFarmersLoop() {
             if (!dodgeFarmersState.active) return;
             const state = dodgeFarmersState;
 
+            // 1. 타이머 감소
+            state.timeLeft -= 1 / 60;
+            if (state.timeLeft <= 0) {
+                state.active = false;
+                state.carryingSkin = false;
+                state.farmers = [];
+                alert("⏱️ [시간 초과]\n\n3분이 모두 경과하여 미니게임이 종료되었습니다.\n서양 검사 스킨 탈출에 실패했습니다!");
+                return;
+            }
+
             state.waveTimer += 16.6;
 
-            // 웨이브 스폰: 플레이어 머리 위 (player.y - 480)에서 1줄 스폰
+            // 웨이브 스폰: 플레이어 기준 위쪽(player.y - 500)에서 1줄 스폰
             if (state.waveTimer >= state.waveInterval) {
                 state.waveTimer = 0;
-                const colXs = [75, 225, 375, 525]; // 4등분 열
-                const numFarmers = (Math.random() < 0.65) ? 3 : 2; // 2~3명 일자로 줄서기
+                // 4개 열 (각 열 150px 폭, 정중앙 좌표: 75, 225, 375, 525)
+                const colXs = [75, 225, 375, 525];
+                const numFarmers = (Math.random() < 0.65) ? 3 : 2; // 한 줄에 2~3명 거대 농부 일자로 배치
                 let cols = [0, 1, 2, 3];
                 cols.sort(() => Math.random() - 0.5);
                 let chosenCols = cols.slice(0, numFarmers);
 
-                let spawnY = player.y - 480;
+                let spawnY = player.y - 520;
                 chosenCols.forEach(col => {
                     state.farmers.push({
                         x: colXs[col],
                         y: spawnY,
-                        radius: 46,
-                        speed: 3.5, // 적당한 속도로 밑으로 다가옴
+                        width: 140, // 4명이 일자로 서면 600px 화면이 꽉 참!
+                        height: 150,
+                        radius: 56, // 단단한 충돌 반경
+                        speed: 4.8, // 거대 농부가 아래로 성큼성큼 다가옴
                         animTimer: Math.random() * 10
                     });
                 });
             }
 
-            // 농부 이동 및 플레이어 충돌 판정
+            // 거대 농부 이동 및 플레이어 충돌 판정
             for (let i = state.farmers.length - 1; i >= 0; i--) {
                 let f = state.farmers[i];
                 f.y += f.speed;
-                f.animTimer += 0.2;
+                f.animTimer += 0.22;
 
-                // 화면 밖으로 벗어난 농부 제거
-                if (f.y > player.y + 700 || f.y > 900) {
+                // 화면 밖으로 멀어진 농부 제거
+                if (f.y > player.y + 800 || f.y > 1200) {
                     state.farmers.splice(i, 1);
                     continue;
                 }
 
-                // 플레이어와의 충돌 판정 (농부는 통과할 수 없음!)
-                let dist = Math.hypot(player.x - f.x, player.y - f.y);
-                let minDist = f.radius + player.radius;
+                // 플레이어와의 충돌 판정 (농부는 통과 불가 벽 판정!)
+                let dx = Math.abs(player.x - f.x);
+                let dy = Math.abs(player.y - f.y);
 
-                if (dist < minDist) {
-                    // 밀쳐내기 (통과 불가 벽 판정)
+                // 가로 65px, 세로 62px 이내 진입 시 충돌
+                if (dx < 65 && dy < 62) {
+                    // 밀쳐내기
                     let angle = Math.atan2(player.y - f.y, player.x - f.x);
-                    player.x = f.x + Math.cos(angle) * minDist;
-                    player.y = f.y + Math.sin(angle) * minDist;
+                    player.x = f.x + Math.cos(angle) * 75;
+                    player.y = f.y + Math.sin(angle) * 75;
 
-                    // 충돌 피격 처리
                     screenRedFlashTimer = 35;
                     if (state.carryingSkin) {
                         state.skinPos = { x: player.x, y: player.y };
                         state.carryingSkin = false;
-                        floatTexts.push({ x: player.x, y: player.y - 90, text: '⚠️ 서양 검사 스킨을 떨어뜨렸습니다! (현재 위치에 떨어짐)', color: '#f59e0b', life: 80, size: 18 });
+                        floatTexts.push({ x: player.x, y: player.y - 90, text: '⚠️ 서양 검사 스킨을 떨어뜨렸습니다! (현재 위치에 떨어짐)', color: '#f59e0b', life: 90, size: 20 });
                     }
 
                     // 일반 지형으로 강제 후퇴
@@ -14437,10 +14386,10 @@
                     cameraY = 100;
                     player.vx = 0; player.vy = 0;
 
-                    // 플레이어 주변 농부들 클리어 (후퇴 즉시 재충돌 방지)
+                    // 플레이어 주변 농부 제거 (후퇴 즉시 연쇄 충돌 방지)
                     state.farmers = state.farmers.filter(farm => farm.y < 0);
 
-                    floatTexts.push({ x: player.x, y: player.y - 80, text: '💥 성난 농부와 충돌! 일반 지형으로 강제 후퇴되었습니다!', color: '#ef4444', life: 90, size: 20 });
+                    floatTexts.push({ x: 300, y: 420, text: '💥 성난 거대 농부와 충돌! 일반 지형으로 강제 후퇴되었습니다!', color: '#ef4444', life: 100, size: 22 });
                     break;
                 }
             }
@@ -14466,22 +14415,24 @@
             }
         }
 
-        // 월드 렌더링: 미니게임 스킨 오브젝트, 농부들, 플레이어 머리 위 운반 표시
+        // ============================================================================
+        // 🎨 [미니게임 월드 렌더링] 바닥 스킨 오브젝트, 거대 농부 군단, 운반 뱃지
+        // ============================================================================
         function drawMinigameWorld(ctx) {
-            // 1. 빨간불 초록불: 해커 스킨 바닥 오브젝트
+            // 1. 빨간불 초록불: 바닥에 놓인 해커 스킨 오브젝트
             if (redLightGreenLightState.active && !redLightGreenLightState.carryingSkin) {
                 drawGroundSkinObject(ctx, 'hacker', redLightGreenLightState.skinPos.x, redLightGreenLightState.skinPos.y);
             }
 
-            // 2. 농부 피하기: 서양 검사 스킨 바닥 오브젝트
+            // 2. 농부 피하기: 바닥에 놓인 서양 검사 스킨 오브젝트
             if (dodgeFarmersState.active && !dodgeFarmersState.carryingSkin) {
                 drawGroundSkinObject(ctx, 'western_swordsman', dodgeFarmersState.skinPos.x, dodgeFarmersState.skinPos.y);
             }
 
-            // 3. 농부 피하기: 성난 농부 군단 렌더링
+            // 3. 농부 피하기: 성난 거대 농부 군단 렌더링
             if (dodgeFarmersState.active && dodgeFarmersState.farmers) {
                 dodgeFarmersState.farmers.forEach(f => {
-                    drawFarmerEnemyObj(ctx, f);
+                    drawBigFarmerEnemyObj(ctx, f);
                 });
             }
 
@@ -14493,113 +14444,220 @@
             }
         }
 
-        // 바닥에 놓인 스킨 오브젝트 렌더링
+        // 바닥에 놓인 거대 스킨 오브젝트 렌더링 (우주 지역에 매우 선명하게 표시)
         function drawGroundSkinObject(ctx, skinType, x, y) {
             ctx.save();
             let now = Date.now() * 0.003;
-            let bob = Math.sin(now * 3) * 6;
+            let bob = Math.sin(now * 3) * 8;
             let isHacker = (skinType === 'hacker');
             let color = isHacker ? '#22c55e' : '#38bdf8';
-            let icon = isHacker ? '💻' : '🤺';
-            let title = isHacker ? '💻 [클릭] 해커 스킨 들기' : '🤺 [클릭] 서양 검사 스킨 들기';
+            let title = isHacker ? '💻 [클릭 / SPACE] 사이버 해커 스킨 줍기' : '🤺 [클릭 / SPACE] 서양 검사 스킨 줍기';
 
-            // 바닥 오라
+            // 바닥 거대 네온 아우라 & 회전 링
             ctx.strokeStyle = color;
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 3;
             ctx.shadowColor = color;
-            ctx.shadowBlur = 15;
+            ctx.shadowBlur = 25;
             ctx.beginPath();
-            ctx.ellipse(x, y + 16, 32, 10, 0, 0, Math.PI * 2);
+            ctx.ellipse(x, y + 25, 48, 16, 0, 0, Math.PI * 2);
             ctx.stroke();
 
-            // 부유 캡슐
+            // 바닥 수직 광선 기둥 (원거리에서도 한눈에 발견 가능!)
+            let beamGrad = ctx.createLinearGradient(x, y + 25, x, y - 90);
+            beamGrad.addColorStop(0, isHacker ? 'rgba(34, 197, 94, 0.45)' : 'rgba(56, 189, 248, 0.45)');
+            beamGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = beamGrad;
+            ctx.fillRect(x - 24, y - 90, 48, 115);
+
+            // 부유 스킨 본체 (크고 선명하게 렌더링)
             ctx.translate(x, y + bob);
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+
+            // 백드롭 글로우 캡슐
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2.5;
             ctx.beginPath();
-            ctx.arc(0, 0, 26, 0, Math.PI * 2);
+            ctx.arc(0, 0, 36, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
 
-            ctx.font = '26px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.shadowBlur = 0;
-            ctx.fillText(icon, 0, 0);
+            // 스킨 미니어처 렌더링
+            ctx.save();
+            ctx.scale(1.2, 1.2);
+            if (isHacker) {
+                // 해커 사이버 후드 & 네온 바이저
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath(); ctx.arc(0, -2, 15, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#22c55e';
+                ctx.fillRect(-10, -5, 20, 6);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 8px monospace';
+                ctx.fillText('0101', -9, 8);
+            } else {
+                // 서양 검사 모자 & 깃털 & 레이피어
+                ctx.fillStyle = '#1e3a8a';
+                ctx.beginPath(); ctx.ellipse(0, -6, 17, 7, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#e2e8f0';
+                ctx.beginPath(); ctx.arc(3, -11, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#f8fafc';
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(-10, 8); ctx.lineTo(12, -4); ctx.stroke();
+            }
+            ctx.restore();
 
-            // 안내 라벨
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+            // 상단 안내 네온 라벨
+            ctx.fillStyle = 'rgba(10, 15, 30, 0.95)';
             ctx.strokeStyle = color;
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.roundRect(-80, -48, 160, 22, 6);
+            ctx.roundRect(-125, -62, 250, 26, 8);
             ctx.fill();
             ctx.stroke();
 
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 11px Arial';
-            ctx.fillText(title, 0, -37);
+            ctx.font = 'bold 12.5px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 8;
+            ctx.fillText(title, 0, -49);
 
             ctx.restore();
         }
 
-        // 성난 농부 렌더링
-        function drawFarmerEnemyObj(ctx, f) {
+        // 👨‍🌾 성난 거대 농부(Big Farmer) 렌더링 - 가로 폭 140px, 높이 150px
+        function drawBigFarmerEnemyObj(ctx, f) {
             ctx.save();
             ctx.translate(f.x, f.y);
 
-            // 바닥 그림자
-            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            let anim = f.animTimer;
+            let stompL = Math.sin(anim * 2.5) * 8;
+            let stompR = Math.sin(anim * 2.5 + Math.PI) * 8;
+
+            // 1. 바닥 거대 그림자 & 쿵쿵 진동 먼지
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
             ctx.beginPath();
-            ctx.ellipse(0, 22, 22, 7, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 42, 60, 16, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            let legBob = Math.sin(f.animTimer * 2) * 4;
+            // 먼지 구름 효과
+            ctx.fillStyle = 'rgba(226, 232, 240, 0.45)';
+            ctx.beginPath();
+            ctx.arc(-35 + Math.sin(anim * 3) * 5, 42 + stompL * 0.3, 10, 0, Math.PI * 2);
+            ctx.arc(35 - Math.sin(anim * 3) * 5, 42 + stompR * 0.3, 10, 0, Math.PI * 2);
+            ctx.fill();
 
-            // 바지
-            ctx.fillStyle = '#334155';
-            ctx.fillRect(-10, 6, 8, 14 + legBob);
-            ctx.fillRect(2, 6, 8, 14 - legBob);
+            // 2. 묵직한 가죽 워커 부츠 (Stomping Boots)
+            ctx.fillStyle = '#78350f';
+            ctx.beginPath(); ctx.roundRect(-42, 22 + stompL, 26, 20, 6); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(16, 22 + stompR, 26, 20, 6); ctx.fill();
+            ctx.fillStyle = '#451a03';
+            ctx.fillRect(-44, 38 + stompL, 30, 6);
+            ctx.fillRect(14, 38 + stompR, 30, 6);
 
-            // 성난 붉은 체크 셔츠
+            // 3. 멜빵 청바지 하의 (Denim Dungarees)
+            ctx.fillStyle = '#1e3a8a';
+            ctx.fillRect(-38, 2, 24, 24 + stompL * 0.5);
+            ctx.fillRect(14, 2, 24, 24 + stompR * 0.5);
+            ctx.beginPath(); ctx.roundRect(-42, -18, 84, 26, [8, 8, 4, 4]); ctx.fill();
+
+            // 4. 성난 붉은 체크 플란넬 셔츠 (Buffalo Plaid Flannel)
             ctx.fillStyle = '#dc2626';
-            ctx.beginPath();
-            ctx.roundRect(-14, -8, 28, 18, 4);
-            ctx.fill();
-
-            // 머리 & 얼굴
-            ctx.fillStyle = '#ffeaa7';
-            ctx.beginPath();
-            ctx.arc(0, -14, 10, 0, Math.PI * 2);
-            ctx.fill();
-
-            // 밀짚모자
-            ctx.fillStyle = '#fef08a';
-            ctx.beginPath();
-            ctx.ellipse(0, -18, 18, 5, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#ca8a04';
-            ctx.beginPath();
-            ctx.roundRect(-8, -26, 16, 9, [4, 4, 0, 0]);
-            ctx.fill();
-
-            // 쇠스랑(Pitchfork)
-            ctx.strokeStyle = '#94a3b8';
+            ctx.beginPath(); ctx.roundRect(-48, -44, 96, 32, 8); ctx.fill();
+            // 체크무늬 격자
+            ctx.strokeStyle = '#7f1d1d';
             ctx.lineWidth = 2.5;
             ctx.beginPath();
-            ctx.moveTo(14, 14); ctx.lineTo(14, -22);
+            ctx.moveTo(-48, -32); ctx.lineTo(48, -32);
+            ctx.moveTo(-48, -20); ctx.lineTo(48, -20);
+            ctx.moveTo(-20, -44); ctx.lineTo(-20, -12);
+            ctx.moveTo(20, -44); ctx.lineTo(20, -12);
             ctx.stroke();
-            ctx.fillStyle = '#cbd5e1';
-            ctx.fillRect(10, -25, 8, 3);
-            ctx.fillRect(10, -32, 2, 8);
-            ctx.fillRect(13, -32, 2, 8);
-            ctx.fillRect(16, -32, 2, 8);
 
-            // 위험 돌진 아우라
-            ctx.strokeStyle = 'rgba(239, 68, 68, 0.7)';
-            ctx.lineWidth = 2;
+            // 멜빵 끈 & 황동 버클
+            ctx.fillStyle = '#1e3a8a';
+            ctx.fillRect(-26, -44, 12, 34);
+            ctx.fillRect(14, -44, 12, 34);
+            ctx.fillStyle = '#facc15';
+            ctx.fillRect(-25, -20, 10, 8);
+            ctx.fillRect(15, -20, 10, 8);
+
+            // 5. 우측 손에 쥔 거대 쇠스랑 (Giant Steel Pitchfork)
+            ctx.save();
+            ctx.translate(46, -20);
+            ctx.rotate(0.15 + Math.sin(anim * 2) * 0.08);
+            // 나무 자루
+            ctx.strokeStyle = '#92400e';
+            ctx.lineWidth = 6;
+            ctx.beginPath(); ctx.moveTo(0, 55); ctx.lineTo(0, -68); ctx.stroke();
+            // 쇠스랑 갈퀴 3날
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 3.5;
             ctx.beginPath();
-            ctx.arc(0, 0, f.radius, 0, Math.PI * 2);
+            ctx.moveTo(-16, -65); ctx.lineTo(16, -65);
+            ctx.moveTo(-14, -65); ctx.lineTo(-14, -92);
+            ctx.moveTo(0, -65); ctx.lineTo(0, -96);
+            ctx.moveTo(14, -65); ctx.lineTo(14, -92);
             ctx.stroke();
+            // 갈퀴 뾰족한 끝 반짝임
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath(); ctx.arc(0, -96, 3, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+
+            // 6. 거대한 성난 얼굴 (Angry Giant Face)
+            ctx.fillStyle = '#fbd38d';
+            ctx.beginPath(); ctx.arc(0, -52, 24, 0, Math.PI * 2); ctx.fill();
+
+            // 이글거리는 붉은 눈 (Fury Red Eyes)
+            ctx.fillStyle = '#dc2626';
+            ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 10;
+            ctx.beginPath(); ctx.arc(-9, -56, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(9, -56, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(-8, -58, 3, 3);
+            ctx.fillRect(10, -58, 3, 3);
+
+            // 성난 찌푸린 눈썹
+            ctx.strokeStyle = '#78350f';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(-16, -64); ctx.lineTo(-4, -60);
+            ctx.moveTo(16, -64); ctx.lineTo(4, -60);
+            ctx.stroke();
+
+            // 덥수룩한 갈색 콧수염 (Giant Mustache)
+            ctx.fillStyle = '#78350f';
+            ctx.beginPath();
+            ctx.ellipse(0, -44, 18, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 7. 거대 밀짚모자 (Giant Straw Hat)
+            ctx.fillStyle = '#facc15';
+            ctx.strokeStyle = '#ca8a04';
+            ctx.lineWidth = 2.5;
+            // 챙 (넓은 가로 115px)
+            ctx.beginPath(); ctx.ellipse(0, -70, 58, 14, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            // 크라운 (모자 윗동)
+            ctx.fillStyle = '#eab308';
+            ctx.beginPath(); ctx.roundRect(-24, -92, 48, 24, [10, 10, 0, 0]); ctx.fill(); ctx.stroke();
+            // 붉은 모자 띠
+            ctx.fillStyle = '#dc2626';
+            ctx.fillRect(-24, -74, 48, 7);
+
+            // 8. 상단 네온 위험 라벨 배너
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(-65, -114, 130, 20, 5);
+            ctx.fill(); ctx.stroke();
+
+            ctx.fillStyle = '#fca5a5';
+            ctx.font = '900 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('👨‍🌾 성난 거대 농부', 0, -104);
 
             ctx.restore();
         }
@@ -14608,38 +14666,42 @@
         function drawCarryingSkinBadge(ctx, skinType) {
             ctx.save();
             let now = Date.now() * 0.004;
-            let bob = Math.sin(now * 3) * 3;
+            let bob = Math.sin(now * 4) * 4;
             let isHacker = (skinType === 'hacker');
             let color = isHacker ? '#22c55e' : '#38bdf8';
-            let text = isHacker ? '💻 해커 스킨 운반 중' : '🤺 서양 검사 스킨 운반 중';
+            let title = isHacker ? '💻 해커 스킨 운반 중!' : '🤺 서양 검사 운반 중!';
 
-            ctx.strokeStyle = color;
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([3, 2]);
-            ctx.beginPath();
-            ctx.moveTo(player.x, player.y - 20);
-            ctx.lineTo(player.x, player.y - 50 + bob);
-            ctx.stroke();
-            ctx.setLineDash([]);
+            ctx.translate(player.x, player.y - 70 + bob);
 
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
             ctx.strokeStyle = color;
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 2;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 12;
             ctx.beginPath();
-            ctx.roundRect(player.x - 70, player.y - 68 + bob, 140, 20, 6);
+            ctx.roundRect(-75, -14, 150, 28, 8);
             ctx.fill();
             ctx.stroke();
 
-            ctx.fillStyle = color;
-            ctx.font = 'bold 10.5px Arial';
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(text, player.x, player.y - 58 + bob);
+            ctx.shadowBlur = 0;
+            ctx.fillText(title, 0, 0);
+
             ctx.restore();
         }
 
-        // 스크린 고정 미니게임 HUD 렌더링
+        // ============================================================================
+        // 🖥️ [미니게임 화면 고정 HUD] 
+        // 1. 화면 위: 타이머, 목숨, 스킨 운반 상태
+        // 2. 화면 가운데: 빨간불 / 초록불 색상 전환 신호등 고정 표시
+        // ============================================================================
         function drawMinigameHUD(ctx) {
+            // ----------------------------------------------------
+            // 1. [미니게임 1: 빨간불 초록불] HUD
+            // ----------------------------------------------------
             if (redLightGreenLightState.active) {
                 const state = redLightGreenLightState;
                 let m = Math.floor(state.timeLeft / 60);
@@ -14647,81 +14709,133 @@
                 let sPad = s < 10 ? '0' + s : s;
                 let isRed = (state.light === 'red');
 
+                // A. [화면 위]: 고정 타이머 & 목숨 & 미션 정보 HUD (y = 40)
                 ctx.save();
-                ctx.translate(GAME_WIDTH / 2, 45);
+                ctx.translate(GAME_WIDTH / 2, 40);
 
-                let w = 310;
-                let h = 48;
-                ctx.fillStyle = isRed ? 'rgba(69, 10, 10, 0.95)' : 'rgba(6, 78, 59, 0.95)';
-                ctx.strokeStyle = isRed ? '#ef4444' : '#10b981';
-                ctx.lineWidth = 2.5;
-                ctx.shadowColor = isRed ? '#ef4444' : '#10b981';
-                ctx.shadowBlur = 14;
+                let topW = 340;
+                let topH = 48;
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+                ctx.lineWidth = 2;
+                ctx.shadowColor = '#000000';
+                ctx.shadowBlur = 12;
                 ctx.beginPath();
-                ctx.roundRect(-w / 2, -h / 2, w, h, 12);
+                ctx.roundRect(-topW / 2, -topH / 2, topW, topH, 12);
                 ctx.fill();
                 ctx.stroke();
                 ctx.shadowBlur = 0;
 
-                ctx.font = 'bold 24px Arial';
+                // 타이머 & 목숨
+                let heartsText = (state.lives === 2) ? '❤️❤️' : (state.lives === 1 ? '❤️🖤' : '🖤🖤');
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(isRed ? '🔴' : '🟢', -w / 2 + 12, 0);
+                ctx.font = '900 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                ctx.fillStyle = '#facc15';
+                ctx.fillText(`⏱️ ${m}:${sPad}`, -topW / 2 + 14, -8);
 
+                ctx.font = 'bold 12px Arial';
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '900 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-                ctx.fillText(isRed ? '빨간불! [즉시 멈추세요!]' : '초록불! [어서 이동하세요!]', -w / 2 + 46, -9);
+                ctx.fillText(`목숨: ${heartsText}`, -topW / 2 + 82, -8);
 
-                let heartsText = (state.lives === 2) ? '❤️❤️' : (state.lives === 1 ? '❤️🖤' : '🖤🖤');
-                ctx.font = '11.5px Arial';
-                ctx.fillStyle = '#fde047';
-                ctx.fillText(`목숨: ${heartsText} | ⏱️ ${m}:${sPad}`, -w / 2 + 46, 11);
-
-                ctx.textAlign = 'right';
-                ctx.font = 'bold 11px Arial';
-                ctx.fillStyle = state.carryingSkin ? '#4ade80' : '#cbd5e1';
-                ctx.fillText(state.carryingSkin ? '💻 운반 중! ➔' : '💻 우주 스킨 필요', w / 2 - 12, 0);
+                // 탈출 미션 가이드
+                ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                if (state.carryingSkin) {
+                    ctx.fillStyle = '#4ade80';
+                    ctx.fillText('💻 해커 스킨 운반 중! ➔ 일반 지형으로 내려가세요!', -topW / 2 + 14, 12);
+                } else {
+                    ctx.fillStyle = '#cbd5e1';
+                    ctx.fillText('🚀 우주 지역(맨 위)으로 올라가 해커 스킨을 들으세요!', -topW / 2 + 14, 12);
+                }
 
                 ctx.restore();
-            } else if (dodgeFarmersState.active) {
+
+                // B. [화면 한가운데]: 빨간불 / 초록불 색상 전환 신호등 고정 표시 (y = 480)
+                ctx.save();
+                ctx.translate(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 20);
+
+                let centerW = 260;
+                let centerH = 76;
+                let pulseScale = isRed ? (1 + Math.sin(Date.now() * 0.02) * 0.04) : 1.0;
+                ctx.scale(pulseScale, pulseScale);
+
+                // 신호등 배경 & 네온 글로우
+                ctx.fillStyle = isRed ? 'rgba(127, 29, 29, 0.94)' : 'rgba(6, 78, 59, 0.92)';
+                ctx.strokeStyle = isRed ? '#ef4444' : '#10b981';
+                ctx.lineWidth = 3.5;
+                ctx.shadowColor = isRed ? '#ef4444' : '#10b981';
+                ctx.shadowBlur = isRed ? 32 : 24;
+                ctx.beginPath();
+                ctx.roundRect(-centerW / 2, -centerH / 2, centerW, centerH, 16);
+                ctx.fill();
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                // 좌측 대형 신호등 구체
+                ctx.font = '36px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(isRed ? '🔴' : '🟢', -centerW / 2 + 38, 0);
+
+                // 우측 상태 텍스트
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '900 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                ctx.shadowColor = isRed ? '#7f1d1d' : '#064e3b';
+                ctx.shadowBlur = 6;
+                ctx.fillText(isRed ? '빨간불! [멈춤!]' : '초록불! [이동!]', -centerW / 2 + 76, -11);
+
+                ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                ctx.fillStyle = isRed ? '#fca5a5' : '#a7f3d0';
+                ctx.fillText(isRed ? '움직이면 즉시 목숨 차감!' : '마음껏 달리세요!', -centerW / 2 + 76, 14);
+
+                ctx.restore();
+            }
+
+            // ----------------------------------------------------
+            // 2. [미니게임 2: 농부 피하기] HUD
+            // ----------------------------------------------------
+            else if (dodgeFarmersState.active) {
                 const state = dodgeFarmersState;
                 let m = Math.floor(state.timeLeft / 60);
                 let s = Math.floor(state.timeLeft % 60);
                 let sPad = s < 10 ? '0' + s : s;
 
+                // [화면 위]: 고정 타이머 & 미션 가이드 HUD (y = 40)
                 ctx.save();
-                ctx.translate(GAME_WIDTH / 2, 45);
+                ctx.translate(GAME_WIDTH / 2, 40);
 
-                let w = 310;
-                let h = 48;
-                ctx.fillStyle = 'rgba(30, 41, 59, 0.95)';
+                let topW = 340;
+                let topH = 48;
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
                 ctx.strokeStyle = '#f59e0b';
-                ctx.lineWidth = 2.5;
+                ctx.lineWidth = 2;
                 ctx.shadowColor = '#f59e0b';
                 ctx.shadowBlur = 12;
                 ctx.beginPath();
-                ctx.roundRect(-w / 2, -h / 2, w, h, 12);
+                ctx.roundRect(-topW / 2, -topH / 2, topW, topH, 12);
                 ctx.fill();
                 ctx.stroke();
                 ctx.shadowBlur = 0;
 
-                ctx.font = 'bold 22px Arial';
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('👨‍🌾', -w / 2 + 12, 0);
+                ctx.font = '900 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                ctx.fillStyle = '#facc15';
+                ctx.fillText(`⏱️ ${m}:${sPad}`, -topW / 2 + 14, -8);
 
+                ctx.font = 'bold 12px Arial';
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '900 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-                ctx.fillText('농부 피하기! [빈 틈으로 통과]', -w / 2 + 44, -9);
+                ctx.fillText('👨‍🌾 거대 농부 피하기 (충돌 시 후퇴)', -topW / 2 + 82, -8);
 
-                ctx.font = '11.5px Arial';
-                ctx.fillStyle = '#fde047';
-                ctx.fillText(`충돌 시 후퇴 | ⏱️ ${m}:${sPad}`, -w / 2 + 44, 11);
-
-                ctx.textAlign = 'right';
-                ctx.font = 'bold 11px Arial';
-                ctx.fillStyle = state.carryingSkin ? '#38bdf8' : '#cbd5e1';
-                ctx.fillText(state.carryingSkin ? '🤺 운반 중! ➔' : '🤺 우주 스킨 필요', w / 2 - 12, 0);
+                ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                if (state.carryingSkin) {
+                    ctx.fillStyle = '#38bdf8';
+                    ctx.fillText('🤺 서양 검사 운반 중! ➔ 빈틈으로 피하며 탈출!', -topW / 2 + 14, 12);
+                } else {
+                    ctx.fillStyle = '#cbd5e1';
+                    ctx.fillText('🚀 우주 지역(맨 위)으로 올라가 서양 검사 스킨을 들으세요!', -topW / 2 + 14, 12);
+                }
 
                 ctx.restore();
             }
@@ -25207,6 +25321,9 @@
                 });
             }
 
+            // 🎮 [미니게임 2종] 월드 요소 (우주 스킨 오브젝트, 거대 농부 군단, 스킨 운반 뱃지) 렌더링
+            if (typeof drawMinigameWorld === 'function') drawMinigameWorld(ctx);
+
             floatTexts.forEach(t => {
                 ctx.fillStyle = t.color; ctx.globalAlpha = t.life / 40;
                 let size = t.size || 18; ctx.font = `bold ${size}px Arial`; ctx.textAlign = 'center';
@@ -25215,7 +25332,15 @@
             });
             ctx.globalAlpha = 1.0;
 
-            ctx.restore(); 
+            ctx.restore();
+
+            // 🎮 [미니게임 2종] 화면 고정 HUD (화면 위 타이머 & 화면 가운데 신호등 색상 변경 표시) 렌더링
+            if (typeof drawMinigameHUD === 'function') drawMinigameHUD(ctx);
+            if (typeof screenRedFlashTimer !== 'undefined' && screenRedFlashTimer > 0) {
+                ctx.fillStyle = `rgba(239, 68, 68, ${Math.min(0.42, screenRedFlashTimer / 50)})`;
+                ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+                screenRedFlashTimer--;
+            } 
 
             // 👑 어드민 스토리 퀘스트: 지상 플레이어 체력 HUD
             if (isAdmin() && (adminGorillaStoryStage === 'earth_monkeys_invading' || adminGorillaStoryStage === 'earth_mad_doctor_rescues')) {
