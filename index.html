@@ -718,7 +718,7 @@
                 <!-- 🍭🎃 [어드민 전용] 사탕 나무 & 캔디콘 상점 버튼 4종 -->
                 <button onclick="adminWarpToCandyTree()" style="padding: 10px; background: linear-gradient(135deg, #ec4899, #f43f5e); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.45);">🍭 [신규] 사탕 나무로 즉시 이동 (Y: 1350)</button>
                 <button onclick="adminToggleCandyCornShop()" style="padding: 10px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.45);">🏪 [신규] 캔디콘 상점 생성 토글 (맨 밑 Y: 3600)</button>
-                <button onclick="player.x = 300; player.y = 4450; closeAdminPanelModal(); floatTexts.push({ x: 300, y: 4370, text: '👼😈 천사악마 지형으로 이동 완료!', color: '#facc15', life: 80, size: 20 });" style="padding: 10px; background: linear-gradient(135deg, #fef08a, #ef4444); color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(250, 204, 21, 0.45);">👼😈 [신규] 천사악마 지형 워프 (Y: 4450)</button>
+                <button onclick="player.x = 300; player.y = -9500; closeAdminPanelModal(); floatTexts.push({ x: 300, y: -9580, text: '👼😈 천사악마 지형으로 이동 완료! (Lv 135)', color: '#facc15', life: 80, size: 20 });" style="padding: 10px; background: linear-gradient(135deg, #fef08a, #ef4444); color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(250, 204, 21, 0.45);">👼😈 [신규] 천사악마 지형 워프 (Lv 135, Y: -9500)</button>
                 <button onclick="closeAdminPanelModal(); openRingMinigameTeamSelect();" style="padding: 10px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.45);">💍 [신규] 링 모으기 대전 시작 (3분)</button>
                 <button onclick="adminAddCandyCorn()" style="padding: 10px; background: linear-gradient(135deg, #eab308, #ca8a04); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.45);">🍬 [신규] 캔디콘 +1,000개 즉시 충전</button>
                 <button onclick="adminRefillAllCandies()" style="padding: 10px; background: linear-gradient(135deg, #a855f7, #9333ea); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.45);">🍬 [신규] 사탕 6종 각 30개씩 충전</button>
@@ -5151,9 +5151,9 @@
             // 20개 링 초기 스폰 (천사악마 지형: X 70 ~ 530, Y 4250 ~ 5850)
             spawnInitialRings(20);
 
-            // 플레이어를 천사악마 지형으로 워프
+            // 플레이어를 얼음 협곡 위 천사악마 지형으로 워프
             player.x = GAME_WIDTH / 2;
-            player.y = 4450;
+            player.y = -9500;
 
             const hud = document.getElementById('ring-minigame-hud');
             if (hud) hud.style.display = 'flex';
@@ -5171,7 +5171,7 @@
 
         function spawnSingleRing() {
             let rx = Math.floor(Math.random() * 460) + 70; // 70 ~ 530
-            let ry = Math.floor(Math.random() * 1550) + 4250; // 4250 ~ 5800
+            let ry = Math.floor(Math.random() * 1500) - 10600; // -10600 ~ -9100 (얼음 협곡 위 천사악마 지형 내부)
             let rType = (ringMinigameTeam === 'angel') ? 'white' : 'black';
             ringMinigameRings.push({
                 x: rx, y: ry, type: rType,
@@ -7872,6 +7872,74 @@
             ctx.restore();
             ctx.restore();
         }
+
+
+        // 👼😈 [신규 지역 : 천사의 성역 | 악마의 심연] 지형 렌더링 (얼음 협곡 위, 레벨 135 진입 가능, Y: -10800 ~ -9000)
+        function drawAngelDevilTerrain(ctx) {
+            const now = Date.now();
+            let aTime = now * 0.002;
+
+            // --- 1. 좌측 천사 구역 (X: 0 ~ 300, Y: -10800 ~ -9000) ---
+            let angelGrad = ctx.createLinearGradient(0, -10800, 300, -9000);
+            angelGrad.addColorStop(0, '#fef9c3');
+            angelGrad.addColorStop(0.35, '#fef08a');
+            angelGrad.addColorStop(0.7, '#e0f2fe');
+            angelGrad.addColorStop(1, '#bae6fd');
+            ctx.fillStyle = angelGrad;
+            ctx.fillRect(0, -10800, GAME_WIDTH / 2, 1800);
+
+            // 천사 구역 순백 몽실몽실 구름 텍스처
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+            for (let ay = -10750; ay < -9050; ay += 110) {
+                let ax = 60 + (Math.sin(ay * 0.03) * 40);
+                ctx.beginPath(); ctx.ellipse(ax, ay, 55, 25, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(ax + 70, ay + 15, 65, 28, 0, 0, Math.PI * 2); ctx.fill();
+            }
+
+            // 천사 순백 깃털 부유 파티클
+            ctx.fillStyle = '#ffffff';
+            for (let af = 0; af < 22; af++) {
+                let afx = ((af * 71 + aTime * 20) % (GAME_WIDTH / 2 - 20));
+                let afy = -10780 + ((af * 89 + aTime * 35) % 1750);
+                ctx.beginPath(); ctx.ellipse(afx, afy, 6, 2.5, 0.4, 0, Math.PI * 2); ctx.fill();
+            }
+
+            // --- 2. 우측 악마 구역 (X: 300 ~ 600, Y: -10800 ~ -9000) ---
+            let devilGrad = ctx.createLinearGradient(300, -10800, 600, -9000);
+            devilGrad.addColorStop(0, '#18181b');
+            devilGrad.addColorStop(0.35, '#450a0a');
+            devilGrad.addColorStop(0.75, '#7f1d1d');
+            devilGrad.addColorStop(1, '#09090b');
+            ctx.fillStyle = devilGrad;
+            ctx.fillRect(GAME_WIDTH / 2, -10800, GAME_WIDTH / 2, 1800);
+
+            // 악마 구역 지옥불 용암 균열선
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.55)';
+            ctx.lineWidth = 2.5;
+            for (let dy = -10740; dy < -9050; dy += 100) {
+                let dx = 360 + (Math.cos(dy * 0.03) * 40);
+                ctx.beginPath();
+                ctx.moveTo(dx, dy); ctx.lineTo(dx + 40, dy + 25); ctx.lineTo(dx + 90, dy + 15); ctx.stroke();
+            }
+
+            // 지옥불 불티 파티클
+            ctx.fillStyle = '#f97316';
+            for (let df = 0; df < 22; df++) {
+                let dfx = 310 + ((df * 73 + aTime * 25) % (GAME_WIDTH / 2 - 20));
+                let dfy = -10780 + ((df * 97 - aTime * 40 + 17500) % 1750);
+                ctx.beginPath(); ctx.arc(dfx, dfy, 2.8, 0, Math.PI * 2); ctx.fill();
+            }
+
+            // --- 3. 중앙 분할 결투선 (X: 300, Y: -10800 ~ -9000) ---
+            let seamGrad = ctx.createLinearGradient(0, -10800, 0, -9000);
+            seamGrad.addColorStop(0, '#facc15'); seamGrad.addColorStop(0.5, '#ef4444'); seamGrad.addColorStop(1, '#a855f7');
+            ctx.strokeStyle = seamGrad;
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#facc15'; ctx.shadowBlur = 12;
+            ctx.beginPath(); ctx.moveTo(GAME_WIDTH / 2, -10800); ctx.lineTo(GAME_WIDTH / 2, -9000); ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+        window.drawAngelDevilTerrain = drawAngelDevilTerrain;
 
         // ❄️ [신규 지역 : 얼음의 협곡] 지형 렌더링 (레벨 125 진입 가능, Y: -9000 ~ -8000)
         function drawIceCanyonTerrain(ctx) {
@@ -11839,15 +11907,7 @@
                     }
                 }
 
-                // 👼😈 [천사 vs 악마 링 모으기 제단] 클릭 감지 (Y: 4300, X: 300)
-                if (isAdmin()) {
-                    let aDist = Math.hypot(cx - 300, cy - 4300);
-                    let aPlayerDist = Math.hypot(player.x - 300, player.y - 4300);
-                    if (aDist < 95 || (isSpacebar && aPlayerDist < 115)) {
-                        openRingMinigameTeamSelect();
-                        return;
-                    }
-                }
+
 
                 // 🏪 [캔디콘 비밀 상점] 클릭 감지 (맨 밑 Y: 3600)
                 if (isAdmin()) {
@@ -14190,9 +14250,9 @@
                 unlocked: true, price: 0, reqLevel: 1, color1: '#ff7675', color2: '#fd79a8', drops: [2, 4]
             },
             {
-                id: 'angel_devil', type: 'angel_devil', x: GAME_WIDTH / 2, y: 4800, radius: 155, trunkRadius: 48,
+                id: 'angel_devil', type: 'angel_devil', x: GAME_WIDTH / 2, y: -9800, radius: 155, trunkRadius: 48,
                 name: '천사악마 나무', progress: 0, maxProgress: 300, shakeAngle: 0,
-                unlocked: true, price: 0, reqLevel: 1, color1: '#fef08a', color2: '#ef4444', drops: [4, 8]
+                unlocked: true, price: 0, reqLevel: 135, color1: '#fef08a', color2: '#ef4444', drops: [4, 8]
             }
         ];
 
@@ -21315,8 +21375,8 @@
             } else { player.walkTimer = 0; }
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
-            const maxBottomLimit = isAdmin() ? 6300 : 2600;
-            player.y = Math.max(-8950, Math.min(maxBottomLimit - player.radius, player.y));
+            const maxBottomLimit = isAdmin() ? 3950 : 2600;
+            player.y = Math.max(-10750, Math.min(maxBottomLimit - player.radius, player.y));
             
             // 🔒 맨 마지막 지역: 얼음의 협곡(Y: -8000 이하) 이번주 토요일 21:30 공개 및 레벨 125 체크
             if (!isIceCanyonEventStarted() && player.y <= -7970 && player.y >= -9000) {
@@ -21325,6 +21385,9 @@
             } else if (!isAdmin() && level < 125 && player.y <= -7970 && player.y >= -9000) {
                 player.y = -7960;
                 if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음의 협곡: 레벨 125 달성 시 입장 가능!`, color: '#38bdf8', life: 50 });
+            } else if (!isAdmin() && level < 135 && player.y <= -8970 && player.y >= -10900) {
+                player.y = -8960;
+                if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 천사악마 지역: 레벨 135 달성 시 입장 가능!`, color: '#facc15', life: 50 });
             }
 
             if (level < 3 && player.y < 30 && player.y > -500) {
@@ -21382,7 +21445,7 @@
             }
 
             let targetCamY = player.y - GAME_HEIGHT / 2 + 100;
-            targetCamY = Math.max(-9000, Math.min(isAdmin() ? 5900 : 1800, targetCamY));
+            targetCamY = Math.max(-10800, Math.min(isAdmin() ? 2850 : 1800, targetCamY));
             cameraY += (targetCamY - cameraY) * 0.1;
 
             trees.forEach(tree => {
@@ -26928,6 +26991,9 @@
             }
             ctx.globalAlpha = 1.0;
 
+            // 👼😈 [신규 지역 : 천사 & 악마 지형] (얼음 협곡 위, 레벨 135 진입 가능, Y: -10800 ~ -9000)
+            drawAngelDevilTerrain(ctx);
+
             // ❄️ 신규 지역: 얼음의 협곡 (-9000 ~ -8000, 레벨 125 진입 가능)
             drawIceCanyonTerrain(ctx);
 
@@ -26999,100 +27065,15 @@
 
             // 🔮 핑크 물음표 지형 삭제 완료 - 캔디 조약돌 길과 지형이 Y: 4000 상점까지 시원하게 이어집니다.
 
-            // 👼😈 [어드민 전용] 천사악마 신규 지형 (Y: 4000 ~ 6200)
-            if (isAdmin()) {
-                // --- 1. 좌측 천사 구역 (X: 0 ~ 300) ---
-                let angelGrad = ctx.createLinearGradient(0, 4000, 300, 6200);
-                angelGrad.addColorStop(0, '#fef9c3');
-                angelGrad.addColorStop(0.4, '#fef08a');
-                angelGrad.addColorStop(0.8, '#e0f2fe');
-                angelGrad.addColorStop(1, '#bae6fd');
-                ctx.fillStyle = angelGrad;
-                ctx.fillRect(0, 4000, GAME_WIDTH / 2, 2200);
+            // ⚡ 세계의 최극단 경계선 (Y: -10800)
+            ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -10800); ctx.lineTo(GAME_WIDTH, -10800); ctx.stroke();
+            ctx.fillStyle = '#f87171'; ctx.font = 'bold 18px Arial'; ctx.textAlign = 'center';
+            ctx.fillText("⚡ 세계의 최극단 (천악 경계선)", GAME_WIDTH / 2, -10820);
 
-                // 천사 구역 순백 구름 텍스처
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-                for (let ay = 4050; ay < 6150; ay += 120) {
-                    let ax = 60 + (Math.sin(ay * 0.03) * 40);
-                    ctx.beginPath(); ctx.ellipse(ax, ay, 55, 25, 0, 0, Math.PI * 2); ctx.fill();
-                    ctx.beginPath(); ctx.ellipse(ax + 70, ay + 15, 65, 28, 0, 0, Math.PI * 2); ctx.fill();
-                }
-
-                // 천사 깃털 파티클
-                let aTime = Date.now() * 0.002;
-                ctx.fillStyle = '#ffffff';
-                for (let af = 0; af < 18; af++) {
-                    let afx = ((af * 71 + aTime * 20) % (GAME_WIDTH / 2 - 20));
-                    let afy = 4020 + ((af * 89 + aTime * 35) % 2100);
-                    ctx.beginPath(); ctx.ellipse(afx, afy, 6, 2.5, 0.4, 0, Math.PI * 2); ctx.fill();
-                }
-
-                // --- 2. 우측 악마 구역 (X: 300 ~ 600) ---
-                let devilGrad = ctx.createLinearGradient(300, 4000, 600, 6200);
-                devilGrad.addColorStop(0, '#18181b');
-                devilGrad.addColorStop(0.4, '#450a0a');
-                devilGrad.addColorStop(0.8, '#7f1d1d');
-                devilGrad.addColorStop(1, '#09090b');
-                ctx.fillStyle = devilGrad;
-                ctx.fillRect(GAME_WIDTH / 2, 4000, GAME_WIDTH / 2, 2200);
-
-                // 악마 구역 용암 균열선
-                ctx.strokeStyle = 'rgba(239, 68, 68, 0.45)';
-                ctx.lineWidth = 2.5;
-                for (let dy = 4080; dy < 6150; dy += 110) {
-                    let dx = 360 + (Math.cos(dy * 0.03) * 40);
-                    ctx.beginPath();
-                    ctx.moveTo(dx, dy); ctx.lineTo(dx + 40, dy + 25); ctx.lineTo(dx + 90, dy + 15); ctx.stroke();
-                }
-
-                // 지옥불 불티 파티클
-                ctx.fillStyle = '#f97316';
-                for (let df = 0; df < 18; df++) {
-                    let dfx = 310 + ((df * 73 + aTime * 25) % (GAME_WIDTH / 2 - 20));
-                    let dfy = 4020 + ((df * 97 - aTime * 40 + 2100) % 2100);
-                    ctx.beginPath(); ctx.arc(dfx, dfy, 2.5, 0, Math.PI * 2); ctx.fill();
-                }
-
-                // --- 3. 중앙 분할 결투선 (X: 300) ---
-                let seamGrad = ctx.createLinearGradient(0, 4000, 0, 6200);
-                seamGrad.addColorStop(0, '#facc15'); seamGrad.addColorStop(0.5, '#ef4444'); seamGrad.addColorStop(1, '#a855f7');
-                ctx.strokeStyle = seamGrad;
-                ctx.lineWidth = 4;
-                ctx.shadowColor = '#facc15'; ctx.shadowBlur = 10;
-                ctx.beginPath(); ctx.moveTo(GAME_WIDTH / 2, 4000); ctx.lineTo(GAME_WIDTH / 2, 6200); ctx.stroke();
-                ctx.shadowBlur = 0;
-
-                // --- 4. 지형 상단 배너 (Y: 4025) ---
-                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(0, 4000); ctx.lineTo(GAME_WIDTH, 4000); ctx.stroke();
-                ctx.fillStyle = '#0f172a';
-                ctx.beginPath(); ctx.roundRect(GAME_WIDTH / 2 - 160, 4008, 320, 32, 8); ctx.fill();
-                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2; ctx.stroke();
-                ctx.fillStyle = '#fde047'; ctx.font = 'bold 15px sans-serif'; ctx.textAlign = 'center';
-                ctx.fillText("👼 천사의 성역 | 😈 악마의 심연 (ADMIN)", GAME_WIDTH / 2, 4030);
-
-                // --- 5. 천사 vs 악마 링 모으기 대전 제단 (Y: 4300, X: 300) ---
-                ctx.save();
-                ctx.translate(GAME_WIDTH / 2, 4300);
-                let altarT = Date.now() * 0.003;
-                // 회전 마법진
-                ctx.rotate(altarT * 0.6);
-                ctx.strokeStyle = 'rgba(250, 204, 21, 0.7)'; ctx.lineWidth = 2.5; ctx.setLineDash([8, 6]);
-                ctx.beginPath(); ctx.arc(0, 0, 48, 0, Math.PI * 2); ctx.stroke();
-                ctx.restore();
-
-                ctx.save();
-                ctx.translate(GAME_WIDTH / 2, 4300);
-                // 제단 본체
-                ctx.fillStyle = '#1e1b4b';
-                ctx.beginPath(); ctx.roundRect(-45, -25, 90, 50, 12); ctx.fill();
-                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.stroke();
-                ctx.font = '26px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText("👼💍😈", 0, -2);
-                // 안내 텍스트
-                ctx.fillStyle = '#fde047'; ctx.font = 'bold 11px sans-serif'; ctx.textBaseline = 'top';
-                ctx.fillText("링 모으기 대전 (클릭)", 0, 32);
-                ctx.restore();
-            }
+            // 👼😈 신규 지역: 천사의 성역 | 악마의 심연 경계선 (Y: -9000, 레벨 135 진입 가능)
+            ctx.strokeStyle = '#facc15'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -9000); ctx.lineTo(GAME_WIDTH, -9000); ctx.stroke();
+            ctx.fillStyle = '#fde047'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
+            ctx.fillText("👼 천사의 성역 | 😈 악마의 심연 (레벨 135 진입 가능)", GAME_WIDTH / 2, -9020);
 
             // ❄️ 얼음의 협곡 경계선 (Y: -8000, 관리자 전용)
             ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -8000); ctx.lineTo(GAME_WIDTH, -8000); ctx.stroke();
@@ -27136,7 +27117,7 @@
             ctx.fillStyle = '#b2bec3'; ctx.fillText("⛏️ 지하: 동굴 지역 (레벨 85 진입 가능)", GAME_WIDTH / 2, -6020);
 
             ctx.strokeStyle = 'rgba(0,0,0,0.08)'; ctx.lineWidth = 2;
-            for(let cy = -9000; cy <= 2600; cy+=100) {
+            for(let cy = -10800; cy <= 3600; cy+=100) {
                 for(let cx = 0; cx <= GAME_WIDTH; cx+=100) { ctx.beginPath(); ctx.arc(cx+50, cy+50, 15, 0, Math.PI); ctx.stroke(); }
             }
 
@@ -28671,7 +28652,7 @@
             <span style="font-size: 16px;">👼</span>
             <span style="font-size: 11.5px; color: #fde047; font-weight: bold;">천사:</span>
             <span id="ring-hud-angel-score" style="font-size: 14px; color: #ffffff; font-weight: 900;">0</span>
-            <span style="font-size: 11px; color: #94a3b8;">/ 2400</span>
+            
         </div>
 
         <div style="width: 1px; height: 18px; background: rgba(255,255,255,0.2);"></div>
@@ -28698,7 +28679,7 @@
             <span style="font-size: 16px;">😈</span>
             <span style="font-size: 11.5px; color: #f87171; font-weight: bold;">악마:</span>
             <span id="ring-hud-devil-score" style="font-size: 14px; color: #ffffff; font-weight: 900;">0</span>
-            <span style="font-size: 11px; color: #94a3b8;">/ 2000</span>
+            
         </div>
     </div>
 
