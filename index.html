@@ -426,7 +426,7 @@
         <canvas id="gameCanvas"></canvas>
         <div id="money-display">💰 0</div>
         <!-- 🍬 캔디콘 HUD (어드민 접속 시 좌측 상단에 머니 디스플레이 바로 아래 표시) -->
-        <div id="candy-corn-hud" style="position: absolute; top: 62px; left: 15px; background: rgba(15, 23, 42, 0.92); color: #facc15; border: 1.5px solid #f59e0b; padding: 6px 14px; border-radius: 18px; font-size: 13px; font-weight: 900; z-index: 15; display: none; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(0,0,0,0.7); pointer-events: none;">
+        <div id="candy-corn-hud" style="position: absolute; top: 100px; left: 15px; background: rgba(15, 23, 42, 0.92); color: #facc15; border: 1.5px solid #f59e0b; padding: 6px 14px; border-radius: 18px; font-size: 13px; font-weight: 900; z-index: 15; display: none; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(0,0,0,0.7); pointer-events: none;">
             🍬 캔디콘: 0개
         </div>
         <div id="level-container">
@@ -1866,6 +1866,53 @@
                 <button onclick="closeTradeMachineModal()" style="background: rgba(255,255,255,0.1); border: none; color: #cbd5e1; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
             </div>
 
+            <!-- 관리자 전용 레시피 탭 선택 바 (어드민 접속 시에만 노출) -->
+            <div id="craft-recipe-tabs" style="display: none; gap: 8px; margin-bottom: 12px;">
+                <button id="craft-tab-btn-ronin" onclick="selectCraftRecipe('ronin')" style="flex: 1; padding: 7px 10px; border-radius: 10px; border: 1.5px solid #38bdf8; background: #0284c7; color: white; font-weight: 900; font-size: 12px; cursor: pointer;">
+                    ⚔️ 일본풍 검사
+                </button>
+                <button id="craft-tab-btn-ax" onclick="selectCraftRecipe('ax')" style="flex: 1; padding: 7px 10px; border-radius: 10px; border: 1.5px solid #facc15; background: rgba(30, 41, 59, 0.85); color: #facc15; font-weight: 900; font-size: 12px; cursor: pointer;">
+                    👑 [ADMIN] 도끼 콤비네이션
+                </button>
+            </div>
+
+            <!-- 👑 [어드민 전용] 도끼 콤비네이션 합성 뷰 -->
+            <div id="craft-ax-view" style="display: none;">
+                <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #facc15; border-radius: 12px; padding: 10px 12px; margin-bottom: 14px; text-align: left;">
+                    <div style="font-size: 12px; color: #fde047; font-weight: 900;">📜 [ADMIN] 전설의 도끼 합성 레시피</div>
+                    <div style="font-size: 13px; font-weight: bold; color: #ffffff; margin-top: 3px;">
+                        ⚡ 고대 도끼 (Lv.4) ➔ 🪓⚡ ax combination (도끼 콤비네이션)
+                    </div>
+                    <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">
+                        왼쪽은 금도끼, 오른쪽은 은도끼, 할로윈 오메가 도끼를 든 신화 검사 스킨!
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 16px;">
+                    <!-- 재료: 고대 도끼 -->
+                    <div style="width: 90px; height: 90px; background: rgba(30, 41, 59, 0.9); border: 2px solid #00cec9; border-radius: 14px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 0 12px rgba(0, 206, 201, 0.35);">
+                        <span style="font-size: 32px;">⚡🪓</span>
+                        <span style="font-size: 10.5px; color: #00cec9; font-weight: 900; margin-top: 2px;">고대 도끼</span>
+                        <span id="craft-ancient-axe-status" style="font-size: 9.5px; color: #4ade80; font-weight: bold;">(보유 중)</span>
+                    </div>
+
+                    <span style="font-size: 24px; font-weight: 900; color: #facc15;">➔</span>
+
+                    <!-- 결과물: 도끼 콤비네이션 -->
+                    <div style="width: 90px; height: 90px; background: rgba(8, 47, 73, 0.9); border: 2.5px solid #facc15; border-radius: 14px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 0 18px rgba(250, 204, 21, 0.45);">
+                        <canvas id="trade-ax-preview" width="60" height="60" style="display: block;"></canvas>
+                        <span style="font-size: 10px; color: #facc15; font-weight: 900; margin-top: 2px;">도끼 콤비네이션</span>
+                    </div>
+                </div>
+
+                <button onclick="craftAxCombinationSkin()" style="width: 100%; padding: 13px; background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%); color: #000; border: none; border-radius: 12px; font-weight: 950; font-size: 16px; cursor: pointer; box-shadow: 0 4px 0 #b45309, 0 6px 18px rgba(245, 158, 11, 0.5); letter-spacing: 1px;">
+                    🔨 도끼 콤비네이션 제작하기
+                </button>
+            </div>
+
+            <!-- 기본 일본풍 검사 뷰 래퍼 -->
+            <div id="craft-ronin-view">
+
             <!-- 레시피 안내 -->
             <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 9px 12px; margin-bottom: 14px;">
                 <div style="font-size: 11.5px; color: #94a3b8; font-weight: bold;">📜 합성 레시피</div>
@@ -1910,6 +1957,7 @@
             <button id="craft-submit-btn" onclick="executeCrafting()" style="width: 100%; padding: 13px; background: linear-gradient(180deg, #06b6d4 0%, #0284c7 100%); color: white; border: none; border-radius: 12px; font-weight: 900; font-size: 17px; cursor: pointer; box-shadow: 0 4px 0 #0369a1, 0 6px 18px rgba(6, 182, 212, 0.45); letter-spacing: 2px;">
                 ✨ 조합!
             </button>
+            </div> <!-- craft-ronin-view 끝 -->
         </div>
 
         <!-- 🛠️ 농장 밭 & 장비 업그레이드 상점 모달 -->
@@ -4955,12 +5003,87 @@
             closeTradeMachineModal();
         }
 
+        let currentCraftRecipe = 'ronin';
+        function selectCraftRecipe(recipe) {
+            currentCraftRecipe = recipe;
+            const roninView = document.getElementById('craft-ronin-view');
+            const axView = document.getElementById('craft-ax-view');
+            const btnRonin = document.getElementById('craft-tab-btn-ronin');
+            const btnAx = document.getElementById('craft-tab-btn-ax');
+
+            if (recipe === 'ax') {
+                if (roninView) roninView.style.display = 'none';
+                if (axView) axView.style.display = 'block';
+                if (btnRonin) { btnRonin.style.background = 'rgba(30, 41, 59, 0.85)'; btnRonin.style.color = '#94a3b8'; }
+                if (btnAx) { btnAx.style.background = '#f59e0b'; btnAx.style.color = '#000'; }
+
+                const statusEl = document.getElementById('craft-ancient-axe-status');
+                const hasAxe = (typeof isAxeOwned === 'function' && isAxeOwned(4)) || isAdmin();
+                if (statusEl) {
+                    statusEl.innerText = hasAxe ? '(✓ 보유 중)' : '(❌ 미보유)';
+                    statusEl.style.color = hasAxe ? '#4ade80' : '#ef4444';
+                }
+                drawTradeAxPreviewCanvas();
+            } else {
+                if (roninView) roninView.style.display = 'block';
+                if (axView) axView.style.display = 'none';
+                if (btnRonin) { btnRonin.style.background = '#0284c7'; btnRonin.style.color = '#fff'; }
+                if (btnAx) { btnAx.style.background = 'rgba(30, 41, 59, 0.85)'; btnAx.style.color = '#facc15'; }
+                drawTradeSkinPreviewCanvas();
+            }
+        }
+        window.selectCraftRecipe = selectCraftRecipe;
+
+        function drawTradeAxPreviewCanvas() {
+            const canvas = document.getElementById('trade-ax-preview');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2 + 10);
+            ctx.scale(0.85, 0.85);
+            const dummyChar = { colors: { skin: '#ffeaa7' }, walkTimer: 0, facing: 1 };
+            drawCharacter(ctx, dummyChar, 0, 0, false, 0, 'ax_combination');
+            ctx.restore();
+        }
+        window.drawTradeAxPreviewCanvas = drawTradeAxPreviewCanvas;
+
+        function craftAxCombinationSkin() {
+            if (!isAdmin()) {
+                alert('❌ 관리자 전용 조합 레시피입니다!');
+                return;
+            }
+            const hasAxe = (typeof isAxeOwned === 'function' && isAxeOwned(4)) || isAdmin();
+            if (!hasAxe) {
+                alert('❌ 고대 도끼(Lv.4)가 필요합니다!');
+                return;
+            }
+
+            if (!ownedSkins.includes('ax_combination')) {
+                ownedSkins.push('ax_combination');
+            }
+            equippedSkin = 'ax_combination';
+            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+            if (typeof saveGame === 'function') saveGame(true);
+
+            floatTexts.push({ x: player.x, y: player.y - 90, text: '🪓⚡ [도끼 콤비네이션] 제작 성공!', color: '#facc15', life: 120, size: 24 });
+            alert('🎉 [조합 대성공!]\n\n고대 도끼를 합성하여 신화 스킨 [도끼 콤비네이션 (Ax Combination)]을 획득하고 자동 장착했습니다!\n왼쪽은 금도끼, 오른쪽은 은도끼, 할로윈 오메가 도끼를 든 검사 스킨입니다!');
+            closeTradeMachineModal();
+        }
+        window.craftAxCombinationSkin = craftAxCombinationSkin;
+
         function openTradeMachineModal() {
             closeAllModals();
             updateCraftingSlotsUI();
             openCraftSlotPicker(1);
             const modal = document.getElementById('trade-machine-modal');
             if (modal) modal.style.display = 'block';
+
+            const tabs = document.getElementById('craft-recipe-tabs');
+            if (tabs) {
+                tabs.style.display = isAdmin() ? 'flex' : 'none';
+            }
+            selectCraftRecipe('ronin');
             drawTradeSkinPreviewCanvas();
         }
 
@@ -5603,6 +5726,32 @@
             const input = document.getElementById('code-input');
             const msg = document.getElementById('code-status-msg');
             const val = (input && input.value ? input.value.trim().toLowerCase() : '');
+
+            // 🛡️⚔️ [우정 한정 스킨] 방패와 검 (Shield & Sword) 쿠폰 코드 (friendship)
+            if (val === 'friendship') {
+                if (!isAdmin()) {
+                    alert('❌ 관리자 전용 한정 쿠폰 코드입니다!');
+                    return;
+                }
+                if (!ownedSkins.includes('shield_and_sword')) {
+                    ownedSkins.push('shield_and_sword');
+                }
+                equippedSkin = 'shield_and_sword';
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                if (typeof saveGame === 'function') saveGame(true);
+                if (msg) {
+                    msg.innerText = '🎉 방패와 검 (Shield & Sword) 스킨을 획득하고 장착했습니다!';
+                    msg.style.color = '#38bdf8';
+                    msg.style.display = 'block';
+                }
+                if (input) input.style.borderColor = '#38bdf8';
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: player.x, y: player.y - 70, text: '🛡️⚔️ 방패와 검 스킨 획득!', color: '#38bdf8', life: 100, size: 20 });
+                }
+                alert('🎉 [쿠폰 등록 완료]\n\n우정의 특별 스킨 [방패와 검 (Shield & Sword)]을 획득하고 자동 장착했습니다!\n두 친구가 손을 꼭 잡고 함께 모험을 떠납니다!');
+                closeCodeModal();
+                return;
+            }
 
             // 🎂🔨 신화 한정 스킨 [포지 케이크] 지급 쿠폰 코드 (sorryaboutvoiseroom)
             if (val === 'sorryaboutvoiseroom') {
@@ -11182,7 +11331,8 @@
             if (isAdmin()) {
                 dmg = 300;
             } else {
-                if (equippedAxe === 4) dmg = 25;
+                if (equippedAxe === 5) dmg = 35;
+                    else if (equippedAxe === 4) dmg = 25;
                 else if (equippedAxe === 3) dmg = 20;
                 else if (equippedAxe === 2) dmg = 16;
                 else if (equippedAxe === 1) dmg = 13;
@@ -11465,7 +11615,7 @@
                 }
 
                 // 🏪 [캔디콘 비밀 상점] 클릭 감지 (맨 밑 Y: 3600)
-                if (isAdmin() && adminCandyCornShopSpawned) {
+                if (isAdmin()) {
                     let shopX = GAME_WIDTH / 2;
                     let shopY = 3600;
                     let sDist = Math.hypot(cx - shopX, cy - shopY);
@@ -11771,7 +11921,8 @@
             { level: 1, name: '나무 도끼', timeText: '나무 패는 시간: 4초', icon: '🪓' },
             { level: 2, name: '은(철) 도끼', timeText: '나무 패는 시간: 3.5초', icon: '⛏️' },
             { level: 3, name: '금 도끼', timeText: '나무 패는 시간: 3.2초', icon: '✨' },
-            { level: 4, name: '고대 도끼', timeText: '나무 패는 시간: 2.7초', icon: '⚡🪓' }
+            { level: 4, name: '고대 도끼', timeText: '나무 패는 시간: 2.7초', icon: '⚡🪓' },
+            { level: 5, name: 'Halloween omega ax', timeText: '나무 패는 시간: 2.5초', icon: '🎃🪓' }
         ];
 
         function getOwnedAxesList() {
@@ -12710,7 +12861,10 @@
             { id: 'infected_gorilla', name: '감염된 고릴라', price: 0, icon: '🦍💜', isReward: true, desc: '크라켄의 씨앗 수확 보상 (22%)' },
             { id: 'frost_dragon', name: '서리룡', price: 0, icon: '🐉❄️', isReward: true, desc: '크라켄의 씨앗 초희귀 수확 보상 (3%)' },
             { id: 'pumpkin_winged_demon', name: '호박 날개 대악마', price: 0, icon: '🎃🪽', isReward: true, desc: '캔디콘 1,000개 할로윈 럭키블록 초신화 보상' },
-            { id: 'candy_king', name: '별사탕 캔디 국왕', price: 0, icon: '👑🍬', isReward: true, desc: '캔디콘 1,000개 할로윈 럭키블록 신화 보상' }
+            { id: 'candy_king', name: '별사탕 캔디 국왕', price: 0, icon: '👑🍬', isReward: true, desc: '캔디콘 1,000개 할로윈 럭키블록 신화 보상' },
+            { id: 'halloween_forge', name: '할로윈 포지', price: 2000, icon: '🎃🗡️', isReward: true, desc: '캔디콘 상점 2,000 캔디 구매 스킨' },
+            { id: 'ax_combination', name: '도끼 콤비네이션', price: 0, icon: '🪓⚡', isReward: true, adminOnly: true, desc: '크래프팅 머신 [고대 도끼] 조합 스킨' },
+            { id: 'shield_and_sword', name: '방패와 검', price: 0, icon: '🛡️⚔️', isReward: true, adminOnly: true, desc: '쿠폰 코드 [friendship] 보상 스킨' }
         ];
 
 
@@ -20605,6 +20759,32 @@
         // 🏪 [캔디콘 비밀 상점 모달 제어]
         // ============================================================
         let candyCornLuckyAnimInterval = null;
+
+        function drawHalloweenOmegaAxePreview(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2 + 10);
+            ctx.scale(1.1, 1.1);
+            drawEquippedAxe(ctx, 5, 1);
+            ctx.restore();
+        }
+
+        function drawHalloweenForgePreview(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2 + 10);
+            ctx.scale(0.85, 0.85);
+            const dummyChar = { colors: { skin: '#ffeaa7' }, walkTimer: 0, facing: 1 };
+            drawCharacter(ctx, dummyChar, 0, 0, false, 0, 'halloween_forge');
+            ctx.restore();
+        }
+
         function openCandyCornShopModal() {
             const modal = document.getElementById('candycorn-shop-modal');
             if (!modal) return;
@@ -20612,6 +20792,9 @@
             if (myCornEl) myCornEl.innerText = candyCorn.toLocaleString();
 
             modal.style.display = 'block';
+
+            drawHalloweenOmegaAxePreview('cc-axe-preview');
+            drawHalloweenForgePreview('cc-forge-preview');
 
             if (candyCornLuckyAnimInterval) clearInterval(candyCornLuckyAnimInterval);
             candyCornLuckyAnimInterval = setInterval(() => {
@@ -20623,6 +20806,146 @@
                 }
             }, 40);
         }
+
+        // 🪓 [아이템 1] Halloween omega ax 구매 (3,000 캔디)
+        function buyHalloweenOmegaAxe() {
+            if (!isAdmin() && candyCorn < 3000) {
+                alert('캔디콘이 부족합니다! 3,000개의 캔디콘이 필요합니다.');
+                return;
+            }
+            if (!isAdmin()) {
+                updateCandyCorn(-3000);
+            }
+            if (!ownedAxes.includes(5)) {
+                ownedAxes.push(5);
+            }
+            equippedAxe = 5;
+            axeLevel = Math.max(axeLevel, 5);
+            if (typeof updateAxeUI === 'function') updateAxeUI();
+            if (typeof saveGame === 'function') saveGame(true);
+
+            const myCornEl = document.getElementById('cc-shop-my-corn');
+            if (myCornEl) myCornEl.innerText = candyCorn.toLocaleString();
+
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🎃🪓 [Halloween omega ax] 장착 완료!', color: '#f59e0b', life: 100, size: 22 });
+            alert('🎉 [Halloween omega ax 구매 완료!]\n\n최강의 할로윈 오메가 도끼를 획득하고 즉시 장착했습니다!\n나무 패는 시간: 2.5초!');
+        }
+        window.buyHalloweenOmegaAxe = buyHalloweenOmegaAxe;
+
+        // 🎁 [아이템 2] premium halloween lucky block 구매 (1,500 캔디)
+        function buyPremiumHalloweenLuckyBlock() {
+            if (!isAdmin() && candyCorn < 1500) {
+                alert('캔디콘이 부족합니다! 1,500개의 캔디콘이 필요합니다.');
+                return;
+            }
+            if (!isAdmin()) {
+                updateCandyCorn(-1500);
+            }
+
+            const rand = Math.random() * 100;
+            let wonTitle = '';
+            let wonDesc = '';
+            let wonIcon = '🎁';
+            let wonColor = '#38bdf8';
+
+            if (rand < 20) {
+                const wonId = 'halloween_forge';
+                wonTitle = '할로윈 포지 (초신화 20%)';
+                wonDesc = '마법 모자와 방패, 검을 장착한 할로윈 포지 스킨 획득!';
+                wonIcon = '🎃🗡️';
+                wonColor = '#38bdf8';
+                if (!ownedSkins.includes(wonId)) ownedSkins.push(wonId);
+            } else if (rand < 35) {
+                const wonId = 'pumpkin_winged_demon';
+                wonTitle = '호박 날개 대악마 (신화 15%)';
+                wonDesc = '천사와 악마 날개가 달린 전설의 호박 대마왕 스킨 획득!';
+                wonIcon = '🎃🪽';
+                wonColor = '#facc15';
+                if (!ownedSkins.includes(wonId)) ownedSkins.push(wonId);
+            } else if (rand < 50) {
+                const wonId = 'candy_king';
+                wonTitle = '별사탕 캔디 국왕 (신화 15%)';
+                wonDesc = '사탕 왕국의 국왕 스킨 획득!';
+                wonIcon = '👑🍬';
+                wonColor = '#c084fc';
+                if (!ownedSkins.includes(wonId)) ownedSkins.push(wonId);
+            } else if (rand < 70) {
+                wonTitle = '🍬 캔디콘 대박 꾸러미 (전설 20%)';
+                wonDesc = '캔디콘 +2,500개 즉시 대박 환급!';
+                wonIcon = '🍬';
+                wonColor = '#fb923c';
+                updateCandyCorn(2500);
+            } else if (rand < 85) {
+                wonTitle = '💰 1,000,000 골드 대박 (영웅 15%)';
+                wonDesc = '황금 코인 1,000,000 골드 획득!';
+                wonIcon = '💰';
+                wonColor = '#38bdf8';
+                money += 1000000;
+                updateMoney();
+            } else {
+                wonTitle = '🍀 2.0배 슈퍼 행운 30분 + 500,000 골드 (15%)';
+                wonDesc = '2.0배 슈퍼 행운 30분 발동 & 500,000 골드 획득!';
+                wonIcon = '🍀';
+                wonColor = '#4ade80';
+                money += 500000;
+                updateMoney();
+                isLuck15Active = true;
+                luck15EndTime = Math.max(Date.now(), luck15EndTime) + 30 * 60 * 1000;
+                updateLuck15Timer();
+            }
+
+            saveGame(true);
+            updateShopSkinUI();
+            updateInvSkinUI();
+
+            const modal = document.getElementById('lucky-unbox-modal');
+            const summaryEl = document.getElementById('lucky-unbox-summary');
+            const itemsEl = document.getElementById('lucky-unbox-items');
+            if (modal && summaryEl && itemsEl) {
+                summaryEl.innerText = `🎃 프리미엄 할로윈 럭키블록 개봉 결과!`;
+                itemsEl.innerHTML = `
+                    <div style="background: rgba(30, 41, 59, 0.95); border: 2px solid ${wonColor}; border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 0 20px ${wonColor}55;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 34px;">${wonIcon}</span>
+                            <div style="text-align: left;">
+                                <div style="font-size: 16px; font-weight: 900; color: #fff;">${wonTitle}</div>
+                                <div style="font-size: 11.5px; color: ${wonColor}; margin-top: 2px;">${wonDesc}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                modal.style.display = 'block';
+            }
+
+            floatTexts.push({ x: player.x, y: player.y - 90, text: `🎁 프리미엄 할로윈 럭키블록 개봉 완료!`, color: wonColor, life: 100, size: 21 });
+            const myCornEl = document.getElementById('cc-shop-my-corn');
+            if (myCornEl) myCornEl.innerText = candyCorn.toLocaleString();
+        }
+        window.buyPremiumHalloweenLuckyBlock = buyPremiumHalloweenLuckyBlock;
+
+        // 🎃🗡️ [아이템 3] halloween forge 스킨 구매 (2,000 캔디)
+        function buyHalloweenForgeSkin() {
+            if (!isAdmin() && candyCorn < 2000) {
+                alert('캔디콘이 부족합니다! 2,000개의 캔디콘이 필요합니다.');
+                return;
+            }
+            if (!isAdmin()) {
+                updateCandyCorn(-2000);
+            }
+            if (!ownedSkins.includes('halloween_forge')) {
+                ownedSkins.push('halloween_forge');
+            }
+            equippedSkin = 'halloween_forge';
+            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+            if (typeof saveGame === 'function') saveGame(true);
+
+            const myCornEl = document.getElementById('cc-shop-my-corn');
+            if (myCornEl) myCornEl.innerText = candyCorn.toLocaleString();
+
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🎃🗡️ [halloween forge] 스킨 장착 완료!', color: '#38bdf8', life: 100, size: 22 });
+            alert('🎉 [halloween forge 스킨 구매 완료!]\n\n할로윈 포지 스킨을 획득하고 즉시 장착했습니다!');
+        }
+        window.buyHalloweenForgeSkin = buyHalloweenForgeSkin;
         window.openCandyCornShopModal = openCandyCornShopModal;
 
         function closeCandyCornShopModal() {
@@ -21077,6 +21400,7 @@
                         else if (equippedAxe === 2) maxP = Math.floor(tree.maxProgress * (3.5 / 5.0)); // 3.5초
                         else if (equippedAxe === 3) maxP = Math.floor(tree.maxProgress * (3.2 / 5.0)); // 3.2초
                         else if (equippedAxe === 4) maxP = Math.floor(tree.maxProgress * (2.7 / 5.0)); // 2.7초 (고대 도끼)
+                        else if (equippedAxe === 5) maxP = Math.floor(tree.maxProgress * (2.5 / 5.0)); // 2.5초 (Halloween omega ax)
                         if (hasActivePet()) {
                             maxP = Math.floor(maxP * 0.8); // 🌲 미니 스킨 펫 효과: 나무 캐는 속도 20% 감소 (벌목 시간 20% 단축)
                         }
@@ -21275,6 +21599,60 @@
 
         function drawEquippedAxe(ctx, axeType, facing = 1) {
             if (!axeType || axeType === 0) return;
+            if (axeType === 5) {
+                // 🎃 Halloween omega ax (양날 초승달 오메가 배틀액스)
+                ctx.save();
+                // 흑요석 자루 + 금빛 룬 띠
+                ctx.fillStyle = '#18181b';
+                ctx.fillRect(-2.5, -28, 5, 32);
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillRect(-2.5, -20, 5, 2);
+                ctx.fillRect(-2.5, -10, 5, 2);
+
+                ctx.shadowColor = '#f97316';
+                ctx.shadowBlur = 12;
+
+                // 전면 도끼날 (앞날 - 불타는 오렌지 & 호박 골드)
+                let fGrad = ctx.createLinearGradient(0, -25, 18 * facing, -20);
+                fGrad.addColorStop(0, '#3b0764');
+                fGrad.addColorStop(0.5, '#ea580c');
+                fGrad.addColorStop(1, '#facc15');
+                ctx.fillStyle = fGrad;
+                ctx.strokeStyle = '#f97316';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.moveTo(0, -28);
+                ctx.lineTo(16 * facing, -34);
+                ctx.quadraticCurveTo(21 * facing, -22, 15 * facing, -11);
+                ctx.lineTo(0, -17);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // 후면 도끼날 (뒷날)
+                let bGrad = ctx.createLinearGradient(0, -25, -14 * facing, -20);
+                bGrad.addColorStop(0, '#3b0764');
+                bGrad.addColorStop(0.5, '#ea580c');
+                bGrad.addColorStop(1, '#facc15');
+                ctx.fillStyle = bGrad;
+                ctx.beginPath();
+                ctx.moveTo(0, -26);
+                ctx.lineTo(-13 * facing, -31);
+                ctx.quadraticCurveTo(-17 * facing, -22, -12 * facing, -13);
+                ctx.lineTo(0, -18);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // 중앙 붉은 보석 & 금빛 안광
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath(); ctx.arc(0, -22.5, 3.5, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath(); ctx.arc(0.5 * facing, -23, 1.5, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.restore();
+                return;
+            }
             ctx.save();
             // 자루 (Axe Handle)
             let handleCol = '#8B4513';
@@ -23216,6 +23594,301 @@
                     ctx.fill();
                 }
                 ctx.shadowBlur = 0;
+
+            // 🪓⚡ [신화 스킨] 도끼 콤비네이션 (Ax Combination) - 크래프팅 머신 고대도끼 조합 스킨
+            } else if (useSkin === 'ax_combination') {
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let time = Date.now() * 0.003;
+
+                // 하의: 검붉은 검사 하카마 바지
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.moveTo(-11, 6);
+                ctx.lineTo(-15, 23);
+                ctx.lineTo(15, 23);
+                ctx.lineTo(11, 6);
+                ctx.closePath();
+                ctx.fill();
+
+                // 상의: 네이비 무사 도복 & 골드 벨트
+                ctx.fillStyle = '#1e1b4b';
+                ctx.beginPath(); ctx.roundRect(-12, -4, 24, 14, [4, 4, 0, 0]); ctx.fill();
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillRect(-12, 4, 24, 3.5);
+
+                // 좌측 팔: 에너지 팔 (Energy Arm - 청록빛 네온 전기 번개 오라)
+                ctx.save();
+                ctx.translate(-13, 0);
+                let eGlow = (Math.sin(time * 5) + 1) * 0.5;
+                ctx.shadowColor = '#00f2fe';
+                ctx.shadowBlur = 12 + eGlow * 8;
+                let armGrad = ctx.createLinearGradient(0, -4, -6, 16);
+                armGrad.addColorStop(0, '#38bdf8');
+                armGrad.addColorStop(0.5, '#00f2fe');
+                armGrad.addColorStop(1, '#818cf8');
+                ctx.fillStyle = armGrad;
+                ctx.beginPath(); ctx.roundRect(-5, -2, 7, 18, 4); ctx.fill();
+                // 번개 스파크
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(-2, 0); ctx.lineTo(-4, 6); ctx.lineTo(-1, 10); ctx.lineTo(-4, 15);
+                ctx.stroke();
+                ctx.restore();
+
+                // 우측 손: Halloween omega ax 들고 있음
+                ctx.save();
+                ctx.translate(13, 2);
+                ctx.rotate(0.35 * facing);
+                drawEquippedAxe(ctx, 5, facing);
+                ctx.restore();
+
+                // 머리: 거대한 배틀액스 머리 (Double Axe Head)
+                // 좌측 날: 금도끼 / 우측 날: 은도끼 / 중앙: 귀여운 미소 얼굴
+                ctx.save();
+                ctx.translate(0, -18);
+
+                // 1) 좌측 금도끼 날 (Gold Axe Blade)
+                ctx.save();
+                let goldGrad = ctx.createLinearGradient(0, 0, -28, 0);
+                goldGrad.addColorStop(0, '#ca8a04');
+                goldGrad.addColorStop(0.5, '#facc15');
+                goldGrad.addColorStop(1, '#fef08a');
+                ctx.fillStyle = goldGrad;
+                ctx.strokeStyle = '#b45309';
+                ctx.lineWidth = 2;
+                ctx.shadowColor = '#facc15'; ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.moveTo(-6, -16);
+                ctx.lineTo(-24, -22);
+                ctx.quadraticCurveTo(-30, 0, -24, 18);
+                ctx.lineTo(-6, 12);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+
+                // 2) 우측 은도끼 날 (Silver Axe Blade)
+                ctx.save();
+                let silvGrad = ctx.createLinearGradient(0, 0, 28, 0);
+                silvGrad.addColorStop(0, '#64748b');
+                silvGrad.addColorStop(0.5, '#cbd5e1');
+                silvGrad.addColorStop(1, '#ffffff');
+                ctx.fillStyle = silvGrad;
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 2;
+                ctx.shadowColor = '#e2e8f0'; ctx.shadowBlur = 6;
+                ctx.beginPath();
+                ctx.moveTo(6, -16);
+                ctx.lineTo(24, -22);
+                ctx.quadraticCurveTo(30, 0, 24, 18);
+                ctx.lineTo(6, 12);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+
+                // 3) 도끼 중앙 소켓 & 둥근 귀여운 얼굴
+                ctx.fillStyle = '#ffeaa7';
+                ctx.strokeStyle = '#2d3436';
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(0, 0, 11, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+                // 귀여운 웃는 얼굴 (:D)
+                ctx.fillStyle = '#000';
+                ctx.beginPath(); ctx.arc(-3.5, -2, 1.8, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(3.5, -2, 1.8, 0, Math.PI * 2); ctx.fill();
+                ctx.lineWidth = 1.8; ctx.strokeStyle = '#000';
+                ctx.beginPath(); ctx.arc(0, 2, 4.5, 0.1, Math.PI - 0.1); ctx.stroke();
+                // 볼터치
+                ctx.fillStyle = '#ff7675';
+                ctx.beginPath(); ctx.arc(-5.5, 1.5, 1.5, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(5.5, 1.5, 1.5, 0, Math.PI * 2); ctx.fill();
+
+                ctx.restore(); // 머리 끝
+                ctx.restore();
+
+            // 🛡️⚔️ [우정 한정 스킨] 방패와 검 (Shield & Sword) - 코드 friendship 보상
+            } else if (useSkin === 'shield_and_sword') {
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let time = Date.now() * 0.003;
+                let legWalk = Math.sin(walkTimer * 0.2) * 4;
+
+                // --- 1. 좌측 방패 친구 (Shield Pal) ---
+                ctx.save();
+                ctx.translate(-13, 0);
+                // 다리
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(-6, 14, 4, 8 + legWalk);
+                ctx.fillRect(2, 14, 4, 8 - legWalk);
+                // 방패 몸체 (블루 & 골드 림)
+                let shGrad = ctx.createLinearGradient(0, -14, 0, 16);
+                shGrad.addColorStop(0, '#3b82f6');
+                shGrad.addColorStop(1, '#1d4ed8');
+                ctx.fillStyle = shGrad;
+                ctx.strokeStyle = '#facc15';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(-11, -12); ctx.lineTo(11, -12); ctx.lineTo(11, 4);
+                ctx.quadraticCurveTo(0, 18, 0, 18);
+                ctx.quadraticCurveTo(-11, 4, -11, 4);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // 방패 친구 얼굴
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(-4, -3, 2, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(4, -3, 2, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath(); ctx.arc(-4, -3, 1.2, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(4, -3, 1.2, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.6;
+                ctx.beginPath(); ctx.arc(0, 1, 3.5, 0.1, Math.PI - 0.1); ctx.stroke();
+                ctx.fillStyle = '#f472b6';
+                ctx.beginPath(); ctx.arc(-7, 1, 1.8, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(7, 1, 1.8, 0, Math.PI * 2); ctx.fill();
+                // 좌측 흔드는 손
+                ctx.fillStyle = '#3b82f6';
+                ctx.beginPath(); ctx.arc(-12, 0, 3, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+
+                // --- 2. 우측 검 친구 (Sword Pal) ---
+                ctx.save();
+                ctx.translate(13, 0);
+                // 다리
+                ctx.fillStyle = '#334155';
+                ctx.fillRect(-6, 14, 4, 8 - legWalk);
+                ctx.fillRect(2, 14, 4, 8 + legWalk);
+                // 검 기사 몸체
+                let swGrad = ctx.createLinearGradient(0, -14, 0, 16);
+                swGrad.addColorStop(0, '#e2e8f0');
+                swGrad.addColorStop(1, '#94a3b8');
+                ctx.fillStyle = swGrad;
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.roundRect(-9, -12, 18, 26, [5, 5, 4, 4]); ctx.fill(); ctx.stroke();
+
+                // 붉은 스카프
+                ctx.fillStyle = '#ef4444'; ctx.fillRect(-10, -4, 20, 3.5);
+
+                // 검 친구 얼굴
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath(); ctx.arc(-3.5, -7, 1.5, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(3.5, -7, 1.5, 0, Math.PI * 2); ctx.fill();
+                ctx.lineWidth = 1.6; ctx.strokeStyle = '#0f172a';
+                ctx.beginPath(); ctx.arc(0, -4, 3, 0.2, Math.PI - 0.2); ctx.stroke();
+                ctx.fillStyle = '#f87171';
+                ctx.beginPath(); ctx.arc(-5.5, -4, 1.5, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(5.5, -4, 1.5, 0, Math.PI * 2); ctx.fill();
+
+                // 우측 손 (미니 검 쥐고 있음)
+                ctx.save();
+                ctx.translate(10, 2);
+                ctx.rotate(0.3);
+                ctx.fillStyle = '#cbd5e1'; ctx.strokeStyle = '#475569'; ctx.lineWidth = 1;
+                ctx.fillRect(-1.5, -16, 3, 16);
+                ctx.fillStyle = '#f59e0b'; ctx.fillRect(-4, 0, 8, 2.5);
+                ctx.fillStyle = '#7f1d1d'; ctx.fillRect(-1.5, 2.5, 3, 5);
+                ctx.restore();
+                ctx.restore();
+
+                // --- 3. 중앙에서 손을 맞잡고 있는 부분 ---
+                ctx.fillStyle = '#ffeaa7';
+                ctx.strokeStyle = '#d97706';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.arc(0, 3, 4.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+                // 머리 위 떠오르는 우정 하트 & 별빛
+                let heartFloat = Math.sin(time * 3) * 3;
+                ctx.font = '13px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText("💛", 0, -18 + heartFloat);
+                ctx.font = '10px sans-serif';
+                ctx.fillText("✨", 8, -25 - heartFloat);
+                ctx.restore();
+
+            // 🎃🗡️ [할로윈 상점 스킨] 할로윈 포지 (Halloween Forge) - 2000 캔디콘 구매 스킨
+            } else if (useSkin === 'halloween_forge') {
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let time = Date.now() * 0.003;
+
+                // 1. 하의 & 신발
+                ctx.fillStyle = '#1e1b4b';
+                ctx.fillRect(-8, 12, 6, 10);
+                ctx.fillRect(2, 12, 6, 10);
+                ctx.fillStyle = '#78350f';
+                ctx.fillRect(-9, 19, 7, 4);
+                ctx.fillRect(2, 19, 7, 4);
+
+                // 2. 상의: 할로윈 갑옷 조끼
+                ctx.fillStyle = '#4a044e';
+                ctx.beginPath(); ctx.roundRect(-11, -3, 22, 16, [4, 4, 2, 2]); ctx.fill();
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                // 3. 좌측 손: 할로윈 호박 방패 (Shield)
+                ctx.save();
+                ctx.translate(-14, 4);
+                ctx.fillStyle = '#7c2d12';
+                ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(-7, -10); ctx.lineTo(7, -10); ctx.lineTo(7, 3);
+                ctx.quadraticCurveTo(0, 13, 0, 13);
+                ctx.quadraticCurveTo(-7, 3, -7, 3);
+                ctx.closePath();
+                ctx.fill(); ctx.stroke();
+                // 방패 호박 문장
+                ctx.fillStyle = '#facc15'; ctx.font = '9px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText("🎃", 0, 2);
+                ctx.restore();
+
+                // 4. 우측 손: 할로윈 불타는 검 (Sword)
+                ctx.save();
+                ctx.translate(14, 2);
+                ctx.rotate(0.25 * facing);
+                ctx.shadowColor = '#ea580c'; ctx.shadowBlur = 8;
+                let swGrad = ctx.createLinearGradient(0, -22, 0, 0);
+                swGrad.addColorStop(0, '#fef08a');
+                swGrad.addColorStop(0.5, '#f97316');
+                swGrad.addColorStop(1, '#991b1b');
+                ctx.fillStyle = swGrad;
+                ctx.beginPath();
+                ctx.moveTo(-2, 0); ctx.lineTo(-2, -20); ctx.lineTo(0, -26); ctx.lineTo(2, -20); ctx.lineTo(2, 0);
+                ctx.closePath(); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#f59e0b'; ctx.fillRect(-5, 0, 10, 2.5);
+                ctx.fillStyle = '#18181b'; ctx.fillRect(-1.5, 2.5, 3, 5);
+                ctx.restore();
+
+                // 5. 머리: 호박 포지 (Pumpkin Forge Head)
+                ctx.fillStyle = '#ea580c';
+                ctx.strokeStyle = '#7c2d12'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.ellipse(0, -12, 13, 11, 0, 0, Math.PI * 2);
+                ctx.fill(); ctx.stroke();
+
+                // 카빙 눈 & 미소 입
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath(); ctx.moveTo(-6, -15); ctx.lineTo(-3, -12); ctx.lineTo(-7, -12); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(6, -15); ctx.lineTo(7, -12); ctx.lineTo(3, -12); ctx.fill();
+                ctx.strokeStyle = '#fef08a'; ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(-6, -8); ctx.lineTo(-4, -6); ctx.lineTo(-2, -8); ctx.lineTo(0, -6);
+                ctx.lineTo(2, -8); ctx.lineTo(4, -6); ctx.lineTo(6, -8); ctx.stroke();
+
+                // 6. 뾰족한 할로윈 마법사 모자 (Hat)
+                ctx.save();
+                ctx.translate(0, -18);
+                ctx.fillStyle = '#1e1b4b'; ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.ellipse(0, 0, 18, 5, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#1e1b4b';
+                ctx.beginPath();
+                ctx.moveTo(-11, 0); ctx.quadraticCurveTo(-4, -14, -8, -25); ctx.lineTo(8, 0);
+                ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#ea580c'; ctx.fillRect(-9, -4, 18, 3.5);
+                ctx.fillStyle = '#facc15'; ctx.strokeRect(-3, -4.5, 6, 4.5);
+                ctx.restore();
+
+                ctx.restore();
 
             // ⚔️ [유저 요구] 일본풍 검사 (Japanese Ronin / Samurai) 스킨 렌더링
             } else if (useSkin === 'japanese_ronin') {
@@ -25985,43 +26658,7 @@
                 }
             }
 
-            // 🔮 [어드민 전용] 할로윈 폐허 하단 핑크색 물음표 미지의 지형 (Y: 2600 ~ 3600)
-            if (isAdmin()) {
-                let pinkGrad = ctx.createLinearGradient(0, 2600, 0, 3600);
-                pinkGrad.addColorStop(0, '#2d0938');
-                pinkGrad.addColorStop(0.5, '#4a0e4e');
-                pinkGrad.addColorStop(1, '#6b117b');
-                ctx.fillStyle = pinkGrad;
-                ctx.fillRect(0, 2600, GAME_WIDTH, 1000);
-
-                // 핑크 네온 사이버 바닥 격자선
-                ctx.strokeStyle = 'rgba(244, 114, 182, 0.3)';
-                ctx.lineWidth = 1.5;
-                for (let py = 2600; py <= 3600; py += 80) {
-                    ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(GAME_WIDTH, py); ctx.stroke();
-                }
-                for (let px = 0; px <= GAME_WIDTH; px += 80) {
-                    ctx.beginPath(); ctx.moveTo(px, 2600); ctx.lineTo(px, 3600); ctx.stroke();
-                }
-
-                // 핑크 네온 경계선 & 배너
-                ctx.strokeStyle = '#ec4899'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 2600); ctx.lineTo(GAME_WIDTH, 2600); ctx.stroke();
-                ctx.fillStyle = '#f472b6'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
-                ctx.fillText("🔮 [ADMIN] 미지의 차원: ??? (비밀 연구 구역)", GAME_WIDTH / 2, 2635);
-
-                // 거대한 부유 핑크빛 네온 물음표 (Y: 3050)
-                let qFloat = Math.sin(Date.now() * 0.003) * 14;
-                ctx.save();
-                ctx.translate(GAME_WIDTH / 2, 3050 + qFloat);
-                ctx.shadowColor = '#f43f5e'; ctx.shadowBlur = 35;
-                ctx.fillStyle = '#fda4af';
-                ctx.font = '900 120px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText("❓", 0, 0);
-                ctx.shadowBlur = 0;
-                ctx.restore();
-            }
+            // 🔮 핑크 물음표 지형 삭제 완료 - 캔디 조약돌 길과 지형이 Y: 4000 상점까지 시원하게 이어집니다.
 
             // ❄️ 얼음의 협곡 경계선 (Y: -8000, 관리자 전용)
             ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -8000); ctx.lineTo(GAME_WIDTH, -8000); ctx.stroke();
@@ -26117,8 +26754,8 @@
                 });
             }
 
-            // 🏪 [캔디콘 비밀 상점] 렌더 목록 등록 (맨 밑 Y: 3600)
-            if (isAdmin() && adminCandyCornShopSpawned) {
+            // 🏪 [캔디콘 비밀 상점] 렌더 목록 등록 (길의 끝자락 맨 밑 Y: 3600 상시 배치)
+            if (isAdmin()) {
                 renderList.push({ type: 'candyCornShop', obj: { x: GAME_WIDTH / 2, y: 3600 }, y: 3600 });
             }
             // 룰렛 머신 삭제 (사용자 요청: 룰렛은 일단 삭제해줘)
@@ -26229,6 +26866,7 @@
                         else if (equippedAxe === 2) maxP = Math.floor(t.maxProgress * (3.5 / 5.0));
                         else if (equippedAxe === 3) maxP = Math.floor(t.maxProgress * (3.2 / 5.0));
                         else if (equippedAxe === 4) maxP = Math.floor(t.maxProgress * (2.7 / 5.0));
+                        else if (equippedAxe === 5) maxP = Math.floor(t.maxProgress * (2.5 / 5.0));
                         if (hasActivePet()) {
                             maxP = Math.floor(maxP * 0.8); // 🌲 미니 스킨 펫 효과
                         }
@@ -27384,40 +28022,96 @@
         </button>
     </div>
 
-    <!-- 🏪 캔디콘 비밀 상점 모달 (맨 밑 Y: 3600) -->
-    <div id="candycorn-shop-modal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #1e1b4b, #09090b); color: white; padding: 22px 20px; border-radius: 20px; width: 92%; max-width: 440px; max-height: 88vh; overflow-y: auto; display: none; border: 2.5px solid #f59e0b; z-index: 960; box-shadow: 0 20px 70px rgba(0,0,0,0.95), 0 0 40px rgba(245, 158, 11, 0.4); text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <div style="font-size: 34px; margin-bottom: 2px;">🎃 🍬 🪽</div>
-        <h2 style="margin: 0 0 4px 0; color: #facc15; font-size: 20px; font-weight: 900;">캔디콘 비밀 상점</h2>
-        <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">보유한 캔디콘으로 초신화 날개 달린 호박 럭키블록을 구매하세요!</div>
-
-        <div style="background: rgba(15, 23, 42, 0.85); border: 2px solid #f59e0b; border-radius: 16px; padding: 14px; margin-bottom: 16px; text-align: center;">
-            <div style="font-size: 12px; color: #fde047; font-weight: bold; margin-bottom: 4px;">🍬 내 보유 캔디콘</div>
-            <div style="font-size: 24px; font-weight: 950; color: #facc15; text-shadow: 0 0 12px rgba(245, 158, 11, 0.6);" id="cc-shop-my-corn">0</div>
+    <!-- 🏪 candy corn shop 모달 (Image 1 요구사항 구현) -->
+    <div id="candycorn-shop-modal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #1e1b4b, #09090b); color: white; padding: 20px 18px; border-radius: 22px; width: 94%; max-width: 480px; max-height: 90vh; overflow-y: auto; display: none; border: 2.5px solid #f59e0b; z-index: 960; box-shadow: 0 20px 70px rgba(0,0,0,0.95), 0 0 40px rgba(245, 158, 11, 0.4); text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <!-- 상단 헤더 & 닫기 버튼 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(245, 158, 11, 0.35); padding-bottom: 8px; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 24px;">🍬🎃</span>
+                <span style="color: #facc15; font-size: 20px; font-weight: 950; letter-spacing: -0.5px;">candy corn shop</span>
+            </div>
+            <button onclick="closeCandyCornShopModal()" style="background: rgba(239, 68, 68, 0.2); border: 1.5px solid #ef4444; color: #fca5a5; width: 30px; height: 30px; border-radius: 50%; font-size: 15px; font-weight: 900; cursor: pointer;">✕</button>
         </div>
 
-        <!-- 🎃🪽 날개 달린 호박 럭키블록 카드 -->
-        <div style="background: rgba(30, 41, 59, 0.8); border: 2px solid #a855f7; border-radius: 16px; padding: 14px; margin-bottom: 16px; text-align: center;">
-            <h3 style="margin: 0 0 4px 0; color: #fde047; font-size: 17px; font-weight: 900;">🎃🪽 날개 달린 호박 럭키블록</h3>
-            <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 10px;">순백의 천사 날개와 흑요석 악마 날개가 달린 초호화 할로윈 럭키블록!</div>
-
-            <!-- 실시간 3D 캔버스 렌더러 -->
-            <div style="display: flex; justify-content: center; margin-bottom: 10px;">
-                <canvas id="halloween-winged-lucky-canvas" width="160" height="135" style="display: block; filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.5));"></canvas>
-            </div>
-
-            <div style="background: rgba(0, 0, 0, 0.35); border-radius: 10px; padding: 8px; margin-bottom: 12px; font-size: 11px; color: #94a3b8; line-height: 1.5;">
-                🏆 <strong>초신화 (5%):</strong> 호박 날개 대악마 스킨<br>
-                💎 <strong>신화 (10%):</strong> 별사탕 캔디 국왕 스킨<br>
-                🍬 <strong>전설 (20%):</strong> 캔디콘 1,200개 대박 환급<br>
-                💰 <strong>영웅 (30%):</strong> 500,000 골드 / <strong>희귀 (35%):</strong> 1.5배 행운+골드
-            </div>
-
-            <button onclick="buyHalloweenWingedLuckyBlock()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 950; font-size: 14.5px; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.5);">
-                🎁 1,000 캔디콘으로 구매 및 개봉
-            </button>
+        <!-- 🍬 내 보유 캔디콘 표시 -->
+        <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #f59e0b; border-radius: 12px; padding: 9px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 12.5px; color: #fde047; font-weight: bold;">🍬 내 보유 캔디콘</div>
+            <div style="font-size: 20px; font-weight: 950; color: #facc15; text-shadow: 0 0 10px rgba(245, 158, 11, 0.6);"><span id="cc-shop-my-corn">0</span> 개</div>
         </div>
 
-        <button onclick="closeCandyCornShopModal()" style="width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.12); color: #cbd5e1; font-weight: bold; font-size: 13px; border: none; border-radius: 8px; cursor: pointer;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- 🪓 아이템 1: Halloween omega ax (나무 패는 시간 2.5초, 가격 3000 캔디) -->
+            <div style="background: rgba(30, 41, 59, 0.85); border: 2px solid #f97316; border-radius: 14px; padding: 12px 14px; text-align: left; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 16px rgba(249, 115, 22, 0.25);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="color: #fb923c; font-size: 16px; font-weight: 950; display: flex; align-items: center; gap: 6px;">
+                            <span>🎃🪓</span> Halloween omega ax
+                        </div>
+                        <div style="font-size: 12px; color: #cbd5e1; margin-top: 2px;">
+                            ⚡ 나무 패는 시간: <strong style="color: #facc15;">2.5초</strong> (최고 Lv.5 도끼)
+                        </div>
+                    </div>
+                    <canvas id="cc-axe-preview" width="60" height="50" style="display: block; border-radius: 8px; background: rgba(0,0,0,0.3);"></canvas>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+                    <div style="font-size: 14px; font-weight: 900; color: #facc15;">
+                        💰 3,000 캔디
+                    </div>
+                    <button onclick="buyHalloweenOmegaAxe()" style="padding: 8px 18px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; font-weight: 900; font-size: 13px; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 3px 10px rgba(249, 115, 22, 0.4);">
+                        Buy (구매)
+                    </button>
+                </div>
+            </div>
+
+            <!-- 🎁 아이템 2: premium halloween lucky block (가격 1500 캔디) -->
+            <div style="background: rgba(30, 41, 59, 0.85); border: 2px solid #a855f7; border-radius: 14px; padding: 12px 14px; text-align: left; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 16px rgba(168, 85, 247, 0.25);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="color: #c084fc; font-size: 16px; font-weight: 950; display: flex; align-items: center; gap: 6px;">
+                            <span>🎃🪽</span> premium halloween lucky block
+                        </div>
+                        <div style="font-size: 11.5px; color: #cbd5e1; margin-top: 2px;">
+                            ✨ 천악 날개 호박 럭키블록 (초신화 스킨 & 100만 골드 & 대박 보상)
+                        </div>
+                    </div>
+                    <canvas id="halloween-winged-lucky-canvas" width="60" height="50" style="display: block; border-radius: 8px; background: rgba(0,0,0,0.3);"></canvas>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+                    <div style="font-size: 14px; font-weight: 900; color: #facc15;">
+                        💰 1,500 캔디
+                    </div>
+                    <button onclick="buyPremiumHalloweenLuckyBlock()" style="padding: 8px 18px; background: linear-gradient(135deg, #a855f7, #9333ea); color: white; font-weight: 900; font-size: 13px; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 3px 10px rgba(168, 85, 247, 0.4);">
+                        Buy (구매)
+                    </button>
+                </div>
+            </div>
+
+            <!-- 🎃🗡️ 아이템 3: halloween forge (마법모자 + 방패 + 검 스킨, 가격 2000 캔디) -->
+            <div style="background: rgba(30, 41, 59, 0.85); border: 2px solid #38bdf8; border-radius: 14px; padding: 12px 14px; text-align: left; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 16px rgba(56, 189, 248, 0.25);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="color: #38bdf8; font-size: 16px; font-weight: 950; display: flex; align-items: center; gap: 6px;">
+                            <span>🎃🗡️</span> halloween forge
+                        </div>
+                        <div style="font-size: 11.5px; color: #cbd5e1; margin-top: 2px;">
+                            🛡️⚔️ 할로윈 포지 스킨 (마법사 모자 + 호박 방패 + 불꽃 검 장착)
+                        </div>
+                    </div>
+                    <canvas id="cc-forge-preview" width="60" height="50" style="display: block; border-radius: 8px; background: rgba(0,0,0,0.3);"></canvas>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+                    <div style="font-size: 14px; font-weight: 900; color: #facc15; display: flex; align-items: center; gap: 6px;">
+                        <span style="text-decoration: line-through; color: #94a3b8; font-size: 12px;">2500</span>
+                        <span>💰 2,000 캔디</span>
+                    </div>
+                    <button onclick="buyHalloweenForgeSkin()" style="padding: 8px 18px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; font-weight: 900; font-size: 13px; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 3px 10px rgba(2, 132, 199, 0.4);">
+                        Buy (구매)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="closeCandyCornShopModal()" style="width: 100%; margin-top: 14px; padding: 10px; background: rgba(255, 255, 255, 0.12); color: #cbd5e1; font-weight: bold; font-size: 13px; border: none; border-radius: 8px; cursor: pointer;">
             닫기
         </button>
     </div>
