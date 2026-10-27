@@ -719,7 +719,7 @@
                 <button onclick="adminWarpToCandyTree()" style="padding: 10px; background: linear-gradient(135deg, #ec4899, #f43f5e); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.45);">🍭 [신규] 사탕 나무로 즉시 이동 (Y: 1350)</button>
                 <button onclick="adminToggleCandyCornShop()" style="padding: 10px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.45);">🏪 [신규] 캔디콘 상점 생성 토글 (맨 밑 Y: 3600)</button>
                 <button onclick="player.x = 300; player.y = -9500; closeAdminPanelModal(); floatTexts.push({ x: 300, y: -9580, text: '👼😈 천사악마 지형으로 이동 완료! (Lv 135)', color: '#facc15', life: 80, size: 20 });" style="padding: 10px; background: linear-gradient(135deg, #fef08a, #ef4444); color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(250, 204, 21, 0.45);">👼😈 [신규] 천사악마 지형 워프 (Lv 135, Y: -9500)</button>
-                <button onclick="closeAdminPanelModal(); openRingMinigameTeamSelect();" style="padding: 10px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.45);">💍 [신규] 링 모으기 대전 시작 (3분)</button>
+                <!-- 링 미니게임 테스터 버튼 제거됨 (코드는 보존) -->
                 <button onclick="adminAddCandyCorn()" style="padding: 10px; background: linear-gradient(135deg, #eab308, #ca8a04); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.45);">🍬 [신규] 캔디콘 +1,000개 즉시 충전</button>
                 <button onclick="adminRefillAllCandies()" style="padding: 10px; background: linear-gradient(135deg, #a855f7, #9333ea); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.45);">🍬 [신규] 사탕 6종 각 30개씩 충전</button>
                 <button onclick="adminResetAlienQuest()" style="padding: 10px; background: linear-gradient(135deg, #00cec9, #0984e3); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🧪 외계인 퀘스트 리셋 (재테스트)</button>
@@ -1798,14 +1798,93 @@
                 <button onclick="closeTradeMachineModal()" style="background: rgba(255,255,255,0.1); border: none; color: #cbd5e1; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
             </div>
 
-            <!-- 관리자 전용 레시피 탭 선택 바 (어드민 접속 시에만 노출) -->
-            <div id="craft-recipe-tabs" style="display: none; gap: 8px; margin-bottom: 12px;">
-                <button id="craft-tab-btn-ronin" onclick="selectCraftRecipe('ronin')" style="flex: 1; padding: 7px 10px; border-radius: 10px; border: 1.5px solid #38bdf8; background: #0284c7; color: white; font-weight: 900; font-size: 12px; cursor: pointer;">
+            <!-- 크래프팅 머신 3대 레시피 탭 바 -->
+            <div id="craft-recipe-tabs" style="display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap;">
+                <button id="craft-tab-btn-ronin" onclick="selectCraftRecipe('ronin')" style="flex: 1; min-width: 90px; padding: 8px 6px; border-radius: 10px; border: 1.5px solid #38bdf8; background: #0284c7; color: white; font-weight: 900; font-size: 11.5px; cursor: pointer;">
                     ⚔️ 일본풍 검사
                 </button>
-                <button id="craft-tab-btn-ax" onclick="selectCraftRecipe('ax')" style="flex: 1; padding: 7px 10px; border-radius: 10px; border: 1.5px solid #facc15; background: rgba(30, 41, 59, 0.85); color: #facc15; font-weight: 900; font-size: 12px; cursor: pointer;">
-                    👑 [ADMIN] 도끼 콤비네이션
+                <button id="craft-tab-btn-shards" onclick="selectCraftRecipe('shards')" style="flex: 1; min-width: 110px; padding: 8px 6px; border-radius: 10px; border: 1.5px solid #a855f7; background: rgba(30, 41, 59, 0.85); color: #c084fc; font-weight: 900; font-size: 11.5px; cursor: pointer;">
+                    🧩 럭키 스킨 조각 합성
                 </button>
+                <button id="craft-tab-btn-ax" onclick="selectCraftRecipe('ax')" style="flex: 1; min-width: 100px; padding: 8px 6px; border-radius: 10px; border: 1.5px solid #facc15; background: rgba(30, 41, 59, 0.85); color: #facc15; font-weight: 900; font-size: 11.5px; cursor: pointer;">
+                    👑 도끼 콤비네이션
+                </button>
+            </div>
+
+            <!-- 🧩 [신규] 럭키 스킨 조각 합성 뷰 (해파리 75, 천사 50, 악마 40, 에테론 6) -->
+            <div id="craft-shards-view" style="display: none;">
+                <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #a855f7; border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; text-align: left;">
+                    <div style="font-size: 12.5px; color: #c084fc; font-weight: 900;">🧩 럭키블럭 & 천악나무 스킨 조각 합성</div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-top: 3px; line-height: 1.4;">
+                        조각을 모아 크래프팅 머신에서 전설/신화 스킨을 직접 제작하세요!
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+                    <!-- 1. 🪼 해파리 스킨 (75개) -->
+                    <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #38bdf8; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 10px; text-align: left;">
+                            <span style="font-size: 30px;">🪼</span>
+                            <div>
+                                <div style="font-size: 14px; font-weight: 900; color: #ffffff;">해파리 스킨</div>
+                                <div style="font-size: 11px; color: #7dd3fc; margin-top: 1px;">
+                                    필요: 해파리 조각 75개 · <span id="craft-jelly-have" style="font-weight: bold; color: #facc15;">0/75</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="craft-btn-jelly" onclick="craftJellyfishSkin()" style="padding: 8px 14px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                            조합하기
+                        </button>
+                    </div>
+
+                    <!-- 2. 👼 천사 스킨 (50개) -->
+                    <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #facc15; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 10px; text-align: left;">
+                            <span style="font-size: 30px;">👼</span>
+                            <div>
+                                <div style="font-size: 14px; font-weight: 900; color: #ffffff;">천사 스킨</div>
+                                <div style="font-size: 11px; color: #fef08a; margin-top: 1px;">
+                                    필요: 천사 조각 50개 · <span id="craft-angel-have" style="font-weight: bold; color: #facc15;">0/50</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="craft-btn-angel" onclick="craftAngelSkin()" style="padding: 8px 14px; background: linear-gradient(135deg, #ca8a04, #facc15); color: #000; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                            조합하기
+                        </button>
+                    </div>
+
+                    <!-- 3. 😈 악마 스킨 (40개) -->
+                    <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #ef4444; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 10px; text-align: left;">
+                            <span style="font-size: 30px;">😈</span>
+                            <div>
+                                <div style="font-size: 14px; font-weight: 900; color: #ffffff;">악마 스킨</div>
+                                <div style="font-size: 11px; color: #fca5a5; margin-top: 1px;">
+                                    필요: 악마 조각 40개 · <span id="craft-devil-have" style="font-weight: bold; color: #facc15;">0/40</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="craft-btn-devil" onclick="craftDevilSkin()" style="padding: 8px 14px; background: linear-gradient(135deg, #dc2626, #ef4444); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                            조합하기
+                        </button>
+                    </div>
+
+                    <!-- 4. 🌓 에테론 스킨 (6개) -->
+                    <div style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(239, 68, 68, 0.25)); border: 1.5px solid #facc15; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 0 15px rgba(250, 204, 21, 0.25);">
+                        <div style="display: flex; align-items: center; gap: 10px; text-align: left;">
+                            <span style="font-size: 30px;">🌓</span>
+                            <div>
+                                <div style="font-size: 14px; font-weight: 900; color: #fde047;">에테론 (천사반 악마반)</div>
+                                <div style="font-size: 11px; color: #fde047; margin-top: 1px;">
+                                    필요: 에테론 조각 6개 · <span id="craft-etheron-have" style="font-weight: bold; color: #ffffff;">0/6</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="craft-btn-etheron" onclick="craftEtheronSkin()" style="padding: 8px 14px; background: linear-gradient(135deg, #facc15, #ea580c); color: #000; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                            초신화 조합
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- 👑 [어드민 전용] 도끼 콤비네이션 합성 뷰 -->
@@ -4940,15 +5019,20 @@
             currentCraftRecipe = recipe;
             const roninView = document.getElementById('craft-ronin-view');
             const axView = document.getElementById('craft-ax-view');
+            const shardsView = document.getElementById('craft-shards-view');
             const btnRonin = document.getElementById('craft-tab-btn-ronin');
             const btnAx = document.getElementById('craft-tab-btn-ax');
+            const btnShards = document.getElementById('craft-tab-btn-shards');
+
+            if (roninView) roninView.style.display = (recipe === 'ronin') ? 'block' : 'none';
+            if (axView) axView.style.display = (recipe === 'ax') ? 'block' : 'none';
+            if (shardsView) shardsView.style.display = (recipe === 'shards') ? 'block' : 'none';
+
+            if (btnRonin) { btnRonin.style.background = (recipe === 'ronin') ? '#0284c7' : 'rgba(30, 41, 59, 0.85)'; btnRonin.style.color = (recipe === 'ronin') ? '#fff' : '#94a3b8'; }
+            if (btnAx) { btnAx.style.background = (recipe === 'ax') ? '#f59e0b' : 'rgba(30, 41, 59, 0.85)'; btnAx.style.color = (recipe === 'ax') ? '#000' : '#facc15'; }
+            if (btnShards) { btnShards.style.background = (recipe === 'shards') ? '#a855f7' : 'rgba(30, 41, 59, 0.85)'; btnShards.style.color = (recipe === 'shards') ? '#fff' : '#c084fc'; }
 
             if (recipe === 'ax') {
-                if (roninView) roninView.style.display = 'none';
-                if (axView) axView.style.display = 'block';
-                if (btnRonin) { btnRonin.style.background = 'rgba(30, 41, 59, 0.85)'; btnRonin.style.color = '#94a3b8'; }
-                if (btnAx) { btnAx.style.background = '#f59e0b'; btnAx.style.color = '#000'; }
-
                 const statusEl = document.getElementById('craft-ancient-axe-status');
                 const hasAxe = (typeof isAxeOwned === 'function' && isAxeOwned(4)) || isAdmin();
                 if (statusEl) {
@@ -4956,15 +5040,200 @@
                     statusEl.style.color = hasAxe ? '#4ade80' : '#ef4444';
                 }
                 drawTradeAxPreviewCanvas();
-            } else {
-                if (roninView) roninView.style.display = 'block';
-                if (axView) axView.style.display = 'none';
-                if (btnRonin) { btnRonin.style.background = '#0284c7'; btnRonin.style.color = '#fff'; }
-                if (btnAx) { btnAx.style.background = 'rgba(30, 41, 59, 0.85)'; btnAx.style.color = '#facc15'; }
+            } else if (recipe === 'ronin') {
                 drawTradeSkinPreviewCanvas();
+            } else if (recipe === 'shards') {
+                updateCraftShardsUI();
             }
         }
         window.selectCraftRecipe = selectCraftRecipe;
+
+        // 🧩 럭키 스킨 조각 합성 UI 갱신 함수
+        function updateCraftShardsUI() {
+            if (typeof inventory === 'undefined') return;
+            const jellyCount = (inventory['해파리 조각'] || 0) + (inventory['해파리조각'] || 0);
+            const angelCount = (inventory['천사 조각'] || 0) + (inventory['천사의 조각'] || 0);
+            const devilCount = (inventory['악마 조각'] || 0) + (inventory['악마의 조각'] || 0);
+            const etheronCount = (inventory['에테론 조각'] || 0) + (inventory['에테론조각'] || 0);
+
+            const elJelly = document.getElementById('craft-jelly-have');
+            const elAngel = document.getElementById('craft-angel-have');
+            const elDevil = document.getElementById('craft-devil-have');
+            const elEtheron = document.getElementById('craft-etheron-have');
+
+            if (elJelly) elJelly.innerText = `${jellyCount}/75개`;
+            if (elAngel) elAngel.innerText = `${angelCount}/50개`;
+            if (elDevil) elDevil.innerText = `${devilCount}/40개`;
+            if (elEtheron) elEtheron.innerText = `${etheronCount}/6개`;
+
+            // 버튼 상태
+            const btnJelly = document.getElementById('craft-btn-jelly');
+            const btnAngel = document.getElementById('craft-btn-angel');
+            const btnDevil = document.getElementById('craft-btn-devil');
+            const btnEth = document.getElementById('craft-btn-etheron');
+
+            if (btnJelly) {
+                if (ownedSkins.includes('jellyfish')) { btnJelly.innerText = '✓ 보유 중 (장착)'; btnJelly.style.background = '#10b981'; }
+                else if (jellyCount >= 75 || isAdmin()) { btnJelly.innerText = '조합하기!'; btnJelly.style.background = 'linear-gradient(135deg, #0284c7, #38bdf8)'; }
+                else { btnJelly.innerText = `조각 부족 (${jellyCount}/75)`; btnJelly.style.background = '#475569'; }
+            }
+            if (btnAngel) {
+                if (ownedSkins.includes('angel')) { btnAngel.innerText = '✓ 보유 중 (장착)'; btnAngel.style.background = '#10b981'; btnAngel.style.color = '#fff'; }
+                else if (angelCount >= 50 || isAdmin()) { btnAngel.innerText = '조합하기!'; btnAngel.style.background = 'linear-gradient(135deg, #ca8a04, #facc15)'; btnAngel.style.color = '#000'; }
+                else { btnAngel.innerText = `조각 부족 (${angelCount}/50)`; btnAngel.style.background = '#475569'; btnAngel.style.color = '#fff'; }
+            }
+            if (btnDevil) {
+                if (ownedSkins.includes('devil')) { btnDevil.innerText = '✓ 보유 중 (장착)'; btnDevil.style.background = '#10b981'; }
+                else if (devilCount >= 40 || isAdmin()) { btnDevil.innerText = '조합하기!'; btnDevil.style.background = 'linear-gradient(135deg, #dc2626, #ef4444)'; }
+                else { btnDevil.innerText = `조각 부족 (${devilCount}/40)`; btnDevil.style.background = '#475569'; }
+            }
+            if (btnEth) {
+                if (ownedSkins.includes('etheron')) { btnEth.innerText = '✓ 보유 중 (장착)'; btnEth.style.background = '#10b981'; btnEth.style.color = '#fff'; }
+                else if (etheronCount >= 6 || isAdmin()) { btnEth.innerText = '초신화 조합!'; btnEth.style.background = 'linear-gradient(135deg, #facc15, #ea580c)'; btnEth.style.color = '#000'; }
+                else { btnEth.innerText = `조각 부족 (${etheronCount}/6)`; btnEth.style.background = '#475569'; btnEth.style.color = '#fff'; }
+            }
+        }
+        window.updateCraftShardsUI = updateCraftShardsUI;
+
+        // 해파리 스킨 조합 (해파리 조각 75개)
+        function craftJellyfishSkin() {
+            if (ownedSkins.includes('jellyfish')) {
+                equippedSkin = 'jellyfish';
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                saveGame(true);
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '🪼 [해파리] 스킨 장착 완료!', color: '#38bdf8', life: 80, size: 20 });
+                closeTradeMachineModal();
+                return;
+            }
+            const jellyCount = (inventory['해파리 조각'] || 0) + (inventory['해파리조각'] || 0);
+            if (jellyCount < 75 && !isAdmin()) {
+                alert(`❌ 해파리 조각이 부족합니다! (현재: ${jellyCount}개 / 필요: 75개)`);
+                return;
+            }
+            if (!isAdmin()) {
+                let remain = 75;
+                if ((inventory['해파리 조각'] || 0) >= remain) {
+                    inventory['해파리 조각'] -= remain;
+                } else {
+                    remain -= (inventory['해파리 조각'] || 0);
+                    inventory['해파리 조각'] = 0;
+                    inventory['해파리조각'] = Math.max(0, (inventory['해파리조각'] || 0) - remain);
+                }
+            }
+            if (!ownedSkins.includes('jellyfish')) ownedSkins.push('jellyfish');
+            equippedSkin = 'jellyfish';
+            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+            saveGame(true);
+            floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [해파리] 스킨 합성 성공!', color: '#38bdf8', life: 110, size: 22 });
+            alert(`🎉 [합성 대성공!]\n\n해파리 조각 75개를 모아 [해파리] 스킨을 획득하고 자동 장착했습니다!`);
+            closeTradeMachineModal();
+        }
+        window.craftJellyfishSkin = craftJellyfishSkin;
+
+        // 천사 스킨 조합 (천사 조각 50개)
+        function craftAngelSkin() {
+            if (ownedSkins.includes('angel')) {
+                equippedSkin = 'angel';
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                saveGame(true);
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '👼 [천사] 스킨 장착 완료!', color: '#fef08a', life: 80, size: 20 });
+                closeTradeMachineModal();
+                return;
+            }
+            const angelCount = (inventory['천사 조각'] || 0) + (inventory['천사의 조각'] || 0);
+            if (angelCount < 50 && !isAdmin()) {
+                alert(`❌ 천사 조각이 부족합니다! (현재: ${angelCount}개 / 필요: 50개)`);
+                return;
+            }
+            if (!isAdmin()) {
+                let remain = 50;
+                if ((inventory['천사 조각'] || 0) >= remain) {
+                    inventory['천사 조각'] -= remain;
+                } else {
+                    remain -= (inventory['천사 조각'] || 0);
+                    inventory['천사 조각'] = 0;
+                    inventory['천사의 조각'] = Math.max(0, (inventory['천사의 조각'] || 0) - remain);
+                }
+            }
+            if (!ownedSkins.includes('angel')) ownedSkins.push('angel');
+            equippedSkin = 'angel';
+            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+            saveGame(true);
+            floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [천사] 스킨 합성 성공!', color: '#fef08a', life: 110, size: 22 });
+            alert(`🎉 [합성 대성공!]\n\n천사 조각 50개를 모아 [천사] 스킨을 획득하고 자동 장착했습니다!`);
+            closeTradeMachineModal();
+        }
+        window.craftAngelSkin = craftAngelSkin;
+
+        // 악마 스킨 조합 (악마 조각 40개)
+        function craftDevilSkin() {
+            if (ownedSkins.includes('devil')) {
+                equippedSkin = 'devil';
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                saveGame(true);
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '😈 [악마] 스킨 장착 완료!', color: '#f87171', life: 80, size: 20 });
+                closeTradeMachineModal();
+                return;
+            }
+            const devilCount = (inventory['악마 조각'] || 0) + (inventory['악마의 조각'] || 0);
+            if (devilCount < 40 && !isAdmin()) {
+                alert(`❌ 악마 조각이 부족합니다! (현재: ${devilCount}개 / 필요: 40개)`);
+                return;
+            }
+            if (!isAdmin()) {
+                let remain = 40;
+                if ((inventory['악마 조각'] || 0) >= remain) {
+                    inventory['악마 조각'] -= remain;
+                } else {
+                    remain -= (inventory['악마 조각'] || 0);
+                    inventory['악마 조각'] = 0;
+                    inventory['악마의 조각'] = Math.max(0, (inventory['악마의 조각'] || 0) - remain);
+                }
+            }
+            if (!ownedSkins.includes('devil')) ownedSkins.push('devil');
+            equippedSkin = 'devil';
+            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+            saveGame(true);
+            floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [악마] 스킨 합성 성공!', color: '#f87171', life: 110, size: 22 });
+            alert(`🎉 [합성 대성공!]\n\n악마 조각 40개를 모아 [악마] 스킨을 획득하고 자동 장착했습니다!`);
+            closeTradeMachineModal();
+        }
+        window.craftDevilSkin = craftDevilSkin;
+
+        // 에테론 초신화 조합 (에테론 조각 6개)
+        function craftEtheronSkin() {
+            if (ownedSkins.includes('etheron')) {
+                equippedSkin = 'etheron';
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                saveGame(true);
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '🌓 [에테론] 초신화 스킨 장착 완료!', color: '#facc15', life: 80, size: 20 });
+                closeTradeMachineModal();
+                return;
+            }
+            const ethCount = (inventory['에테론 조각'] || 0) + (inventory['에테론조각'] || 0);
+            if (ethCount < 6 && !isAdmin()) {
+                alert(`❌ 에테론 조각이 부족합니다! (현재: ${ethCount}개 / 필요: 6개)`);
+                return;
+            }
+            if (!isAdmin()) {
+                let remain = 6;
+                if ((inventory['에테론 조각'] || 0) >= remain) {
+                    inventory['에테론 조각'] -= remain;
+                } else {
+                    remain -= (inventory['에테론 조각'] || 0);
+                    inventory['에테론 조각'] = 0;
+                    inventory['에테론조각'] = Math.max(0, (inventory['에테론조각'] || 0) - remain);
+                }
+            }
+            if (!ownedSkins.includes('etheron')) ownedSkins.push('etheron');
+            equippedSkin = 'etheron';
+            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+            saveGame(true);
+            floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉🌟 [에테론 (천사반 악마반)] 초신화 스킨 합성 성공!', color: '#facc15', life: 130, size: 24 });
+            alert(`🎉🌟 [초신화 합성 대성공!]\n\n에테론 조각 6개를 모아 최고 희귀도의 초신화 스킨 [에테론 (천사반 악마반)]을 획득하고 자동 장착했습니다!`);
+            closeTradeMachineModal();
+        }
+        window.craftEtheronSkin = craftEtheronSkin;
 
         function drawTradeAxPreviewCanvas() {
             const canvas = document.getElementById('trade-ax-preview');
@@ -5010,6 +5279,118 @@
         // ============================================================================
 
         // 🍬 [집 클릭 시 창 안 뜨고 20~25 캔디콘 즉시 지급 함수]
+
+        // 👼😈 [천악 지형] 줄 서 있는 천사 & 악마 주민 4명 렌더러 (X: 300, Y: -9680)
+        function drawAngelDevilQueueResidents(ctx, pos) {
+            ctx.save();
+            let qTime = Date.now() * 0.003;
+
+            // 1. 천사 주민 (X: pos.x - 45, Y: pos.y)
+            drawAngelResident(ctx, pos.x - 45, pos.y, '👼', '#facc15', qTime);
+            // 2. 악마 주민 (X: pos.x - 15, Y: pos.y + 4)
+            drawDevilResident(ctx, pos.x - 15, pos.y + 4, '😈', '#ef4444', qTime + 1);
+            // 3. 대천사 주민 (X: pos.x + 15, Y: pos.y + 8)
+            drawAngelResident(ctx, pos.x + 15, pos.y + 8, '👼✨', '#fde047', qTime + 2);
+            // 4. 대악마 주민 (X: pos.x + 45, Y: pos.y + 12)
+            drawDevilResident(ctx, pos.x + 45, pos.y + 12, '😈🔥', '#dc2626', qTime + 3);
+
+            // 말풍선 배너 (X: pos.x, Y: pos.y - 40)
+            ctx.save();
+            ctx.translate(pos.x, pos.y - 40);
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath(); ctx.roundRect(-80, -13, 160, 26, 7); ctx.fill();
+            ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.8; ctx.stroke();
+            ctx.fillStyle = '#fde047'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText("👼 천사 & 😈 악마 주민 교환소 (클릭)", 0, 0);
+            ctx.restore();
+
+            ctx.restore();
+        }
+        window.drawAngelDevilQueueResidents = drawAngelDevilQueueResidents;
+
+        function drawAngelResident(ctx, x, y, icon, col, t) {
+            ctx.save();
+            ctx.translate(x, y + Math.sin(t * 3) * 2.5);
+            ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(0, 12, 11, 4, 0, 0, Math.PI * 2); ctx.fill();
+            // 천사 광배
+            ctx.strokeStyle = '#fef08a'; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.ellipse(0, -14, 11, 4, 0, 0, Math.PI * 2); ctx.stroke();
+            ctx.fillStyle = col; ctx.beginPath(); ctx.arc(0, 0, 11, 0, Math.PI * 2); ctx.fill();
+            ctx.font = '14px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(icon, 0, 0);
+            ctx.restore();
+        }
+
+        function drawDevilResident(ctx, x, y, icon, col, t) {
+            ctx.save();
+            ctx.translate(x, y + Math.sin(t * 3) * 2.5);
+            ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(0, 12, 11, 4, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = col; ctx.beginPath(); ctx.arc(0, 0, 11, 0, Math.PI * 2); ctx.fill();
+            ctx.font = '14px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(icon, 0, 0);
+            ctx.restore();
+        }
+
+        // 👼😈 [천악 지형 줄 선 주민 거래 함수]
+        // 천악 나무에서 수확한 과일(깃털, 날개, 창, 삼지창, 링)을 캔디콘과 보너스 조각으로 교환!
+        function tradeAngelDevilResidents() {
+            if (typeof inventory === 'undefined') return;
+            const rates = [
+                { name: '천사의 깃털', corn: 5, gold: 5000 },
+                { name: '악마의 깃털', corn: 5, gold: 5000 },
+                { name: '천사의 날개', corn: 15, gold: 20000 },
+                { name: '악마의 날개', corn: 15, gold: 20000 },
+                { name: '천사의 창', corn: 35, gold: 60000 },
+                { name: '악마의 삼지창', corn: 35, gold: 60000 },
+                { name: '천사의 링', corn: 120, gold: 200000, shard: '천사 조각' },
+                { name: '악마의 링', corn: 120, gold: 200000, shard: '악마 조각' }
+            ];
+
+            let totalCorn = 0;
+            let totalGold = 0;
+            let bonusAngelShards = 0;
+            let bonusDevilShards = 0;
+            let tradedItems = [];
+
+            rates.forEach(item => {
+                const count = inventory[item.name] || 0;
+                if (count > 0) {
+                    const c = count * item.corn;
+                    const g = count * item.gold;
+                    totalCorn += c;
+                    totalGold += g;
+                    if (item.shard === '천사 조각') bonusAngelShards += count;
+                    if (item.shard === '악마 조각') bonusDevilShards += count;
+                    tradedItems.push(`${item.name} ${count}개 (+${c} 캔디콘, +${g.toLocaleString()}G)`);
+                    inventory[item.name] = 0;
+                }
+            });
+
+            if (totalCorn > 0 || totalGold > 0) {
+                updateCandyCorn(totalCorn);
+                money += totalGold;
+                updateMoney();
+                if (bonusAngelShards > 0) {
+                    inventory['천사 조각'] = (inventory['천사 조각'] || 0) + bonusAngelShards;
+                }
+                if (bonusDevilShards > 0) {
+                    inventory['악마 조각'] = (inventory['악마 조각'] || 0) + bonusDevilShards;
+                }
+                if (typeof updateInventoryUI === 'function') updateInventoryUI();
+                if (typeof saveGame === 'function') saveGame(true);
+
+                let bonusText = '';
+                if (bonusAngelShards > 0) bonusText += `\n👼 천사 조각 +${bonusAngelShards}개 보너스!`;
+                if (bonusDevilShards > 0) bonusText += `\n😈 악마 조각 +${bonusDevilShards}개 보너스!`;
+
+                floatTexts.push({ x: player.x, y: player.y - 75, text: `👼😈 [천악 주민 교환] 캔디콘 +${totalCorn}개, +${totalGold.toLocaleString()}G!`, color: '#facc15', life: 110, size: 22 });
+                alert(`👼😈 [천사 & 악마 주민과의 거래 완료!]\n\n천악 나무에서 얻은 전리품을 성공적으로 교환했습니다!\n\n📜 교환 내역:\n${tradedItems.join('\n')}\n\n🍬 획득 캔디콘: +${totalCorn.toLocaleString()}개\n💰 획득 골드: +${totalGold.toLocaleString()} 골드${bonusText}\n✨ 현재 캔디콘: ${candyCorn.toLocaleString()}개`);
+            } else {
+                floatTexts.push({ x: player.x, y: player.y - 70, text: `👼😈 주민들: "천악 나무에서 깃털, 날개, 창, 링을 수확해오세요!"`, color: '#fde047', life: 90, size: 16 });
+                alert('👼 천사 & 😈 악마 주민 교환소\n\n"천악 나무에서 수확한 [천사의 깃털, 악마의 깃털, 날개, 창, 삼지창, 링]을 가져오시면 두둑한 캔디콘과 골드, 그리고 보너스 스킨 조각으로 교환해드립니다!"');
+            }
+        }
+        window.tradeAngelDevilResidents = tradeAngelDevilResidents;
+
         function claimCandyHouseCornDirect(h) {
             if (!h) return;
             const now = Date.now();
@@ -11907,6 +12288,16 @@
                     }
                 }
 
+                // 👼😈 [천악 지형] 줄 서 있는 천사 & 악마 주민 클릭 거래 감지 (Y: -9680, X: 300)
+                if (isAdmin()) {
+                    let adDist = Math.hypot(cx - 300, cy - (-9680));
+                    let adPlayerDist = Math.hypot(player.x - 300, player.y - (-9680));
+                    if (adDist < 95 || (isSpacebar && adPlayerDist < 115)) {
+                        tradeAngelDevilResidents();
+                        return;
+                    }
+                }
+
 
 
                 // 🏪 [캔디콘 비밀 상점] 클릭 감지 (맨 밑 Y: 3600)
@@ -13733,7 +14124,7 @@
             }
         }, 50);
 
-        // 👑 [ADMIN 전용] 럭키블럭 구매 및 언박싱
+        // 👑 [럭키블럭 개편] 스킨 완제품 대신 스킨 파편 드롭 & 크래프트 머신 조합
         function buyLuckyBlocks(count, price) {
             if (!isAdmin()) {
                 alert('🔒 최고 관리자(ADMIN) 전용 기능입니다!');
@@ -13749,30 +14140,53 @@
                 updateMoney();
             }
 
-            const drops = [];
+            const shardDrops = [];
             for (let i = 0; i < count; i++) {
                 const rand = Math.random() * 100;
-                let wonId = 'jellyfish';
+                let wonShard = '해파리 조각';
+                let wonCount = 1;
+                let shardIcon = '🪼';
+                let rarityColor = '#38bdf8';
+                let rarityName = '일반 (50%)';
+
                 if (rand < 50) {
-                    wonId = 'jellyfish'; // 50%
+                    wonShard = '해파리 조각';
+                    wonCount = Math.floor(Math.random() * 3) + 2; // 2~4개
+                    shardIcon = '🪼';
+                    rarityColor = '#38bdf8';
+                    rarityName = '일반 (50%)';
                 } else if (rand < 75) {
-                    wonId = 'phoenix';   // 25%
+                    wonShard = '천사 조각';
+                    wonCount = Math.floor(Math.random() * 2) + 2; // 2~3개
+                    shardIcon = '👼';
+                    rarityColor = '#fef08a';
+                    rarityName = '희귀 (25%)';
                 } else if (rand < 90) {
-                    wonId = 'angel';     // 15%
+                    wonShard = '천사 조각';
+                    wonCount = Math.floor(Math.random() * 2) + 1; // 1~2개
+                    shardIcon = '👼';
+                    rarityColor = '#fef08a';
+                    rarityName = '희귀 (15%)';
                 } else if (rand < 99) {
-                    wonId = 'devil';     // 9%
+                    wonShard = '악마 조각';
+                    wonCount = Math.floor(Math.random() * 2) + 1; // 1~2개
+                    shardIcon = '😈';
+                    rarityColor = '#f87171';
+                    rarityName = '영웅 (9%)';
                 } else {
-                    wonId = 'etheron';   // 1% 초신화
+                    wonShard = '에테론 조각';
+                    wonCount = 1;
+                    shardIcon = '🌓';
+                    rarityColor = '#facc15';
+                    rarityName = '초신화 (1%)';
                 }
-                drops.push(wonId);
-                if (!ownedSkins.includes(wonId)) {
-                    ownedSkins.push(wonId);
-                }
+
+                inventory[wonShard] = (inventory[wonShard] || 0) + wonCount;
+                shardDrops.push({ name: wonShard, count: wonCount, icon: shardIcon, color: rarityColor, rarity: rarityName });
             }
 
             saveGame(true);
-            updateShopSkinUI();
-            updateInvSkinUI();
+            if (typeof updateInventoryUI === 'function') updateInventoryUI();
 
             // 결과 모달 띄우기
             const modal = document.getElementById('lucky-unbox-modal');
@@ -13780,41 +14194,42 @@
             const itemsEl = document.getElementById('lucky-unbox-items');
 
             if (modal && summaryEl && itemsEl) {
-                summaryEl.innerText = `총 ${count}개의 럭키블럭을 오픈했습니다!`;
-                const countsById = {};
-                drops.forEach(id => { countsById[id] = (countsById[id] || 0) + 1; });
+                summaryEl.innerText = `총 ${count}개의 럭키블럭에서 스킨 파편을 획득했습니다!`;
+                const totalsByName = {};
+                const metaByName = {};
+                shardDrops.forEach(d => {
+                    totalsByName[d.name] = (totalsByName[d.name] || 0) + d.count;
+                    metaByName[d.name] = d;
+                });
 
-                const skinOrder = ['etheron', 'devil', 'angel', 'phoenix', 'jellyfish'];
-                itemsEl.innerHTML = skinOrder.filter(id => countsById[id]).map(id => {
-                    const skin = skinsData.find(s => s.id === id) || { name: id, icon: '✨' };
-                    let rarityColor = '#38bdf8';
-                    let rarityName = '희귀';
-                    if (id === 'etheron') { rarityColor = '#facc15'; rarityName = '초신화 (1%)'; }
-                    else if (id === 'devil') { rarityColor = '#f87171'; rarityName = '영웅 (9%)'; }
-                    else if (id === 'angel') { rarityColor = '#fef08a'; rarityName = '영웅 (15%)'; }
-                    else if (id === 'phoenix') { rarityColor = '#fb923c'; rarityName = '전설 (25%)'; }
-                    else if (id === 'jellyfish') { rarityColor = '#38bdf8'; rarityName = '일반 (50%)'; }
-
+                const shardOrder = ['에테론 조각', '악마 조각', '천사 조각', '해파리 조각'];
+                itemsEl.innerHTML = shardOrder.filter(name => totalsByName[name]).map(name => {
+                    const meta = metaByName[name];
                     return `
-                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid ${rarityColor}; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 0 12px ${rarityColor}44;">
+                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid ${meta.color}; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 0 12px ${meta.color}44;">
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 26px;">${skin.icon}</span>
+                                <span style="font-size: 26px;">${meta.icon}</span>
                                 <div style="text-align: left;">
-                                    <div style="font-size: 14px; font-weight: bold; color: #fff;">${skin.name}</div>
-                                    <div style="font-size: 10.5px; color: ${rarityColor}; font-weight: bold;">${rarityName}</div>
+                                    <div style="font-size: 14px; font-weight: bold; color: #fff;">${name}</div>
+                                    <div style="font-size: 10.5px; color: ${meta.color}; font-weight: bold;">${meta.rarity} · (현재 보유: ${inventory[name] || 0}개)</div>
                                 </div>
                             </div>
                             <div style="font-size: 16px; font-weight: 900; color: #facc15;">
-                                x ${countsById[id]}개
+                                +${totalsByName[name]}개
                             </div>
                         </div>
                     `;
-                }).join('');
+                }).join('') + `
+                    <div style="background: rgba(15, 23, 42, 0.9); border: 1px dashed #38bdf8; border-radius: 8px; padding: 8px; margin-top: 8px; font-size: 11px; color: #cbd5e1; text-align: center;">
+                        🛠️ <strong>크래프팅 머신</strong>에서 스킨으로 조합할 수 있습니다!<br>
+                        (해파리 75개 / 천사 50개 / 악마 40개 / 에테론 6개)
+                    </div>
+                `;
 
                 modal.style.display = 'block';
             }
 
-            floatTexts.push({ x: player.x, y: player.y - 100, text: `🎁 럭키블럭 ${count}개 개봉 완료!`, color: '#facc15', life: 100, size: 22 });
+            floatTexts.push({ x: player.x, y: player.y - 100, text: `🎁 럭키블럭 ${count}개에서 스킨 파편 획득!`, color: '#facc15', life: 100, size: 22 });
         }
 
         function updateShopSkinUI() {
@@ -21153,13 +21568,18 @@
         setTimeout(checkAndShowFrostCanyonNotice, 1500);
         setInterval(saveGame, 1000);
 
+        // 👼😈 [천악 나무 신규 드롭 테이블]
+        // 65% 일반: 천사의 깃털, 악마의 깃털
+        // 15% 희귀: 천사의 날개, 악마의 날개
+        // 10% 영웅: 천사의 창, 악마의 삼지창
+        // 8% 전설: 천사의 조각, 악마의 조각
+        // 9% 디바인: 천사의 링, 악마의 링
         const angelDevilDropTables = [
-            { chance: 0.60, color: '#fbc531', xp: 20, price: 3000, items: ['알사탕'] },
-            { chance: 0.15, color: '#e84118', xp: 50, price: 10000, items: ['롤리팝'] },
-            { chance: 0.10, color: '#7f8c8d', xp: 120, price: 30000, items: ['초콜릿'] },
-            { chance: 0.08, color: '#9b59b6', xp: 250, price: 70000, items: ['과일젤리'] },
-            { chance: 0.05, color: '#f5cd79', xp: 600, price: 180000, items: ['마시멜로우'] },
-            { chance: 0.02, color: '#f39c12', xp: 1500, price: 500000, items: ['별사탕 킹캔디'] }
+            { chance: 0.65, grade: '일반', color: '#e2e8f0', xp: 30, price: 5000, items: ['천사의 깃털', '악마의 깃털'] },
+            { chance: 0.15, grade: '희귀', color: '#38bdf8', xp: 100, price: 20000, items: ['천사의 날개', '악마의 날개'] },
+            { chance: 0.10, grade: '영웅', color: '#a855f7', xp: 300, price: 60000, items: ['천사의 창', '악마의 삼지창'] },
+            { chance: 0.08, grade: '전설', color: '#f59e0b', xp: 1000, price: 150000, items: ['천사의 조각', '악마의 조각'] },
+            { chance: 0.09, grade: '디바인', color: '#ec4899', xp: 3000, price: 400000, items: ['천사의 링', '악마의 링'] }
         ];
 
         function getTables(type) {
@@ -21385,9 +21805,9 @@
             } else if (!isAdmin() && level < 125 && player.y <= -7970 && player.y >= -9000) {
                 player.y = -7960;
                 if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음의 협곡: 레벨 125 달성 시 입장 가능!`, color: '#38bdf8', life: 50 });
-            } else if (!isAdmin() && level < 135 && player.y <= -8970 && player.y >= -10900) {
+            } else if (!isAdmin() && player.y <= -8970) {
                 player.y = -8960;
-                if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 천사악마 지역: 레벨 135 달성 시 입장 가능!`, color: '#facc15', life: 50 });
+                if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 천사악마 지역은 관리자(Admin) 전용 지역입니다!`, color: '#facc15', life: 60, size: 18 });
             }
 
             if (level < 3 && player.y < 30 && player.y > -500) {
@@ -27073,7 +27493,7 @@
             // 👼😈 신규 지역: 천사의 성역 | 악마의 심연 경계선 (Y: -9000, 레벨 135 진입 가능)
             ctx.strokeStyle = '#facc15'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -9000); ctx.lineTo(GAME_WIDTH, -9000); ctx.stroke();
             ctx.fillStyle = '#fde047'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
-            ctx.fillText("👼 천사의 성역 | 😈 악마의 심연 (레벨 135 진입 가능)", GAME_WIDTH / 2, -9020);
+            ctx.fillText("👼 천사의 성역 | 😈 악마의 심연 (👑 ADMIN ONLY)", GAME_WIDTH / 2, -9020);
 
             // ❄️ 얼음의 협곡 경계선 (Y: -8000, 관리자 전용)
             ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -8000); ctx.lineTo(GAME_WIDTH, -8000); ctx.stroke();
@@ -27174,6 +27594,8 @@
                 renderList.push({ type: 'candyCornShop', obj: { x: GAME_WIDTH / 2, y: 3600 }, y: 3600 });
                 // 🍬 [상점 앞 줄 서 있는 주민들] (X: 210, Y: 3630)
                 renderList.push({ type: 'candyQueueResidents', obj: { x: 210, y: 3630 }, y: 3630 });
+                // 👼😈 [천악 지형] 줄 서 있는 천사 & 악마 주민들 (X: 300, Y: -9680)
+                renderList.push({ type: 'angelDevilQueueResidents', obj: { x: GAME_WIDTH / 2, y: -9680 }, y: -9680 });
             }
 
             // 💍 [링 모으기 미니게임] 스폰된 링 렌더 등록
@@ -27753,6 +28175,8 @@
                     drawCandyCornShop(ctx, item.obj);
                 } else if (item.type === 'candyQueueResidents') {
                     drawCandyQueueResidents(ctx, item.obj);
+                } else if (item.type === 'angelDevilQueueResidents') {
+                    drawAngelDevilQueueResidents(ctx, item.obj);
                 } else if (item.type === 'ringItem') {
                     drawMinigameRing(ctx, item.obj);
                 } else if (item.type === 'craftingMachine') {
