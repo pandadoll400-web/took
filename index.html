@@ -1422,6 +1422,56 @@
             <button class="close-btn" onclick="document.getElementById('halloween-modal').style.display='none'" style="background: #4a235a; border: 1px solid #8e44ad;">닫기</button>
         </div>
 
+        <!-- 🍭 캔디 왕국 도감 (사탕 도감) - 사탕 상점 클릭 시 오픈 -->
+        <div id="candy-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #2e1065, #0f051d); color: white; padding: 22px 18px; border-radius: 18px; width: 90%; max-width: 440px; max-height: 82%; overflow-y: auto; display: none; border: 2.5px solid #ec4899; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(236, 72, 153, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(236, 72, 153, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 26px;">👑🍭</span>
+                    <div>
+                        <h2 style="margin: 0; color: #f472b6; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">사탕 도감 (캔디 왕국 도감)</h2>
+                        <span style="font-size: 11px; color: #cbd5e1;">사탕 나무 6종 과일을 모두 수집 시 [캔디 왕국의 군주] 스킨 지급!</span>
+                    </div>
+                </div>
+                <button onclick="closeCandyIndex()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
+            </div>
+            <div style="background: rgba(30, 41, 59, 0.8); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; border: 1px solid #334155;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; margin-bottom: 6px;">
+                    <span style="color: #cbd5e1;">사탕 도감 수집 진행도</span>
+                    <span id="candy-progress-text" style="color: #f472b6;">0 / 6 (0%)</span>
+                </div>
+                <div style="background: #0f172a; height: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #1e293b;">
+                    <div id="candy-progress-bar" style="background: linear-gradient(90deg, #ec4899, #facc15); height: 100%; width: 0%; transition: width 0.4s ease;"></div>
+                </div>
+            </div>
+            <div id="candy-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;"></div>
+            <div id="candy-claim-area" style="text-align: center; margin-top: 10px;"></div>
+        </div>
+
+        <!-- 👼😈 천악 도감 모달 (천악 상점 클릭 시 오픈) -->
+        <div id="angel-devil-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #1e1b4b, #09090b); color: white; padding: 22px 18px; border-radius: 18px; width: 90%; max-width: 440px; max-height: 82%; overflow-y: auto; display: none; border: 2.5px solid #a855f7; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(168, 85, 247, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(168, 85, 247, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 26px;">🌓👑</span>
+                    <div>
+                        <h2 style="margin: 0; color: #c084fc; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">천악 도감 (천사의 성역 & 악마의 심연)</h2>
+                        <span style="font-size: 11px; color: #cbd5e1;">천악 나무 10종 아이템을 모두 수집 시 [에테론] 스킨 지급!</span>
+                    </div>
+                </div>
+                <button onclick="closeAngelDevilIndex()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
+            </div>
+            <div style="background: rgba(30, 41, 59, 0.8); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; border: 1px solid #334155;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; margin-bottom: 6px;">
+                    <span style="color: #cbd5e1;">천악 도감 수집 진행도</span>
+                    <span id="angel-devil-progress-text" style="color: #c084fc;">0 / 10 (0%)</span>
+                </div>
+                <div style="background: #0f172a; height: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #1e293b;">
+                    <div id="angel-devil-progress-bar" style="background: linear-gradient(90deg, #38bdf8, #a855f7, #ef4444); height: 100%; width: 0%; transition: width 0.4s ease;"></div>
+                </div>
+            </div>
+            <div id="angel-devil-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;"></div>
+            <div id="angel-devil-claim-area" style="text-align: center; margin-top: 10px;"></div>
+        </div>
+
         <!-- 🚀🌌 우주 도감 모달 (외계인 부품 & 우주비행사 스킨) -->
         <div id="space-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #0f172a, #050510); color: white; padding: 22px 18px; border-radius: 18px; width: 88%; max-width: 440px; max-height: 82%; overflow-y: auto; display: none; border: 2px solid #00f2fe; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(0, 242, 254, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(0, 242, 254, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
@@ -1579,14 +1629,14 @@
             </button>
         </div>
 
-        <!-- 🐧 펭귄 & 펫 도감 모달 -->
+        <!-- 🐾 인큐베이터 3대 고유 펫 도감 모달 -->
         <div id="penguin-codex-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 480px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(56, 189, 248, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 26px;">🐧</span>
+                    <span style="font-size: 26px;">🐾</span>
                     <div>
-                        <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold;">펭귄 & 얼음 펫 도감</h2>
-                        <span style="font-size: 11px; color: #94a3b8;">얼음의 협곡 주민 발굴 도감</span>
+                        <h2 style="margin: 0; color: #38bdf8; font-size: 19px; font-weight: bold;">동행 펫 도감 (인큐베이터)</h2>
+                        <span style="font-size: 11px; color: #94a3b8;">인큐베이터 부화 3대 고유 펫 도감</span>
                     </div>
                 </div>
                 <button onclick="closePenguinCodexModal()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
@@ -1595,8 +1645,8 @@
             <!-- 수집 진행도 바 -->
             <div style="background: rgba(30, 41, 59, 0.8); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; border: 1px solid #334155;">
                 <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; margin-bottom: 6px;">
-                    <span style="color: #cbd5e1;">펭귄/펫 도감 수집 진행도</span>
-                    <span id="penguin-progress-text" style="color: #38bdf8;">0 / 8 (0%)</span>
+                    <span style="color: #cbd5e1;">펫 도감 수집 진행도</span>
+                    <span id="penguin-progress-text" style="color: #38bdf8;">0 / 3 (0%)</span>
                 </div>
                 <div style="background: #0f172a; height: 12px; border-radius: 6px; overflow: hidden; border: 1px solid #1e293b;">
                     <div id="penguin-progress-bar" style="background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6); height: 100%; width: 0%; transition: width 0.4s ease;"></div>
@@ -1666,6 +1716,9 @@
 
             <!-- 화석 카드 그리드 -->
             <div id="fossil-codex-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px;"></div>
+
+            <!-- 🐧 펭귄 스킨 보상 획득 영역 -->
+            <div id="fossil-claim-area" style="text-align: center; margin-bottom: 14px;"></div>
 
             <!-- 다른 도감 바로가기 링크 버튼 -->
             <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;">
@@ -2308,18 +2361,11 @@
             { id: 'egg_rock', name: '공룡알 조각 교환 바위', x: 440, y: -8340, radius: 30, hitTimer: 0 }
         ];
 
-        // 🐧 얼음 지형 주민 NPC 객체 (x: 480, y: -8520)
-        const iceVillager = {
-            x: 480,
-            y: -8520,
-            radius: 30,
-            name: '얼음 주민 [펭구]'
-        };
+        // 🐧 얼음 지형 주민 NPC (유저 요청으로 삭제됨)
+        const iceVillager = null;
 
         function openIceVillagerModal() {
             closeAllModals();
-            const modal = document.getElementById('ice-villager-modal');
-            if (modal) modal.style.display = 'block';
         }
         function closeIceVillagerModal() {
             const modal = document.getElementById('ice-villager-modal');
@@ -2328,16 +2374,11 @@
         window.openIceVillagerModal = openIceVillagerModal;
         window.closeIceVillagerModal = closeIceVillagerModal;
 
-        // 🐧 펭귄 & 펫 도감 데이터 및 로직
+        // 🐾 인큐베이터 3대 고유 펫 도감 데이터 및 로직 (일반 고릴라, 일반 늑대, 일반 고양이)
         const PENGUIN_PET_CODEX_DATA = [
-            { id: 'penguin', name: '꼬마 펭귄', icon: '🐧', grade: '스페셜', desc: '인큐베이터에서 부화한 사랑스러운 꼬마 펭귄. 이동속도 +15% 증가!' },
-            { id: 'penguin_butler', name: '황제 펭귄 집사', icon: '🐧🎩', grade: '희귀', desc: '얼음 왕국의 정중한 집사 펭귄. 상점 판매 시 골드 +50% 보너스 정산!' },
-            { id: 'frost_wolf', name: '칠흑의 눈꽃 늑대', icon: '🐺❄️', grade: '신화', desc: '태고의 만년설 속 영수. 과일 수확량 +50% 및 빙결 오라 발동!' },
-            { id: 'baby_ice_dragon', name: '빙룡 베이비', icon: '🐉❄️', grade: '전설', desc: '고대 서리룡의 새끼. 보스전 피해량 +35% 증가!' },
-            { id: 'aurora_fox', name: '오로라 구미호', icon: '🦊✨', grade: '고대', desc: '극광의 빛을 품은 신비로운 여우. 15초마다 황금 과일 자동 드랍!' },
-            { id: 'pet_gorilla', name: '일반 고릴라', icon: '🦍', grade: '일반', desc: '인큐베이터 부화 고릴라. 벌목 속도 +20% 증가!' },
-            { id: 'pet_wolf', name: '일반 늑대', icon: '🐺', grade: '희귀', desc: '인큐베이터 부화 늑대. 벌목 속도 +20% 증가!' },
-            { id: 'pet_cat', name: '일반 고양이', icon: '🐱', grade: '초희귀', desc: '인큐베이터 부화 고양이. 벌목 속도 +20% 증가!' }
+            { id: 'pet_gorilla', name: '일반 고릴라', icon: '🦍', grade: '일반 (60%)', desc: '인큐베이터 부화 고릴라. 우직하게 나무를 벱니다. 벌목 속도 +20% 증가!' },
+            { id: 'pet_wolf', name: '일반 늑대', icon: '🐺', grade: '희귀 (25%)', desc: '인큐베이터 부화 늑대. 날카로운 발톱을 지녔습니다. 벌목 속도 +20% 증가!' },
+            { id: 'pet_cat', name: '일반 고양이', icon: '🐱', grade: '초희귀 (15%)', desc: '인큐베이터 부화 고양이. 민첩하게 나무를 벱니다. 벌목 속도 +20% 증가!' }
         ];
 
         function openPenguinCodexModal() {
@@ -2703,7 +2744,52 @@
                     </div>
                 `;
             });
+
+            // 🐧 20종 완전 수집 시 꼬마 펭귄 스킨 획득 버튼 노출
+            const claimArea = document.getElementById('fossil-claim-area');
+            if (claimArea) {
+                if (collectedCount >= FOSSIL_ITEMS.length) {
+                    if (!ownedSkins.includes('penguin')) {
+                        claimArea.innerHTML = `
+                            <div style="background: linear-gradient(135deg, #0284c7, #0369a1); border: 2px solid #38bdf8; border-radius: 12px; padding: 12px; text-align: center; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);">
+                                <div style="font-size: 14px; font-weight: 900; color: #ffffff; margin-bottom: 6px;">🎉 얼음의 협곡 20종 고대 화석 완전 수집 달성!</div>
+                                <button onclick="claimPenguinSkin()" style="padding: 10px 24px; background: #facc15; color: #0f172a; border: none; border-radius: 8px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(250, 204, 21, 0.4);">
+                                    🐧 꼬마 펭귄 스킨 획득하기!
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        claimArea.innerHTML = `
+                            <div style="color: #38bdf8; font-weight: bold; font-size: 13px; padding: 8px; background: rgba(56, 189, 248, 0.15); border-radius: 8px; border: 1px solid #38bdf8;">
+                                ✓ 🐧 꼬마 펭귄 스킨 획득 완료 (보유 중)
+                            </div>
+                        `;
+                    }
+                } else {
+                    claimArea.innerHTML = '';
+                }
+            }
         }
+
+        function claimPenguinSkin() {
+            let collectedCount = 0;
+            FOSSIL_ITEMS.forEach(item => {
+                if ((inventory[item.name] || 0) > 0 || fossilCollection.includes(item.name)) collectedCount++;
+            });
+            if (collectedCount >= FOSSIL_ITEMS.length && !ownedSkins.includes('penguin')) {
+                ownedSkins.push('penguin');
+                useSkin = 'penguin';
+                equippedSkin = 'penguin';
+                try { localStorage.setItem('equipped_skin', 'penguin'); } catch(e) {}
+                alert('🐧 [꼬마 펭귄 스킨 획득 완료!]\n\n얼음의 협곡 20종 고대 화석을 모두 모아 [꼬마 펭귄] 스킨을 획득하고 장착했습니다!');
+                floatTexts.push({ x: player.x, y: player.y - 100, text: `🐧 꼬마 펭귄 스킨 획득!`, color: '#38bdf8', life: 100 });
+                if (typeof updateShopSkinUI === 'function') updateShopSkinUI();
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                renderFossilCodex();
+                saveGame();
+            }
+        }
+        window.claimPenguinSkin = claimPenguinSkin;
 
         let currentActiveFossilRock = null;
 
@@ -2920,33 +3006,27 @@
                 return;
             }
 
-            // 🐣 [유저 요구] 펫 알 부화 확률: 꼬마 펭귄 30%, 일반 고릴라 45%, 일반 늑대 15%, 일반 고양이 10%
+            // 🐣 [유저 요구] 펫 알 부화 확률: 3대 고유 펫만 부화! (일반 고릴라 60%, 일반 늑대 25%, 일반 고양이 15%)
             const roll = Math.random() * 100;
             let petId, petName, petIcon, petColor, petRarity;
-            if (roll < 30) {
-                petId = 'penguin';
-                petName = '꼬마 펭귄';
-                petIcon = '🐧';
-                petColor = '#38bdf8';
-                petRarity = '스페셜 펭귄 (30%)';
-            } else if (roll < 75) {
+            if (roll < 60) {
                 petId = 'pet_gorilla';
                 petName = '일반 고릴라';
                 petIcon = '🦍';
                 petColor = '#a855f7';
-                petRarity = '일반 (45%)';
-            } else if (roll < 90) {
+                petRarity = '일반 (60%)';
+            } else if (roll < 85) {
                 petId = 'pet_wolf';
                 petName = '일반 늑대';
                 petIcon = '🐺';
                 petColor = '#38bdf8';
-                petRarity = '희귀 (15%)';
+                petRarity = '희귀 (25%)';
             } else {
                 petId = 'pet_cat';
                 petName = '일반 고양이';
                 petIcon = '🐱';
                 petColor = '#facc15';
-                petRarity = '초희귀 (10%)';
+                petRarity = '초희귀 (15%)';
             }
 
             if (!ownedPets.includes(petId)) {
@@ -12224,8 +12304,8 @@
                 }
             }
 
-            // 🐧 얼음 지형 주민 NPC 클릭 판정
-            if (typeof iceVillager !== 'undefined') {
+            // 🐧 얼음 지형 주민 NPC 클릭 판정 (삭제됨)
+            if (iceVillager) {
                 let ivDist = Math.hypot(cx - iceVillager.x, cy - iceVillager.y);
                 let ivPlayerDist = Math.hypot(player.x - iceVillager.x, player.y - iceVillager.y);
                 if (ivDist < iceVillager.radius + 35 || (isSpacebar && ivPlayerDist < 85)) {
@@ -12314,10 +12394,16 @@
                             openCaveIndex();
                             return;
                         } else if (shop.type === 'halloween') {
-                            floatTexts.push({ x: shop.x + 90, y: shop.y + 40, text: '🌫️ 폐쇄된 상점입니다. 상인이 떠났습니다.', color: '#94a3b8', life: 75, size: 18 });
+                            openCandyIndex();
                             return;
                         } else if (shop.type === 'space') {
                             openSpaceIndex();
+                            return;
+                        } else if (shop.type === 'ice_canyon') {
+                            openFossilCodexModal();
+                            return;
+                        } else if (shop.type === 'angel_devil') {
+                            openAngelDevilIndex();
                             return;
                         }
                     }
@@ -12331,16 +12417,6 @@
                             claimCandyHouseCornDirect(h);
                             return;
                         }
-                    }
-                }
-
-                // 👼😈 [천악 지형] 줄 서 있는 천사 & 악마 주민 클릭 거래 감지 (Y: -9680, X: 300)
-                if (isAdmin()) {
-                    let adDist = Math.hypot(cx - 300, cy - (-9680));
-                    let adPlayerDist = Math.hypot(player.x - 300, player.y - (-9680));
-                    if (adDist < 95 || (isSpacebar && adPlayerDist < 115)) {
-                        tradeAngelDevilResidents();
-                        return;
                     }
                 }
 
@@ -12847,6 +12923,266 @@
                 saveGame();
             }
         }
+
+        // 🍭 사탕 도감 (캔디 왕국 도감) 데이터 및 로직 (사탕 상점 클릭 시 오픈)
+        const CANDY_ITEMS = [
+            { name: '알사탕', grade: '일반 (60%)', color: '#ff7675', icon: '🍬', desc: '달콤한 알사탕. 상점 주민이 캔디콘으로 교환해줍니다.' },
+            { name: '롤리팝', grade: '희귀 (15%)', color: '#e84393', icon: '🍭', desc: '소용돌이 막대사탕. 캔디 왕국의 상징적인 달콤함!' },
+            { name: '초콜릿', grade: '초희귀 (10%)', color: '#a29bfe', icon: '🍫', desc: '진하고 부드러운 초콜릿. 손님들이 선호하는 달콤한 간식!' },
+            { name: '과일젤리', grade: '영웅 (8%)', color: '#fdcb6e', icon: '🍮', desc: '탱글탱글 상큼한 과일 젤리. 많은 캔디콘을 보상합니다.' },
+            { name: '마시멜로우', grade: '전설 (5%)', color: '#00cec9', icon: '🍡', desc: '폭신폭신 구름 마시멜로우. 최고급 캔디콘 보상!' },
+            { name: '별사탕 킹캔디', grade: '신화 (2%)', color: '#ff9ff3', icon: '⭐🍬', desc: '반짝이는 왕관 모양의 별사탕 킹캔디. 최고봉 캔디!' }
+        ];
+
+        let candyCollection = [];
+        try {
+            candyCollection = JSON.parse(localStorage.getItem('candy_collection') || '[]');
+        } catch(e) { candyCollection = []; }
+
+        function openCandyIndex() {
+            closeAllModals();
+            const modal = document.getElementById('candy-modal');
+            if (!modal) return;
+            modal.style.display = 'block';
+            if (typeof resetJoyMouse === 'function') resetJoyMouse();
+            if (typeof player !== 'undefined') player.targetTree = null;
+
+            renderCandyIndex();
+        }
+        function closeCandyIndex() {
+            const modal = document.getElementById('candy-modal');
+            if (modal) modal.style.display = 'none';
+        }
+        window.openCandyIndex = openCandyIndex;
+        window.closeCandyIndex = closeCandyIndex;
+
+        function renderCandyIndex() {
+            const grid = document.getElementById('candy-grid');
+            const pText = document.getElementById('candy-progress-text');
+            const pBar = document.getElementById('candy-progress-bar');
+            const claimArea = document.getElementById('candy-claim-area');
+            if (!grid) return;
+
+            let collectedCount = 0;
+            CANDY_ITEMS.forEach(item => {
+                if ((inventory[item.name] || 0) > 0 || candyCollection.includes(item.name)) {
+                    collectedCount++;
+                    if (!candyCollection.includes(item.name)) candyCollection.push(item.name);
+                }
+            });
+            try { localStorage.setItem('candy_collection', JSON.stringify(candyCollection)); } catch(e) {}
+
+            let percent = Math.round((collectedCount / CANDY_ITEMS.length) * 100);
+            if (pText) pText.innerText = `${collectedCount} / ${CANDY_ITEMS.length} (${percent}%)`;
+            if (pBar) pBar.style.width = `${percent}%`;
+
+            grid.innerHTML = '';
+            CANDY_ITEMS.forEach(item => {
+                let isOwned = (inventory[item.name] || 0) > 0 || candyCollection.includes(item.name);
+                let count = inventory[item.name] || 0;
+                let cardBg = isOwned ? 'rgba(30, 41, 59, 0.9)' : 'rgba(15, 23, 42, 0.65)';
+                let cardBorder = isOwned ? item.color : '#334155';
+                let glow = isOwned ? `0 0 10px ${item.color}44` : 'none';
+
+                grid.innerHTML += `
+                    <div style="background: ${cardBg}; border: 1.5px solid ${cardBorder}; border-radius: 10px; padding: 10px; box-shadow: ${glow}; display: flex; flex-direction: column; justify-content: space-between; min-height: 94px; box-sizing: border-box;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <span style="font-size: 24px; filter: ${isOwned ? 'none' : 'grayscale(100%) opacity(35%)'};">${item.icon}</span>
+                            <span style="font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; background: ${item.color}22; color: ${item.color}; border: 1px solid ${item.color}66;">
+                                ${item.grade}
+                            </span>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; font-weight: bold; color: ${isOwned ? '#ffffff' : '#64748b'}; margin-bottom: 2px;">
+                                ${isOwned ? item.name : '??? (미수집)'}
+                            </div>
+                            <div style="font-size: 10px; color: ${isOwned ? '#cbd5e1' : '#475569'}; line-height: 1.2;">
+                                ${isOwned ? item.desc : '사탕 나무에서 채집 가능'}
+                            </div>
+                        </div>
+                        <div style="margin-top: 6px; font-size: 10.5px; font-weight: bold; color: ${isOwned ? item.color : '#475569'}; text-align: right;">
+                            ${isOwned ? `보유: x${count}` : '🔒 미발견'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (claimArea) {
+                if (collectedCount >= CANDY_ITEMS.length) {
+                    if (!ownedSkins.includes('candy_king')) {
+                        claimArea.innerHTML = `
+                            <div style="background: linear-gradient(135deg, #ec4899, #db2777); border: 2px solid #f472b6; border-radius: 12px; padding: 12px; text-align: center; box-shadow: 0 0 15px rgba(236, 72, 153, 0.4);">
+                                <div style="font-size: 14px; font-weight: 900; color: #ffffff; margin-bottom: 6px;">🎉 사탕 도감 6종 과일 완전 수집 달성!</div>
+                                <button onclick="claimCandyKingSkin()" style="padding: 10px 24px; background: #facc15; color: #0f172a; border: none; border-radius: 8px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(250, 204, 21, 0.4);">
+                                    👑🍭 캔디 왕국의 군주 스킨 획득하기!
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        claimArea.innerHTML = `
+                            <div style="color: #f472b6; font-weight: bold; font-size: 13px; padding: 8px; background: rgba(236, 72, 153, 0.15); border-radius: 8px; border: 1px solid #ec4899;">
+                                ✓ 👑🍭 캔디 왕국의 군주 스킨 보유 중 (착용 완료)
+                            </div>
+                        `;
+                    }
+                } else {
+                    claimArea.innerHTML = '';
+                }
+            }
+        }
+        window.renderCandyIndex = renderCandyIndex;
+
+        function claimCandyKingSkin() {
+            let collectedCount = 0;
+            CANDY_ITEMS.forEach(item => {
+                if ((inventory[item.name] || 0) > 0 || candyCollection.includes(item.name)) collectedCount++;
+            });
+            if (collectedCount >= CANDY_ITEMS.length && !ownedSkins.includes('candy_king')) {
+                ownedSkins.push('candy_king');
+                useSkin = 'candy_king';
+                equippedSkin = 'candy_king';
+                try { localStorage.setItem('equipped_skin', 'candy_king'); } catch(e) {}
+                alert('👑🍭 [캔디 왕국의 군주 스킨 획득 완료!]\n\n사탕 도감 6종 과일을 모두 모아 [캔디 왕국의 군주] 스킨을 획득하고 장착했습니다!');
+                floatTexts.push({ x: player.x, y: player.y - 100, text: `👑🍭 캔디 왕국의 군주 스킨 획득!`, color: '#ec4899', life: 100 });
+                if (typeof updateShopSkinUI === 'function') updateShopSkinUI();
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                renderCandyIndex();
+                saveGame();
+            }
+        }
+        window.claimCandyKingSkin = claimCandyKingSkin;
+
+        // 👼😈 천악 도감 (천사의 성역 & 악마의 심연) 데이터 및 로직 (천악 상점 클릭 시 오픈)
+        const ANGEL_DEVIL_ITEMS = [
+            { name: '천사의 깃털', grade: '일반 (65%)', color: '#e2e8f0', icon: '🪶', desc: '순백의 천사 깃털.' },
+            { name: '악마의 깃털', grade: '일반 (65%)', color: '#94a3b8', icon: '🪶', desc: '칠흑의 악마 깃털.' },
+            { name: '천사의 날개', grade: '희귀 (15%)', color: '#38bdf8', icon: '🪽', desc: '하늘을 가르는 순백 날개.' },
+            { name: '악마의 날개', grade: '희귀 (15%)', color: '#f87171', icon: '🦇', desc: '심연을 가르는 박쥐 날개.' },
+            { name: '천사의 창', grade: '영웅 (10%)', color: '#a855f7', icon: '🗡️', desc: '신성한 빛의 정밀 투창.' },
+            { name: '악마의 삼지창', grade: '영웅 (10%)', color: '#ef4444', icon: '🔱', desc: '지옥불을 내뿜는 삼지창.' },
+            { name: '천사의 조각', grade: '전설 (8%)', color: '#f59e0b', icon: '✨', desc: '성스러운 기운의 천사 조각.' },
+            { name: '악마의 조각', grade: '전설 (8%)', color: '#ea580c', icon: '🔥', desc: '파멸적인 마력의 악마 조각.' },
+            { name: '천사의 링', grade: '디바인 (9%)', color: '#fde047', icon: '😇', desc: '황금빛으로 빛나는 천사의 후광 링.' },
+            { name: '악마의 링', grade: '디바인 (9%)', color: '#dc2626', icon: '⭕', desc: '검붉은 마력으로 타오르는 악마의 링.' }
+        ];
+
+        let angelDevilCollection = [];
+        try {
+            angelDevilCollection = JSON.parse(localStorage.getItem('angel_devil_collection') || '[]');
+        } catch(e) { angelDevilCollection = []; }
+
+        function openAngelDevilIndex() {
+            closeAllModals();
+            const modal = document.getElementById('angel-devil-modal');
+            if (!modal) return;
+            modal.style.display = 'block';
+            if (typeof resetJoyMouse === 'function') resetJoyMouse();
+            if (typeof player !== 'undefined') player.targetTree = null;
+
+            renderAngelDevilIndex();
+        }
+        function closeAngelDevilIndex() {
+            const modal = document.getElementById('angel-devil-modal');
+            if (modal) modal.style.display = 'none';
+        }
+        window.openAngelDevilIndex = openAngelDevilIndex;
+        window.closeAngelDevilIndex = closeAngelDevilIndex;
+
+        function renderAngelDevilIndex() {
+            const grid = document.getElementById('angel-devil-grid');
+            const pText = document.getElementById('angel-devil-progress-text');
+            const pBar = document.getElementById('angel-devil-progress-bar');
+            const claimArea = document.getElementById('angel-devil-claim-area');
+            if (!grid) return;
+
+            let collectedCount = 0;
+            ANGEL_DEVIL_ITEMS.forEach(item => {
+                if ((inventory[item.name] || 0) > 0 || angelDevilCollection.includes(item.name)) {
+                    collectedCount++;
+                    if (!angelDevilCollection.includes(item.name)) angelDevilCollection.push(item.name);
+                }
+            });
+            try { localStorage.setItem('angel_devil_collection', JSON.stringify(angelDevilCollection)); } catch(e) {}
+
+            let percent = Math.round((collectedCount / ANGEL_DEVIL_ITEMS.length) * 100);
+            if (pText) pText.innerText = `${collectedCount} / ${ANGEL_DEVIL_ITEMS.length} (${percent}%)`;
+            if (pBar) pBar.style.width = `${percent}%`;
+
+            grid.innerHTML = '';
+            ANGEL_DEVIL_ITEMS.forEach(item => {
+                let isOwned = (inventory[item.name] || 0) > 0 || angelDevilCollection.includes(item.name);
+                let count = inventory[item.name] || 0;
+                let cardBg = isOwned ? 'rgba(30, 41, 59, 0.9)' : 'rgba(15, 23, 42, 0.65)';
+                let cardBorder = isOwned ? item.color : '#334155';
+                let glow = isOwned ? `0 0 10px ${item.color}44` : 'none';
+
+                grid.innerHTML += `
+                    <div style="background: ${cardBg}; border: 1.5px solid ${cardBorder}; border-radius: 10px; padding: 10px; box-shadow: ${glow}; display: flex; flex-direction: column; justify-content: space-between; min-height: 94px; box-sizing: border-box;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <span style="font-size: 24px; filter: ${isOwned ? 'none' : 'grayscale(100%) opacity(35%)'};">${item.icon}</span>
+                            <span style="font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; background: ${item.color}22; color: ${item.color}; border: 1px solid ${item.color}66;">
+                                ${item.grade}
+                            </span>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; font-weight: bold; color: ${isOwned ? '#ffffff' : '#64748b'}; margin-bottom: 2px;">
+                                ${isOwned ? item.name : '??? (미수집)'}
+                            </div>
+                            <div style="font-size: 10px; color: ${isOwned ? '#cbd5e1' : '#475569'}; line-height: 1.2;">
+                                ${isOwned ? item.desc : '천악 나무에서 채집 가능'}
+                            </div>
+                        </div>
+                        <div style="margin-top: 6px; font-size: 10.5px; font-weight: bold; color: ${isOwned ? item.color : '#475569'}; text-align: right;">
+                            ${isOwned ? `보유: x${count}` : '🔒 미발견'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (claimArea) {
+                if (collectedCount >= ANGEL_DEVIL_ITEMS.length) {
+                    if (!ownedSkins.includes('etheron')) {
+                        claimArea.innerHTML = `
+                            <div style="background: linear-gradient(135deg, #7c3aed, #4c1d95); border: 2px solid #c084fc; border-radius: 12px; padding: 12px; text-align: center; box-shadow: 0 0 15px rgba(192, 132, 252, 0.4);">
+                                <div style="font-size: 14px; font-weight: 900; color: #ffffff; margin-bottom: 6px;">🎉 천악 도감 10종 완전 수집 달성!</div>
+                                <button onclick="claimEtheronSkinFromCodex()" style="padding: 10px 24px; background: #facc15; color: #0f172a; border: none; border-radius: 8px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(250, 204, 21, 0.4);">
+                                    🌓👑 에테론 스킨 획득하기!
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        claimArea.innerHTML = `
+                            <div style="color: #c084fc; font-weight: bold; font-size: 13px; padding: 8px; background: rgba(168, 85, 247, 0.15); border-radius: 8px; border: 1px solid #a855f7;">
+                                ✓ 🌓👑 에테론 스킨 보유 중 (착용 완료)
+                            </div>
+                        `;
+                    }
+                } else {
+                    claimArea.innerHTML = '';
+                }
+            }
+        }
+        window.renderAngelDevilIndex = renderAngelDevilIndex;
+
+        function claimEtheronSkinFromCodex() {
+            let collectedCount = 0;
+            ANGEL_DEVIL_ITEMS.forEach(item => {
+                if ((inventory[item.name] || 0) > 0 || angelDevilCollection.includes(item.name)) collectedCount++;
+            });
+            if (collectedCount >= ANGEL_DEVIL_ITEMS.length && !ownedSkins.includes('etheron')) {
+                ownedSkins.push('etheron');
+                useSkin = 'etheron';
+                equippedSkin = 'etheron';
+                try { localStorage.setItem('equipped_skin', 'etheron'); } catch(e) {}
+                alert('🌓👑 [에테론 스킨 획득 완료!]\n\n천악 도감 10종 아이템을 모두 모아 초신화 [에테론] 스킨을 획득하고 장착했습니다!');
+                floatTexts.push({ x: player.x, y: player.y - 100, text: `🌓👑 에테론 스킨 획득!`, color: '#c084fc', life: 100 });
+                if (typeof updateShopSkinUI === 'function') updateShopSkinUI();
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                renderAngelDevilIndex();
+                saveGame();
+            }
+        }
+        window.claimEtheronSkinFromCodex = claimEtheronSkinFromCodex;
 
         // 🚀🌌 우주 도감 모달 컨트롤 함수들
         function openSpaceIndex() {
@@ -14436,16 +14772,11 @@
             pCtx.restore();
         }
 
-        // 🐾 [펫 전용 데이터] 캐릭터 스킨과 분리된 독립 동행 펫 데이터베이스
+        // 🐾 [펫 전용 데이터] 인큐베이터 3대 고유 동행 펫
         const PETS_DATA = [
-            { id: 'penguin', name: '꼬마 펭귄', icon: '🐧', grade: '스페셜', desc: '인큐베이터에서 부화한 사랑스러운 꼬마 펭귄!', buff: '이동속도 +15% 증가' },
             { id: 'pet_gorilla', name: '일반 고릴라', icon: '🦍', grade: '일반', desc: '인큐베이터 부화 고릴라. 우직하게 나무를 벱니다.', buff: '벌목 속도 +20% 단축' },
             { id: 'pet_wolf', name: '일반 늑대', icon: '🐺', grade: '희귀', desc: '인큐베이터 부화 늑대. 날카로운 발톱을 지녔습니다.', buff: '벌목 속도 +20% 단축' },
-            { id: 'pet_cat', name: '일반 고양이', icon: '🐱', grade: '초희귀', desc: '인큐베이터 부화 고양이. 민첩하게 나무를 벱니다.', buff: '벌목 속도 +20% 단축' },
-            { id: 'penguin_butler', name: '황제 펭귄 집사', icon: '🐧🎩', grade: '희귀', desc: '정중한 집사 펭귄. 상점 판매 시 골드를 추가로 획득합니다.', buff: '상점 판매 골드 +50%' },
-            { id: 'frost_wolf', name: '칠흑의 눈꽃 늑대', icon: '🐺❄️', grade: '신화', desc: '태고의 만년설 속 영수. 혹한의 한기로 수확량을 늘립니다.', buff: '과일 수확량 +50% / 빙결 오라' },
-            { id: 'baby_ice_dragon', name: '빙룡 베이비', icon: '🐉❄️', grade: '전설', desc: '고대 서리룡의 새끼. 적에게 얼음 브레스를 뿜습니다.', buff: '보스전 피해량 +35%' },
-            { id: 'aurora_fox', name: '오로라 구미호', icon: '🦊✨', grade: '고대', desc: '극광의 빛을 품은 신비로운 9개의 꼬리를 지닌 여우.', buff: '15초마다 황금 과일 자동 드랍' }
+            { id: 'pet_cat', name: '일반 고양이', icon: '🐱', grade: '초희귀', desc: '인큐베이터 부화 고양이. 민첩하게 나무를 벱니다.', buff: '벌목 속도 +20% 단축' }
         ];
 
         let ownedPets = [];
@@ -14738,7 +15069,9 @@
             { type: 'ocean', name: '바다 상점', x: 420, y: -5300, frontX: shopFrontX, queueY: -5150, queue: [] },
             { type: 'cave', name: '동굴 상점', x: 420, y: -6300, frontX: shopFrontX, queueY: -6150, queue: [] },
             { type: 'halloween', name: '할로윈 상점', x: 420, y: 1680, frontX: shopFrontX, queueY: 1820, queue: [] },
-            { type: 'space', name: '우주 상점', x: 420, y: -7300, frontX: shopFrontX, queueY: -7150, queue: [] }
+            { type: 'space', name: '우주 상점', x: 420, y: -7300, frontX: shopFrontX, queueY: -7150, queue: [] },
+            { type: 'ice_canyon', name: '얼음 협곡 상점', x: 420, y: -8300, frontX: shopFrontX, queueY: -8150, queue: [] },
+            { type: 'angel_devil', name: '천악 상점', x: 420, y: -9400, frontX: shopFrontX, queueY: -9250, queue: [] }
         ];
 
         // 🔮 크래프팅 머신 (일반 지역 중앙 배치)
@@ -14762,6 +15095,8 @@
         shops[7].roofColor = '#636e72'; shops[7].wallColor = '#2d3436';
         shops[8].roofColor = '#8e44ad'; shops[8].wallColor = '#e67e22';
         shops[9].roofColor = '#00f2fe'; shops[9].wallColor = '#1e272e';
+        shops[10].roofColor = '#74b9ff'; shops[10].wallColor = '#dff9fb';
+        shops[11].roofColor = '#9b59b6'; shops[11].wallColor = '#2c3e50';
 
         // Firebase 연동 및 계정 관리
         const firebaseConfig = {
@@ -15083,6 +15418,8 @@
                 caveCollection: [...caveStoneNames],
                 spaceCollection: (typeof spaceAlienItemNames !== 'undefined') ? [...spaceAlienItemNames] : [],
                 fossilCollection: (typeof FOSSIL_ITEMS !== 'undefined') ? FOSSIL_ITEMS.map(f => f.name) : [],
+                candyCollection: (typeof CANDY_ITEMS !== 'undefined') ? CANDY_ITEMS.map(c => c.name) : [],
+                angelDevilCollection: (typeof ANGEL_DEVIL_ITEMS !== 'undefined') ? ANGEL_DEVIL_ITEMS.map(a => a.name) : [],
                 rocketLaunched: true,
                 fuseSlots: [null, null, null],
                 activeFuseStartTime: 0,
@@ -18175,7 +18512,8 @@
                 'admin-panel-modal', 'guild-modal', 'guild-member-action-modal', 'trade-request-modal',
                 'trade-incoming-modal', 'battle-incoming-modal', 'ranking-modal', 'ocean-modal',
                 'radioactive-modal', 'cave-modal', 'halloween-modal', 'space-modal', 'code-modal', 'teleport-modal',
-                'trade-window-modal', 'alien-scientist-modal', 'mad-doctor-modal', 'trade-qty-dialog'
+                'trade-window-modal', 'alien-scientist-modal', 'mad-doctor-modal', 'trade-qty-dialog',
+                'candy-modal', 'angel-devil-modal', 'penguin-codex-modal', 'ice-villager-modal', 'candycorn-shop-modal', 'lucky-block-craft-modal'
             ];
             modalIds.forEach(id => {
                 const el = document.getElementById(id);
@@ -18362,6 +18700,8 @@
                 caveCollection: caveCollection,
                 spaceCollection: (typeof spaceCollection !== 'undefined') ? spaceCollection : [],
                 fossilCollection: (typeof fossilCollection !== 'undefined') ? fossilCollection : [],
+                candyCollection: (typeof candyCollection !== 'undefined') ? candyCollection : [],
+                angelDevilCollection: (typeof angelDevilCollection !== 'undefined') ? angelDevilCollection : [],
                 hasHalloweenTeleporter: !!hasHalloweenTeleporter,
                 rocketLaunched: rocket.launched,
                 fuseSlots: fuseSlots,
@@ -18408,6 +18748,8 @@
                 caveCollection = [];
                 spaceCollection = [];
                 fossilCollection = [];
+                candyCollection = [];
+                angelDevilCollection = [];
                 farmPlots = [
                     { id: 0, seed: null, plantedAt: 0, duration: 300000 },
                     { id: 1, seed: null, plantedAt: 0, duration: 300000 },
@@ -18540,6 +18882,12 @@
             spaceCollection = data.spaceCollection ? [...data.spaceCollection] : [];
             if (data.fossilCollection) {
                 fossilCollection = [...data.fossilCollection];
+            }
+            if (data.candyCollection) {
+                candyCollection = [...data.candyCollection];
+            }
+            if (data.angelDevilCollection) {
+                angelDevilCollection = [...data.angelDevilCollection];
             }
             if (data.hasHalloweenTeleporter !== undefined) {
                 hasHalloweenTeleporter = !!data.hasHalloweenTeleporter;
@@ -21651,8 +21999,8 @@
 
         loadGame(); 
 
-        // 🐾 [펫-스킨 분리 마이그레이션] 이전 버전에서 펫을 스킨으로 장착했던 유저 복구
-        const ALL_PET_IDS = ['penguin', 'pet_gorilla', 'pet_wolf', 'pet_cat', 'penguin_butler', 'frost_wolf', 'baby_ice_dragon', 'aurora_fox'];
+        // 🐾 인큐베이터 3대 고유 펫 (일반 고릴라, 일반 늑대, 일반 고양이)
+        const ALL_PET_IDS = ['pet_gorilla', 'pet_wolf', 'pet_cat'];
         ALL_PET_IDS.forEach(pid => {
             if ((ownedSkins.includes(pid) || synthesizedPets.includes(pid)) && !ownedPets.includes(pid)) {
                 ownedPets.push(pid);
@@ -21723,6 +22071,7 @@
         function generateCustomer(type) {
             let fruit, amount, reward;
             let customerSkin = null;
+            let rewardCorn = 0;
 
             if (type === 'space') {
                 let tables = spaceDropTables;
@@ -21734,14 +22083,14 @@
                 customerSkin = 'astronaut'; // "상점 주민들은 우주복 입고"
             } else if (type === 'halloween') {
                 if (isAdmin()) {
-                    // 🍭 사탕 나무 과일(사탕 6종) 구매 손님
+                    // 🍭 사탕 나무 과일(사탕 6종) 구매 손님 -> 보상은 오직 캔디콘! (돈 지급 X)
                     const candyChoices = [
-                        { item: '알사탕', price: 3000 },
-                        { item: '롤리팝', price: 10000 },
-                        { item: '초콜릿', price: 30000 },
-                        { item: '과일젤리', price: 70000 },
-                        { item: '마시멜로우', price: 180000 },
-                        { item: '별사탕 킹캔디', price: 500000 }
+                        { item: '알사탕', corn: 5, price: 3000 },
+                        { item: '롤리팝', corn: 15, price: 10000 },
+                        { item: '초콜릿', corn: 35, price: 30000 },
+                        { item: '과일젤리', corn: 80, price: 70000 },
+                        { item: '마시멜로우', corn: 200, price: 180000 },
+                        { item: '별사탕 킹캔디', corn: 500, price: 500000 }
                     ];
                     let r = Math.random();
                     let chosen = candyChoices[0];
@@ -21754,7 +22103,8 @@
 
                     fruit = chosen.item;
                     amount = (chosen.item === '별사탕 킹캔디') ? 1 : (Math.floor(Math.random() * 2) + 1);
-                    reward = chosen.price * amount;
+                    rewardCorn = chosen.corn * amount;
+                    reward = 0;
                 } else {
                     const pumpkinChoices = [
                         { item: '주황호박', price: 2000 },
@@ -21765,18 +22115,35 @@
                     fruit = chosen.item;
                     amount = Math.floor(Math.random() * 3) + 1;
                     reward = chosen.price * amount;
+                    rewardCorn = 0;
                 }
 
                 // 똑같이 할로윈 스킨 주민이 옴
                 const hwSkins = ['ghost_fedora', 'ghost_classic', 'ghost_purple', 'jack_orange', 'jack_fiery'];
                 customerSkin = hwSkins[Math.floor(Math.random() * hwSkins.length)];
+            } else if (type === 'ice_canyon') {
+                let tables = (typeof iceCanyonDropTables !== 'undefined') ? iceCanyonDropTables : iceDropTables;
+                let r = Math.random(), cum = 0, tier = tables[0];
+                for (let t of tables) { cum += t.chance; if (r <= cum) { tier = t; break; } }
+                fruit = tier.items[Math.floor(Math.random() * tier.items.length)];
+                amount = Math.floor(Math.random() * 2) + 1;
+                reward = tier.price * amount;
+                customerSkin = (Math.random() < 0.5) ? 'penguin' : 'archaeologist';
+            } else if (type === 'angel_devil') {
+                let tables = (typeof angelDevilDropTables !== 'undefined') ? angelDevilDropTables : normalDropTables;
+                let r = Math.random(), cum = 0, tier = tables[0];
+                for (let t of tables) { cum += t.chance; if (r <= cum) { tier = t; break; } }
+                fruit = tier.items[Math.floor(Math.random() * tier.items.length)];
+                amount = Math.floor(Math.random() * 2) + 1;
+                reward = tier.price * amount;
+                customerSkin = (Math.random() < 0.5) ? 'angel' : 'devil';
             } else {
                 let tables = getAdjustedTables(type);
                 let r = Math.random(), cum = 0, tier = tables[0];
                 for (let t of tables) { cum += t.chance; if (r <= cum) { tier = t; break; } }
                 
-                if (type === 'ice' || type === 'ice_canyon') {
-                    customerSkin = (Math.random() < 0.6) ? 'penguin' : 'penguin_butler';
+                if (type === 'ice') {
+                    customerSkin = (Math.random() < 0.6) ? 'penguin' : null;
                 }
                 fruit = tier.items[Math.floor(Math.random() * tier.items.length)];
                 amount = Math.floor(Math.random() * 3) + 1;
@@ -21797,6 +22164,7 @@
             
             return {
                 x: -50, walkTimer: 0, fruit: fruit, amount: amount, reward: reward,
+                rewardCorn: rewardCorn,
                 colors: { skin: skins[Math.floor(Math.random()*skins.length)], shirt: shirts[Math.floor(Math.random()*shirts.length)], hat: hats[Math.floor(Math.random()*hats.length)] },
                 shopType: type,
                 skin: customerSkin
@@ -22104,8 +22472,8 @@
             }
 
             shops.forEach(shop => {
-                // 어드민 계정일 때는 할로윈 사탕 상점에 할로윈 스킨 손님 방문 허용!
-                if (shop.type === 'halloween') {
+                // 어드민 계정일 때만 할로윈/얼음협곡/천악 상점에 손님 방문 허용
+                if (shop.type === 'halloween' || shop.type === 'ice_canyon' || shop.type === 'angel_devil') {
                     if (!isAdmin()) {
                         shop.queue = [];
                         return;
@@ -22132,7 +22500,7 @@
 
                         if (totalAvailable >= firstC.amount) {
                             let needed = firstC.amount;
-                            let baseRewardPerItem = firstC.reward / firstC.amount;
+                            let baseRewardPerItem = (firstC.reward || 0) / firstC.amount;
                             let totalEarned = 0;
                             
                             // 수익이 가장 높은 특성 과일 우선 소모 (가장 비싸게 팔아줌!)
@@ -22158,25 +22526,15 @@
                                 }
                             }
                             
-                            totalEarned = Math.floor(totalEarned);
-                            money += totalEarned; updateMoney();
-                            if (typeof trackQuestProgress === 'function') {
-                                trackQuestProgress('deliver', 1);
-                                trackQuestProgress('gold', totalEarned);
-                            }
-                            
                             // 주울 때와 완전히 동일한 XP 지급!
                             let baseItemXp = 2; // 기본값
-                            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...iceCanyonDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables, ...spaceDropTables];
-                            for (let t of tables) { if (t.items.includes(baseName)) { baseItemXp = t.xp; break; } }
+                            let tables = [...normalDropTables, ...twistedDropTables, ...electricDropTables, ...iceDropTables, ...iceCanyonDropTables, ...radioactiveDropTables, ...oceanDropTables, ...caveDropTables, ...halloweenDropTables, ...spaceDropTables, ...angelDevilDropTables];
+                            for (let t of tables) { if (t.items && t.items.includes(baseName)) { baseItemXp = t.xp; break; } }
                             let earnedXp = firstC.amount * baseItemXp;
-                            
                             addXp(earnedXp, firstC.x, shop.queueY - 100);
-                            
-                            floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned}`, color: 'gold', life: 60 });
 
-                            // 🍬 할로윈 사탕 상점 손님 거래 시 손님이 요구한 과일에 따라 캔디콘 지급!
-                            if (shop.type === 'halloween' && isAdmin()) {
+                            // 🍬 할로윈 사탕 상점 손님 거래 시 손님이 요구한 과일에 따라 캔디콘만 지급! (골드 지급 절대 안 함!)
+                            if (shop.type === 'halloween') {
                                 let cornRate = 10;
                                 if (baseName === '알사탕') cornRate = 5;
                                 else if (baseName === '롤리팝') cornRate = 15;
@@ -22185,9 +22543,17 @@
                                 else if (baseName === '마시멜로우') cornRate = 200;
                                 else if (baseName.includes('별사탕')) cornRate = 500;
                                 
-                                let earnedCorn = cornRate * firstC.amount;
+                                let earnedCorn = firstC.rewardCorn || (cornRate * firstC.amount);
                                 updateCandyCorn(earnedCorn);
-                                floatTexts.push({ x: firstC.x, y: shop.queueY - 110, text: `+🍬${earnedCorn} 캔디콘!`, color: '#facc15', life: 75, size: 20 });
+                                floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+🍬${earnedCorn} 캔디콘!`, color: '#facc15', life: 75, size: 20 });
+                            } else {
+                                totalEarned = Math.floor(totalEarned);
+                                money += totalEarned; updateMoney();
+                                if (typeof trackQuestProgress === 'function') {
+                                    trackQuestProgress('deliver', 1);
+                                    trackQuestProgress('gold', totalEarned);
+                                }
+                                floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned}`, color: 'gold', life: 60 });
                             }
 
                             shop.queue.shift();
@@ -27773,7 +28139,7 @@
             if (typeof petMachine !== 'undefined') {
                 renderList.push({ type: 'petMachine', obj: petMachine, y: petMachine.y });
             }
-            if (typeof iceVillager !== 'undefined') {
+            if (iceVillager) {
                 renderList.push({ type: 'iceVillager', obj: iceVillager, y: iceVillager.y });
             }
             // 할로윈 텔레포터 비콘 렌더링 삭제됨
@@ -27794,12 +28160,7 @@
                 renderList.push({ type: 'candyCornShop', obj: { x: GAME_WIDTH / 2, y: 3600 }, y: 3600 });
             }
 
-            // 👼😈 [천악 지형] 줄 서 있는 천사 & 악마 주민들 (X: 300, Y: -9680, 관리자 전용)
-            if (isAdmin()) {
-                renderList.push({ type: 'angelDevilQueueResidents', obj: { x: GAME_WIDTH / 2, y: -9680 }, y: -9680 });
-            }
-
-            // 💍 [링 모으기 미니게임] 스폰된 링 렌더 등록
+            // 링 모으기 미니게임 스폰된 링 렌더 등록
             if (isAdmin() && isRingMinigameActive && Array.isArray(ringMinigameRings)) {
                 ringMinigameRings.forEach(r => {
                     renderList.push({ type: 'ringItem', obj: r, y: r.y });
@@ -27859,7 +28220,14 @@
                         ctx.fillStyle = 'black'; 
                         ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
                         ctx.fillText(`${item.obj.fruit} x${item.obj.amount}`, item.obj.x, item.obj.y - 67);
-                        ctx.fillStyle = '#d35400'; ctx.fillText(`💰${item.obj.reward}`, item.obj.x, item.obj.y - 53);
+                        if (item.obj.shopType === 'halloween' || (item.obj.rewardCorn && item.obj.rewardCorn > 0)) {
+                            ctx.fillStyle = '#d97706';
+                            ctx.font = 'bold 11.5px Arial';
+                            ctx.fillText(`🍬${item.obj.rewardCorn || 10} 캔디콘`, item.obj.x, item.obj.y - 53);
+                        } else {
+                            ctx.fillStyle = '#d35400';
+                            ctx.fillText(`💰${item.obj.reward}`, item.obj.x, item.obj.y - 53);
+                        }
                         
                         let baseName = item.obj.fruit;
                         let totalAvailable = (inventory[baseName]||0) + (inventory['불꽃 '+baseName]||0) + (inventory['뒤틀린 '+baseName]||0) + (inventory['전기 '+baseName]||0) + (inventory['얼음 '+baseName]||0) + (inventory['방사능 '+baseName]||0) + (inventory['심해 '+baseName]||0);
@@ -28393,7 +28761,10 @@
                 }
             });
 
-            shops.forEach(shop => drawShop(ctx, shop));
+            shops.forEach(shop => {
+                if ((shop.type === 'angel_devil' || shop.type === 'ice_canyon') && !isAdmin()) return;
+                drawShop(ctx, shop);
+            });
             // 융합 호박 머신 삭제됨 (크래프팅 머신만 렌더링 유지)
 
             // 👑 어드민 스토리 퀘스트: 할로윈 지형 원숭이 10마리 & 미친 박사 렌더링
@@ -29249,32 +29620,6 @@
                     </div>
                     <button onclick="buyHalloweenForgeSkin()" style="padding: 8px 18px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; font-weight: 900; font-size: 13px; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 3px 10px rgba(2, 132, 199, 0.4);">
                         Buy (구매)
-                    </button>
-                </div>
-            </div>
-
-            <!-- 👑🍭 아이템 4: [도감] 캔디 왕국의 군주 (Lord of Candy Kingdom) -->
-            <div style="background: rgba(30, 41, 59, 0.85); border: 2px solid #ec4899; border-radius: 14px; padding: 12px 14px; text-align: left; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 16px rgba(236, 72, 153, 0.25);">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <div style="color: #f472b6; font-size: 16px; font-weight: 950; display: flex; align-items: center; gap: 6px;">
-                            <span>👑🍭</span> [도감] 캔디 왕국의 군주
-                        </div>
-                        <div style="font-size: 11.5px; color: #cbd5e1; margin-top: 2px;">
-                            🍭 롤리팝 페이스 & 👑 로열 셉터(봉)를 쥔 캔디 왕국의 절대 군주!
-                        </div>
-                        <div style="font-size: 10.5px; color: #fde047; font-weight: bold; margin-top: 4px;">
-                            ✨ 디럭스 스위트 로열 벨벳 로브 & 별사탕 보석 왕관
-                        </div>
-                    </div>
-                    <canvas id="cc-candy-king-preview" width="60" height="50" style="display: block; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid #ec4899;"></canvas>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
-                    <div style="font-size: 13px; font-weight: 900; color: #f472b6;">
-                        📖 캔디 도감 등록 완료
-                    </div>
-                    <button onclick="equipOrViewCandyKingSkin()" style="padding: 8px 18px; background: linear-gradient(135deg, #ec4899, #db2777); color: white; font-weight: 900; font-size: 13px; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 3px 10px rgba(236, 72, 153, 0.4);">
-                        착용하기
                     </button>
                 </div>
             </div>
