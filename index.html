@@ -443,7 +443,7 @@
         <!-- 👑 실시간 투표 모달 (오늘 플레이 하나요? - 30초 한정) -->
                 <!-- 🍀 행운 1.5배 버프 위젯 (우측 하단) -->
         <div id="luck-buffs-wrapper" style="position: absolute; bottom: 20px; right: 20px; z-index: 25; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: none;">
-            <div id="luck-container" style="pointer-events: auto; text-align: center; display: none; flex-direction: column; align-items: center; cursor: pointer; user-select: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+            <div id="luck-container" style="pointer-events: auto; text-align: center; display: none; flex-direction: column; align-items: center; cursor: pointer; user-select: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" onclick="alert('🍀 [행운 1.5배 버프 발동 중]\n\n10분 동안 모든 나무 및 고대 화석의 희귀/영웅/전설/신화 아이템 드롭 확률이 1.5배 증가합니다!');">
                 <div id="luck-icon" style="font-size: 28px; filter: drop-shadow(0 0 10px #2ecc71); animation: luckFloat 2s ease-in-out infinite;">🍀</div>
                 <div id="luck-timer" style="color: #2ecc71; font-weight: 800; background: rgba(15, 23, 42, 0.94); padding: 5px 12px; border-radius: 14px; font-size: 12px; margin-top: 2px; border: 1.5px solid #2ecc71; box-shadow: 0 4px 14px rgba(46, 204, 113, 0.45); white-space: nowrap; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
                     행운 1.5배 [10:00]
@@ -12548,7 +12548,8 @@
             }
             if (!isSpacebar) {
                 for (let shop of shops) {
-                    if (cx > shop.x - 20 && cx < shop.x + 200 && cy > shop.y && cy < shop.y + 210) {
+                    let isNearby = (isSpacebar && Math.hypot(player.x - (shop.x + 90), player.y - (shop.y + 140)) < 135);
+                    if ((cx > shop.x - 20 && cx < shop.x + 200 && cy > shop.y && cy < shop.y + 210) || isNearby) {
                         if (shop.type === 'ocean') {
                             openOceanIndex();
                             return;
@@ -21770,6 +21771,7 @@
         // 🛑 유저 요청: 투표창, 공지 메시지, 럭 이벤트 전체 완전 종료 (그 누구도 못 보게 차단)
         // ============================================================================
         let isLuck15Active = false;
+        let luck15EndTime = 0;
         let isFarmSkinLuckActive = false;
         let forgeAbuseEventStarted = true;
         let halloweenInvaderDevil = null;
@@ -21781,10 +21783,56 @@
             localStorage.removeItem('wl_user_voted_topic_forge_is_fool_v2');
             localStorage.removeItem('wl_user_voted_topic_are_you_wate_v1');
             localStorage.removeItem('forge_abuse_shown_date');
+
+            // 🍀 1.5배 행운 버프 복원 (새로고침 시 잔여 시간 복원)
+            const savedLuckEnd = parseInt(localStorage.getItem('luck_15_end_time') || '0', 10);
+            if (savedLuckEnd > Date.now()) {
+                luck15EndTime = savedLuckEnd;
+                isLuck15Active = true;
+            } else {
+                localStorage.removeItem('luck_15_end_time');
+            }
         } catch (e) {}
 
-        isLuck15Active = false;
-        isFarmSkinLuckActive = false;
+        function activateLuck15Buff(durationMs = 10 * 60 * 1000) {
+            isLuck15Active = true;
+            luck15EndTime = Math.max(Date.now(), luck15EndTime || 0) + durationMs;
+            try {
+                localStorage.setItem('luck_15_end_time', luck15EndTime.toString());
+            } catch(e) {}
+            if (typeof updateLuck15Timer === 'function') updateLuck15Timer();
+            if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                floatTexts.push({ x: player.x, y: player.y - 100, text: '🍀 1.5배 행운 버프 10분 시작!', color: '#2ecc71', life: 120, size: 24 });
+            }
+        }
+        window.activateLuck15Buff = activateLuck15Buff;
+
+        function updateLuck15Timer() {
+            const container = document.getElementById('luck-container');
+            const timerEl = document.getElementById('luck-timer');
+            if (!container || !timerEl) return;
+
+            if (!isLuck15Active || Date.now() >= luck15EndTime) {
+                if (isLuck15Active) {
+                    isLuck15Active = false;
+                    try { localStorage.removeItem('luck_15_end_time'); } catch(e) {}
+                    if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                        floatTexts.push({ x: player.x, y: player.y - 100, text: '🍀 1.5배 행운 버프가 종료되었습니다.', color: '#94a3b8', life: 80, size: 18 });
+                    }
+                }
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'flex';
+            const remainingMs = luck15EndTime - Date.now();
+            const remainingSec = Math.max(0, Math.floor(remainingMs / 1000));
+            const mins = Math.floor(remainingSec / 60);
+            const secs = remainingSec % 60;
+            const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            timerEl.innerText = `행운 1.5배 [${timeStr}]`;
+        }
+        window.updateLuck15Timer = updateLuck15Timer;
 
         // ============================================================================
         // 🔨 [포지 8시 30분 ~ 8시 40분 정기 이벤트 및 카운트다운 완전 삭제 완료]
@@ -22484,6 +22532,19 @@
 
         loadGame(); 
 
+        // ❄️ 얼음 협곡 상점 초기 펭귄 손님 줄 대기열 생성 (전체 서버)
+        try {
+            let iceShop = shops.find(s => s.type === 'ice_canyon');
+            if (iceShop && iceShop.queue.length === 0) {
+                for (let i = 0; i < 3; i++) {
+                    let c = generateCustomer('ice_canyon');
+                    c.x = iceShop.frontX - i * 60;
+                    c.y = iceShop.queueY;
+                    iceShop.queue.push(c);
+                }
+            }
+        } catch(e) {}
+
         // 🐾 펫 목록 로컬 저장소 동기화 (계정별 보존 보장)
         if (currentUser) {
             try { localStorage.setItem('owned_pets_' + currentUser.toLowerCase(), JSON.stringify(ownedPets)); } catch(e) {}
@@ -22604,7 +22665,7 @@
                 fruit = tier.items[Math.floor(Math.random() * tier.items.length)];
                 amount = Math.floor(Math.random() * 2) + 1;
                 reward = tier.price * amount;
-                customerSkin = (Math.random() < 0.5) ? 'penguin' : 'archaeologist';
+                customerSkin = 'penguin'; // 얼음 협곡 상점 전용 귀여운 꼬마 펭귄 손님
             } else if (type === 'angel_devil') {
                 let tables = (typeof angelDevilDropTables !== 'undefined') ? angelDevilDropTables : normalDropTables;
                 let r = Math.random(), cum = 0, tier = tables[0];
@@ -22948,12 +23009,10 @@
             }
 
             shops.forEach(shop => {
-                // 어드민 계정일 때만 할로윈/얼음협곡/천악 상점에 손님 방문 허용
-                if (shop.type === 'halloween' || shop.type === 'ice_canyon' || shop.type === 'angel_devil') {
-                    if (!isAdmin()) {
-                        shop.queue = [];
-                        return;
-                    }
+                // 어드민 계정일 때만 할로윈/천악 상점에 손님 방문 허용 (얼음협곡 상점은 전체 서버/전체 유저 오픈!)
+                if ((shop.type === 'halloween' || shop.type === 'angel_devil') && !isAdmin()) {
+                    shop.queue = [];
+                    return;
                 }
                 if (shop.queue.length < 5 && Math.random() < 0.01) {
                     let newCustomer = generateCustomer(shop.type);
@@ -23029,7 +23088,13 @@
                                     trackQuestProgress('deliver', 1);
                                     trackQuestProgress('gold', totalEarned);
                                 }
-                                floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned}`, color: 'gold', life: 60 });
+                                if (shop.type === 'ice_canyon') {
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned.toLocaleString()}`, color: '#38bdf8', life: 65, size: 20 });
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 105, text: `🐧 고마워 펭!`, color: '#facc15', life: 75, size: 17 });
+                                } else {
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned}`, color: 'gold', life: 60 });
+                                }
+                                saveGame(true);
                             }
 
                             shop.queue.shift();
@@ -27517,6 +27582,191 @@
 
         function drawShop(ctx, shop) {
             const x = shop.x; const y = shop.y;
+            if (shop.type === 'ice_canyon') {
+                // ❄️⛏️ [초호화 혹한의 고대 화석 상점] 얼음 협곡 전용 3D 프리미엄 렌더러
+                ctx.save();
+
+                // 1. 바닥 그림자 & 서리 낀 설원 베이스
+                ctx.fillStyle = 'rgba(2, 6, 23, 0.55)';
+                ctx.beginPath();
+                ctx.ellipse(x + 90, y + 215, 120, 26, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 2. 단단한 혹한의 빙하 석조 기반 (Glacial Stone Foundation)
+                let baseGrad = ctx.createLinearGradient(x - 15, y + 200, x + 195, y + 225);
+                baseGrad.addColorStop(0, '#0f172a');
+                baseGrad.addColorStop(0.5, '#1e293b');
+                baseGrad.addColorStop(1, '#0f172a');
+                ctx.fillStyle = baseGrad;
+                ctx.beginPath();
+                ctx.roundRect(x - 15, y + 200, 210, 22, 6);
+                ctx.fill();
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // 3. 고대 빙하 크리스탈 벽체 (Ice Crystal Wall)
+                let wallGrad = ctx.createLinearGradient(x, y + 75, x, y + 205);
+                wallGrad.addColorStop(0, '#0284c7');
+                wallGrad.addColorStop(0.3, '#0369a1');
+                wallGrad.addColorStop(0.7, '#075985');
+                wallGrad.addColorStop(1, '#0c4a6e');
+                ctx.fillStyle = wallGrad;
+                ctx.beginPath();
+                ctx.roundRect(x, y + 75, 180, 130, [4, 4, 0, 0]);
+                ctx.fill();
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                // 좌우 굵은 얼음 기둥 (Ice Pillars)
+                let pillarGrad = ctx.createLinearGradient(x, y, x + 20, y);
+                pillarGrad.addColorStop(0, '#38bdf8');
+                pillarGrad.addColorStop(0.5, '#7dd3fc');
+                pillarGrad.addColorStop(1, '#0284c7');
+                ctx.fillStyle = pillarGrad;
+                ctx.fillRect(x - 4, y + 75, 18, 127);
+                ctx.fillRect(x + 166, y + 75, 18, 127);
+                ctx.strokeStyle = '#bae6fd'; ctx.lineWidth = 1.5;
+                ctx.strokeRect(x - 4, y + 75, 18, 127);
+                ctx.strokeRect(x + 166, y + 75, 18, 127);
+
+                // 벽돌 얼음 결 (Ice Brick Pattern)
+                ctx.strokeStyle = 'rgba(224, 242, 254, 0.22)';
+                ctx.lineWidth = 1.2;
+                for (let row = 0; row < 4; row++) {
+                    let by = y + 95 + row * 26;
+                    ctx.beginPath();
+                    ctx.moveTo(x + 16, by);
+                    ctx.lineTo(x + 164, by);
+                    ctx.stroke();
+                }
+
+                // 4. 따뜻하게 빛나는 화석 발굴 진열장 & 서비스 창구
+                // 창문 배경 (신비로운 심해/빙하 내부 빛)
+                let winGrad = ctx.createRadialGradient(x + 90, y + 140, 5, x + 90, y + 140, 60);
+                winGrad.addColorStop(0, '#38bdf8');
+                winGrad.addColorStop(0.5, '#0284c7');
+                winGrad.addColorStop(1, '#082f49');
+                ctx.fillStyle = winGrad;
+                ctx.beginPath();
+                ctx.roundRect(x + 35, y + 105, 110, 72, 8);
+                ctx.fill();
+                ctx.strokeStyle = '#7dd3fc';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // 진열장 내부 고대 화석 실루엣 (암모나이트 & 공룡 뼈대 & 곡괭이)
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = '#38bdf8';
+                ctx.shadowBlur = 10;
+                ctx.fillText("🦴🐚⛏️", x + 90, y + 148);
+                ctx.shadowBlur = 0;
+
+                // 판매대 나무/얼음 카운터 (Counter Shelf)
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(x + 28, y + 168, 124, 12);
+                ctx.strokeStyle = '#67e8f9';
+                ctx.lineWidth = 1.8;
+                ctx.strokeRect(x + 28, y + 168, 124, 12);
+
+                // 5. 지붕 (혹한의 눈 덮인 크리스탈 뾰족 지붕)
+                let roofGrad = ctx.createLinearGradient(x - 20, y, x + 200, y + 80);
+                roofGrad.addColorStop(0, '#0284c7');
+                roofGrad.addColorStop(0.5, '#38bdf8');
+                roofGrad.addColorStop(1, '#0369a1');
+                ctx.fillStyle = roofGrad;
+                ctx.beginPath();
+                ctx.moveTo(x - 25, y + 78);
+                ctx.lineTo(x + 90, y - 5);
+                ctx.lineTo(x + 205, y + 78);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#e0f2fe';
+                ctx.lineWidth = 3.5;
+                ctx.stroke();
+
+                // 지붕 위 소복이 쌓인 새하얀 만년설 (Snow Drift on Roof)
+                ctx.fillStyle = '#f0f9ff';
+                ctx.beginPath();
+                ctx.moveTo(x - 28, y + 75);
+                ctx.quadraticCurveTo(x + 30, y + 35, x + 90, y - 8);
+                ctx.quadraticCurveTo(x + 150, y + 35, x + 208, y + 75);
+                ctx.lineTo(x + 200, y + 83);
+                ctx.quadraticCurveTo(x + 145, y + 45, x + 90, y + 5);
+                ctx.quadraticCurveTo(x + 35, y + 45, x - 20, y + 83);
+                ctx.closePath();
+                ctx.fill();
+
+                // 처마 밑 맺힌 투명한 고드름들 (Dripping Icicles)
+                ctx.fillStyle = 'rgba(224, 242, 254, 0.9)';
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 1;
+                const iciclePoints = [
+                    { ox: -15, h: 14 }, { ox: 5, h: 22 }, { ox: 25, h: 16 },
+                    { ox: 48, h: 26 }, { ox: 70, h: 18 }, { ox: 90, h: 28 },
+                    { ox: 110, h: 19 }, { ox: 132, h: 25 }, { ox: 155, h: 15 },
+                    { ox: 175, h: 22 }, { ox: 195, h: 12 }
+                ];
+                iciclePoints.forEach(pt => {
+                    ctx.beginPath();
+                    ctx.moveTo(x + pt.ox - 4, y + 78);
+                    ctx.lineTo(x + pt.ox + 4, y + 78);
+                    ctx.lineTo(x + pt.ox, y + 78 + pt.h);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                });
+
+                // 6. 상점 간판 (Ice Canyon Signboard)
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.roundRect(x + 20, y + 34, 140, 36, 8);
+                ctx.fill();
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+                // 간판 네온 텍스트
+                ctx.fillStyle = '#e0f2fe';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = '#38bdf8';
+                ctx.shadowBlur = 8;
+                ctx.fillText("❄️ 얼음 협곡 상점 ⛏️", x + 90, y + 57);
+                ctx.shadowBlur = 0;
+
+                // 7. 좌우 장식 소품: 빙하 곡괭이 & 눈 덮인 화석 원석 상자
+                ctx.fillStyle = '#334155';
+                ctx.fillRect(x - 24, y + 172, 20, 28);
+                ctx.strokeStyle = '#64748b';
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(x - 24, y + 172, 20, 28);
+                ctx.fillStyle = '#38bdf8';
+                ctx.font = '14px Arial';
+                ctx.fillText("🦴", x - 14, y + 192);
+
+                // 상점 위 [클릭: 화석 도감] 상호작용 알림 캡슐 (플레이어가 근처에 있을 때 부드럽게 반짝임)
+                let pDist = (typeof player !== 'undefined') ? Math.hypot(player.x - (x + 90), player.y - (y + 120)) : 999;
+                if (pDist < 160) {
+                    let pulse = Math.sin(Date.now() * 0.005) * 3;
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+                    ctx.beginPath();
+                    ctx.roundRect(x + 30, y - 26 + pulse, 120, 22, 11);
+                    ctx.fill();
+                    ctx.strokeStyle = '#38bdf8';
+                    ctx.lineWidth = 1.8;
+                    ctx.stroke();
+                    ctx.fillStyle = '#38bdf8';
+                    ctx.font = 'bold 11px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText("👆 클릭: 화석 도감", x + 90, y - 11 + pulse);
+                }
+
+                ctx.restore();
+                return;
+            }
             if (shop.type === 'halloween') {
                 if (isAdmin()) {
                     // 🍭 [어드민 전용] 할로윈 달콤한 사탕 상점
@@ -29238,7 +29488,7 @@
             });
 
             shops.forEach(shop => {
-                if ((shop.type === 'angel_devil' || shop.type === 'ice_canyon') && !isAdmin()) return;
+                if (shop.type === 'angel_devil' && !isAdmin()) return;
                 drawShop(ctx, shop);
             });
             // 융합 호박 머신 삭제됨 (크래프팅 머신만 렌더링 유지)
@@ -30129,6 +30379,11 @@ async function startLive830EventSequence() {
     // 10. Forge:모두들 굿바이
     showForgeBroadcast('Forge: 모두들 굿바이', 5500);
     await wait(5500);
+
+    // 🍀 유저 요청: 포지 마지막 인사 후 10분 동안 1.5배 행운 버프 지급
+    if (typeof activateLuck15Buff === 'function') {
+        activateLuck15Buff(10 * 60 * 1000);
+    }
 
     window._isLive830SequenceRunning = false;
 }
