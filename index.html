@@ -27,26 +27,26 @@
         #gameCanvas { display: block; }
         
         #money-display {
-            position: absolute; top: 15px; left: 15px;
-            background: rgba(0, 0, 0, 0.7); color: #f1c40f;
-            font-size: 20px; font-weight: bold;
-            padding: 8px 15px; border-radius: 20px;
+            position: absolute; top: 12px; left: 12px;
+            background: rgba(0, 0, 0, 0.75); color: #f1c40f;
+            font-size: 16px; font-weight: bold;
+            padding: 6px 12px; border-radius: 16px;
             border: 2px solid #f39c12; pointer-events: none; z-index: 10;
         }
         
         #level-container {
-            position: absolute; top: 15px; left: 50%;
-            transform: translateX(-50%); width: 250px;
+            position: absolute; top: 10px; left: 50%;
+            transform: translateX(-50%); width: 150px;
             text-align: center; pointer-events: none; z-index: 10;
         }
         #level-text {
-            color: white; font-size: 22px; font-weight: bold;
-            text-shadow: 2px 2px 4px #000; margin-bottom: 5px;
+            color: white; font-size: 17px; font-weight: bold;
+            text-shadow: 2px 2px 4px #000; margin-bottom: 3px;
             pointer-events: auto; cursor: pointer;
         }
         #xp-bar-bg {
-            background: rgba(0,0,0,0.6); border: 2px solid #fff;
-            border-radius: 10px; height: 15px; width: 100%;
+            background: rgba(0,0,0,0.6); border: 1.5px solid #fff;
+            border-radius: 8px; height: 11px; width: 100%;
             overflow: hidden; position: relative;
         }
         #xp-bar-fill {
@@ -435,8 +435,8 @@
         </div>
 
         <!-- 로그인 / 프로필 표시 버튼 (우측 상단) -->
-        <div id="user-profile-badge" onclick="openLoginModal()" style="position: absolute; top: 15px; right: 15px; background: rgba(18, 16, 28, 0.88); color: #fff; border: 1.5px solid #38bdf8; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; z-index: 15; box-shadow: 0 4px 12px rgba(0,0,0,0.6); transition: all 0.2s;">
-            <span style="font-size: 15px;">👤</span>
+        <div id="user-profile-badge" onclick="openLoginModal()" style="position: absolute; top: 12px; right: 12px; background: rgba(18, 16, 28, 0.88); color: #fff; border: 1.5px solid #38bdf8; padding: 6px 12px; border-radius: 18px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; z-index: 15; box-shadow: 0 4px 12px rgba(0,0,0,0.6); transition: all 0.2s; white-space: nowrap;">
+            <span style="font-size: 14px;">👤</span>
             <span id="user-status-text">로그인</span>
         </div>
 
@@ -1451,10 +1451,10 @@
         <div id="angel-devil-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #1e1b4b, #09090b); color: white; padding: 22px 18px; border-radius: 18px; width: 90%; max-width: 440px; max-height: 82%; overflow-y: auto; display: none; border: 2.5px solid #a855f7; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(168, 85, 247, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(168, 85, 247, 0.3); padding-bottom: 10px; margin-bottom: 12px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 26px;">🌓👑</span>
+                    <span style="font-size: 26px;">👼✨</span>
                     <div>
-                        <h2 style="margin: 0; color: #c084fc; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">천악 도감 (천사의 성역 & 악마의 심연)</h2>
-                        <span style="font-size: 11px; color: #cbd5e1;">천악 나무 10종 아이템을 모두 수집 시 [에테론] 스킨 지급!</span>
+                        <h2 style="margin: 0; color: #fef08a; font-size: 19px; font-weight: bold; letter-spacing: -0.5px;">천악 도감 (천사의 성역 & 악마의 심연)</h2>
+                        <span style="font-size: 11px; color: #cbd5e1;">천악 나무 10종 아이템을 모두 수집 시 [천사] 스킨 지급!</span>
                     </div>
                 </div>
                 <button onclick="closeAngelDevilIndex()" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
@@ -2593,8 +2593,17 @@
                 buff: '상점 판매 시 골드 +50% 보너스 정산'
             }
         ];
-        let adminActivePet = localStorage.getItem('admin_active_pet') || 'frost_wolf';
-        let adminPetFollowEnabled = localStorage.getItem('admin_pet_follow') === 'true';
+        let adminActivePet = null;
+        let adminPetFollowEnabled = false;
+        try {
+            localStorage.removeItem('admin_active_pet');
+            localStorage.removeItem('admin_pet_follow');
+            let savedActivePet = localStorage.getItem('active_skin_pet');
+            if (savedActivePet === 'frost_wolf' || savedActivePet === 'baby_ice_dragon' || savedActivePet === 'aurora_fox' || savedActivePet === 'penguin_butler') {
+                localStorage.removeItem('active_skin_pet');
+                activeSkinPet = null;
+            }
+        } catch(e) {}
         let followPetPos = { x: 260, y: 650, floatTimer: 0 };
 
         // 🐉 얼음의 협곡 고대 서리룡 보스 객체
@@ -8890,26 +8899,17 @@
             ctx.restore();
         }
 
-        // 🐾 플레이어 동행 펫 렌더링 (스킨 미니 캐릭터 & 목줄 연결 완벽 지원)
+        // 🐾 플레이어 동행 펫 렌더링 (유저가 직접 장착한 펫만 표시)
         function drawFollowingPet(ctx, playerObj) {
-            let petName = '';
-            let petColor = '#f59e0b';
-            let isSkinPet = false;
+            if (!activeSkinPet) return; // 펫을 장착하지 않았을 땐 절대 표시 안 함!
 
             const curPetInfo = (typeof PETS_DATA !== 'undefined' ? PETS_DATA.find(p => p.id === activeSkinPet) : null) ||
-                               (typeof PENGUIN_PET_CODEX_DATA !== 'undefined' ? PENGUIN_PET_CODEX_DATA.find(p => p.id === activeSkinPet) : null) ||
-                               skinsData.find(skin => skin.id === activeSkinPet);
-            if (activeSkinPet && (curPetInfo || isPetOwned(activeSkinPet))) {
-                petName = curPetInfo ? curPetInfo.name : activeSkinPet;
-                petColor = '#38bdf8';
-                isSkinPet = true;
-            } else if (isAdmin() && adminPetFollowEnabled) {
-                const petInfo = adminPetsData.find(p => p.id === adminActivePet) || adminPetsData[0];
-                petName = petInfo.name;
-                petColor = petInfo.tierColor || '#38bdf8';
-            } else {
-                return;
-            }
+                               (typeof PENGUIN_PET_CODEX_DATA !== 'undefined' ? PENGUIN_PET_CODEX_DATA.find(p => p.id === activeSkinPet) : null);
+            if (!curPetInfo && !isPetOwned(activeSkinPet)) return;
+
+            let petName = curPetInfo ? curPetInfo.name : activeSkinPet;
+            let petColor = '#38bdf8';
+            let isSkinPet = true;
 
             let targetX = playerObj.x + (playerObj.vx < 0 ? 36 : -36);
             let targetY = playerObj.y - 12;
@@ -13141,19 +13141,19 @@
 
             if (claimArea) {
                 if (collectedCount >= ANGEL_DEVIL_ITEMS.length) {
-                    if (!ownedSkins.includes('etheron')) {
+                    if (!ownedSkins.includes('angel')) {
                         claimArea.innerHTML = `
-                            <div style="background: linear-gradient(135deg, #7c3aed, #4c1d95); border: 2px solid #c084fc; border-radius: 12px; padding: 12px; text-align: center; box-shadow: 0 0 15px rgba(192, 132, 252, 0.4);">
+                            <div style="background: linear-gradient(135deg, #eab308, #ca8a04); border: 2px solid #fef08a; border-radius: 12px; padding: 12px; text-align: center; box-shadow: 0 0 15px rgba(254, 240, 138, 0.4);">
                                 <div style="font-size: 14px; font-weight: 900; color: #ffffff; margin-bottom: 6px;">🎉 천악 도감 10종 완전 수집 달성!</div>
-                                <button onclick="claimEtheronSkinFromCodex()" style="padding: 10px 24px; background: #facc15; color: #0f172a; border: none; border-radius: 8px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(250, 204, 21, 0.4);">
-                                    🌓👑 에테론 스킨 획득하기!
+                                <button onclick="claimAngelSkinFromCodex()" style="padding: 10px 24px; background: #ffffff; color: #0f172a; border: none; border-radius: 8px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 255, 255, 0.5);">
+                                    👼 천사 스킨 획득하기!
                                 </button>
                             </div>
                         `;
                     } else {
                         claimArea.innerHTML = `
-                            <div style="color: #c084fc; font-weight: bold; font-size: 13px; padding: 8px; background: rgba(168, 85, 247, 0.15); border-radius: 8px; border: 1px solid #a855f7;">
-                                ✓ 🌓👑 에테론 스킨 보유 중 (착용 완료)
+                            <div style="color: #fef08a; font-weight: bold; font-size: 13px; padding: 8px; background: rgba(254, 240, 138, 0.15); border-radius: 8px; border: 1px solid #fef08a;">
+                                ✓ 👼 천사 스킨 보유 중 (착용 완료)
                             </div>
                         `;
                     }
@@ -13164,25 +13164,25 @@
         }
         window.renderAngelDevilIndex = renderAngelDevilIndex;
 
-        function claimEtheronSkinFromCodex() {
+        function claimAngelSkinFromCodex() {
             let collectedCount = 0;
             ANGEL_DEVIL_ITEMS.forEach(item => {
                 if ((inventory[item.name] || 0) > 0 || angelDevilCollection.includes(item.name)) collectedCount++;
             });
-            if (collectedCount >= ANGEL_DEVIL_ITEMS.length && !ownedSkins.includes('etheron')) {
-                ownedSkins.push('etheron');
-                useSkin = 'etheron';
-                equippedSkin = 'etheron';
-                try { localStorage.setItem('equipped_skin', 'etheron'); } catch(e) {}
-                alert('🌓👑 [에테론 스킨 획득 완료!]\n\n천악 도감 10종 아이템을 모두 모아 초신화 [에테론] 스킨을 획득하고 장착했습니다!');
-                floatTexts.push({ x: player.x, y: player.y - 100, text: `🌓👑 에테론 스킨 획득!`, color: '#c084fc', life: 100 });
+            if (collectedCount >= ANGEL_DEVIL_ITEMS.length && !ownedSkins.includes('angel')) {
+                ownedSkins.push('angel');
+                useSkin = 'angel';
+                equippedSkin = 'angel';
+                try { localStorage.setItem('equipped_skin', 'angel'); } catch(e) {}
+                alert('👼 [천사 스킨 획득 완료!]\n\n천악 도감 10종 아이템을 모두 모아 성스러운 [천사] 스킨을 획득하고 장착했습니다!');
+                floatTexts.push({ x: player.x, y: player.y - 100, text: `👼 천사 스킨 획득!`, color: '#fef08a', life: 100 });
                 if (typeof updateShopSkinUI === 'function') updateShopSkinUI();
                 if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
                 renderAngelDevilIndex();
                 saveGame();
             }
         }
-        window.claimEtheronSkinFromCodex = claimEtheronSkinFromCodex;
+        window.claimAngelSkinFromCodex = claimAngelSkinFromCodex;
 
         // 🚀🌌 우주 도감 모달 컨트롤 함수들
         function openSpaceIndex() {
