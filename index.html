@@ -6638,19 +6638,42 @@
             const msg = document.getElementById('code-status-msg');
             const val = (input && input.value ? input.value.trim().toLowerCase() : '');
 
-            // 🛡️⚔️ [우정 한정 스킨] friendship 쿠폰 코드 ➔ sold out!
+            // 🛡️⚔️ [우정 한정 스킨] friendship 쿠폰 코드 ➔ 작업완료 시점 기준 2분 동안 배포, 이후 sold out!
+            const FRIENDSHIP_EXPIRE_TIME = 1793188678696;
             if (val === 'friendship') {
-                if (msg) {
-                    msg.innerText = 'sold out!';
-                    msg.style.color = '#ef4444';
-                    msg.style.display = 'block';
+                if (Date.now() <= FRIENDSHIP_EXPIRE_TIME) {
+                    if (!ownedSkins.includes('shield_and_sword')) {
+                        ownedSkins.push('shield_and_sword');
+                    }
+                    equippedSkin = 'shield_and_sword';
+                    if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                    if (typeof updateShopSkinUI === 'function') updateShopSkinUI();
+                    if (typeof saveGame === 'function') saveGame(true);
+                    if (msg) {
+                        msg.innerText = '🎉 [방패와 검] 한정 스킨을 획득하고 장착했습니다!';
+                        msg.style.color = '#2ecc71';
+                        msg.style.display = 'block';
+                    }
+                    if (input) input.style.borderColor = '#2ecc71';
+                    if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                        floatTexts.push({ x: player.x, y: player.y - 70, text: '🛡️⚔️ 방패와 검 스킨 획득!', color: '#38bdf8', life: 110, size: 22 });
+                    }
+                    alert('🎉 [한정 코드 등록 완료!]\n\n초호화 한정 스킨 [방패와 검]을 획득하고 자동 장착했습니다!\n가방 스킨 탭에서 확인하실 수 있습니다.');
+                    closeCodeModal();
+                    return;
+                } else {
+                    if (msg) {
+                        msg.innerText = 'sold out!';
+                        msg.style.color = '#ef4444';
+                        msg.style.display = 'block';
+                    }
+                    if (input) input.style.borderColor = '#ef4444';
+                    if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                        floatTexts.push({ x: player.x, y: player.y - 70, text: 'sold out!', color: '#ef4444', life: 100, size: 22 });
+                    }
+                    alert('sold out!');
+                    return;
                 }
-                if (input) input.style.borderColor = '#ef4444';
-                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
-                    floatTexts.push({ x: player.x, y: player.y - 70, text: 'sold out!', color: '#ef4444', life: 100, size: 22 });
-                }
-                alert('sold out!');
-                return;
             }
 
             // 🎂🔨 신화 한정 스킨 [포지 케이크] 지급 쿠폰 코드 (sorryaboutvoiseroom)
@@ -12574,8 +12597,8 @@
                         }
                     }
                 }
-                // 🏘️ [할로윈 캔디 마을] 집 10채 클릭 감지 (미니게임 활성화 시에만 클릭 가능)
-                if (isAdmin() && typeof candyVillageHouses !== 'undefined' && ((typeof isRingMinigameActive !== 'undefined' && isRingMinigameActive) || (typeof adminCandyCornShopSpawned !== 'undefined' && adminCandyCornShopSpawned))) {
+                // 🏘️ [할로윈 캔디 마을] 집 10채 클릭 감지 (전체 서버 정식 출시)
+                if (typeof candyVillageHouses !== 'undefined') {
                     for (let h of candyVillageHouses) {
                         let hDist = Math.hypot(cx - h.x, cy - h.y);
                         let hPlayerDist = Math.hypot(player.x - h.x, player.y - h.y);
@@ -12586,16 +12609,14 @@
                     }
                 }
 
-                // 🏪 [캔디콘 비밀 상점] 클릭 감지 (미니게임 활성화 시에만 클릭 가능)
-                if (isAdmin() && ((typeof isRingMinigameActive !== 'undefined' && isRingMinigameActive) || (typeof adminCandyCornShopSpawned !== 'undefined' && adminCandyCornShopSpawned))) {
-                    let shopX = GAME_WIDTH / 2;
-                    let shopY = 3600;
-                    let sDist = Math.hypot(cx - shopX, cy - shopY);
-                    let spDist = Math.hypot(player.x - shopX, player.y - shopY);
-                    if (sDist < 110 || (isSpacebar && spDist < 125)) {
-                        openCandyCornShopModal();
-                        return;
-                    }
+                // 🏪 [캔디콘 비밀 상점] 클릭 감지 (전체 서버 정식 출시)
+                let shopX = GAME_WIDTH / 2;
+                let shopY = 3600;
+                let sDist = Math.hypot(cx - shopX, cy - shopY);
+                let spDist = Math.hypot(player.x - shopX, player.y - shopY);
+                if (sDist < 110 || (isSpacebar && spDist < 125)) {
+                    openCandyCornShopModal();
+                    return;
                 }
 
                 // 🔮 크래프팅 머신 클릭 감지 (일반 지역 중앙)
@@ -14107,7 +14128,7 @@
             { id: 'candy_king', name: '별사탕 캔디 국왕', price: 0, icon: '👑🍬', isReward: true, desc: '캔디콘 1,000개 할로윈 럭키블록 신화 보상' },
             { id: 'halloween_forge', name: '할로윈 포지', price: 2000, icon: '🎃🗡️', isReward: true, desc: '캔디콘 상점 2,000 캔디 구매 스킨' },
             { id: 'ax_combination', name: '도끼 콤비네이션', price: 0, icon: '🪓⚡', isReward: true, adminOnly: true, desc: '크래프팅 머신 [고대 도끼] 조합 스킨' },
-            { id: 'shield_and_sword', name: '방패와 검', price: 0, icon: '🛡️⚔️', isReward: true, adminOnly: true, desc: '쿠폰 코드 [friendship] 보상 스킨' },
+            { id: 'shield_and_sword', name: '방패와 검', price: 0, icon: '🛡️⚔️', isReward: true, adminOnly: false, desc: '쿠폰 코드 [friendship] 한정 보상 스킨' },
             { id: 'wizard', name: '대마법사', price: 0, icon: '🧙✨', isReward: true, desc: '프리미엄 할로윈 럭키블록 1% 초신화 스킨' }
         ];
 
@@ -19161,7 +19182,7 @@
 
             // 🚫 비관리자 계정의 한정/미출시/관리자 스킨 오염 완벽 정제 (Purge unreleased/admin skins for normal accounts)
             if (!isAdmin()) {
-                const adminOnlyIds = ['shield_and_sword', 'admin_sword', 'ax_combination', 'jellyfish'];
+                const adminOnlyIds = ['admin_sword', 'ax_combination', 'jellyfish'];
                 ownedSkins = ownedSkins.filter(id => !adminOnlyIds.includes(id));
 
                 // 관리자 계정 접속 후 유출된 미달성 도감/업적 스킨 회수
@@ -22619,43 +22640,30 @@
                 reward = tier.price * amount;
                 customerSkin = 'astronaut'; // "상점 주민들은 우주복 입고"
             } else if (type === 'halloween') {
-                if (isAdmin()) {
-                    // 🍭 사탕 나무 과일(사탕 6종) 구매 손님 -> 보상은 오직 캔디콘! (돈 지급 X)
-                    const candyChoices = [
-                        { item: '알사탕', corn: 5, price: 3000 },
-                        { item: '롤리팝', corn: 15, price: 10000 },
-                        { item: '초콜릿', corn: 35, price: 30000 },
-                        { item: '과일젤리', corn: 80, price: 70000 },
-                        { item: '마시멜로우', corn: 200, price: 180000 },
-                        { item: '별사탕 킹캔디', corn: 500, price: 500000 }
-                    ];
-                    let r = Math.random();
-                    let chosen = candyChoices[0];
-                    if (r < 0.60) chosen = candyChoices[0];
-                    else if (r < 0.75) chosen = candyChoices[1];
-                    else if (r < 0.85) chosen = candyChoices[2];
-                    else if (r < 0.93) chosen = candyChoices[3];
-                    else if (r < 0.98) chosen = candyChoices[4];
-                    else chosen = candyChoices[5];
+                // 🍭 [전체 서버] 사탕 6종 구매 손님 -> 보상은 캔디콘 지급!
+                const candyChoices = [
+                    { item: '알사탕', corn: 5, price: 3000 },
+                    { item: '롤리팝', corn: 15, price: 10000 },
+                    { item: '초콜릿', corn: 35, price: 30000 },
+                    { item: '과일젤리', corn: 80, price: 70000 },
+                    { item: '마시멜로우', corn: 200, price: 180000 },
+                    { item: '별사탕 킹캔디', corn: 500, price: 500000 }
+                ];
+                let r = Math.random();
+                let chosen = candyChoices[0];
+                if (r < 0.60) chosen = candyChoices[0];
+                else if (r < 0.75) chosen = candyChoices[1];
+                else if (r < 0.85) chosen = candyChoices[2];
+                else if (r < 0.93) chosen = candyChoices[3];
+                else if (r < 0.98) chosen = candyChoices[4];
+                else chosen = candyChoices[5];
 
-                    fruit = chosen.item;
-                    amount = (chosen.item === '별사탕 킹캔디') ? 1 : (Math.floor(Math.random() * 2) + 1);
-                    rewardCorn = chosen.corn * amount;
-                    reward = 0;
-                } else {
-                    const pumpkinChoices = [
-                        { item: '주황호박', price: 2000 },
-                        { item: '초록호박', price: 2000 },
-                        { item: '하얀호박', price: 2000 }
-                    ];
-                    let chosen = pumpkinChoices[Math.floor(Math.random() * pumpkinChoices.length)];
-                    fruit = chosen.item;
-                    amount = Math.floor(Math.random() * 3) + 1;
-                    reward = chosen.price * amount;
-                    rewardCorn = 0;
-                }
+                fruit = chosen.item;
+                amount = (chosen.item === '별사탕 킹캔디') ? 1 : (Math.floor(Math.random() * 2) + 1);
+                rewardCorn = chosen.corn * amount;
+                reward = 0;
 
-                // 똑같이 할로윈 스킨 주민이 옴
+                // 귀여운 할로윈 분장 주민 방문
                 const hwSkins = ['ghost_fedora', 'ghost_classic', 'ghost_purple', 'jack_orange', 'jack_fiery'];
                 customerSkin = hwSkins[Math.floor(Math.random() * hwSkins.length)];
             } else if (type === 'ice_canyon') {
@@ -22800,7 +22808,7 @@
             } else { player.walkTimer = 0; }
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
-            const maxBottomLimit = isAdmin() ? 3950 : 2600;
+            const maxBottomLimit = 3950; // 할로윈 지형 & 캔디콘 상점(Y: 3600) 전 유저 오픈
             player.y = Math.max(-10750, Math.min(maxBottomLimit - player.radius, player.y));
             
             // 🔒 맨 마지막 지역: 얼음의 협곡(Y: -8000 이하) 이번주 토요일 21:30 공개 및 레벨 125 체크
@@ -23009,8 +23017,8 @@
             }
 
             shops.forEach(shop => {
-                // 어드민 계정일 때만 할로윈/천악 상점에 손님 방문 허용 (얼음협곡 상점은 전체 서버/전체 유저 오픈!)
-                if ((shop.type === 'halloween' || shop.type === 'angel_devil') && !isAdmin()) {
+                // 천악 상점만 어드민 전용, 할로윈 및 얼음협곡 상점은 전체 서버 오픈!
+                if (shop.type === 'angel_devil' && !isAdmin()) {
                     shop.queue = [];
                     return;
                 }
@@ -27768,57 +27776,30 @@
                 return;
             }
             if (shop.type === 'halloween') {
-                if (isAdmin()) {
-                    // 🍭 [어드민 전용] 할로윈 달콤한 사탕 상점
-                    ctx.fillStyle = '#3b1d54'; ctx.fillRect(x - 10, y + 210, 200, 20);
-                    let wallGrad = ctx.createLinearGradient(x, y, x, y + 210);
-                    wallGrad.addColorStop(0, '#581c87'); wallGrad.addColorStop(1, '#3b0764');
-                    ctx.fillStyle = wallGrad; ctx.fillRect(x, y + 80, 180, 130);
-                    ctx.fillStyle = '#7e22ce'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
-                    
-                    // 따뜻하게 빛나는 캔디 진열 창문
-                    ctx.fillStyle = '#fef08a'; ctx.fillRect(x + 35, y + 105, 110, 75);
-                    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3; ctx.strokeRect(x + 35, y + 105, 110, 75);
-                    ctx.fillStyle = '#ea580c'; ctx.font = '22px Arial'; ctx.textAlign = 'center'; ctx.fillText("🍬🍭🍫", x + 90, y + 150);
+                // 🍭 [전체 서버 정식 출시] 할로윈 달콤한 사탕 상점
+                ctx.fillStyle = '#3b1d54'; ctx.fillRect(x - 10, y + 210, 200, 20);
+                let wallGrad = ctx.createLinearGradient(x, y, x, y + 210);
+                wallGrad.addColorStop(0, '#581c87'); wallGrad.addColorStop(1, '#3b0764');
+                ctx.fillStyle = wallGrad; ctx.fillRect(x, y + 80, 180, 130);
+                ctx.fillStyle = '#7e22ce'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
+                
+                // 따뜻하게 빛나는 캔디 진열 창문
+                ctx.fillStyle = '#fef08a'; ctx.fillRect(x + 35, y + 105, 110, 75);
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3; ctx.strokeRect(x + 35, y + 105, 110, 75);
+                ctx.fillStyle = '#ea580c'; ctx.font = '22px Arial'; ctx.textAlign = 'center'; ctx.fillText("🍬🍭🍫", x + 90, y + 150);
 
-                    // 주황 & 보라 줄무늬 할로윈 차양
-                    let roofGrad = ctx.createLinearGradient(x - 20, y, x + 200, y + 80);
-                    roofGrad.addColorStop(0, '#f97316'); roofGrad.addColorStop(1, '#c026d3');
-                    ctx.fillStyle = roofGrad;
-                    ctx.beginPath(); ctx.moveTo(x - 20, y + 80); ctx.lineTo(x + 90, y); ctx.lineTo(x + 200, y + 80); ctx.fill();
-                    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 3.5; ctx.stroke();
-
-                    // 간판
-                    ctx.fillStyle = '#1e1b24'; ctx.fillRect(x + 30, y + 40, 125, 36);
-                    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.strokeRect(x + 30, y + 40, 125, 36);
-                    ctx.fillStyle = '#facc15'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
-                    ctx.fillText("🍭 사탕 상점 🍬", x + 92, y + 63);
-                    return;
-                }
-                // 🌫️ 사용자 요청: 버려지고 판자로 폐쇄된 할로윈 폐허 상점 (일반 유저)
-                ctx.fillStyle = '#2d241e'; ctx.fillRect(x - 10, y + 210, 200, 20);
-                ctx.fillStyle = '#3a312a'; ctx.fillRect(x, y + 80, 180, 130);
-                ctx.fillStyle = '#1e1814'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
-                // 어두운 폐쇄 입구
-                ctx.fillStyle = '#0f0e11'; ctx.fillRect(x + 30, y + 100, 120, 110);
-                // X자 및 가로 판자
-                ctx.fillStyle = '#5c4033';
-                ctx.fillRect(x + 20, y + 120, 140, 16);
-                ctx.fillRect(x + 20, y + 160, 140, 16);
-                ctx.save();
-                ctx.translate(x + 90, y + 155);
-                ctx.rotate(0.4); ctx.fillRect(-70, -8, 140, 16);
-                ctx.rotate(-0.8); ctx.fillRect(-70, -8, 140, 16);
-                ctx.restore();
-                // 낡은 지붕
-                ctx.fillStyle = '#2d1b36';
+                // 주황 & 보라 줄무늬 할로윈 차양
+                let roofGrad = ctx.createLinearGradient(x - 20, y, x + 200, y + 80);
+                roofGrad.addColorStop(0, '#f97316'); roofGrad.addColorStop(1, '#c026d3');
+                ctx.fillStyle = roofGrad;
                 ctx.beginPath(); ctx.moveTo(x - 20, y + 80); ctx.lineTo(x + 90, y); ctx.lineTo(x + 200, y + 80); ctx.fill();
-                ctx.strokeStyle = '#120c17'; ctx.lineWidth = 4; ctx.stroke();
-                // 폐쇄 간판
-                ctx.fillStyle = '#1e1b24'; ctx.fillRect(x + 35, y + 40, 120, 35);
-                ctx.strokeStyle = '#475569'; ctx.lineWidth = 2.5; ctx.strokeRect(x + 35, y + 40, 120, 35);
-                ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
-                ctx.fillText("🚫 [폐쇄된 상점]", x + 95, y + 63);
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 3.5; ctx.stroke();
+
+                // 간판
+                ctx.fillStyle = '#1e1b24'; ctx.fillRect(x + 30, y + 40, 125, 36);
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.strokeRect(x + 30, y + 40, 125, 36);
+                ctx.fillStyle = '#facc15'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
+                ctx.fillText("🍭 사탕 상점 🍬", x + 92, y + 63);
                 return;
             }
             ctx.fillStyle = '#5c3a21'; ctx.fillRect(x - 10, y + 210, 200, 20);
@@ -28874,17 +28855,15 @@
                 renderList.push({ type: 'craftingMachine', obj: craftingMachine, y: craftingMachine.y });
             }
 
-            // 🏘️ [할로윈 캔디 마을] 집 10채 (평소에는 맵 하단에 없고 미니게임 진행 중에만 등장)
-            if (isAdmin() && typeof candyVillageHouses !== 'undefined' && ((typeof isRingMinigameActive !== 'undefined' && isRingMinigameActive) || (typeof adminCandyCornShopSpawned !== 'undefined' && adminCandyCornShopSpawned))) {
+            // 🏘️ [할로윈 캔디 마을] 집 10채 (전체 서버 정식 출시)
+            if (typeof candyVillageHouses !== 'undefined') {
                 candyVillageHouses.forEach(h => {
                     renderList.push({ type: 'candyHouse', obj: h, y: h.y });
                 });
             }
 
-            // 🏪 [캔디콘 비밀 상점] (평소에는 맵 하단에 없고 미니게임 진행 중에만 등장)
-            if (isAdmin() && ((typeof isRingMinigameActive !== 'undefined' && isRingMinigameActive) || (typeof adminCandyCornShopSpawned !== 'undefined' && adminCandyCornShopSpawned))) {
-                renderList.push({ type: 'candyCornShop', obj: { x: GAME_WIDTH / 2, y: 3600 }, y: 3600 });
-            }
+            // 🏪 [캔디콘 비밀 상점] (전체 서버 정식 출시)
+            renderList.push({ type: 'candyCornShop', obj: { x: GAME_WIDTH / 2, y: 3600 }, y: 3600 });
 
             // 링 모으기 미니게임 스폰된 링 렌더 등록
             if (isAdmin() && isRingMinigameActive && Array.isArray(ringMinigameRings)) {
@@ -30204,12 +30183,13 @@ function is830EventTimeWindow() {
     if (window.FORCE_830_EVENT) return true;
     const now = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 30, 0);
-    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 40, 0);
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 50, 0);
     return now >= start && now <= end;
 }
 window.is830EventTimeWindow = is830EventTimeWindow;
 
 function updateCountdownHUD() {
+    const hud = document.getElementById('admin-abuse-countdown-hud');
     const titleEl = document.getElementById('countdown-hud-title');
     const timerEl = document.getElementById('countdown-hud-timer');
     if (!titleEl || !timerEl) return;
@@ -30219,11 +30199,9 @@ function updateCountdownHUD() {
     const diffMs = target - now;
 
     if (diffMs <= 0 || window.FORCE_830_EVENT) {
-        titleEl.innerText = '관리자남용';
-        titleEl.style.color = '#4ade80';
-        timerEl.innerText = '0시간 0분 0초 (천악 지형 오픈!)';
-        timerEl.style.color = '#4ade80';
+        if (hud) hud.style.display = 'none';
     } else {
+        if (hud) hud.style.display = 'block';
         const totalSec = Math.floor(diffMs / 1000);
         const hours = Math.floor(totalSec / 3600);
         const minutes = Math.floor((totalSec % 3600) / 60);
@@ -30236,6 +30214,13 @@ function updateCountdownHUD() {
 }
 updateCountdownHUD();
 setInterval(updateCountdownHUD, 1000);
+
+function checkAndTrigger830EventOnRefresh() {
+    if (typeof checkAutoTrigger830LiveEvent === 'function') {
+        checkAutoTrigger830LiveEvent();
+    }
+}
+window.checkAndTrigger830EventOnRefresh = checkAndTrigger830EventOnRefresh;
 
 function showForgeBroadcast(text, duration = 4800) {
     const banner = document.getElementById('forge-broadcast-banner');
