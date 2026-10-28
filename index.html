@@ -12583,6 +12583,10 @@
                             openCaveIndex();
                             return;
                         } else if (shop.type === 'halloween') {
+                            if (!isAdmin()) {
+                                alert('🔒 [폐쇄된 상점]\n\n현재 사탕 상점은 관리자 전용으로 폐쇄되어 있습니다.');
+                                return;
+                            }
                             openCandyIndex();
                             return;
                         } else if (shop.type === 'space') {
@@ -12609,14 +12613,16 @@
                     }
                 }
 
-                // 🏪 [캔디콘 비밀 상점] 클릭 감지 (전체 서버 정식 출시)
-                let shopX = GAME_WIDTH / 2;
-                let shopY = 3600;
-                let sDist = Math.hypot(cx - shopX, cy - shopY);
-                let spDist = Math.hypot(player.x - shopX, player.y - shopY);
-                if (sDist < 110 || (isSpacebar && spDist < 125)) {
-                    openCandyCornShopModal();
-                    return;
+                // 🏪 [캔디콘 비밀 상점] 클릭 감지 (어드민 계정 전용)
+                if (isAdmin()) {
+                    let shopX = GAME_WIDTH / 2;
+                    let shopY = 3600;
+                    let sDist = Math.hypot(cx - shopX, cy - shopY);
+                    let spDist = Math.hypot(player.x - shopX, player.y - shopY);
+                    if (sDist < 110 || (isSpacebar && spDist < 125)) {
+                        openCandyCornShopModal();
+                        return;
+                    }
                 }
 
                 // 🔮 크래프팅 머신 클릭 감지 (일반 지역 중앙)
@@ -22261,6 +22267,10 @@
         window.equipOrViewCandyKingSkin = equipOrViewCandyKingSkin;
 
         function openCandyCornShopModal() {
+            if (!isAdmin()) {
+                alert('🔒 캔디콘 상점은 관리자 전용 상점입니다.');
+                return;
+            }
             const modal = document.getElementById('candycorn-shop-modal');
             if (!modal) return;
             const myCornEl = document.getElementById('cc-shop-my-corn');
@@ -23017,8 +23027,8 @@
             }
 
             shops.forEach(shop => {
-                // 천악 상점만 어드민 전용, 할로윈 및 얼음협곡 상점은 전체 서버 오픈!
-                if (shop.type === 'angel_devil' && !isAdmin()) {
+                // 어드민 계정일 때만 할로윈/천악 상점에 손님 방문 허용
+                if ((shop.type === 'halloween' || shop.type === 'angel_devil') && !isAdmin()) {
                     shop.queue = [];
                     return;
                 }
@@ -27776,30 +27786,57 @@
                 return;
             }
             if (shop.type === 'halloween') {
-                // 🍭 [전체 서버 정식 출시] 할로윈 달콤한 사탕 상점
-                ctx.fillStyle = '#3b1d54'; ctx.fillRect(x - 10, y + 210, 200, 20);
-                let wallGrad = ctx.createLinearGradient(x, y, x, y + 210);
-                wallGrad.addColorStop(0, '#581c87'); wallGrad.addColorStop(1, '#3b0764');
-                ctx.fillStyle = wallGrad; ctx.fillRect(x, y + 80, 180, 130);
-                ctx.fillStyle = '#7e22ce'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
-                
-                // 따뜻하게 빛나는 캔디 진열 창문
-                ctx.fillStyle = '#fef08a'; ctx.fillRect(x + 35, y + 105, 110, 75);
-                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3; ctx.strokeRect(x + 35, y + 105, 110, 75);
-                ctx.fillStyle = '#ea580c'; ctx.font = '22px Arial'; ctx.textAlign = 'center'; ctx.fillText("🍬🍭🍫", x + 90, y + 150);
+                if (isAdmin()) {
+                    // 🍭 [어드민 전용] 할로윈 달콤한 사탕 상점
+                    ctx.fillStyle = '#3b1d54'; ctx.fillRect(x - 10, y + 210, 200, 20);
+                    let wallGrad = ctx.createLinearGradient(x, y, x, y + 210);
+                    wallGrad.addColorStop(0, '#581c87'); wallGrad.addColorStop(1, '#3b0764');
+                    ctx.fillStyle = wallGrad; ctx.fillRect(x, y + 80, 180, 130);
+                    ctx.fillStyle = '#7e22ce'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
+                    
+                    // 따뜻하게 빛나는 캔디 진열 창문
+                    ctx.fillStyle = '#fef08a'; ctx.fillRect(x + 35, y + 105, 110, 75);
+                    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3; ctx.strokeRect(x + 35, y + 105, 110, 75);
+                    ctx.fillStyle = '#ea580c'; ctx.font = '22px Arial'; ctx.textAlign = 'center'; ctx.fillText("🍬🍭🍫", x + 90, y + 150);
 
-                // 주황 & 보라 줄무늬 할로윈 차양
-                let roofGrad = ctx.createLinearGradient(x - 20, y, x + 200, y + 80);
-                roofGrad.addColorStop(0, '#f97316'); roofGrad.addColorStop(1, '#c026d3');
-                ctx.fillStyle = roofGrad;
+                    // 주황 & 보라 줄무늬 할로윈 차양
+                    let roofGrad = ctx.createLinearGradient(x - 20, y, x + 200, y + 80);
+                    roofGrad.addColorStop(0, '#f97316'); roofGrad.addColorStop(1, '#c026d3');
+                    ctx.fillStyle = roofGrad;
+                    ctx.beginPath(); ctx.moveTo(x - 20, y + 80); ctx.lineTo(x + 90, y); ctx.lineTo(x + 200, y + 80); ctx.fill();
+                    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 3.5; ctx.stroke();
+
+                    // 간판
+                    ctx.fillStyle = '#1e1b24'; ctx.fillRect(x + 30, y + 40, 125, 36);
+                    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.strokeRect(x + 30, y + 40, 125, 36);
+                    ctx.fillStyle = '#facc15'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
+                    ctx.fillText("🍭 사탕 상점 🍬", x + 92, y + 63);
+                    return;
+                }
+                // 🌫️ 일반 유저 화면: 판자로 폐쇄된 상점
+                ctx.fillStyle = '#2d241e'; ctx.fillRect(x - 10, y + 210, 200, 20);
+                ctx.fillStyle = '#3a312a'; ctx.fillRect(x, y + 80, 180, 130);
+                ctx.fillStyle = '#1e1814'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
+                // 어두운 폐쇄 입구
+                ctx.fillStyle = '#0f0e11'; ctx.fillRect(x + 30, y + 100, 120, 110);
+                // X자 및 가로 판자
+                ctx.fillStyle = '#5c4033';
+                ctx.fillRect(x + 20, y + 120, 140, 16);
+                ctx.fillRect(x + 20, y + 160, 140, 16);
+                ctx.save();
+                ctx.translate(x + 90, y + 155);
+                ctx.rotate(0.4); ctx.fillRect(-70, -8, 140, 16);
+                ctx.rotate(-0.8); ctx.fillRect(-70, -8, 140, 16);
+                ctx.restore();
+                // 낡은 지붕
+                ctx.fillStyle = '#2d1b36';
                 ctx.beginPath(); ctx.moveTo(x - 20, y + 80); ctx.lineTo(x + 90, y); ctx.lineTo(x + 200, y + 80); ctx.fill();
-                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 3.5; ctx.stroke();
-
-                // 간판
-                ctx.fillStyle = '#1e1b24'; ctx.fillRect(x + 30, y + 40, 125, 36);
-                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.strokeRect(x + 30, y + 40, 125, 36);
-                ctx.fillStyle = '#facc15'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
-                ctx.fillText("🍭 사탕 상점 🍬", x + 92, y + 63);
+                ctx.strokeStyle = '#120c17'; ctx.lineWidth = 4; ctx.stroke();
+                // 폐쇄 간판
+                ctx.fillStyle = '#1e1b24'; ctx.fillRect(x + 35, y + 40, 120, 35);
+                ctx.strokeStyle = '#475569'; ctx.lineWidth = 2.5; ctx.strokeRect(x + 35, y + 40, 120, 35);
+                ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
+                ctx.fillText("🚫 [폐쇄된 상점]", x + 95, y + 63);
                 return;
             }
             ctx.fillStyle = '#5c3a21'; ctx.fillRect(x - 10, y + 210, 200, 20);
@@ -28862,8 +28899,10 @@
                 });
             }
 
-            // 🏪 [캔디콘 비밀 상점] (전체 서버 정식 출시)
-            renderList.push({ type: 'candyCornShop', obj: { x: GAME_WIDTH / 2, y: 3600 }, y: 3600 });
+            // 🏪 [캔디콘 비밀 상점] (어드민 계정 전용)
+            if (isAdmin()) {
+                renderList.push({ type: 'candyCornShop', obj: { x: GAME_WIDTH / 2, y: 3600 }, y: 3600 });
+            }
 
             // 링 모으기 미니게임 스폰된 링 렌더 등록
             if (isAdmin() && isRingMinigameActive && Array.isArray(ringMinigameRings)) {
