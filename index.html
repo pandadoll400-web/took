@@ -710,6 +710,12 @@
                 </div>
                 <span class="hud-tile-label" style="color: #f1c40f;">ADMIN</span>
             </button>
+            <button id="weqwxe3-event-btn" class="hud-tile-btn" onclick="openWeqwxe3EventModal()" style="display: none; border-color: #ec4899; background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(168, 85, 247, 0.25)); box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);">
+                <div class="hud-tile-icon-wrap">
+                    <span style="font-size: 16px;">🎃</span>
+                </div>
+                <span class="hud-tile-label" style="color: #f472b6; font-weight: 900;">이벤트</span>
+            </button>
         </div>
 
         <!-- 👑 최고 관리자 컨트롤 패널 모달 -->
@@ -721,11 +727,7 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                 <!-- 🎮 [어드민 전용] 미니게임 2종 테스트 버튼 -->
                 <div style="grid-column: span 2; margin-top: 4px; padding: 10px; background: rgba(15, 23, 42, 0.85); border: 2px solid #38bdf8; border-radius: 12px; box-shadow: 0 4px 16px rgba(56, 189, 248, 0.25);">
-                    <div style="font-size: 13.5px; font-weight: 900; color: #38bdf8; margin-bottom: 8px; text-align: center;">🎮 [어드민 전용] 신규 미니게임 2종 & 8:30 실시간 이벤트 테스트</div>
-                    <button onclick="window.FORCE_830_EVENT = true; startLive830EventSequence(); closeAdminPanelModal();" style="width: 100%; margin-bottom: 8px; padding: 11px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; border: 2px solid #facc15; border-radius: 8px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5); text-align: center;">
-                        ▶️ [8:30 실시간 이벤트 강제 재생 테스트]<br>
-                        <span style="font-size: 10.5px; opacity: 0.95;">(Forge 방송 ➔ 링 모으기 ➔ 천사 승리 ➔ 천악 피하기 ➔ friendship ➔ 실시간 투표 ➔ 굿바이)</span>
-                    </button>
+                    <div style="font-size: 13.5px; font-weight: 900; color: #38bdf8; margin-bottom: 8px; text-align: center;">🎮 [어드민 전용] 신규 미니게임 2종 테스트</div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <button onclick="startRedLightGreenLightGame()" style="padding: 11px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 12.5px; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); text-align: center;">🚦 [미니게임 1]<br>빨간불 초록불 테스트<br><span style="font-size: 10.5px; opacity: 0.9;">(💻 해커 스킨 탈출)</span></button>
                         <button onclick="startDodgeFarmersGame()" style="padding: 11px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 12.5px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); text-align: center;">👨‍🌾 [미니게임 2]<br>농부 피하기 테스트<br><span style="font-size: 10.5px; opacity: 0.9;">(🤺 서양 검사 탈출)</span></button>
@@ -762,6 +764,82 @@
                 <button onclick="adminRefillAll()" style="padding: 10px; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🎒 모든 과일/암석/물고기 999개 충전</button>
                 <button onclick="adminWarpToEarth()" style="padding: 10px; background: rgba(255,255,255,0.12); color: #ddd; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer;">🌍 지상 마을(시작점)로 이동</button>
             </div>
+        </div>
+
+        <!-- 🎃 [weqwxe3 전용] 특별 이벤트 & 미니게임 모달 -->
+        <div id="weqwxe3-event-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #1e1035, #0a0614); color: white; padding: 22px 18px; border-radius: 22px; width: 94%; max-width: 480px; max-height: 88vh; overflow-y: auto; display: none; border: 2.5px solid #ec4899; z-index: 85; box-shadow: 0 16px 50px rgba(0,0,0,0.95), 0 0 40px rgba(236, 72, 153, 0.4); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(236, 72, 153, 0.35); padding-bottom: 8px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 22px;">🎃✨</span>
+                    <h3 style="margin: 0; color: #f472b6; font-size: 18px; font-weight: 950;">특별 이벤트 센터</h3>
+                </div>
+                <button onclick="closeWeqwxe3EventModal()" style="background: rgba(239, 68, 68, 0.2); border: 1.5px solid #ef4444; color: #fca5a5; width: 30px; height: 30px; border-radius: 50%; font-size: 15px; font-weight: 900; cursor: pointer;">✕</button>
+            </div>
+
+            <!-- 탭 전환 버튼: 1) 미니게임 참여 / 2) 9시 이벤트 -->
+            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+                <button id="weqwxe3-tab-minigames" onclick="switchWeqwxe3Tab('minigames')" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #ec4899, #d946ef); color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 13.5px; cursor: pointer; box-shadow: 0 3px 10px rgba(236, 72, 153, 0.4);">🎮 미니게임 참여</button>
+                <button id="weqwxe3-tab-9pm" onclick="switchWeqwxe3Tab('9pm')" style="flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.08); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; font-weight: 900; font-size: 13.5px; cursor: pointer;">🎃 9시 이벤트</button>
+            </div>
+
+            <!-- 탭 1: 미니게임 참여 목록 -->
+            <div id="weqwxe3-section-minigames" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- 1. 빨간불 초록불 -->
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid #10b981; border-radius: 12px; padding: 12px; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 900; font-size: 15px; color: #34d399;">🚦 빨간불 초록불</div>
+                        <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">신호등을 보며 우주로 가 [해커] 스킨 탈출!</div>
+                    </div>
+                    <button onclick="closeWeqwxe3EventModal(); startRedLightGreenLightGame(true);" style="padding: 9px 16px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4);">참여하기</button>
+                </div>
+
+                <!-- 2. 성난 농부 돌진 -->
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid #f59e0b; border-radius: 12px; padding: 12px; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 900; font-size: 15px; color: #fbbf24;">👨‍🌾 성난 농부 돌진</div>
+                        <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">돌진하는 농부를 피해 [서양 검사] 스킨 탈출!</div>
+                    </div>
+                    <button onclick="closeWeqwxe3EventModal(); startDodgeFarmersGame(true, 'farmer');" style="padding: 9px 16px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(245, 158, 11, 0.4);">참여하기</button>
+                </div>
+
+                <!-- 3. 천악 링모으기 -->
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid #a855f7; border-radius: 12px; padding: 12px; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 900; font-size: 15px; color: #c084fc;">💍 천악 링모으기</div>
+                        <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">천사 vs 악마 진영 링 수집 (3분 대전)!</div>
+                    </div>
+                    <button onclick="closeWeqwxe3EventModal(); openRingMinigameTeamSelect();" style="padding: 9px 16px; background: linear-gradient(135deg, #a855f7, #9333ea); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(168, 85, 247, 0.4);">참여하기</button>
+                </div>
+
+                <!-- 4. 집10채 생성 -->
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid #f97316; border-radius: 12px; padding: 12px; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 900; font-size: 15px; color: #fb923c;">🏘️ 집 10채 생성</div>
+                        <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">사탕 마을에 집 10채 소환 및 즉시 이동!</div>
+                    </div>
+                    <button onclick="toggleCandyVillageHouses();" style="padding: 9px 16px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(249, 115, 22, 0.4);">생성/이동</button>
+                </div>
+
+                <!-- 5. 캔디콘 콜렉트 -->
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid #eab308; border-radius: 12px; padding: 12px; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 900; font-size: 15px; color: #facc15;">🍬 캔디콘 콜렉트</div>
+                        <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">모든 지형에 캔디콘 15개씩 드롭 &amp; 수집!</div>
+                    </div>
+                    <button onclick="triggerCandyCornCollectEvent();" style="padding: 9px 16px; background: linear-gradient(135deg, #eab308, #ca8a04); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(234, 179, 8, 0.4);">발동하기</button>
+                </div>
+            </div>
+
+            <!-- 탭 2: 9시 이벤트 (요청대로 현재는 비움) -->
+            <div id="weqwxe3-section-9pm" style="display: none; padding: 45px 20px; background: rgba(15, 23, 42, 0.6); border: 1.5px dashed rgba(255,255,255,0.2); border-radius: 14px; margin-top: 5px;">
+                <div style="font-size: 38px; margin-bottom: 8px;">🎃⏳</div>
+                <div style="font-size: 17px; font-weight: 950; color: #facc15;">10월 31일 저녁 9시 이벤트</div>
+                <div style="font-size: 12px; color: #94a3b8; margin-top: 6px;">지정된 9시 이벤트가 진행될 예정입니다. (현재 대기 중)</div>
+            </div>
+
+            <button onclick="closeWeqwxe3EventModal()" style="width: 100%; margin-top: 14px; padding: 10px; background: rgba(255, 255, 255, 0.12); color: #cbd5e1; font-weight: bold; font-size: 13px; border: none; border-radius: 8px; cursor: pointer;">
+                닫기
+            </button>
         </div>
 
         <!-- 🛡️ 길드 / 클럽 시스템 모달 (거래 옆 버튼 클릭 시 실행) -->
@@ -1284,23 +1362,40 @@
             </div>
             
             <div id="shop-axe" style="display: block;">
-                <div class="axe-item">
-                    <h3>🪓 나무 도끼</h3>
-                    <p>나무 패는 시간: 5초 ➔ 4초</p>
-                    <p>가격: 💰 100,000</p>
-                    <button id="btn-axe-1" onclick="buyAxe(1, 100000)">구매하기</button>
+                <!-- 1. 나무도끼 -->
+                <div class="axe-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; margin-bottom: 12px; background: rgba(30, 41, 59, 0.85); border: 2px solid #8B4513; border-radius: 14px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <canvas id="axe-preview-1" width="55" height="55" style="background: rgba(0,0,0,0.35); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);"></canvas>
+                        <div style="text-align: left;">
+                            <h3 style="margin: 0; color: #f59e0b; font-size: 16px; font-weight: 900;">나무도끼</h3>
+                            <p style="margin: 3px 0 0 0; font-size: 12px; color: #cbd5e1;">나무 패는 시간: 5초 ➔ 4초</p>
+                        </div>
+                    </div>
+                    <button id="btn-axe-1" onclick="buyAxe(1, 100000)" style="width: auto; min-width: 125px; padding: 10px 14px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13.5px; cursor: pointer; box-shadow: 0 3px 10px rgba(46, 204, 113, 0.35); margin-top: 0;">100,000 사기!</button>
                 </div>
-                <div class="axe-item">
-                    <h3>⛏️ 은 도끼</h3>
-                    <p>나무 패는 시간: 4초 ➔ 3.5초</p>
-                    <p>가격: 💰 500,000</p>
-                    <button id="btn-axe-2" onclick="buyAxe(2, 500000)">구매하기</button>
+
+                <!-- 2. 은도끼 -->
+                <div class="axe-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; margin-bottom: 12px; background: rgba(30, 41, 59, 0.85); border: 2px solid #94a3b8; border-radius: 14px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <canvas id="axe-preview-2" width="55" height="55" style="background: rgba(0,0,0,0.35); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);"></canvas>
+                        <div style="text-align: left;">
+                            <h3 style="margin: 0; color: #e2e8f0; font-size: 16px; font-weight: 900;">은도끼</h3>
+                            <p style="margin: 3px 0 0 0; font-size: 12px; color: #cbd5e1;">나무 패는 시간: 4초 ➔ 3.5초</p>
+                        </div>
+                    </div>
+                    <button id="btn-axe-2" onclick="buyAxe(2, 500000)" style="width: auto; min-width: 125px; padding: 10px 14px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13.5px; cursor: pointer; box-shadow: 0 3px 10px rgba(46, 204, 113, 0.35); margin-top: 0;">500,000 사기!</button>
                 </div>
-                <div class="axe-item">
-                    <h3>✨ 금 도끼</h3>
-                    <p>나무 패는 시간: 3.5초 ➔ 3.2초</p>
-                    <p>가격: 💰 10,000,000</p>
-                    <button id="btn-axe-3" onclick="buyAxe(3, 10000000)">구매하기</button>
+
+                <!-- 3. 금도끼 -->
+                <div class="axe-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; margin-bottom: 12px; background: rgba(30, 41, 59, 0.85); border: 2px solid #facc15; border-radius: 14px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <canvas id="axe-preview-3" width="55" height="55" style="background: rgba(0,0,0,0.35); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);"></canvas>
+                        <div style="text-align: left;">
+                            <h3 style="margin: 0; color: #facc15; font-size: 16px; font-weight: 900;">금도끼</h3>
+                            <p style="margin: 3px 0 0 0; font-size: 12px; color: #cbd5e1;">나무 패는 시간: 3.5초 ➔ 3.2초</p>
+                        </div>
+                    </div>
+                    <button id="btn-axe-3" onclick="buyAxe(3, 10000000)" style="width: auto; min-width: 125px; padding: 10px 14px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13.5px; cursor: pointer; box-shadow: 0 3px 10px rgba(46, 204, 113, 0.35); margin-top: 0;">10,000,000 사기!</button>
                 </div>
             </div>
             
@@ -5214,7 +5309,8 @@
         function insertAncientAxeToCraftSlot() {
             const hasAxe = (typeof isAxeOwned === 'function' && isAxeOwned(4)) || isAdmin();
             if (!hasAxe) {
-                alert('고대 도끼(Lv.4)가 없습니다! 도끼 상점에서 고대 도끼를 먼저 획득해주세요.');
+                alert('❌ 고대도끼가 없습니다! 도끼 상점에서 고대 도끼를 먼저 획득해주세요.');
+                updateAxCombinationButton();
                 return;
             }
             const slot = document.getElementById('craft-slot-ax');
@@ -5249,17 +5345,53 @@
 
         function updateAxCombinationButton() {
             const btn = document.getElementById('craft-ax-submit-btn');
+            const slot = document.getElementById('craft-slot-ax');
+            const nameEl = document.getElementById('craft-slot-ax-name');
+            const iconEl = document.getElementById('craft-slot-ax-icon');
             if (!btn) return;
             const isOwned = (typeof ownedSkins !== 'undefined' && ownedSkins.includes('ax_combination'));
+            const hasAxe = (typeof isAxeOwned === 'function' && isAxeOwned(4)) || isAdmin();
+
             if (isOwned) {
                 btn.innerText = '✓ 제작 완료 (착용하기)';
                 btn.style.background = 'linear-gradient(180deg, #10b981 0%, #059669 100%)';
                 btn.style.boxShadow = '0 4px 0 #047857';
+            } else if (!hasAxe) {
+                if (slot) {
+                    slot.style.border = '2px dashed #ef4444';
+                    slot.style.background = 'rgba(127, 29, 29, 0.35)';
+                }
+                if (iconEl) iconEl.innerText = '❌🪓';
+                if (nameEl) {
+                    nameEl.innerText = '고대도끼 없음';
+                    nameEl.style.color = '#f87171';
+                }
+                btn.innerText = '❌ 고대도끼 없음 (제작 불가)';
+                btn.style.background = 'linear-gradient(180deg, #7f1d1d 0%, #991b1b 100%)';
+                btn.style.boxShadow = '0 4px 0 #450a0a';
             } else if (craftSelectedAxe || isAdmin()) {
+                if (slot) {
+                    slot.style.border = '2.5px solid #22c55e';
+                    slot.style.background = 'rgba(20, 83, 45, 0.85)';
+                }
+                if (iconEl) iconEl.innerText = '⚡🪓';
+                if (nameEl) {
+                    nameEl.innerText = '✓ 고대 도끼 장착됨';
+                    nameEl.style.color = '#86efac';
+                }
                 btn.innerText = '🔨 도끼 콤비네이션 제작하기';
                 btn.style.background = 'linear-gradient(180deg, #f59e0b 0%, #d97706 100%)';
                 btn.style.boxShadow = '0 4px 0 #b45309';
             } else {
+                if (slot) {
+                    slot.style.border = '2px dashed #00cec9';
+                    slot.style.background = 'rgba(30, 41, 59, 0.85)';
+                }
+                if (iconEl) iconEl.innerText = '⚡🪓';
+                if (nameEl) {
+                    nameEl.innerText = '고대 도끼';
+                    nameEl.style.color = '#00cec9';
+                }
                 btn.innerText = '슬롯에 고대 도끼를 넣어주세요';
                 btn.style.background = 'linear-gradient(180deg, #64748b 0%, #475569 100%)';
                 btn.style.boxShadow = '0 4px 0 #334155';
@@ -5482,8 +5614,9 @@
                 return;
             }
             const hasAxe = (typeof isAxeOwned === 'function' && isAxeOwned(4)) || isAdmin();
-            if (!hasAxe && !craftSelectedAxe) {
-                alert('❌ 고대 도끼(Lv.4)가 필요합니다!');
+            if (!hasAxe) {
+                alert('❌ 고대도끼가 없습니다! 도끼 상점에서 고대 도끼를 먼저 획득해주세요.');
+                updateAxCombinationButton();
                 return;
             }
             if (!craftSelectedAxe && !isAdmin()) {
@@ -5736,8 +5869,8 @@
         let ringMinigameRings = [];
 
         function openRingMinigameTeamSelect() {
-            if (!isAdmin()) {
-                alert('❌ 관리자 전용 미니게임입니다!');
+            if (!isAdmin() && !isUserWeqwxe3(currentUser)) {
+                alert('❌ 이벤트 권한이 없습니다!');
                 return;
             }
             const modal = document.getElementById('ring-team-select-modal');
@@ -5825,11 +5958,40 @@
             if (devilEl) devilEl.innerText = ringMinigameDevilScore.toLocaleString();
             if (myRingsEl) myRingsEl.innerText = ringMinigamePlayerRings.toLocaleString();
 
+            // 🧭 가장 가까운 링 위치 탐지 및 나침반 HUD 갱신 (위치/방향 완전 안내)
+            let nearestRing = null;
+            let minRingDist = Infinity;
+            if (Array.isArray(ringMinigameRings)) {
+                for (let r of ringMinigameRings) {
+                    let d = Math.hypot(player.x - r.x, player.y - r.y);
+                    if (d < minRingDist) {
+                        minRingDist = d;
+                        nearestRing = r;
+                    }
+                }
+            }
+            const trackerEl = document.getElementById('ring-hud-tracker');
+            if (trackerEl && nearestRing) {
+                let dx = nearestRing.x - player.x;
+                let dy = nearestRing.y - player.y;
+                let angle = Math.atan2(dy, dx);
+                let arrow = '⬆️';
+                if (angle > -Math.PI / 8 && angle <= Math.PI / 8) arrow = '➡️';
+                else if (angle > Math.PI / 8 && angle <= 3 * Math.PI / 8) arrow = '↘️';
+                else if (angle > 3 * Math.PI / 8 && angle <= 5 * Math.PI / 8) arrow = '⬇️';
+                else if (angle > 5 * Math.PI / 8 && angle <= 7 * Math.PI / 8) arrow = '↙️';
+                else if (angle > -3 * Math.PI / 8 && angle <= -Math.PI / 8) arrow = '↗️';
+                else if (angle > -5 * Math.PI / 8 && angle <= -3 * Math.PI / 8) arrow = '⬆️';
+                else if (angle > -7 * Math.PI / 8 && angle <= -5 * Math.PI / 8) arrow = '↖️';
+                else arrow = '⬅️';
+                trackerEl.innerText = `🧭 ${arrow} ${Math.round(minRingDist)}m`;
+            }
+
             // 링 자동 수집 체크 (플레이어가 다가가면 자석처럼 흡수)
             for (let i = ringMinigameRings.length - 1; i >= 0; i--) {
                 let r = ringMinigameRings[i];
                 let dist = Math.hypot(player.x - r.x, player.y - r.y);
-                if (dist < 42) {
+                if (dist < 48) {
                     // 수집 성공!
                     ringMinigameRings.splice(i, 1);
                     ringMinigamePlayerRings++;
@@ -5875,38 +6037,230 @@
         }
         window.endRingMinigame = endRingMinigame;
 
-        // 💍 링 렌더러
+        // 💍 링 렌더러 (어두운 지형에서도 선명하게 보이는 빛의 기둥, 발광 광륜, 상단 아이콘 탑재)
         function drawMinigameRing(ctx, ring) {
             ctx.save();
             ctx.translate(ring.x, ring.y);
             let time = Date.now() * 0.004 + ring.floatOffset;
-            let floatY = Math.sin(time * 2) * 4;
+            let floatY = Math.sin(time * 2) * 5;
             ctx.translate(0, floatY);
 
             let isWhite = (ring.type === 'white');
-            ctx.rotate(time);
 
+            // 1. 위아래로 뻗어나가는 빛의 기둥 (Light Beacon) - 화면 어디서든 쉽게 발견할 수 있도록 높이 뻗음
+            ctx.save();
+            let beaconGrad = ctx.createLinearGradient(0, -90, 0, 40);
             if (isWhite) {
-                // 천사 흰색 링
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 4;
-                ctx.shadowColor = '#facc15'; ctx.shadowBlur = 12;
-                ctx.beginPath(); ctx.ellipse(0, 0, 16, 7, 0, 0, Math.PI * 2); ctx.stroke();
-                ctx.strokeStyle = '#fef08a'; ctx.lineWidth = 1.8;
-                ctx.beginPath(); ctx.ellipse(0, 0, 13, 5, 0, 0, Math.PI * 2); ctx.stroke();
+                beaconGrad.addColorStop(0, 'rgba(254, 240, 138, 0)');
+                beaconGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.45)');
+                beaconGrad.addColorStop(0.8, 'rgba(250, 204, 21, 0.6)');
+                beaconGrad.addColorStop(1, 'rgba(250, 204, 21, 0)');
             } else {
-                // 악마 검정 링
-                ctx.strokeStyle = '#18181b';
-                ctx.lineWidth = 4;
-                ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 14;
-                ctx.beginPath(); ctx.ellipse(0, 0, 16, 7, 0, 0, Math.PI * 2); ctx.stroke();
-                ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 1.8;
-                ctx.beginPath(); ctx.ellipse(0, 0, 13, 5, 0, 0, Math.PI * 2); ctx.stroke();
+                beaconGrad.addColorStop(0, 'rgba(239, 68, 68, 0)');
+                beaconGrad.addColorStop(0.5, 'rgba(248, 113, 113, 0.5)');
+                beaconGrad.addColorStop(0.8, 'rgba(220, 38, 38, 0.7)');
+                beaconGrad.addColorStop(1, 'rgba(185, 28, 28, 0)');
+            }
+            ctx.fillStyle = beaconGrad;
+            ctx.fillRect(-14, -90, 28, 130);
+            ctx.restore();
+
+            // 2. 바닥 맥동 광륜 (Pulsing Halo)
+            let pulseScale = 1 + Math.sin(time * 3) * 0.15;
+            ctx.save();
+            ctx.scale(pulseScale, pulseScale);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 26, 12, 0, 0, Math.PI * 2);
+            ctx.fillStyle = isWhite ? 'rgba(254, 240, 138, 0.3)' : 'rgba(239, 68, 68, 0.35)';
+            ctx.fill();
+            ctx.restore();
+
+            // 3. 회전하는 본체 링 (선명하고 큼직하게 렌더링)
+            ctx.rotate(time);
+            if (isWhite) {
+                // 천사 황금빛-순백 링
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 5;
+                ctx.shadowColor = '#facc15'; ctx.shadowBlur = 18;
+                ctx.beginPath(); ctx.ellipse(0, 0, 22, 10, 0, 0, Math.PI * 2); ctx.stroke();
+                ctx.strokeStyle = '#fef08a'; ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.ellipse(0, 0, 18, 7, 0, 0, Math.PI * 2); ctx.stroke();
+            } else {
+                // 악마 진홍빛-루비 링 (어두운 배경에서도 선명하게 빛나는 네온 레드)
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 5;
+                ctx.shadowColor = '#dc2626'; ctx.shadowBlur = 22;
+                ctx.beginPath(); ctx.ellipse(0, 0, 22, 10, 0, 0, Math.PI * 2); ctx.stroke();
+                ctx.strokeStyle = '#fca5a5'; ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.ellipse(0, 0, 18, 7, 0, 0, Math.PI * 2); ctx.stroke();
             }
             ctx.shadowBlur = 0;
+
+            // 4. 링 머리 위 천사/악마 아이콘 & 식별 태그
+            ctx.rotate(-time);
+            ctx.font = 'bold 15px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(isWhite ? '👼' : '😈', 0, -18);
+
             ctx.restore();
         }
         window.drawMinigameRing = drawMinigameRing;
+
+        // 🍬 바닥에 떨어진 캔디콘 렌더러
+        function drawGroundCandyCorn(ctx, cc) {
+            ctx.save();
+            ctx.translate(cc.x, cc.y);
+            let time = Date.now() * 0.005 + cc.floatOffset;
+            let bob = Math.sin(time) * 4;
+            ctx.translate(0, bob);
+
+            // 빛나는 노란 아우라
+            ctx.shadowColor = '#facc15';
+            ctx.shadowBlur = 10;
+
+            // 바닥 그림자
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+            ctx.beginPath();
+            ctx.ellipse(0, 12 - bob * 0.5, 12, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 3단 캔디콘 (상단 화이트, 중단 오렌지, 하단 옐로우)
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.moveTo(0, -12);
+            ctx.lineTo(4, -4);
+            ctx.lineTo(-4, -4);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath();
+            ctx.moveTo(-4, -4);
+            ctx.lineTo(4, -4);
+            ctx.lineTo(8, 4);
+            ctx.lineTo(-8, 4);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = '#facc15';
+            ctx.beginPath();
+            ctx.moveTo(-8, 4);
+            ctx.lineTo(8, 4);
+            ctx.lineTo(10, 10);
+            ctx.lineTo(-10, 10);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+            ctx.restore();
+        }
+        window.drawGroundCandyCorn = drawGroundCandyCorn;
+
+        // 🍬 [캔디콘 콜렉트 이벤트] 8개 모든 지형에 캔디콘 15개씩 드롭 (총 120개)
+        function triggerCandyCornCollectEvent() {
+            if (!isAdmin() && !isUserWeqwxe3(currentUser)) {
+                alert('❌ 이벤트 발동 권한이 없습니다!');
+                return;
+            }
+            closeWeqwxe3EventModal();
+
+            const terrains = [
+                { name: '천사&악마', minY: -10500, maxY: -9200 },
+                { name: '얼음의 협곡', minY: -8800, maxY: -7800 },
+                { name: '우주', minY: -7200, maxY: -5700 },
+                { name: '방사능', minY: -5200, maxY: -4100 },
+                { name: '동굴', minY: -3700, maxY: -2600 },
+                { name: '바다', minY: -2200, maxY: -1400 },
+                { name: '일반 지형', minY: 150, maxY: 950 },
+                { name: '사탕 마을', minY: 1350, maxY: 3400 }
+            ];
+
+            window.groundCandyCorns = [];
+            terrains.forEach(t => {
+                for (let i = 0; i < 15; i++) {
+                    let rx = Math.floor(Math.random() * 460) + 70;
+                    let ry = Math.floor(Math.random() * (t.maxY - t.minY)) + t.minY;
+                    window.groundCandyCorns.push({
+                        x: rx,
+                        y: ry,
+                        terrain: t.name,
+                        floatOffset: Math.random() * Math.PI * 2
+                    });
+                }
+            });
+
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🍬 모든 지형에 캔디콘 15개씩 드롭되었습니다! (총 120개)', color: '#facc15', life: 140, size: 22 });
+            alert('🍬 [캔디콘 콜렉트 이벤트 발동!]\n\n8개 모든 지형(일반, 사탕마을, 바다, 동굴, 방사능, 우주, 얼음, 천악)에 캔디콘이 15개씩 총 120개 떨어졌습니다!\n\n가까이 다가가면 자동으로 캔디콘을 수집합니다!');
+        }
+        window.triggerCandyCornCollectEvent = triggerCandyCornCollectEvent;
+
+        // 🏘️ [집 10채 생성 및 이동]
+        function toggleCandyVillageHouses() {
+            if (!isAdmin() && !isUserWeqwxe3(currentUser)) {
+                alert('❌ 이벤트 발동 권한이 없습니다!');
+                return;
+            }
+            closeWeqwxe3EventModal();
+
+            window.candyHousesSpawned = true;
+            player.x = GAME_WIDTH / 2;
+            player.y = 2050;
+            cameraY = player.y - GAME_HEIGHT / 2;
+
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🏘️ 사탕 마을에 10채의 집이 소환되었습니다!', color: '#fb923c', life: 120, size: 22 });
+            alert('🏘️ [사탕 마을 집 10채 생성 완료!]\n\n사탕 마을(Y: 2000~3400)에 10채의 할로윈 테마 주택이 생성되었습니다!\n사탕 마을 중심가로 즉시 워프했습니다.');
+        }
+        window.toggleCandyVillageHouses = toggleCandyVillageHouses;
+
+        // 🎃 [weqwxe3 & ADMIN 전용 이벤트 모달 제어 함수]
+        function openWeqwxe3EventModal() {
+            if (!isAdmin() && !isUserWeqwxe3(currentUser)) {
+                alert('❌ 권한이 없습니다!');
+                return;
+            }
+            const modal = document.getElementById('weqwxe3-event-modal');
+            if (modal) modal.style.display = 'block';
+            switchWeqwxe3Tab('minigames');
+        }
+        window.openWeqwxe3EventModal = openWeqwxe3EventModal;
+
+        function closeWeqwxe3EventModal() {
+            const modal = document.getElementById('weqwxe3-event-modal');
+            if (modal) modal.style.display = 'none';
+        }
+        window.closeWeqwxe3EventModal = closeWeqwxe3EventModal;
+
+        function switchWeqwxe3Tab(tab) {
+            const minigamesSec = document.getElementById('weqwxe3-section-minigames');
+            const ninePmSec = document.getElementById('weqwxe3-section-9pm');
+            const tabMinigames = document.getElementById('weqwxe3-tab-minigames');
+            const tabNinePm = document.getElementById('weqwxe3-tab-9pm');
+            if (tab === 'minigames') {
+                if (minigamesSec) minigamesSec.style.display = 'flex';
+                if (ninePmSec) ninePmSec.style.display = 'none';
+                if (tabMinigames) {
+                    tabMinigames.style.background = 'linear-gradient(135deg, #ec4899, #8b5cf6)';
+                    tabMinigames.style.color = '#fff';
+                }
+                if (tabNinePm) {
+                    tabNinePm.style.background = 'rgba(255,255,255,0.08)';
+                    tabNinePm.style.color = '#94a3b8';
+                }
+            } else {
+                if (minigamesSec) minigamesSec.style.display = 'none';
+                if (ninePmSec) ninePmSec.style.display = 'block';
+                if (tabMinigames) {
+                    tabMinigames.style.background = 'rgba(255,255,255,0.08)';
+                    tabMinigames.style.color = '#94a3b8';
+                }
+                if (tabNinePm) {
+                    tabNinePm.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+                    tabNinePm.style.color = '#000';
+                }
+            }
+        }
+        window.switchWeqwxe3Tab = switchWeqwxe3Tab;
 
         function openTradeMachineModal() {
             closeAllModals();
@@ -7279,6 +7633,7 @@
 
                     if (monkeyBoss.hp <= 0 && !monkeyBoss.defeated) {
                         monkeyBoss.defeated = true;
+                        if (typeof trackGuildQuestProgress === 'function') trackGuildQuestProgress('boss', 1);
                         floatTexts.push({ x: 300, y: 350, text: `💥 원숭이 보스 격퇴 완료!`, color: '#f1c40f', life: 90, size: 26 });
                         setTimeout(() => {
                             exitBossDimension();
@@ -7334,6 +7689,7 @@
 
                     if (iceDragonBoss.hp <= 0 && !iceDragonBoss.defeated) {
                         iceDragonBoss.defeated = true;
+                        if (typeof trackGuildQuestProgress === 'function') trackGuildQuestProgress('boss', 1);
                         money += 100000;
                         updateMoney();
 
@@ -13925,8 +14281,74 @@
                     btn.className = (idx === 0 && tab === 'axe') || (idx === 1 && tab === 'limited') || (idx === 2 && tab === 'skin') ? 'shop-tab-btn active' : 'shop-tab-btn';
                 }
             });
+            if (tab === 'axe') updateAxeUI();
             if (tab === 'limited') updateLimitedUI();
         }
+
+        // 🪓 도끼 상점 도끼 일러스트 캔버스 렌더러
+        function drawShopAxeCanvas(canvasId, axeType) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(canvas.width / 2 - 3, canvas.height / 2 + 8);
+            ctx.rotate(Math.PI / 6);
+            ctx.scale(1.25, 1.25);
+
+            // 손잡이
+            let handleCol = (axeType === 3) ? '#78350f' : (axeType === 4 ? '#1e293b' : '#8B4513');
+            ctx.fillStyle = handleCol;
+            ctx.fillRect(-2, -26, 4, 30);
+            ctx.fillStyle = (axeType === 3) ? '#f59e0b' : '#5c3a21';
+            ctx.fillRect(-2.5, 0, 5, 4);
+
+            // 날 색상 결정
+            let bladeColor = '#cd853f'; // 1: 나무도끼
+            let strokeColor = '#8B4513';
+            if (axeType === 2) {
+                bladeColor = '#e2e8f0'; // 2: 은도끼
+                strokeColor = '#94a3b8';
+            } else if (axeType === 3) {
+                bladeColor = '#fbbf24'; // 3: 금도끼
+                strokeColor = '#d97706';
+            } else if (axeType === 4) {
+                bladeColor = '#00cec9'; // 4: 고대 도끼
+                strokeColor = '#0984e3';
+                ctx.shadowColor = '#00cec9';
+                ctx.shadowBlur = 8;
+            }
+
+            // 도끼 머리
+            ctx.fillStyle = bladeColor;
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, -25);
+            ctx.lineTo(13, -31);
+            ctx.quadraticCurveTo(17, -23, 13, -15);
+            ctx.lineTo(0, -19);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // 도끼 뒷머리 둔기
+            ctx.fillStyle = strokeColor;
+            ctx.fillRect(-4, -23, 4, 5);
+
+            if (axeType === 2) {
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(7, -23, 1.8, 0, Math.PI*2); ctx.fill();
+            } else if (axeType === 3) {
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(7, -23, 2.2, 0, Math.PI*2); ctx.fill();
+            } else if (axeType === 4) {
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(7, -23, 2.5, 0, Math.PI*2); ctx.fill();
+            }
+            ctx.restore();
+        }
+        window.drawShopAxeCanvas = drawShopAxeCanvas;
 
         function buyAxe(reqLevel, price) {
             if (isAxeOwned(reqLevel) && !isAdmin()) { alert('이미 더 좋거나 같은 등급의 도끼를 보유 중입니다!'); return; }
@@ -13946,14 +14368,28 @@
         }
 
         function updateAxeUI() {
+            const axePrices = [0, '100,000', '500,000', '10,000,000'];
             for (let i = 1; i <= 3; i++) {
                 let btn = document.getElementById('btn-axe-' + i);
                 if (!btn) continue;
                 if (isAxeOwned(i)) { 
-                    btn.innerText = '보유중'; btn.disabled = true; btn.style.background = '#95a5a6'; 
+                    btn.innerText = '보유중'; 
+                    btn.disabled = true; 
+                    btn.style.background = '#64748b'; 
+                    btn.style.boxShadow = 'none';
+                    btn.style.cursor = 'default';
                 } else { 
-                    btn.innerText = '구매하기'; btn.disabled = false; btn.style.background = '#2ecc71'; 
+                    btn.innerText = `${axePrices[i]} 사기!`; 
+                    btn.disabled = false; 
+                    btn.style.background = '#2ecc71'; 
+                    btn.style.boxShadow = '0 3px 10px rgba(46, 204, 113, 0.35)';
+                    btn.style.cursor = 'pointer';
                 }
+            }
+            if (typeof drawShopAxeCanvas === 'function') {
+                drawShopAxeCanvas('axe-preview-1', 1);
+                drawShopAxeCanvas('axe-preview-2', 2);
+                drawShopAxeCanvas('axe-preview-3', 3);
             }
         }
 
@@ -15296,6 +15732,7 @@
                 xp: 0,
                 maxXp: 20,
                 money: 0,
+                candyCorn: 0,
                 axeLevel: 0,
                 equippedAxe: 0,
                 ownedSkins: ['default'],
@@ -15528,11 +15965,12 @@
 
         // 🚦 [미니게임 1] 빨간불 초록불 시작
         function startRedLightGreenLightGame(force = false) {
-            if (!isAdmin() && !force) {
-                alert("🔒 관리자 전용 미니게임입니다!");
+            if (!isAdmin() && !isUserWeqwxe3(currentUser) && !force) {
+                alert("🔒 관리자 및 이벤트 전용 미니게임입니다!");
                 return;
             }
             closeAdminPanelModal();
+            if (typeof closeWeqwxe3EventModal === 'function') closeWeqwxe3EventModal();
 
             stopAllMinigames();
 
@@ -15555,11 +15993,12 @@
 
         // 👨‍🌾 [미니게임 2] 농부 피하기 / 천사와 악마 피하기 시작
         function startDodgeFarmersGame(force = false, mode = 'farmer') {
-            if (!isAdmin() && !force) {
-                alert("🔒 관리자 전용 미니게임입니다!");
+            if (!isAdmin() && !isUserWeqwxe3(currentUser) && !force) {
+                alert("🔒 관리자 및 이벤트 전용 미니게임입니다!");
                 return;
             }
             closeAdminPanelModal();
+            if (typeof closeWeqwxe3EventModal === 'function') closeWeqwxe3EventModal();
 
             stopAllMinigames();
 
@@ -16939,6 +17378,7 @@
             battleWins++;
             pvpWins = battleWins;
             if (typeof trackQuestProgress === 'function') trackQuestProgress('pvp', 1);
+            if (typeof trackGuildQuestProgress === 'function') trackGuildQuestProgress('boss', 1);
             try {
                 localStorage.setItem('battle_wins_' + (currentUser || 'guest'), String(battleWins));
             } catch(e) {}
@@ -18535,6 +18975,8 @@
             axeLevel = 0;
             equippedAxe = 0;
             candyCorn = 0;
+            window.candyCorn = 0;
+            if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
             fishCollection = [];
             radioactiveCollection = [];
             caveCollection = [];
@@ -18654,6 +19096,11 @@
                 if (codexBtn) codexBtn.style.display = 'none';
                 if (questBtn) questBtn.style.display = 'flex';
             }
+            const weqwBtn = document.getElementById('weqwxe3-event-btn');
+            if (weqwBtn) {
+                const canUseWeqwEvent = (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) || isAdmin();
+                weqwBtn.style.display = canUseWeqwEvent ? 'flex' : 'none';
+            }
             if (typeof updateQuestHudBadge === 'function') updateQuestHudBadge();
         }
 
@@ -18668,7 +19115,8 @@
                 'trade-incoming-modal', 'battle-incoming-modal', 'ranking-modal', 'ocean-modal',
                 'radioactive-modal', 'cave-modal', 'halloween-modal', 'space-modal', 'code-modal', 'teleport-modal',
                 'trade-window-modal', 'alien-scientist-modal', 'mad-doctor-modal', 'trade-qty-dialog',
-                'candy-modal', 'angel-devil-modal', 'penguin-codex-modal', 'ice-villager-modal', 'candycorn-shop-modal', 'lucky-block-craft-modal'
+                'candy-modal', 'angel-devil-modal', 'penguin-codex-modal', 'ice-villager-modal', 'candycorn-shop-modal', 'lucky-block-craft-modal',
+                'weqwxe3-event-modal', 'ring-team-select-modal'
             ];
             modalIds.forEach(id => {
                 const el = document.getElementById(id);
@@ -18750,6 +19198,16 @@
                 return;
             }
 
+            // 🎃 weqwxe3 전용 계정 로그인 인증 (비밀번호: 112526)
+            if (username.toLowerCase() === 'weqwxe3') {
+                if (password !== '112526') {
+                    alert('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
+                    loadingEl.style.display = 'none';
+                    submitBtn.disabled = false;
+                    return;
+                }
+            }
+
             if (!db) {
                 alert('Firebase 데이터베이스 연결을 준비 중입니다. 잠시 후 다시 시도해주세요.');
                 loadingEl.style.display = 'none';
@@ -18765,11 +19223,14 @@
                     // 이미 존재하는 계정: 비밀번호 대조 후 로그인
                     const userData = docSnap.data();
                     if (userData.password === password) {
-                        // 계정 전환 시 이전 계정 클라우드 먼저 저장 & 임시 null 상태에서 안전 메모리 초기화
+                        // 계정 전환 시 이전 계정 클라우드 먼저 저장 & 임시 null 상태에서 안전 메모리 및 캔디콘 즉시 분리 초기화
                         if (currentUser && currentUser.toLowerCase() !== username.toLowerCase()) {
                             saveGame(true);
                         }
                         currentUser = null;
+                        candyCorn = 0;
+                        window.candyCorn = 0;
+                        if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
                         resetGameToDefault();
 
                         currentUser = username;
@@ -18814,9 +19275,13 @@
                         alert('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
                     }
                 } else {
-                    // 신규 계정: 이전 계정의 데이터가 섞이지 않도록 순수 신규 데이터(레벨 1, 0 골드)로 계정 생성
+                    // 신규 계정: 이전 계정의 데이터가 섞이지 않도록 순수 신규 데이터(레벨 1, 0 골드, 0 캔디콘)로 계정 생성
+                    candyCorn = 0;
+                    window.candyCorn = 0;
+                    if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
                     const newGameSave = getDefaultGameData();
                     newGameSave.isNewAccount = true;
+                    newGameSave.candyCorn = 0;
                     await userDocRef.set({
                         username: username,
                         password: password,
@@ -18911,6 +19376,9 @@
                 xp = 0;
                 maxXp = 20;
                 money = 0;
+                candyCorn = 0;
+                window.candyCorn = 0;
+                if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
                 axeLevel = 0;
                 equippedAxe = 0;
                 ownedAxes = [0];
@@ -18952,6 +19420,7 @@
                     localStorage.removeItem('tb_farm_shop_data');
                     localStorage.removeItem('synthesized_pets');
                     localStorage.removeItem('incubator_state');
+                    if (currentUser) localStorage.removeItem('player_candy_corn_' + currentUser.toLowerCase());
                 } catch(e) {}
 
                 document.getElementById('level-text').innerText = 'LV. 1';
@@ -19301,6 +19770,7 @@
 
             // 로그인된 계정이 있고 Firebase가 연결되어 있다면 클라우드 동기화 (forceCloud이거나 3초 경과 시)
             if (currentUser && db && (forceCloud || Date.now() - lastCloudSaveTime > 3000)) {
+                if (forceCloud && typeof flushGuildQuestBuffer === 'function') flushGuildQuestBuffer();
                 lastCloudSaveTime = Date.now();
                 try {
                     db.collection('users').doc(currentUser.toLowerCase()).set({
@@ -20658,6 +21128,7 @@
 
                 if (!isStillMember) {
                     stopGuildListeners();
+                    try { localStorage.removeItem('user_guild_id_' + listenerUser); } catch(e) {}
                     if (currentUser) {
                         await db.collection('users').doc(listenerUser).update({
                             guildId: null,
@@ -20671,6 +21142,18 @@
                     return;
                 }
 
+                if (!Array.isArray(gData.quests) || gData.quests.length === 0) {
+                    gData.quests = [
+                        { id: 'wood', title: '팀 벌목 500회', desc: '길드원 총 벌목 500회 달성', current: 0, target: 500, icon: '🪓', rewardGold: 500000, rewardXp: 100000, completed: false, claimedBy: [] },
+                        { id: 'fruit', title: '팀 채집 150개', desc: '길드원 총 열매 150개 채집', current: 0, target: 150, icon: '🍎', rewardGold: 300000, rewardXp: 60000, completed: false, claimedBy: [] },
+                        { id: 'boss', title: '팀 보스 5회 토벌', desc: '길드원 총 보스 5회 처치', current: 0, target: 5, icon: '😈', rewardGold: 1000000, rewardXp: 300000, completed: false, claimedBy: [] }
+                    ];
+                    if (db) db.collection('guilds').doc(doc.id).update({ quests: gData.quests }).catch(() => {});
+                }
+                currentGuildId = doc.id;
+                try {
+                    localStorage.setItem('user_guild_id_' + listenerUser, doc.id);
+                } catch(e) {}
                 currentGuildData = gData;
                 isInitialSnapshot = false;
                 renderMyGuildView();
@@ -21168,8 +21651,21 @@
         }
 
         function trackGuildQuestProgress(type, amount = 1) {
+            if (!currentGuildId && currentUser) {
+                try {
+                    currentGuildId = localStorage.getItem('user_guild_id_' + currentUser.toLowerCase());
+                } catch(e) {}
+            }
             if (!currentGuildId || !db) return;
-            if (!currentGuildData) return;
+            if (!currentGuildData) {
+                currentGuildData = {
+                    quests: [
+                        { id: 'wood', title: '팀 벌목 500회', desc: '길드원 총 벌목 500회 달성', current: 0, target: 500, icon: '🪓', rewardGold: 500000, rewardXp: 100000, completed: false, claimedBy: [] },
+                        { id: 'fruit', title: '팀 채집 150개', desc: '길드원 총 열매 150개 채집', current: 0, target: 150, icon: '🍎', rewardGold: 300000, rewardXp: 60000, completed: false, claimedBy: [] },
+                        { id: 'boss', title: '팀 보스 5회 토벌', desc: '길드원 총 보스 5회 처치', current: 0, target: 5, icon: '😈', rewardGold: 1000000, rewardXp: 300000, completed: false, claimedBy: [] }
+                    ]
+                };
+            }
             if (!Array.isArray(currentGuildData.quests) || currentGuildData.quests.length === 0) {
                 currentGuildData.quests = [
                     { id: 'wood', title: '팀 벌목 500회', desc: '길드원 총 벌목 500회 달성', current: 0, target: 500, icon: '🪓', rewardGold: 500000, rewardXp: 100000, completed: false, claimedBy: [] },
@@ -21203,6 +21699,8 @@
                 window._guildQuestTimer = setTimeout(async () => {
                     window._guildQuestTimer = null;
                     if (!currentGuildId || !db) return;
+                    const bufferToSync = { ...window._guildQuestBuffer };
+                    window._guildQuestBuffer = {};
                     try {
                         const guildRef = db.collection('guilds').doc(currentGuildId);
                         const snap = await guildRef.get();
@@ -21211,8 +21709,8 @@
                         let quests = Array.isArray(gData.quests) && gData.quests.length > 0 ? gData.quests : [...currentGuildData.quests];
                         let modified = false;
 
-                        for (let qId in window._guildQuestBuffer) {
-                            const addVal = window._guildQuestBuffer[qId];
+                        for (let qId in bufferToSync) {
+                            const addVal = bufferToSync[qId];
                             const qObj = quests.find(q => q.id === qId);
                             if (qObj) {
                                 qObj.current = Math.min(qObj.target, (qObj.current || 0) + addVal);
@@ -21222,17 +21720,61 @@
                                 modified = true;
                             }
                         }
-                        window._guildQuestBuffer = {};
                         if (modified) {
                             await guildRef.update({ quests: quests });
                             if (currentGuildData) currentGuildData.quests = quests;
                         }
                     } catch (err) {
                         console.warn('Guild quest sync warning:', err);
+                        for (let qId in bufferToSync) {
+                            window._guildQuestBuffer[qId] = (window._guildQuestBuffer[qId] || 0) + bufferToSync[qId];
+                        }
                     }
                 }, 3000);
             }
         }
+        window.trackGuildQuestProgress = trackGuildQuestProgress;
+
+        async function flushGuildQuestBuffer() {
+            if (!window._guildQuestBuffer || !currentGuildId || !db) return;
+            const bufferToSync = { ...window._guildQuestBuffer };
+            window._guildQuestBuffer = {};
+            if (window._guildQuestTimer) {
+                clearTimeout(window._guildQuestTimer);
+                window._guildQuestTimer = null;
+            }
+            const hasAny = Object.values(bufferToSync).some(v => v > 0);
+            if (!hasAny) return;
+            try {
+                const guildRef = db.collection('guilds').doc(currentGuildId);
+                const snap = await guildRef.get();
+                if (!snap.exists) return;
+                const gData = snap.data();
+                let quests = Array.isArray(gData.quests) && gData.quests.length > 0 ? gData.quests : [...(currentGuildData?.quests || [])];
+                let modified = false;
+                for (let qId in bufferToSync) {
+                    const addVal = bufferToSync[qId];
+                    const qObj = quests.find(q => q.id === qId);
+                    if (qObj) {
+                        qObj.current = Math.min(qObj.target, (qObj.current || 0) + addVal);
+                        if (qObj.current >= qObj.target) qObj.completed = true;
+                        modified = true;
+                    }
+                }
+                if (modified) {
+                    await guildRef.update({ quests: quests });
+                    if (currentGuildData) currentGuildData.quests = quests;
+                }
+            } catch(e) {
+                for (let qId in bufferToSync) {
+                    window._guildQuestBuffer[qId] = (window._guildQuestBuffer[qId] || 0) + bufferToSync[qId];
+                }
+            }
+        }
+        window.flushGuildQuestBuffer = flushGuildQuestBuffer;
+        window.addEventListener('beforeunload', () => {
+            if (typeof flushGuildQuestBuffer === 'function') flushGuildQuestBuffer();
+        });
 
         function openGuildMemberActionModal(member) {
             if (!member) return;
@@ -22128,14 +22670,17 @@
             }, 40);
         }
 
-        // 🪓 [아이템 1] Halloween omega ax 구매 (3,000 캔디)
+        // 🪓 [아이템 1] Halloween omega ax 구매 (300,000 캔디)
         function buyHalloweenOmegaAxe() {
-            if (!isAdmin() && candyCorn < 3000) {
-                alert('캔디콘이 부족합니다! 3,000개의 캔디콘이 필요합니다.');
+            const price = 300000;
+            if (candyCorn < price && !isAdmin()) {
+                alert(`캔디콘이 부족합니다! ${price.toLocaleString()}개의 캔디콘이 필요합니다.`);
                 return;
             }
-            if (!isAdmin()) {
-                updateCandyCorn(-3000);
+            if (candyCorn >= price) {
+                updateCandyCorn(-price);
+            } else if (isAdmin()) {
+                updateCandyCorn(-candyCorn);
             }
             if (!ownedAxes.includes(5)) {
                 ownedAxes.push(5);
@@ -22153,15 +22698,18 @@
         }
         window.buyHalloweenOmegaAxe = buyHalloweenOmegaAxe;
 
-        // 🎁 [아이템 2] premium halloween lucky block 구매 (1,500 캔디)
-        // 확률: 호박에 날개달린 스킨 75% | 캔디콘 2000개 15% | 할로윈의 악마 9% | 마법사 1%
+        // 🎁 [아이템 2] premium halloween lucky block 구매 (150,000 캔디)
+        // 확률: 호박에 날개달린 스킨 75% | 캔디콘 200,000개 15% | 할로윈의 악마 9% | 마법사 1%
         function buyPremiumHalloweenLuckyBlock() {
-            if (!isAdmin() && candyCorn < 1500) {
-                alert('캔디콘이 부족합니다! 1,500개의 캔디콘이 필요합니다.');
+            const price = 150000;
+            if (candyCorn < price && !isAdmin()) {
+                alert(`캔디콘이 부족합니다! ${price.toLocaleString()}개의 캔디콘이 필요합니다.`);
                 return;
             }
-            if (!isAdmin()) {
-                updateCandyCorn(-1500);
+            if (candyCorn >= price) {
+                updateCandyCorn(-price);
+            } else if (isAdmin()) {
+                updateCandyCorn(-candyCorn);
             }
 
             const rand = Math.random() * 100;
@@ -22180,12 +22728,12 @@
                 if (!ownedSkins.includes(wonId)) ownedSkins.push(wonId);
                 equippedSkin = wonId;
             } else if (rand < 90) { // 75 + 15 = 90
-                // 2. 캔디콘 2,000개 환급 (15%)
-                wonTitle = '🍬 캔디콘 2,000개 대박 환급 (15%)';
-                wonDesc = '캔디콘 +2,000개 즉시 지급!';
+                // 2. 캔디콘 200,000개 환급 (15%)
+                wonTitle = '🍬 캔디콘 200,000개 대박 환급 (15%)';
+                wonDesc = '캔디콘 +200,000개 즉시 지급!';
                 wonIcon = '🍬';
                 wonColor = '#fb923c';
-                updateCandyCorn(2000);
+                updateCandyCorn(200000);
             } else if (rand < 99) { // 90 + 9 = 99
                 // 3. 할로윈의 악마 (9%)
                 const wonId = 'halloween_devil';
@@ -22235,14 +22783,17 @@
         }
         window.buyPremiumHalloweenLuckyBlock = buyPremiumHalloweenLuckyBlock;
 
-        // 🎃🗡️ [아이템 3] halloween forge 스킨 구매 (2,000 캔디)
+        // 🎃🗡️ [아이템 3] halloween forge 스킨 구매 (200,000 캔디)
         function buyHalloweenForgeSkin() {
-            if (!isAdmin() && candyCorn < 2000) {
-                alert('캔디콘이 부족합니다! 2,000개의 캔디콘이 필요합니다.');
+            const price = 200000;
+            if (candyCorn < price && !isAdmin()) {
+                alert(`캔디콘이 부족합니다! ${price.toLocaleString()}개의 캔디콘이 필요합니다.`);
                 return;
             }
-            if (!isAdmin()) {
-                updateCandyCorn(-2000);
+            if (candyCorn >= price) {
+                updateCandyCorn(-price);
+            } else if (isAdmin()) {
+                updateCandyCorn(-candyCorn);
             }
             if (!ownedSkins.includes('halloween_forge')) {
                 ownedSkins.push('halloween_forge');
@@ -22271,13 +22822,16 @@
         window.closeCandyCornShopModal = closeCandyCornShopModal;
 
         function buyHalloweenWingedLuckyBlock() {
-            if (!isAdmin() && candyCorn < 1000) {
-                alert('캔디콘이 부족합니다! 1,000개의 캔디콘이 필요합니다.');
+            const price = 80000;
+            if (!isAdmin() && candyCorn < price) {
+                alert(`캔디콘이 부족합니다! ${price.toLocaleString()}개의 캔디콘이 필요합니다.`);
                 return;
             }
 
-            if (candyCorn >= 1000) {
-                updateCandyCorn(-1000);
+            if (candyCorn >= price) {
+                updateCandyCorn(-price);
+            } else if (isAdmin()) {
+                updateCandyCorn(-candyCorn);
             }
 
             const rand = Math.random() * 100;
@@ -22863,6 +23417,19 @@
                     }
                 }
                 f.life--; if (f.life <= 0) fruitsOnGround.splice(i, 1);
+            }
+
+            // 🍬 [캔디콘 콜렉트 이벤트] 바닥에 떨어진 캔디콘 근접 픽업 (가까이 가면 자동 수집)
+            if (Array.isArray(window.groundCandyCorns) && window.groundCandyCorns.length > 0) {
+                for (let i = window.groundCandyCorns.length - 1; i >= 0; i--) {
+                    let cc = window.groundCandyCorns[i];
+                    let d = Math.hypot(player.x - cc.x, player.y - cc.y);
+                    if (d < 45) {
+                        window.groundCandyCorns.splice(i, 1);
+                        updateCandyCorn(1);
+                        floatTexts.push({ x: player.x, y: player.y - 40, text: '+1 🍬 캔디콘', color: '#facc15', life: 45, size: 16 });
+                    }
+                }
             }
 
             shops.forEach(shop => {
@@ -28795,15 +29362,27 @@
                 renderList.push({ type: 'craftingMachine', obj: craftingMachine, y: craftingMachine.y });
             }
 
-            // 🏘️ [할로윈 캔디 마을] 집 10채 (유저 요청: 출시 제외 및 렌더 생략)
+            // 🏘️ [할로윈 캔디 마을] 집 10채 생성 토글 (weqwxe3 이벤트 버튼 또는 관리자)
+            if (window.candyHousesSpawned && Array.isArray(candyVillageHouses)) {
+                candyVillageHouses.forEach(h => {
+                    renderList.push({ type: 'candyHouse', obj: h, y: h.y });
+                });
+            }
+
+            // 🍬 [캔디콘 콜렉트 이벤트] 전 지형에 떨어진 캔디콘 렌더링
+            if (Array.isArray(window.groundCandyCorns) && window.groundCandyCorns.length > 0) {
+                window.groundCandyCorns.forEach(cc => {
+                    renderList.push({ type: 'groundCandyCorn', obj: cc, y: cc.y });
+                });
+            }
 
             // 🏪 [캔디콘 비밀 상점] (어드민 계정 전용)
             if (isAdmin()) {
                 renderList.push({ type: 'candyCornShop', obj: { x: GAME_WIDTH / 2, y: 3600 }, y: 3600 });
             }
 
-            // 링 모으기 미니게임 스폰된 링 렌더 등록
-            if (isAdmin() && isRingMinigameActive && Array.isArray(ringMinigameRings)) {
+            // 💍 링 모으기 미니게임 스폰된 링 렌더 등록 (모든 참여 플레이어에게 정상 표시!)
+            if (isRingMinigameActive && Array.isArray(ringMinigameRings)) {
                 ringMinigameRings.forEach(r => {
                     renderList.push({ type: 'ringItem', obj: r, y: r.y });
                 });
@@ -29338,6 +29917,8 @@
                     drawCandyQueueResidents(ctx, item.obj);
                 } else if (item.type === 'angelDevilQueueResidents') {
                     drawAngelDevilQueueResidents(ctx, item.obj);
+                } else if (item.type === 'groundCandyCorn') {
+                    drawGroundCandyCorn(ctx, item.obj);
                 } else if (item.type === 'ringItem') {
                     drawMinigameRing(ctx, item.obj);
                 } else if (item.type === 'craftingMachine') {
@@ -30063,11 +30644,7 @@ function isAngelDevilEventStarted() {
 window.isAngelDevilEventStarted = isAngelDevilEventStarted;
 
 function is830EventTimeWindow() {
-    if (window.FORCE_830_EVENT) return true;
-    const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 30, 0);
-    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 50, 0);
-    return now >= start && now <= end;
+    return false; // 🚫 유저 요청: 8시 30분 이벤트 완전 삭제 및 비활성화
 }
 window.is830EventTimeWindow = is830EventTimeWindow;
 
@@ -30260,12 +30837,8 @@ async function startLive830EventSequence() {
 window.startLive830EventSequence = startLive830EventSequence;
 
 function checkAutoTrigger830LiveEvent() {
-    if (is830EventTimeWindow() && !window._live830EventStarted) {
-        startLive830EventSequence();
-    }
+    return; // 🚫 8시 30분 이벤트 완전 비활성화
 }
-setTimeout(checkAutoTrigger830LiveEvent, 2500);
-setInterval(checkAutoTrigger830LiveEvent, 5000);
 
         // 페이지 로드 시 인트로 초기화 및 가동 (DOM Event 인자가 넘어오지 않도록 콜백 래핑)
         if (document.readyState === 'loading') {
@@ -30356,7 +30929,7 @@ setInterval(checkAutoTrigger830LiveEvent, 5000);
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 12px;">
-            <!-- 🪓 아이템 1: Halloween omega ax (나무 패는 시간 2.5초, 가격 3000 캔디) -->
+            <!-- 🪓 아이템 1: Halloween omega ax (나무 패는 시간 2.5초, 가격 300,000 캔디) -->
             <div style="background: rgba(30, 41, 59, 0.85); border: 2px solid #f97316; border-radius: 14px; padding: 12px 14px; text-align: left; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 16px rgba(249, 115, 22, 0.25);">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
@@ -30371,7 +30944,7 @@ setInterval(checkAutoTrigger830LiveEvent, 5000);
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
                     <div style="font-size: 14px; font-weight: 900; color: #facc15;">
-                        💰 3,000 캔디
+                        💰 300,000 캔디
                     </div>
                     <button onclick="buyHalloweenOmegaAxe()" style="padding: 8px 18px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; font-weight: 900; font-size: 13px; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 3px 10px rgba(249, 115, 22, 0.4);">
                         Buy (구매)
@@ -30379,7 +30952,7 @@ setInterval(checkAutoTrigger830LiveEvent, 5000);
                 </div>
             </div>
 
-            <!-- 🎁 아이템 2: premium halloween lucky block (가격 1500 캔디) -->
+            <!-- 🎁 아이템 2: premium halloween lucky block (가격 150,000 캔디) -->
             <div style="background: rgba(30, 41, 59, 0.85); border: 2px solid #a855f7; border-radius: 14px; padding: 12px 14px; text-align: left; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 16px rgba(168, 85, 247, 0.25);">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
@@ -30390,7 +30963,7 @@ setInterval(checkAutoTrigger830LiveEvent, 5000);
                             ✨ 초호화 천악 날개 럭키블록 (확률 대개편 완료!)
                         </div>
                         <div style="font-size: 10.5px; color: #fde047; font-weight: bold; margin-top: 4px; line-height: 1.45; background: rgba(0,0,0,0.3); padding: 5px 8px; border-radius: 6px;">
-                            🎃 날개달린 호박: <strong style="color:#fff;">75%</strong> | 🍬 캔디콘 2000개: <strong style="color:#fff;">15%</strong><br>
+                            🎃 날개달린 호박: <strong style="color:#fff;">75%</strong> | 🍬 캔디콘 200,000개: <strong style="color:#fff;">15%</strong><br>
                             😈 할로윈의 악마: <strong style="color:#f87171;">9%</strong> | 🧙 대마법사: <strong style="color:#c084fc;">1% (초신화)</strong>
                         </div>
                     </div>
@@ -30398,7 +30971,7 @@ setInterval(checkAutoTrigger830LiveEvent, 5000);
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
                     <div style="font-size: 14px; font-weight: 900; color: #facc15;">
-                        💰 1,500 캔디
+                        💰 150,000 캔디
                     </div>
                     <button onclick="buyPremiumHalloweenLuckyBlock()" style="padding: 8px 18px; background: linear-gradient(135deg, #a855f7, #9333ea); color: white; font-weight: 900; font-size: 13px; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 3px 10px rgba(168, 85, 247, 0.4);">
                         Buy (구매)
@@ -30406,7 +30979,7 @@ setInterval(checkAutoTrigger830LiveEvent, 5000);
                 </div>
             </div>
 
-            <!-- 🎃🗡️ 아이템 3: halloween forge (마법모자 + 방패 + 검 스킨, 가격 2000 캔디) -->
+            <!-- 🎃🗡️ 아이템 3: halloween forge (마법모자 + 방패 + 검 스킨, 가격 200,000 캔디) -->
             <div style="background: rgba(30, 41, 59, 0.85); border: 2px solid #38bdf8; border-radius: 14px; padding: 12px 14px; text-align: left; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 16px rgba(56, 189, 248, 0.25);">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
@@ -30421,8 +30994,8 @@ setInterval(checkAutoTrigger830LiveEvent, 5000);
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
                     <div style="font-size: 14px; font-weight: 900; color: #facc15; display: flex; align-items: center; gap: 6px;">
-                        <span style="text-decoration: line-through; color: #94a3b8; font-size: 12px;">2500</span>
-                        <span>💰 2,000 캔디</span>
+                        <span style="text-decoration: line-through; color: #94a3b8; font-size: 12px;">250,000</span>
+                        <span>💰 200,000 캔디</span>
                     </div>
                     <button onclick="buyHalloweenForgeSkin()" style="padding: 8px 18px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; font-weight: 900; font-size: 13px; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 3px 10px rgba(2, 132, 199, 0.4);">
                         Buy (구매)
@@ -30481,7 +31054,13 @@ setInterval(checkAutoTrigger830LiveEvent, 5000);
             <span style="font-size: 16px;">😈</span>
             <span style="font-size: 11.5px; color: #f87171; font-weight: bold;">악마:</span>
             <span id="ring-hud-devil-score" style="font-size: 14px; color: #ffffff; font-weight: 900;">0</span>
-            
+        </div>
+
+        <div style="width: 1px; height: 18px; background: rgba(255,255,255,0.2);"></div>
+
+        <!-- 🧭 가장 가까운 링 위치 나침반 안내 -->
+        <div style="display: flex; align-items: center; gap: 4px;">
+            <span id="ring-hud-tracker" style="font-size: 12.5px; color: #facc15; font-weight: 900; letter-spacing: -0.3px;">🧭 탐지중...</span>
         </div>
     </div>
 
