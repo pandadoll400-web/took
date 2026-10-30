@@ -426,7 +426,7 @@
         <canvas id="gameCanvas"></canvas>
         <div id="money-display">💰 0</div>
         <!-- 🍬 캔디콘 HUD (어드민 접속 시 좌측 상단에 머니 디스플레이 바로 아래 표시) -->
-        <div id="candy-corn-hud" style="position: absolute; top: 100px; left: 15px; background: rgba(15, 23, 42, 0.92); color: #facc15; border: 1.5px solid #f59e0b; padding: 6px 14px; border-radius: 18px; font-size: 13px; font-weight: 900; z-index: 15; display: none; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(0,0,0,0.7); pointer-events: none;">
+        <div id="candy-corn-hud" style="position: absolute; top: 100px; left: 15px; background: rgba(15, 23, 42, 0.92); color: #facc15; border: 1.5px solid #f59e0b; padding: 6px 14px; border-radius: 18px; font-size: 13px; font-weight: 900; z-index: 15; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(0,0,0,0.7); pointer-events: none;">
             🍬 캔디콘: 0개
         </div>
         <div id="level-container">
@@ -454,7 +454,7 @@
 <!-- ⏳ [화면 상단 HUD] 관리자남용까지 카운트다운 (오늘 20:30 오픈) -->
         <div id="admin-abuse-countdown-hud" style="position: absolute; top: 58px; left: 50%; transform: translateX(-50%); z-index: 45; pointer-events: none; text-align: center; background: rgba(15, 12, 28, 0.85); border: 1.5px solid rgba(250, 204, 21, 0.5); padding: 5px 16px; border-radius: 12px; backdrop-filter: blur(6px); box-shadow: 0 4px 18px rgba(0,0,0,0.5), 0 0 14px rgba(250, 204, 21, 0.25);">
             <div id="countdown-hud-title" style="font-size: 11.5px; font-weight: 900; color: #facc15; letter-spacing: 0.5px; text-shadow: 0 0 8px rgba(250, 204, 21, 0.6);">관리자남용까지</div>
-            <div id="countdown-hud-timer" style="font-size: 14.5px; font-weight: 950; font-family: monospace, sans-serif; color: #ffffff; letter-spacing: 1px; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">00시간 00분 00초</div>
+            <div id="countdown-hud-timer" style="font-size: 14.5px; font-weight: 950; font-family: monospace, sans-serif; color: #ffffff; letter-spacing: 1px; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">00일 00시간 00분 00초</div>
         </div>
 
         <!-- 📢 Forge 실시간 공식 방송 배너 -->
@@ -1288,7 +1288,7 @@
                 <button class="shop-tab-btn active" onclick="switchShopTab('axe')">도끼</button>
                 <button class="shop-tab-btn" onclick="switchShopTab('limited')">한정조합</button>
                 <button class="shop-tab-btn" onclick="switchShopTab('skin')">시즌 스킨!</button>
-                <button class="shop-tab-btn" id="shop-tab-lucky-btn" onclick="switchShopTab('lucky')" style="display: none; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 900;">👑 럭키블럭</button>
+                <button class="shop-tab-btn" id="shop-tab-lucky-btn" onclick="switchShopTab('lucky')" style="display: inline-block; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 900;">👑 럭키블럭</button>
             </div>
             
             <div id="shop-axe" style="display: block;">
@@ -1328,77 +1328,10 @@
 
             <!-- 👑 [ADMIN 전용] 천악 럭키블록 상점 섹션 -->
             <div id="shop-lucky" style="display: none; padding-top: 10px;">
-                <div style="background: radial-gradient(circle at top, rgba(30, 27, 75, 0.9), rgba(15, 23, 42, 0.98)); border: 2px solid #a855f7; border-radius: 16px; padding: 16px 12px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(168, 85, 247, 0.35);">
-                    
-                    <!-- 헤더 타이틀 -->
-                    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 2px;">
-                        <span style="font-size: 22px;">👼😈</span>
-                        <h3 style="margin: 0; color: #facc15; font-size: 21px; font-weight: 900; letter-spacing: -0.5px; text-shadow: 0 0 12px rgba(250, 204, 21, 0.7);">천악 럭키블록</h3>
-                    </div>
-                    <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 12px;">
-                        순백의 천사와 칠흑의 악마가 깃든 초신화 럭키블록!
-                    </div>
-
-                    <!-- 3D 캔버스 럭키블럭 비주얼 박스 -->
-                    <div style="display: flex; justify-content: center; margin-bottom: 14px;">
-                        <canvas id="angel-demon-lucky-canvas" width="130" height="130" style="filter: drop-shadow(0 8px 20px rgba(234, 179, 8, 0.45));"></canvas>
-                    </div>
-
-                    <!-- 5종 스킨 드랍 라인업 (Roblox 스타일 가로 카드 그리드) -->
-                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 16px;">
-                        <!-- 1. 해파리 50% -->
-                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #38bdf8; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
-                            <span style="position: absolute; top: -6px; background: #0284c7; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">50%</span>
-                            <canvas id="lucky-prev-jellyfish" width="48" height="48" style="margin-top: 4px;"></canvas>
-                            <span style="font-size: 10.5px; font-weight: bold; color: #7dd3fc; margin-top: 2px;">해파리</span>
-                        </div>
-                        <!-- 2. 피닉스 25% -->
-                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #f97316; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
-                            <span style="position: absolute; top: -6px; background: #ea580c; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">25%</span>
-                            <canvas id="lucky-prev-phoenix" width="48" height="48" style="margin-top: 4px;"></canvas>
-                            <span style="font-size: 10.5px; font-weight: bold; color: #fdba74; margin-top: 2px;">피닉스</span>
-                        </div>
-                        <!-- 3. 천사 15% -->
-                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #facc15; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
-                            <span style="position: absolute; top: -6px; background: #ca8a04; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">15%</span>
-                            <canvas id="lucky-prev-angel" width="48" height="48" style="margin-top: 4px;"></canvas>
-                            <span style="font-size: 10.5px; font-weight: bold; color: #fef08a; margin-top: 2px;">천사</span>
-                        </div>
-                        <!-- 4. 악마 9% -->
-                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #ef4444; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
-                            <span style="position: absolute; top: -6px; background: #dc2626; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">9%</span>
-                            <canvas id="lucky-prev-devil" width="48" height="48" style="margin-top: 4px;"></canvas>
-                            <span style="font-size: 10.5px; font-weight: bold; color: #fca5a5; margin-top: 2px;">악마</span>
-                        </div>
-                        <!-- 5. 에테론 1% -->
-                        <div style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(239, 68, 68, 0.3)); border: 1.5px solid #eab308; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative; box-shadow: 0 0 10px rgba(234, 179, 8, 0.35);">
-                            <span style="position: absolute; top: -6px; background: linear-gradient(90deg, #eab308, #ef4444); color: white; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 6px;">1%</span>
-                            <canvas id="lucky-prev-etheron" width="48" height="48" style="margin-top: 4px;"></canvas>
-                            <span style="font-size: 10px; font-weight: 900; color: #fde047; margin-top: 2px;">에테론</span>
-                        </div>
-                    </div>
-
-                    <!-- 3종 구매 카드 (Roblox 스타일 3열 레이아웃 & 버튼에는 순수 돈만 표시) -->
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                        <!-- 1개 -->
-                        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; min-height: 70px;">
-                            <div style="font-size: 12px; font-weight: bold; color: #e2e8f0; margin-bottom: 6px;">1x Lucky Block</div>
-                            <button onclick="buyLuckyBlocks(1, 10000)" class="lucky-buy-btn">💰 10,000</button>
-                        </div>
-                        <!-- 10개 [BEST] -->
-                        <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid #f59e0b; border-radius: 10px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; min-height: 70px; position: relative;">
-                            <span style="position: absolute; top: -8px; background: #ea580c; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">BEST</span>
-                            <div style="font-size: 12px; font-weight: bold; color: #fef08a; margin-bottom: 6px;">10x Lucky Blocks</div>
-                            <button onclick="buyLuckyBlocks(10, 100000)" class="lucky-buy-btn">💰 100,000</button>
-                        </div>
-                        <!-- 30개 [BEST] -->
-                        <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid #ec4899; border-radius: 10px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; min-height: 70px; position: relative;">
-                            <span style="position: absolute; top: -8px; background: #ec4899; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">BEST</span>
-                            <div style="font-size: 12px; font-weight: bold; color: #f472b6; margin-bottom: 6px;">30x Lucky Blocks</div>
-                            <button onclick="buyLuckyBlocks(30, 500000)" class="lucky-buy-btn">💰 500,000</button>
-                        </div>
-                    </div>
-
+                <div style="background: rgba(15, 23, 42, 0.9); border: 2px dashed #a855f7; border-radius: 16px; padding: 45px 20px; text-align: center; margin: 15px 0; box-shadow: 0 4px 25px rgba(0,0,0,0.6);">
+                    <div style="font-size: 42px; margin-bottom: 12px; filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6));">👑🎁✨</div>
+                    <div style="font-size: 20px; font-weight: 950; color: #c084fc; letter-spacing: -0.5px; text-shadow: 0 0 12px rgba(192, 132, 252, 0.6);">10월 31일 9시에 공개!</div>
+                    <div style="font-size: 13px; color: #cbd5e1; margin-top: 8px;">천악 럭키블록 뽑기는 10월 31일 저녁 9시에 정식 공개됩니다.</div>
                 </div>
             </div>
             
@@ -12583,10 +12516,6 @@
                             openCaveIndex();
                             return;
                         } else if (shop.type === 'halloween') {
-                            if (!isAdmin()) {
-                                alert('🔒 [폐쇄된 상점]\n\n현재 사탕 상점은 관리자 전용으로 폐쇄되어 있습니다.');
-                                return;
-                            }
                             openCandyIndex();
                             return;
                         } else if (shop.type === 'space') {
@@ -12601,17 +12530,7 @@
                         }
                     }
                 }
-                // 🏘️ [할로윈 캔디 마을] 집 10채 클릭 감지 (전체 서버 정식 출시)
-                if (typeof candyVillageHouses !== 'undefined') {
-                    for (let h of candyVillageHouses) {
-                        let hDist = Math.hypot(cx - h.x, cy - h.y);
-                        let hPlayerDist = Math.hypot(player.x - h.x, player.y - h.y);
-                        if (hDist < 85 || (isSpacebar && hPlayerDist < 100)) {
-                            claimCandyHouseCornDirect(h);
-                            return;
-                        }
-                    }
-                }
+                // 🏘️ [할로윈 캔디 마을] 집 10채 (유저 요청: 출시 제외 및 제거)
 
                 // 🏪 [캔디콘 비밀 상점] 클릭 감지 (어드민 계정 전용)
                 if (isAdmin()) {
@@ -12651,14 +12570,7 @@
             });
 
             if (target) {
-                if (target.id === 'halloween') {
-                    if (!isAdmin()) {
-                        floatTexts.push({ x: target.x, y: target.y - 70, text: '💥 두동강 난 고목은 흔들거나 벨 수 없습니다.', color: '#94a3b8', life: 75, size: 18 });
-                        player.targetTree = null;
-                        return;
-                    }
-                    // 어드민 계정은 사탕 나무 벌목 가능!
-                }
+                // 🍭 사탕 나무: 전체 서버 모든 유저 벌목 가능!
 
                 if (player.targetTree === target) {
                     player.targetTree = null;
@@ -12897,7 +12809,7 @@
             const hud = document.getElementById('candy-corn-hud');
             if (hud) {
                 hud.innerText = `🍬 캔디콘: ${candyCorn.toLocaleString()}개`;
-                hud.style.display = isAdmin() ? 'flex' : 'none';
+                hud.style.display = 'flex';
             }
             const myCornEl = document.getElementById('cc-shop-my-corn');
             if (myCornEl) myCornEl.innerText = candyCorn.toLocaleString();
@@ -13913,7 +13825,7 @@
             document.getElementById('shop-modal').style.display = 'block';
             resetJoyMouse(); player.targetTree = null;
             const luckyBtn = document.getElementById('shop-tab-lucky-btn');
-            if (luckyBtn) luckyBtn.style.display = isAdmin() ? 'inline-block' : 'none';
+            if (luckyBtn) luckyBtn.style.display = 'inline-block';
             updateAxeUI();
             updateShopSkinUI();
         });
@@ -14007,7 +13919,7 @@
         function switchShopTab(tab) {
             const luckyBtn = document.getElementById('shop-tab-lucky-btn');
             if (luckyBtn) {
-                luckyBtn.style.display = isAdmin() ? 'inline-block' : 'none';
+                luckyBtn.style.display = 'inline-block';
             }
 
             document.getElementById('shop-axe').style.display = tab === 'axe' ? 'block' : 'none';
@@ -14015,13 +13927,7 @@
             document.getElementById('shop-skin').style.display = tab === 'skin' ? 'block' : 'none';
             const luckySec = document.getElementById('shop-lucky');
             if (luckySec) {
-                luckySec.style.display = (tab === 'lucky' && isAdmin()) ? 'block' : 'none';
-                if (tab === 'lucky' && isAdmin()) {
-                    setTimeout(() => {
-                        renderLuckySkinPreviews();
-                        drawAngelDevilLuckyBlock('angel-demon-lucky-canvas');
-                    }, 50);
-                }
+                luckySec.style.display = (tab === 'lucky') ? 'block' : 'none';
             }
 
             document.querySelectorAll('.shop-tab-btn').forEach((btn, idx) => {
@@ -14710,14 +14616,8 @@
 
         // 👑 [럭키블럭 개편] 스킨 완제품 대신 스킨 파편 드롭 & 크래프트 머신 조합
         function buyLuckyBlocks(count, price) {
-            if (!isAdmin()) {
-                alert('🔒 최고 관리자(ADMIN) 전용 기능입니다!');
-                return;
-            }
-            if (money < price && !isAdmin()) {
-                alert('골드가 부족합니다!');
-                return;
-            }
+            alert('🔒 10월 31일 9시에 공개됩니다!');
+            return;
 
             if (money >= price) {
                 money -= price;
@@ -14819,55 +14719,19 @@
         function updateShopSkinUI() {
             const list = document.getElementById('skin-list');
             if (!list) return;
-            list.innerHTML = '';
-            skinsData.forEach(skin => {
-                if (skin.id === 'default' || skin.isReward) return; // 기본 스킨과 보상 스킨 제외
-                if (skin.adminOnly && !isAdmin()) return; // 관리자 전용 스킨 비공개
-                const isOwned = ownedSkins.includes(skin.id);
-                
-                let btnHtml = '';
-                if (isOwned) {
-                    btnHtml = `<button disabled style="background: #95a5a6;">보유중</button>`;
-                } else {
-                    btnHtml = `<button onclick="buySkin('${skin.id}')" style="background: #2ecc71;">구매 (💰 ${skin.price})</button>`;
-                }
-
-                list.innerHTML += `
-                    <div class="axe-item" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
-                            <canvas id="preview-shop-${skin.id}" width="60" height="80"></canvas>
-                            <h4 style="margin:5px 0 0 0; color:#fff;">${skin.name}</h4>
-                        </div>
-                        <div>${btnHtml}</div>
-                    </div>
-                `;
-            });
-
-            // html 생성 후 캔버스에 그리기
-            skinsData.forEach(skin => {
-                if (skin.adminOnly && !isAdmin()) return;
-                if (skin.id !== 'default') drawPreviewCanvas(`preview-shop-${skin.id}`, skin.id);
-            });
+            // 🔒 유저 요청: 상점에 시즌 스킨 탭에 있는 모든 스킨 내려주고 "10월 31일 9시에 공개!"만 표시
+            list.innerHTML = `
+                <div style="background: rgba(15, 23, 42, 0.9); border: 2px dashed #f59e0b; border-radius: 16px; padding: 45px 20px; text-align: center; margin: 15px 0; box-shadow: 0 4px 25px rgba(0,0,0,0.6);">
+                    <div style="font-size: 42px; margin-bottom: 12px; filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.6));">🔒🎃✨</div>
+                    <div style="font-size: 20px; font-weight: 950; color: #facc15; letter-spacing: -0.5px; text-shadow: 0 0 12px rgba(250, 204, 21, 0.6);">10월 31일 9시에 공개!</div>
+                    <div style="font-size: 13px; color: #cbd5e1; margin-top: 8px;">시즌 한정 스킨 라인업이 10월 31일 저녁 9시에 정식 공개됩니다.</div>
+                </div>
+            `;
         }
 
         function buySkin(skinId) {
-            const skin = skinsData.find(s => s.id === skinId);
-            if (!skin) return;
-            if (skin.adminOnly && !isAdmin()) return;
-
-            if (ownedSkins.includes(skinId)) {
-                alert('이미 보유하고 있는 스킨입니다.'); return;
-            }
-            if (isAdmin() || money >= skin.price) {
-                if (!isAdmin()) money -= skin.price;
-                ownedSkins.push(skinId);
-                updateMoney();
-                updateShopSkinUI();
-                updateInvSkinUI();
-                floatTexts.push({ x: GAME_WIDTH/2, y: player.y - 100, text: `구매 완료! 가방을 확인하세요.`, color: '#f1c40f', life: 80 });
-            } else {
-                alert('돈이 부족합니다!');
-            }
+            alert('🔒 10월 31일 9시에 공개됩니다!');
+            return;
         }
 
         function updateInvSkinUI() {
@@ -22563,17 +22427,19 @@
 
         loadGame(); 
 
-        // ❄️ 얼음 협곡 상점 초기 펭귄 손님 줄 대기열 생성 (전체 서버)
+        // ❄️ 얼음 협곡 & 🍭 사탕 상점 & 👼 천악 상점 초기 손님 줄 대기열 생성 (전체 서버)
         try {
-            let iceShop = shops.find(s => s.type === 'ice_canyon');
-            if (iceShop && iceShop.queue.length === 0) {
-                for (let i = 0; i < 3; i++) {
-                    let c = generateCustomer('ice_canyon');
-                    c.x = iceShop.frontX - i * 60;
-                    c.y = iceShop.queueY;
-                    iceShop.queue.push(c);
+            ['ice_canyon', 'halloween', 'angel_devil'].forEach(sType => {
+                let s = shops.find(item => item.type === sType);
+                if (s && s.queue.length === 0) {
+                    for (let i = 0; i < 3; i++) {
+                        let c = generateCustomer(sType);
+                        c.x = s.frontX - i * 60;
+                        c.y = s.queueY;
+                        s.queue.push(c);
+                    }
                 }
-            }
+            });
         } catch(e) {}
 
         // 🐾 펫 목록 로컬 저장소 동기화 (계정별 보존 보장)
@@ -22818,7 +22684,7 @@
             } else { player.walkTimer = 0; }
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
-            const maxBottomLimit = 3950; // 할로윈 지형 & 캔디콘 상점(Y: 3600) 전 유저 오픈
+            const maxBottomLimit = isAdmin() ? 3950 : 2050; // 사탕 상점(Y: 1680)까지 오픈, 집10채/하단상점은 미출시
             player.y = Math.max(-10750, Math.min(maxBottomLimit - player.radius, player.y));
             
             // 🔒 맨 마지막 지역: 얼음의 협곡(Y: -8000 이하) 이번주 토요일 21:30 공개 및 레벨 125 체크
@@ -22828,10 +22694,8 @@
             } else if (!isAdmin() && level < 125 && player.y <= -7970 && player.y >= -9000) {
                 player.y = -7960;
                 if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음의 협곡: 레벨 125 달성 시 입장 가능!`, color: '#38bdf8', life: 50 });
-            } else if (!isAngelDevilEventStarted() && player.y <= -8970) {
-                player.y = -8960;
-                if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 천사악마 지형은 관리자남용(오늘 20:30) 카운트다운 종료 시 공개됩니다!`, color: '#facc15', life: 60, size: 18 });
             }
+            // 👼😈 천악 지형 (Y: -9000 ~ -10800) 전체 서버 오픈
 
             if (level < 3 && player.y < 30 && player.y > -500) {
                 player.y = 30;
@@ -23027,11 +22891,7 @@
             }
 
             shops.forEach(shop => {
-                // 어드민 계정일 때만 할로윈/천악 상점에 손님 방문 허용
-                if ((shop.type === 'halloween' || shop.type === 'angel_devil') && !isAdmin()) {
-                    shop.queue = [];
-                    return;
-                }
+                // 🍭 할로윈 사탕 상점 & 👼 천악 상점 손님 대기열 전체 서버 정상 운영
                 if (shop.queue.length < 5 && Math.random() < 0.01) {
                     let newCustomer = generateCustomer(shop.type);
                     newCustomer.y = shop.queueY;
@@ -23106,7 +22966,95 @@
                                     trackQuestProgress('deliver', 1);
                                     trackQuestProgress('gold', totalEarned);
                                 }
-                                if (shop.type === 'ice_canyon') {
+                                if (shop.type === 'angel_devil') {
+                // 👼😈 [초호화 천사의 성역 & 악마의 심연 상점] 전용 3D 프리미엄 렌더러
+                ctx.save();
+                // 1. 바닥 성스러운 빛 & 심연 그림자
+                ctx.fillStyle = 'rgba(15, 10, 25, 0.6)';
+                ctx.beginPath();
+                ctx.ellipse(x + 90, y + 215, 120, 26, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 2. 기반 대리석 & 흑요석 받침
+                let baseGrad = ctx.createLinearGradient(x - 15, y, x + 195, y);
+                baseGrad.addColorStop(0, '#fef08a');
+                baseGrad.addColorStop(0.5, '#450a0a');
+                baseGrad.addColorStop(1, '#18181b');
+                ctx.fillStyle = baseGrad;
+                ctx.beginPath();
+                ctx.roundRect(x - 15, y + 200, 210, 22, 6);
+                ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2; ctx.stroke();
+
+                // 3. 본체 반반 벽체 (좌: 순백 천상 대리석 / 우: 칠흑 지옥불 벽돌)
+                let angelWall = ctx.createLinearGradient(x, y, x + 90, y);
+                angelWall.addColorStop(0, '#ffffff'); angelWall.addColorStop(1, '#fef9c3');
+                ctx.fillStyle = angelWall;
+                ctx.fillRect(x, y + 80, 90, 125);
+                let devilWall = ctx.createLinearGradient(x + 90, y, x + 180, y);
+                devilWall.addColorStop(0, '#7f1d1d'); devilWall.addColorStop(1, '#18181b');
+                ctx.fillStyle = devilWall;
+                ctx.fillRect(x + 90, y + 80, 90, 125);
+
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5;
+                ctx.strokeRect(x, y + 80, 180, 125);
+
+                // 4. 중앙 신성 & 파멸의 진열 창구
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath(); ctx.roundRect(x + 35, y + 105, 110, 72, 8); ctx.fill();
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = '#facc15'; ctx.shadowBlur = 10;
+                ctx.fillText("🪽🔱✨", x + 90, y + 148);
+                ctx.shadowBlur = 0;
+
+                // 5. 뾰족 지붕 (좌측 황금 후광 & 우측 악마 뿔 장식)
+                let roofGrad = ctx.createLinearGradient(x - 20, y, x + 200, y + 80);
+                roofGrad.addColorStop(0, '#fde047');
+                roofGrad.addColorStop(0.5, '#f59e0b');
+                roofGrad.addColorStop(1, '#dc2626');
+                ctx.fillStyle = roofGrad;
+                ctx.beginPath();
+                ctx.moveTo(x - 25, y + 80);
+                ctx.lineTo(x + 90, y - 5);
+                ctx.lineTo(x + 205, y + 80);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; ctx.stroke();
+
+                // 지붕 꼭대기 천사 헤일로 & 악마 삼지창
+                ctx.fillStyle = '#fef08a';
+                ctx.font = '22px Arial';
+                ctx.fillText("😇", x + 65, y + 15);
+                ctx.fillText("😈", x + 115, y + 15);
+
+                // 6. 상점 간판
+                ctx.fillStyle = '#1e1035';
+                ctx.beginPath(); ctx.roundRect(x + 20, y + 36, 140, 36, 8); ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5; ctx.stroke();
+                ctx.fillStyle = '#fef08a';
+                ctx.font = 'bold 13.5px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("👼 천악 상점 😈", x + 90, y + 59);
+
+                // 상호작용 알림 캡슐
+                let pDist = (typeof player !== 'undefined') ? Math.hypot(player.x - (x + 90), player.y - (y + 120)) : 999;
+                if (pDist < 160) {
+                    let pulse = Math.sin(Date.now() * 0.005) * 3;
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+                    ctx.beginPath(); ctx.roundRect(x + 30, y - 26 + pulse, 120, 22, 11); ctx.fill();
+                    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.8; ctx.stroke();
+                    ctx.fillStyle = '#fde047'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+                    ctx.fillText("👆 클릭: 천악 도감", x + 90, y - 11 + pulse);
+                }
+
+                ctx.restore();
+                return;
+            }
+            if (shop.type === 'ice_canyon') {
                                     floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned.toLocaleString()}`, color: '#38bdf8', life: 65, size: 20 });
                                     floatTexts.push({ x: firstC.x, y: shop.queueY - 105, text: `🐧 고마워 펭!`, color: '#facc15', life: 75, size: 17 });
                                 } else {
@@ -27786,57 +27734,47 @@
                 return;
             }
             if (shop.type === 'halloween') {
-                if (isAdmin()) {
-                    // 🍭 [어드민 전용] 할로윈 달콤한 사탕 상점
-                    ctx.fillStyle = '#3b1d54'; ctx.fillRect(x - 10, y + 210, 200, 20);
-                    let wallGrad = ctx.createLinearGradient(x, y, x, y + 210);
-                    wallGrad.addColorStop(0, '#581c87'); wallGrad.addColorStop(1, '#3b0764');
-                    ctx.fillStyle = wallGrad; ctx.fillRect(x, y + 80, 180, 130);
-                    ctx.fillStyle = '#7e22ce'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
-                    
-                    // 따뜻하게 빛나는 캔디 진열 창문
-                    ctx.fillStyle = '#fef08a'; ctx.fillRect(x + 35, y + 105, 110, 75);
-                    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3; ctx.strokeRect(x + 35, y + 105, 110, 75);
-                    ctx.fillStyle = '#ea580c'; ctx.font = '22px Arial'; ctx.textAlign = 'center'; ctx.fillText("🍬🍭🍫", x + 90, y + 150);
+                // 🍭 [전체 서버 정식 출시] 할로윈 달콤한 사탕 상점
+                ctx.fillStyle = '#3b1d54'; ctx.fillRect(x - 10, y + 210, 200, 20);
+                let wallGrad = ctx.createLinearGradient(x, y, x, y + 210);
+                wallGrad.addColorStop(0, '#581c87'); wallGrad.addColorStop(1, '#3b0764');
+                ctx.fillStyle = wallGrad; ctx.fillRect(x, y + 80, 180, 130);
+                ctx.fillStyle = '#7e22ce'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
+                
+                // 따뜻하게 빛나는 캔디 진열 창문
+                ctx.fillStyle = '#fef08a'; ctx.fillRect(x + 35, y + 105, 110, 75);
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3; ctx.strokeRect(x + 35, y + 105, 110, 75);
+                ctx.fillStyle = '#ea580c'; ctx.font = '22px Arial'; ctx.textAlign = 'center'; ctx.fillText("🍬🍭🍫", x + 90, y + 150);
 
-                    // 주황 & 보라 줄무늬 할로윈 차양
-                    let roofGrad = ctx.createLinearGradient(x - 20, y, x + 200, y + 80);
-                    roofGrad.addColorStop(0, '#f97316'); roofGrad.addColorStop(1, '#c026d3');
-                    ctx.fillStyle = roofGrad;
-                    ctx.beginPath(); ctx.moveTo(x - 20, y + 80); ctx.lineTo(x + 90, y); ctx.lineTo(x + 200, y + 80); ctx.fill();
-                    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 3.5; ctx.stroke();
-
-                    // 간판
-                    ctx.fillStyle = '#1e1b24'; ctx.fillRect(x + 30, y + 40, 125, 36);
-                    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.strokeRect(x + 30, y + 40, 125, 36);
-                    ctx.fillStyle = '#facc15'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
-                    ctx.fillText("🍭 사탕 상점 🍬", x + 92, y + 63);
-                    return;
-                }
-                // 🌫️ 일반 유저 화면: 판자로 폐쇄된 상점
-                ctx.fillStyle = '#2d241e'; ctx.fillRect(x - 10, y + 210, 200, 20);
-                ctx.fillStyle = '#3a312a'; ctx.fillRect(x, y + 80, 180, 130);
-                ctx.fillStyle = '#1e1814'; ctx.fillRect(x, y + 80, 15, 130); ctx.fillRect(x + 165, y + 80, 15, 130);
-                // 어두운 폐쇄 입구
-                ctx.fillStyle = '#0f0e11'; ctx.fillRect(x + 30, y + 100, 120, 110);
-                // X자 및 가로 판자
-                ctx.fillStyle = '#5c4033';
-                ctx.fillRect(x + 20, y + 120, 140, 16);
-                ctx.fillRect(x + 20, y + 160, 140, 16);
-                ctx.save();
-                ctx.translate(x + 90, y + 155);
-                ctx.rotate(0.4); ctx.fillRect(-70, -8, 140, 16);
-                ctx.rotate(-0.8); ctx.fillRect(-70, -8, 140, 16);
-                ctx.restore();
-                // 낡은 지붕
-                ctx.fillStyle = '#2d1b36';
+                // 주황 & 보라 줄무늬 할로윈 차양
+                let roofGrad = ctx.createLinearGradient(x - 20, y, x + 200, y + 80);
+                roofGrad.addColorStop(0, '#f97316'); roofGrad.addColorStop(1, '#c026d3');
+                ctx.fillStyle = roofGrad;
                 ctx.beginPath(); ctx.moveTo(x - 20, y + 80); ctx.lineTo(x + 90, y); ctx.lineTo(x + 200, y + 80); ctx.fill();
-                ctx.strokeStyle = '#120c17'; ctx.lineWidth = 4; ctx.stroke();
-                // 폐쇄 간판
-                ctx.fillStyle = '#1e1b24'; ctx.fillRect(x + 35, y + 40, 120, 35);
-                ctx.strokeStyle = '#475569'; ctx.lineWidth = 2.5; ctx.strokeRect(x + 35, y + 40, 120, 35);
-                ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
-                ctx.fillText("🚫 [폐쇄된 상점]", x + 95, y + 63);
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 3.5; ctx.stroke();
+
+                // 간판
+                ctx.fillStyle = '#1e1b24'; ctx.fillRect(x + 30, y + 40, 125, 36);
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.strokeRect(x + 30, y + 40, 125, 36);
+                ctx.fillStyle = '#facc15'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center';
+                ctx.fillText("🍭 사탕 상점 🍬", x + 92, y + 63);
+
+                // 상점 근처 클릭 힌트
+                let pDist = (typeof player !== 'undefined') ? Math.hypot(player.x - (x + 90), player.y - (y + 120)) : 999;
+                if (pDist < 160) {
+                    let pulse = Math.sin(Date.now() * 0.005) * 3;
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+                    ctx.beginPath();
+                    ctx.roundRect(x + 30, y - 26 + pulse, 120, 22, 11);
+                    ctx.fill();
+                    ctx.strokeStyle = '#f472b6';
+                    ctx.lineWidth = 1.8;
+                    ctx.stroke();
+                    ctx.fillStyle = '#f472b6';
+                    ctx.font = 'bold 11px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText("👆 클릭: 사탕 도감", x + 90, y - 11 + pulse);
+                }
                 return;
             }
             ctx.fillStyle = '#5c3a21'; ctx.fillRect(x - 10, y + 210, 200, 20);
@@ -28737,61 +28675,46 @@
             ctx.fillStyle = '#cf3a24'; ctx.fillRect(0, -1000, GAME_WIDTH, 1000); 
             // 🌿 일반 지역 연장 (Y: 1150까지 잔디 대지 확장)
             ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1150); 
-            if (isAdmin()) {
-                // 🍭🎃 [어드민 전용] 할로윈 캔디 마을 & 사탕 나무 지형 (Y: 1150 ~ 4000)
-                let candyBgGrad = ctx.createLinearGradient(0, 1150, 0, 4000);
-                candyBgGrad.addColorStop(0, '#1c132b');
-                candyBgGrad.addColorStop(0.3, '#2a1645');
-                candyBgGrad.addColorStop(0.7, '#1f1035');
-                candyBgGrad.addColorStop(1, '#130924');
-                ctx.fillStyle = candyBgGrad;
-                ctx.fillRect(0, 1150, GAME_WIDTH, 2850);
+            // 🍭🎃 [전체 서버] 달콤한 사탕 지형 & 사탕 나무 지형 (Y: 1150 ~ 2100)
+            let candyBgGrad = ctx.createLinearGradient(0, 1150, 0, 2100);
+            candyBgGrad.addColorStop(0, '#1c132b');
+            candyBgGrad.addColorStop(0.3, '#2a1645');
+            candyBgGrad.addColorStop(0.7, '#1f1035');
+            candyBgGrad.addColorStop(1, '#130924');
+            ctx.fillStyle = candyBgGrad;
+            ctx.fillRect(0, 1150, GAME_WIDTH, 950);
 
-                // 중앙 캔디 조약돌 길 (Cobblestone Street: X 230 ~ 370)
-                ctx.fillStyle = 'rgba(45, 25, 75, 0.85)';
-                ctx.fillRect(230, 1150, 140, 2850);
-                ctx.strokeStyle = '#f472b6';
-                ctx.lineWidth = 1.5;
-                ctx.setLineDash([8, 12]);
-                ctx.beginPath(); ctx.moveTo(230, 1150); ctx.lineTo(230, 4000); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(370, 1150); ctx.lineTo(370, 4000); ctx.stroke();
-                ctx.setLineDash([]);
+            // 중앙 캔디 조약돌 길 (Cobblestone Street: X 230 ~ 370)
+            ctx.fillStyle = 'rgba(45, 25, 75, 0.85)';
+            ctx.fillRect(230, 1150, 140, 950);
+            ctx.strokeStyle = '#f472b6';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([8, 12]);
+            ctx.beginPath(); ctx.moveTo(230, 1150); ctx.lineTo(230, 2100); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(370, 1150); ctx.lineTo(370, 2100); ctx.stroke();
+            ctx.setLineDash([]);
 
-                // 길 위 조약돌 패턴
-                ctx.fillStyle = 'rgba(244, 114, 182, 0.15)';
-                for (let ry = 1170; ry < 3980; ry += 65) {
-                    let rx1 = 260 + (Math.sin(ry * 0.05) * 20);
-                    let rx2 = 330 + (Math.cos(ry * 0.04) * 20);
-                    ctx.beginPath(); ctx.ellipse(rx1, ry, 16, 10, 0.2, 0, Math.PI * 2); ctx.fill();
-                    ctx.beginPath(); ctx.ellipse(rx2, ry + 25, 18, 11, -0.2, 0, Math.PI * 2); ctx.fill();
-                }
-
-                // 반짝이는 별사탕 마법 입자 효과
-                let candyTime = Date.now() * 0.002;
-                for (let cp = 0; cp < 40; cp++) {
-                    let cpx = ((cp * 97 + candyTime * 25) % GAME_WIDTH);
-                    let cpy = 1160 + ((cp * 73 + cp * cp * 19) % 2700);
-                    let ccol = (cp % 4 === 0) ? '#f472b6' : (cp % 4 === 1 ? '#facc15' : (cp % 4 === 2 ? '#38bdf8' : '#c084fc'));
-                    let calpha = 0.3 + Math.sin(candyTime * 3 + cp) * 0.35;
-                    ctx.fillStyle = ccol;
-                    ctx.globalAlpha = Math.max(0.1, calpha);
-                    ctx.beginPath(); ctx.arc(cpx, cpy, (cp % 3 === 0) ? 3 : 2, 0, Math.PI * 2); ctx.fill();
-                }
-                ctx.globalAlpha = 1.0;
-            } else {
-                // 🌫️ 파괴된 할로윈 폐허 (일반 유저)
-                ctx.fillStyle = '#1c1921'; ctx.fillRect(0, 1150, GAME_WIDTH, 1450); 
-                ctx.fillStyle = 'rgba(148, 163, 184, 0.16)';
-                ctx.fillRect(0, 1150, GAME_WIDTH, 1450);
-                let dustT = Date.now() * 0.001;
-                ctx.fillStyle = 'rgba(203, 213, 225, 0.35)';
-                for (let d = 0; d < 25; d++) {
-                    let dx = ((d * 97 + dustT * 30) % GAME_WIDTH);
-                    let dy = 1160 + ((d * 67 + dustT * 15) % 1400);
-                    let dr = (d % 3 === 0) ? 2.5 : 1.5;
-                    ctx.beginPath(); ctx.arc(dx, dy, dr, 0, Math.PI * 2); ctx.fill();
-                }
+            // 길 위 조약돌 패턴
+            ctx.fillStyle = 'rgba(244, 114, 182, 0.15)';
+            for (let ry = 1170; ry < 2080; ry += 65) {
+                let rx1 = 260 + (Math.sin(ry * 0.05) * 20);
+                let rx2 = 330 + (Math.cos(ry * 0.04) * 20);
+                ctx.beginPath(); ctx.ellipse(rx1, ry, 16, 10, 0.2, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(rx2, ry + 25, 18, 11, -0.2, 0, Math.PI * 2); ctx.fill();
             }
+
+            // 반짝이는 별사탕 마법 입자 효과
+            let candyTime = Date.now() * 0.002;
+            for (let cp = 0; cp < 30; cp++) {
+                let cpx = ((cp * 97 + candyTime * 25) % GAME_WIDTH);
+                let cpy = 1160 + ((cp * 73 + cp * cp * 19) % 900);
+                let ccol = (cp % 4 === 0) ? '#f472b6' : (cp % 4 === 1 ? '#facc15' : (cp % 4 === 2 ? '#38bdf8' : '#c084fc'));
+                let calpha = 0.3 + Math.sin(candyTime * 3 + cp) * 0.35;
+                ctx.fillStyle = ccol;
+                ctx.globalAlpha = Math.max(0.1, calpha);
+                ctx.beginPath(); ctx.arc(cpx, cpy, (cp % 3 === 0) ? 3 : 2, 0, Math.PI * 2); ctx.fill();
+            }
+            ctx.globalAlpha = 1.0;
 
             // 🔮 핑크 물음표 지형 삭제 완료 - 캔디 조약돌 길과 지형이 Y: 4000 상점까지 시원하게 이어집니다.
 
@@ -28803,7 +28726,7 @@
             // 👼😈 신규 지역: 천사의 성역 | 악마의 심연 경계선 (Y: -9000, 레벨 135 진입 가능)
             ctx.strokeStyle = '#facc15'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -9000); ctx.lineTo(GAME_WIDTH, -9000); ctx.stroke();
             ctx.fillStyle = '#fde047'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
-            ctx.fillText("👼 천사의 성역 | 😈 악마의 심연 (👑 ADMIN ONLY)", GAME_WIDTH / 2, -9020);
+            ctx.fillText("👼 천사의 성역 | 😈 악마의 심연", GAME_WIDTH / 2, -9020);
 
             // ❄️ 얼음의 협곡 경계선 (Y: -8000, 관리자 전용)
             ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -8000); ctx.lineTo(GAME_WIDTH, -8000); ctx.stroke();
@@ -28816,14 +28739,9 @@
             ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -7000); ctx.lineTo(GAME_WIDTH, -7000); ctx.stroke();
             ctx.fillStyle = '#a29bfe'; ctx.fillText("🚀 미지의 영역: 우주 지역 (레벨 105 진입 가능)", GAME_WIDTH / 2, -7020);
 
-            ctx.strokeStyle = isAdmin() ? '#ec4899' : '#475569'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1150); ctx.lineTo(GAME_WIDTH, 1150); ctx.stroke();
-            if (isAdmin()) {
-                ctx.fillStyle = '#f472b6'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
-                ctx.fillText("🍭 달콤한 사탕 나무 & 캔디 마을 (Trick-or-Treat)", GAME_WIDTH / 2, 1185);
-            } else {
-                ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
-                ctx.fillText("🌫️ 폐허: 파괴된 할로윈 폐허 (출입 통제 구역)", GAME_WIDTH / 2, 1185);
-            }
+            ctx.strokeStyle = '#ec4899'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1150); ctx.lineTo(GAME_WIDTH, 1150); ctx.stroke();
+            ctx.fillStyle = '#f472b6'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
+            ctx.fillText("🍭 달콤한 사탕 나무 & 사탕 상점 (Candy Land)", GAME_WIDTH / 2, 1185);
 
             ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(GAME_WIDTH, 0); ctx.stroke();
             ctx.fillStyle = '#d35400'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("🔥 위험: 불꽃 지역 (레벨 3 진입 가능)", GAME_WIDTH / 2, -20);
@@ -28892,12 +28810,7 @@
                 renderList.push({ type: 'craftingMachine', obj: craftingMachine, y: craftingMachine.y });
             }
 
-            // 🏘️ [할로윈 캔디 마을] 집 10채 (전체 서버 정식 출시)
-            if (typeof candyVillageHouses !== 'undefined') {
-                candyVillageHouses.forEach(h => {
-                    renderList.push({ type: 'candyHouse', obj: h, y: h.y });
-                });
-            }
+            // 🏘️ [할로윈 캔디 마을] 집 10채 (유저 요청: 출시 제외 및 렌더 생략)
 
             // 🏪 [캔디콘 비밀 상점] (어드민 계정 전용)
             if (isAdmin()) {
@@ -28998,11 +28911,72 @@
                     } else if (t.type === 'cave') {
                         trunkGrad.addColorStop(0, '#2d3436'); trunkGrad.addColorStop(0.5, '#636e72'); trunkGrad.addColorStop(1, '#1e272e');
                     } else if (t.type === 'halloween') {
-                        if (isAdmin()) {
-                            // 🍭 페퍼민트 사탕 지팡이 나무 기둥 (Candy Cane Peppermint)
-                            trunkGrad.addColorStop(0, '#ff4757'); trunkGrad.addColorStop(0.3, '#ffffff'); trunkGrad.addColorStop(0.6, '#ff6b81'); trunkGrad.addColorStop(1, '#ffffff');
-                        } else {
-                            trunkGrad.addColorStop(0, '#2d3436'); trunkGrad.addColorStop(0.5, '#4a235a'); trunkGrad.addColorStop(1, '#1b1464');
+                        // 🍭✨ [전체 서버] 초호화 마법 사탕 나무 (Candy Tree) 렌더링!
+                        let candyTime = Date.now() * 0.003;
+                        
+                        // 1. 달콤한 솜사탕/젤리 다층 수관
+                        let cloudGrad1 = ctx.createRadialGradient(-35, -70, 15, -35, -70, t.radius * 0.85);
+                        cloudGrad1.addColorStop(0, '#ff9ff3'); cloudGrad1.addColorStop(1, '#f368e0');
+                        ctx.fillStyle = cloudGrad1;
+                        ctx.beginPath(); ctx.arc(-55, -45, t.radius * 0.75, 0, Math.PI * 2); ctx.fill();
+
+                        let cloudGrad2 = ctx.createRadialGradient(45, -65, 15, 45, -65, t.radius * 0.85);
+                        cloudGrad2.addColorStop(0, '#54a0ff'); cloudGrad2.addColorStop(1, '#2e86de');
+                        ctx.fillStyle = cloudGrad2;
+                        ctx.beginPath(); ctx.arc(55, -45, t.radius * 0.75, 0, Math.PI * 2); ctx.fill();
+
+                        let cloudGrad3 = ctx.createRadialGradient(0, -110, 20, 0, -110, t.radius * 0.95);
+                        cloudGrad3.addColorStop(0, '#feca57'); cloudGrad3.addColorStop(0.5, '#ff6b6b'); cloudGrad3.addColorStop(1, '#ee5253');
+                        ctx.fillStyle = cloudGrad3;
+                        ctx.beginPath(); ctx.arc(0, -100, t.radius * 0.9, 0, Math.PI * 2); ctx.fill();
+
+                        let cloudGrad4 = ctx.createRadialGradient(0, -50, 20, 0, -50, t.radius * 1.05);
+                        cloudGrad4.addColorStop(0, '#1dd1a1'); cloudGrad4.addColorStop(1, '#10ac84');
+                        ctx.fillStyle = cloudGrad4;
+                        ctx.beginPath(); ctx.arc(0, -45, t.radius * 0.95, 0, Math.PI * 2); ctx.fill();
+
+                        // 2. 나무에 매달린 거대한 소용돌이 롤리팝 2개
+                        ctx.save();
+                        ctx.translate(-75, -95);
+                        ctx.rotate(candyTime);
+                        let lpGrad1 = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
+                        lpGrad1.addColorStop(0, '#ffffff'); lpGrad1.addColorStop(0.5, '#ff4757'); lpGrad1.addColorStop(1, '#ff6b81');
+                        ctx.fillStyle = lpGrad1;
+                        ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
+                        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
+                        ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 1.5); ctx.stroke();
+                        ctx.restore();
+
+                        ctx.save();
+                        ctx.translate(75, -95);
+                        ctx.rotate(-candyTime);
+                        let lpGrad2 = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
+                        lpGrad2.addColorStop(0, '#ffffff'); lpGrad2.addColorStop(0.5, '#2ed573'); lpGrad2.addColorStop(1, '#1e90ff');
+                        ctx.fillStyle = lpGrad2;
+                        ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
+                        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
+                        ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 1.5); ctx.stroke();
+                        ctx.restore();
+
+                        // 3. 나무 꼭대기 빛나는 신화 별사탕 킹캔디 장식 (Star Candy King Crown)
+                        ctx.save();
+                        ctx.translate(0, -195 + Math.sin(candyTime * 3) * 6);
+                        ctx.shadowColor = '#facc15'; ctx.shadowBlur = 18;
+                        ctx.fillStyle = '#fef08a';
+                        ctx.font = '34px Arial';
+                        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                        ctx.fillText("⭐👑", 0, 0);
+                        ctx.restore();
+
+                        // 4. 반짝이는 달콤한 설탕 가루 & 젤리 방울
+                        for (let sp = 0; sp < 8; sp++) {
+                            let spAngle = candyTime * 2 + (sp * Math.PI / 4);
+                            let spDist = (t.radius * 0.7) + Math.sin(candyTime * 3 + sp) * 20;
+                            let spx = Math.cos(spAngle) * spDist;
+                            let spy = -70 + Math.sin(spAngle) * (spDist * 0.55);
+                            let spCol = (sp % 3 === 0) ? '#fde047' : ((sp % 3 === 1) ? '#ffffff' : '#f472b6');
+                            ctx.fillStyle = spCol;
+                            ctx.beginPath(); ctx.arc(spx, spy, 3.5, 0, Math.PI * 2); ctx.fill();
                         }
                     } else if (t.type === 'angel_devil') {
                         // 👼😈 반천사 반악마 나무 기둥 (천사: 순백/황금, 악마: 흑요석/지옥불)
@@ -29506,7 +29480,6 @@
             });
 
             shops.forEach(shop => {
-                if (shop.type === 'angel_devil' && !isAdmin()) return;
                 drawShop(ctx, shop);
             });
             // 융합 호박 머신 삭제됨 (크래프팅 머신만 렌더링 유지)
@@ -30211,10 +30184,7 @@
 // 👼😈 [8:30 실시간 공식 이벤트 & 관리자남용 카운트다운 엔진]
 // ============================================================================
 function isAngelDevilEventStarted() {
-    if (isAdmin() || window.FORCE_830_EVENT) return true;
-    const now = new Date();
-    const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 30, 0);
-    return now >= target;
+    return true; // 👼😈 천악 지형 정식 출시 완료!
 }
 window.isAngelDevilEventStarted = isAngelDevilEventStarted;
 
@@ -30234,20 +30204,22 @@ function updateCountdownHUD() {
     if (!titleEl || !timerEl) return;
 
     const now = new Date();
-    const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 30, 0);
+    // ⏳ [관리자남용 타이머] 2026년 10월 31일 저녁 9시 (21:00:00 KST)
+    const target = new Date(2026, 9, 31, 21, 0, 0);
     const diffMs = target - now;
 
-    if (diffMs <= 0 || window.FORCE_830_EVENT) {
+    if (diffMs <= 0) {
         if (hud) hud.style.display = 'none';
     } else {
         if (hud) hud.style.display = 'block';
         const totalSec = Math.floor(diffMs / 1000);
-        const hours = Math.floor(totalSec / 3600);
+        const days = Math.floor(totalSec / 86400);
+        const hours = Math.floor((totalSec % 86400) / 3600);
         const minutes = Math.floor((totalSec % 3600) / 60);
         const seconds = totalSec % 60;
         titleEl.innerText = '관리자남용까지';
         titleEl.style.color = '#facc15';
-        timerEl.innerText = `${hours}시간 ${minutes}분 ${seconds}초`;
+        timerEl.innerText = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
         timerEl.style.color = '#ffffff';
     }
 }
