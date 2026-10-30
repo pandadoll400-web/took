@@ -12782,29 +12782,16 @@
 
         let level = 1; let xp = 0; let maxXp = 20;
         let money = 0;
-        let candyCorn = (function() {
-            try {
-                // 🍬 [정식 출시] 모든 유저 최초 0개 시작
-                const releaseInitKey = 'candy_corn_official_release_v1';
-                if (!localStorage.getItem(releaseInitKey)) {
-                    localStorage.setItem(releaseInitKey, 'true');
-                    localStorage.setItem('player_candy_corn', '0');
-                    return 0;
-                }
-                return parseInt(localStorage.getItem('player_candy_corn') || '0', 10) || 0;
-            } catch(e) { return 0; }
-        })();
-        window.candyCorn = candyCorn;
+        let candyCorn = 0;
+        window.candyCorn = 0;
         function updateCandyCorn(amount = 0) {
             candyCorn = Math.max(0, (candyCorn || 0) + amount);
             window.candyCorn = candyCorn;
             try {
-                localStorage.setItem('player_candy_corn', candyCorn.toString());
                 if (currentUser) {
                     localStorage.setItem('player_candy_corn_' + currentUser.toLowerCase(), candyCorn.toString());
-                }
-                if (isAdmin()) {
-                    localStorage.setItem('player_candy_corn_adminaccount', candyCorn.toString());
+                } else {
+                    localStorage.setItem('player_candy_corn_guest', candyCorn.toString());
                 }
             } catch(e) {}
             const hud = document.getElementById('candy-corn-hud');
@@ -15231,7 +15218,10 @@
         // [유저 요구] "할로윈 이벤트 공지 이제 아무도 못보게 하고, 새로고침 빼고 오랜만에 왔거나 나갔다가 다시오면 뜨게"
         function checkAndShowFrostCanyonNotice() {
             try {
-                // 🎃 [유저 요청] 게임 들어갔을 때마다 항상 업데이트 팝업 노출 (로그인 창이 열려있는 경우 로그인 후 표시)
+                // 🎃 [유저 요청] 새로고침(F5) 시에는 팝업창 안 뜨게 차단!
+                if (isPageReload()) {
+                    return;
+                }
                 const loginOverlay = document.getElementById('login-modal-overlay');
                 if (loginOverlay && loginOverlay.style.display !== 'none' && loginOverlay.style.display !== '') {
                     return;
@@ -15428,10 +15418,8 @@
             // 🍬 관리자 캔디콘 수량 영구 보존 복원
             let adminCandyCorn = 0;
             try {
-                const uKey = currentUser ? ('player_candy_corn_' + currentUser.toLowerCase()) : 'player_candy_corn_adminaccount';
-                const rawVal = localStorage.getItem(uKey) || localStorage.getItem('player_candy_corn_adminaccount') || localStorage.getItem('player_candy_corn');
+                const rawVal = localStorage.getItem('player_candy_corn_adminaccount');
                 if (rawVal !== null) adminCandyCorn = Math.max(0, parseInt(rawVal, 10) || 0);
-                if (typeof candyCorn === 'number' && candyCorn > 0) adminCandyCorn = Math.max(adminCandyCorn, candyCorn);
             } catch(e) {}
 
             return {
@@ -18604,6 +18592,9 @@
             localStorage.removeItem('admin_pet_follow');
             
             // 다른 계정으로 로그인하거나 새 계정을 만들 때 이전 계정 데이터가 남지 않도록 게임 상태 완전 초기화
+            candyCorn = 0;
+            window.candyCorn = 0;
+            updateCandyCorn(0);
             resetGameToDefault();
             player.x = GAME_WIDTH / 2;
             player.y = 500;
@@ -18978,32 +18969,23 @@
             maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
             xp = Math.min(data.xp || 0, maxXp - 1);
             money = data.money || 0;
-            // 🍬 캔디콘 세이브 복구 (최초 정식 출시 시 모든 유저 0개 시작, 이후 획득량 정상 저장)
-            const releaseUserKey = 'candy_corn_user_reset_v1_' + (currentUser ? currentUser.toLowerCase() : 'guest');
-            if (!localStorage.getItem(releaseUserKey)) {
+            // 🍬 캔디콘 세이브 복구: 계정별 독립 분리 및 클라우드/로컬 세이브 복원 (새로고침 시 초기화 방지)
+            if (data && typeof data.candyCorn === 'number') {
+                candyCorn = data.candyCorn;
+                window.candyCorn = candyCorn;
+            } else if (currentUser) {
+                try {
+                    const uKey = 'player_candy_corn_' + currentUser.toLowerCase();
+                    const localCC = parseInt(localStorage.getItem(uKey) || '0', 10);
+                    candyCorn = isNaN(localCC) ? 0 : localCC;
+                    window.candyCorn = candyCorn;
+                } catch(e) {
+                    candyCorn = 0;
+                    window.candyCorn = 0;
+                }
+            } else {
                 candyCorn = 0;
                 window.candyCorn = 0;
-                if (data) data.candyCorn = 0;
-                try {
-                    localStorage.setItem(releaseUserKey, 'true');
-                    localStorage.setItem('player_candy_corn', '0');
-                    if (currentUser) {
-                        localStorage.setItem('player_candy_corn_' + currentUser.toLowerCase(), '0');
-                    }
-                } catch(e) {}
-                if (typeof saveGame === 'function') saveGame(true);
-            } else {
-                if (typeof data.candyCorn === 'number') {
-                    candyCorn = data.candyCorn;
-                    window.candyCorn = candyCorn;
-                } else {
-                    try {
-                        const uKey = currentUser ? ('player_candy_corn_' + currentUser.toLowerCase()) : 'player_candy_corn';
-                        const localCC = parseInt(localStorage.getItem(uKey) || localStorage.getItem('player_candy_corn') || '0', 10);
-                        candyCorn = isNaN(localCC) ? 0 : localCC;
-                        window.candyCorn = candyCorn;
-                    } catch(e) {}
-                }
             }
             if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
             axeLevel = data.axeLevel || 0;
@@ -21551,10 +21533,9 @@
                                 equippedSkin = userData.gameData.equippedSkin;
                             }
                             if (userData.gameData && typeof userData.gameData.candyCorn === 'number') {
-                                candyCorn = Math.max(candyCorn || 0, userData.gameData.candyCorn);
+                                candyCorn = userData.gameData.candyCorn;
                                 try {
                                     localStorage.setItem('player_candy_corn_adminaccount', candyCorn.toString());
-                                    localStorage.setItem('player_candy_corn', candyCorn.toString());
                                 } catch(e) {}
                             }
                             applyLoadedGameData(getAdminGameData());
