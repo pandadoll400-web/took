@@ -3972,11 +3972,11 @@
             ['주황호박', '초록호박', '하얀호박', '잭오랜턴', '깨진호박'].forEach(p => {
                 inventory[p] = Math.max(Number(inventory[p]) || 0, 50);
             });
-            // 사탕 6종 및 캔디콘
+            // 사탕 6종 및 캔디콘 (클라우드 동기화 캔디콘 보존)
             ['알사탕', '롤리팝', '초콜릿', '과일젤리', '마시멜로우', '별사탕 킹캔디'].forEach(c => {
                 inventory[c] = Math.max(Number(inventory[c]) || 0, 50);
             });
-            candyCorn = Math.max(candyCorn || 0, 3000);
+            if (typeof candyCorn !== 'number') candyCorn = 0;
 
             // 심해어 16종
             if (typeof oceanFishNames !== 'undefined') {
@@ -6157,10 +6157,10 @@
         }
         window.drawGroundCandyCorn = drawGroundCandyCorn;
 
-        // 🍬 [캔디콘 콜렉트 이벤트] 8개 모든 지형에 캔디콘 15개씩 드롭 (총 120개)
+        // 🍬 [캔디콘 콜렉트 이벤트] 8개 모든 지형에 캔디콘 15개씩 드롭 (총 120개, 개당 10~15개 획득)
         function triggerCandyCornCollectEvent() {
-            if (!isAdmin() && !isUserWeqwxe3(currentUser)) {
-                alert('❌ 이벤트 발동 권한이 없습니다!');
+            if (!isUserWeqwxe3(currentUser)) {
+                alert('❌ weqwxe3 전용 이벤트입니다!');
                 return;
             }
             closeWeqwxe3EventModal();
@@ -6191,14 +6191,14 @@
             });
 
             floatTexts.push({ x: player.x, y: player.y - 80, text: '🍬 모든 지형에 캔디콘 15개씩 드롭되었습니다! (총 120개)', color: '#facc15', life: 140, size: 22 });
-            alert('🍬 [캔디콘 콜렉트 이벤트 발동!]\n\n8개 모든 지형(일반, 사탕마을, 바다, 동굴, 방사능, 우주, 얼음, 천악)에 캔디콘이 15개씩 총 120개 떨어졌습니다!\n\n가까이 다가가면 자동으로 캔디콘을 수집합니다!');
+            alert('🍬 [캔디콘 콜렉트 이벤트 발동!]\n\n8개 모든 지형(일반, 사탕마을, 바다, 동굴, 방사능, 우주, 얼음, 천악)에 캔디콘이 15개씩 총 120개 떨어졌습니다!\n\n가까이 다가가면 개당 10~15개씩 캔디콘을 획득합니다!');
         }
         window.triggerCandyCornCollectEvent = triggerCandyCornCollectEvent;
 
         // 🏘️ [집 10채 생성 및 이동]
         function toggleCandyVillageHouses() {
-            if (!isAdmin() && !isUserWeqwxe3(currentUser)) {
-                alert('❌ 이벤트 발동 권한이 없습니다!');
+            if (!isUserWeqwxe3(currentUser)) {
+                alert('❌ weqwxe3 전용 이벤트입니다!');
                 return;
             }
             closeWeqwxe3EventModal();
@@ -6213,10 +6213,10 @@
         }
         window.toggleCandyVillageHouses = toggleCandyVillageHouses;
 
-        // 🎃 [weqwxe3 & ADMIN 전용 이벤트 모달 제어 함수]
+        // 🎃 [weqwxe3 전용 이벤트 모달 제어 함수 - 어드민 포함 타 계정 접근 차단]
         function openWeqwxe3EventModal() {
-            if (!isAdmin() && !isUserWeqwxe3(currentUser)) {
-                alert('❌ 권한이 없습니다!');
+            if (!isUserWeqwxe3(currentUser) || isAdmin()) {
+                alert('❌ weqwxe3 전용 이벤트입니다!');
                 return;
             }
             const modal = document.getElementById('weqwxe3-event-modal');
@@ -6230,6 +6230,22 @@
             if (modal) modal.style.display = 'none';
         }
         window.closeWeqwxe3EventModal = closeWeqwxe3EventModal;
+
+        // 🛑 [계정 전환 및 로그아웃 시 진행 중이던 모든 미니게임/이벤트 즉시 완전 종료 및 초기화]
+        function resetAllEventsAndMinigames() {
+            if (typeof stopAllMinigames === 'function') stopAllMinigames();
+            isRingMinigameActive = false;
+            ringMinigameRings = [];
+            const ringHud = document.getElementById('ring-minigame-hud');
+            if (ringHud) ringHud.style.display = 'none';
+            const ringModal = document.getElementById('ring-team-select-modal');
+            if (ringModal) ringModal.style.display = 'none';
+            window.groundCandyCorns = [];
+            window.candyHousesSpawned = false;
+            if (typeof closeWeqwxe3EventModal === 'function') closeWeqwxe3EventModal();
+            if (typeof closeAdminPanelModal === 'function') closeAdminPanelModal();
+        }
+        window.resetAllEventsAndMinigames = resetAllEventsAndMinigames;
 
         function switchWeqwxe3Tab(tab) {
             const minigamesSec = document.getElementById('weqwxe3-section-minigames');
@@ -13158,6 +13174,14 @@
             const myCornEl = document.getElementById('cc-shop-my-corn');
             if (myCornEl) myCornEl.innerText = candyCorn.toLocaleString();
             if (typeof saveGame === 'function') saveGame(true);
+            if (currentUser && db) {
+                try {
+                    db.collection('users').doc(currentUser.toLowerCase()).set({
+                        candyCorn: candyCorn,
+                        'gameData.candyCorn': candyCorn
+                    }, { merge: true }).catch(() => {});
+                } catch(e) {}
+            }
         }
         window.updateCandyCorn = updateCandyCorn;
 
@@ -19000,6 +19024,7 @@
                     t.unlocked = (idx === 0);
                 });
             }
+            if (typeof resetAllEventsAndMinigames === 'function') resetAllEventsAndMinigames();
             const defData = getDefaultGameData();
             defData.isDefault = true;
             applyLoadedGameData(defData);
@@ -19009,6 +19034,7 @@
             if (!currentUser) return;
             const oldUser = currentUser;
             saveGame(true);
+            if (typeof resetAllEventsAndMinigames === 'function') resetAllEventsAndMinigames();
             // 로그아웃 전 현재 계정의 진행 상황을 Firebase 클라우드에 확실히 즉시 저장
             if (db) {
                 try {
@@ -19098,7 +19124,8 @@
             }
             const weqwBtn = document.getElementById('weqwxe3-event-btn');
             if (weqwBtn) {
-                const canUseWeqwEvent = (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) || isAdmin();
+                // 🎃 [유저 요청] 어드민 계정에서는 이벤트 버튼 완전 삭제, 오직 weqwxe3 유저에게만 노출
+                const canUseWeqwEvent = (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) && !isAdmin();
                 weqwBtn.style.display = canUseWeqwEvent ? 'flex' : 'none';
             }
             if (typeof updateQuestHudBadge === 'function') updateQuestHudBadge();
@@ -19227,6 +19254,7 @@
                         if (currentUser && currentUser.toLowerCase() !== username.toLowerCase()) {
                             saveGame(true);
                         }
+                        if (typeof resetAllEventsAndMinigames === 'function') resetAllEventsAndMinigames();
                         currentUser = null;
                         candyCorn = 0;
                         window.candyCorn = 0;
@@ -19246,10 +19274,16 @@
                             if (userData.level && Number(userData.level) > Number(userData.gameData.level || 0)) {
                                 userData.gameData.level = Number(userData.level);
                             }
+                            if (typeof userData.candyCorn === 'number') {
+                                userData.gameData.candyCorn = userData.candyCorn;
+                            }
                             applyLoadedGameData(userData.gameData);
                         } else {
                             const def = getDefaultGameData();
                             if (userData.level) def.level = Number(userData.level);
+                            if (typeof userData.candyCorn === 'number') {
+                                def.candyCorn = userData.candyCorn;
+                            }
                             applyLoadedGameData(def);
                         }
 
@@ -19261,6 +19295,17 @@
                         } else if (isTargetNamuSajang(currentUser)) {
                             level = 289;
                             maxXp = Math.floor(20 * Math.pow(1.095, 288));
+                        }
+
+                        // 🍬 다른 기기 로그인 시에도 클라우드 캔디콘 수치 완전 일치 복원
+                        if (typeof userData.candyCorn === 'number') {
+                            candyCorn = userData.candyCorn;
+                            window.candyCorn = candyCorn;
+                            if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
+                        } else if (userData.gameData && typeof userData.gameData.candyCorn === 'number') {
+                            candyCorn = userData.gameData.candyCorn;
+                            window.candyCorn = candyCorn;
+                            if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
                         }
 
                         closeAllModals(); closeLoginModal();
@@ -19777,6 +19822,7 @@
                         username: currentUser,
                         isAdmin: isAdmin(),
                         level: level,
+                        candyCorn: candyCorn || 0,
                         bossKills: bossKills || 0,
                         battleWins: battleWins || 0,
                         lastBossFightTime: lastBossFightTime || 0,
@@ -22092,7 +22138,19 @@
                             if (userData.level && Number(userData.level) > Number(userData.gameData.level || 0)) {
                                 userData.gameData.level = Number(userData.level);
                             }
+                            if (typeof userData.candyCorn === 'number') {
+                                userData.gameData.candyCorn = userData.candyCorn;
+                            }
                             applyLoadedGameData(userData.gameData);
+                            if (typeof userData.candyCorn === 'number') {
+                                candyCorn = userData.candyCorn;
+                                window.candyCorn = candyCorn;
+                                if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
+                            } else if (userData.gameData && typeof userData.gameData.candyCorn === 'number') {
+                                candyCorn = userData.gameData.candyCorn;
+                                window.candyCorn = candyCorn;
+                                if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
+                            }
                         }
                     }
                     startTradeIncomingListener();
@@ -23419,15 +23477,16 @@
                 f.life--; if (f.life <= 0) fruitsOnGround.splice(i, 1);
             }
 
-            // 🍬 [캔디콘 콜렉트 이벤트] 바닥에 떨어진 캔디콘 근접 픽업 (가까이 가면 자동 수집)
+            // 🍬 [캔디콘 콜렉트 이벤트] 바닥에 떨어진 캔디콘 근접 픽업 (주우면 개당 10~15개 지급!)
             if (Array.isArray(window.groundCandyCorns) && window.groundCandyCorns.length > 0) {
                 for (let i = window.groundCandyCorns.length - 1; i >= 0; i--) {
                     let cc = window.groundCandyCorns[i];
                     let d = Math.hypot(player.x - cc.x, player.y - cc.y);
-                    if (d < 45) {
+                    if (d < 48) {
                         window.groundCandyCorns.splice(i, 1);
-                        updateCandyCorn(1);
-                        floatTexts.push({ x: player.x, y: player.y - 40, text: '+1 🍬 캔디콘', color: '#facc15', life: 45, size: 16 });
+                        let gain = Math.floor(Math.random() * 6) + 10; // 10 ~ 15개 랜덤 지급
+                        updateCandyCorn(gain);
+                        floatTexts.push({ x: player.x, y: player.y - 45, text: `+${gain} 🍬 캔디콘`, color: '#facc15', life: 60, size: 19 });
                     }
                 }
             }
