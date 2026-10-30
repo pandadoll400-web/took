@@ -593,43 +593,35 @@
         </div>
 
         <!-- ❄️ 얼음의 협곡 & 불사조 피닉스 대규모 업데이트 공지 팝업 (새로고침 제외, 재방문/오랜만 접속 시 표시) -->
-        <div id="frost-canyon-notice-overlay" onclick="if(event.target === this) closeFrostCanyonNoticeModal()" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.88); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 120;">
-            <div style="position: relative; background: linear-gradient(180deg, #0b1e36 0%, #030a16 100%); border: 2.5px solid #38bdf8; border-radius: 24px; padding: 24px 20px 20px 20px; width: 92%; max-width: 390px; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(56, 189, 248, 0.45); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <div id="frost-canyon-notice-overlay" onclick="if(event.target === this) closeFrostCanyonNoticeModal()" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 3, 12, 0.88); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 120;">
+            <div style="position: relative; background: linear-gradient(180deg, #1e1338 0%, #0d071a 100%); border: 2.5px solid #f59e0b; border-radius: 24px; padding: 22px 20px 20px 20px; width: 92%; max-width: 390px; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(245, 158, 11, 0.45); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
                 <!-- 우측 상단 닫기 X 버튼 -->
                 <button onclick="closeFrostCanyonNoticeModal()" style="position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #ecf0f1; width: 32px; height: 32px; border-radius: 50%; font-size: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="닫기">✕</button>
 
-                <!-- 상단 헤더 뱃지 -->
-                <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(14, 165, 233, 0.2); border: 1px solid #38bdf8; border-radius: 20px; padding: 5px 14px; margin-bottom: 12px;">
-                    <span style="font-size: 14px;">❄️</span>
-                    <span style="color: #38bdf8; font-size: 11px; font-weight: 800; letter-spacing: 0.5px;">📅 이번주 토요일(10/24) 21:30 대공개!</span>
+                <!-- 사진 (할로윈 사탕 나무 & 킹캔디 배너) -->
+                <div style="display: flex; justify-content: center; margin-top: 6px; margin-bottom: 12px;">
+                    <img src="halloween_update_banner.png" alt="Happy Halloween" style="width: 100%; max-width: 280px; height: auto; max-height: 230px; border-radius: 14px; border: 2px solid #a855f7; box-shadow: 0 6px 25px rgba(168, 85, 247, 0.45), 0 0 15px rgba(245, 158, 11, 0.35); object-fit: contain; display: block;">
                 </div>
 
-                <!-- 사진 (Frost Canyon & Phoenix Banner) -->
-                <div style="display: flex; justify-content: center; margin-bottom: 14px;">
-                    <img src="frost_canyon_phoenix.jpg" alt="Frost Canyon Phoenix" style="width: 100%; max-width: 290px; height: auto; max-height: 220px; border-radius: 14px; border: 2px solid #38bdf8; box-shadow: 0 6px 25px rgba(56, 189, 248, 0.45), 0 0 15px rgba(249, 115, 22, 0.35); object-fit: cover; display: block;">
-                </div>
-
-                <!-- 텍스트 안내 영역 (유저 필수 3문구) -->
-                <div style="background: rgba(4, 14, 28, 0.85); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 13px 14px; margin-bottom: 14px; text-align: left; display: flex; flex-direction: column; gap: 8px;">
-                    <div style="color: #e0f2fe; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 16px;">🦴</span> <span>신규 지역에서 뼈를 발굴하세요!</span>
+                <!-- 텍스트 안내 영역 (유저 요청 4문구 정확히 반영) -->
+                <div style="background: rgba(15, 10, 28, 0.88); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; text-align: center; display: flex; flex-direction: column; gap: 5px;">
+                    <div style="color: #facc15; font-size: 19px; font-weight: 950; letter-spacing: -0.5px; text-shadow: 0 0 10px rgba(250, 204, 21, 0.6);">
+                        🎃 Happy Halloween!
                     </div>
-                    <div style="color: #fbc531; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 16px;">🐾</span> <span>얻은 뼈들로 펫을 길들이세요!</span>
+                    <div style="color: #ffffff; font-size: 14.5px; font-weight: 800; letter-spacing: -0.3px;">
+                        할로윈미니게임&천사악마 미니게임
                     </div>
-                    <div style="color: #ff7675; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 8px rgba(255, 118, 117, 0.5);">
-                        <span style="font-size: 16px;">🦅</span> <span>서리룡의 습격으로 부터 피닉스를 지켜 내세요</span>
+                    <div style="color: #f472b6; font-size: 13.5px; font-weight: 800;">
+                        10월 31일 토요일
                     </div>
-                </div>
-
-                <!-- 보너스 안내 문구 -->
-                <div style="font-size: 12px; color: #f97316; font-weight: bold; margin-bottom: 13px; text-shadow: 0 0 10px rgba(249, 115, 22, 0.4);">
-                    🔥 서리룡 30회 토벌 완료 시 전설 [피닉스] 스킨 100% 지급!
+                    <div style="color: #38bdf8; font-size: 13.5px; font-weight: 800;">
+                        우리업데이트에 참여하세요!
+                    </div>
                 </div>
 
                 <!-- 하단 확인 버튼 -->
-                <button onclick="closeFrostCanyonNoticeModal()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.5);">
-                    탐험 시작하기
+                <button onclick="closeFrostCanyonNoticeModal()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; border: none; border-radius: 10px; font-weight: 900; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.5);">
+                    확인
                 </button>
             </div>
         </div>
@@ -15239,43 +15231,17 @@
         // [유저 요구] "할로윈 이벤트 공지 이제 아무도 못보게 하고, 새로고침 빼고 오랜만에 왔거나 나갔다가 다시오면 뜨게"
         function checkAndShowFrostCanyonNotice() {
             try {
-                // 1. 새로고침 시에는 절대 띄우지 않음!
-                if (isPageReload()) {
-                    return;
-                }
-
-                // 2. 로그인 창이 아직 열려있으면 로그인 후나 창 닫은 후 띄움
+                // 🎃 [유저 요청] 게임 들어갔을 때마다 항상 업데이트 팝업 노출 (로그인 창이 열려있는 경우 로그인 후 표시)
                 const loginOverlay = document.getElementById('login-modal-overlay');
                 if (loginOverlay && loginOverlay.style.display !== 'none' && loginOverlay.style.display !== '') {
                     return;
                 }
-
-                // 3. 나갔다가 다시오면 (세션 스토리지 비어있음) OR 오랜만에 왔거나 (마지막 확인 후 30분 경과)
-                let sessionSeen = false;
-                try {
-                    sessionSeen = (sessionStorage.getItem('frost_canyon_notice_seen_session') === 'true');
-                } catch(e) {}
-
-                let lastSeenTime = 0;
-                try {
-                    lastSeenTime = Number(localStorage.getItem('frost_canyon_notice_last_time') || 0);
-                } catch(e) {}
-
-                const now = Date.now();
-                const isLongTimeSince = (!lastSeenTime || (now - lastSeenTime > 30 * 60 * 1000));
-
-                if (!sessionSeen || isLongTimeSince) {
-                    const noticeOverlay = document.getElementById('frost-canyon-notice-overlay');
-                    if (noticeOverlay) {
-                        noticeOverlay.style.display = 'flex';
-                        try {
-                            sessionStorage.setItem('frost_canyon_notice_seen_session', 'true');
-                            localStorage.setItem('frost_canyon_notice_last_time', now.toString());
-                        } catch(e) {}
-                    }
+                const noticeOverlay = document.getElementById('frost-canyon-notice-overlay');
+                if (noticeOverlay) {
+                    noticeOverlay.style.display = 'flex';
                 }
             } catch (e) {
-                console.warn('Frost Canyon notice error:', e);
+                console.warn('Halloween notice error:', e);
             }
         }
 
@@ -22719,7 +22685,11 @@
                 player.y = -7960;
                 if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음의 협곡: 레벨 125 달성 시 입장 가능!`, color: '#38bdf8', life: 50 });
             }
-            // 👼😈 천악 지형 (Y: -9000 ~ -10800) 전체 서버 오픈
+            // 👼😈 천악 지형 (Y: -9000 ~ -10800): 레벨 135 진입 제한
+            if (!isAdmin() && level < 135 && player.y <= -8970) {
+                player.y = -8960;
+                if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 천사의 성역 & 악마의 심연: 레벨 135 달성 시 입장 가능!`, color: '#facc15', life: 50 });
+            }
 
             if (level < 3 && player.y < 30 && player.y > -500) {
                 player.y = 30;
@@ -22990,94 +22960,16 @@
                                     trackQuestProgress('deliver', 1);
                                     trackQuestProgress('gold', totalEarned);
                                 }
-                                if (shop.type === 'angel_devil') {
-                // 👼😈 [초호화 천사의 성역 & 악마의 심연 상점] 전용 3D 프리미엄 렌더러
-                ctx.save();
-                // 1. 바닥 성스러운 빛 & 심연 그림자
-                ctx.fillStyle = 'rgba(15, 10, 25, 0.6)';
-                ctx.beginPath();
-                ctx.ellipse(x + 90, y + 215, 120, 26, 0, 0, Math.PI * 2);
-                ctx.fill();
-
-                // 2. 기반 대리석 & 흑요석 받침
-                let baseGrad = ctx.createLinearGradient(x - 15, y, x + 195, y);
-                baseGrad.addColorStop(0, '#fef08a');
-                baseGrad.addColorStop(0.5, '#450a0a');
-                baseGrad.addColorStop(1, '#18181b');
-                ctx.fillStyle = baseGrad;
-                ctx.beginPath();
-                ctx.roundRect(x - 15, y + 200, 210, 22, 6);
-                ctx.fill();
-                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2; ctx.stroke();
-
-                // 3. 본체 반반 벽체 (좌: 순백 천상 대리석 / 우: 칠흑 지옥불 벽돌)
-                let angelWall = ctx.createLinearGradient(x, y, x + 90, y);
-                angelWall.addColorStop(0, '#ffffff'); angelWall.addColorStop(1, '#fef9c3');
-                ctx.fillStyle = angelWall;
-                ctx.fillRect(x, y + 80, 90, 125);
-                let devilWall = ctx.createLinearGradient(x + 90, y, x + 180, y);
-                devilWall.addColorStop(0, '#7f1d1d'); devilWall.addColorStop(1, '#18181b');
-                ctx.fillStyle = devilWall;
-                ctx.fillRect(x + 90, y + 80, 90, 125);
-
-                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5;
-                ctx.strokeRect(x, y + 80, 180, 125);
-
-                // 4. 중앙 신성 & 파멸의 진열 창구
-                ctx.fillStyle = '#0f172a';
-                ctx.beginPath(); ctx.roundRect(x + 35, y + 105, 110, 72, 8); ctx.fill();
-                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.stroke();
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '24px Arial';
-                ctx.textAlign = 'center';
-                ctx.shadowColor = '#facc15'; ctx.shadowBlur = 10;
-                ctx.fillText("🪽🔱✨", x + 90, y + 148);
-                ctx.shadowBlur = 0;
-
-                // 5. 뾰족 지붕 (좌측 황금 후광 & 우측 악마 뿔 장식)
-                let roofGrad = ctx.createLinearGradient(x - 20, y, x + 200, y + 80);
-                roofGrad.addColorStop(0, '#fde047');
-                roofGrad.addColorStop(0.5, '#f59e0b');
-                roofGrad.addColorStop(1, '#dc2626');
-                ctx.fillStyle = roofGrad;
-                ctx.beginPath();
-                ctx.moveTo(x - 25, y + 80);
-                ctx.lineTo(x + 90, y - 5);
-                ctx.lineTo(x + 205, y + 80);
-                ctx.closePath();
-                ctx.fill();
-                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; ctx.stroke();
-
-                // 지붕 꼭대기 천사 헤일로 & 악마 삼지창
-                ctx.fillStyle = '#fef08a';
-                ctx.font = '22px Arial';
-                ctx.fillText("😇", x + 65, y + 15);
-                ctx.fillText("😈", x + 115, y + 15);
-
-                // 6. 상점 간판
-                ctx.fillStyle = '#1e1035';
-                ctx.beginPath(); ctx.roundRect(x + 20, y + 36, 140, 36, 8); ctx.fill();
-                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5; ctx.stroke();
-                ctx.fillStyle = '#fef08a';
-                ctx.font = 'bold 13.5px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText("👼 천악 상점 😈", x + 90, y + 59);
-
-                // 상호작용 알림 캡슐
-                let pDist = (typeof player !== 'undefined') ? Math.hypot(player.x - (x + 90), player.y - (y + 120)) : 999;
-                if (pDist < 160) {
-                    let pulse = Math.sin(Date.now() * 0.005) * 3;
-                    ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
-                    ctx.beginPath(); ctx.roundRect(x + 30, y - 26 + pulse, 120, 22, 11); ctx.fill();
-                    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.8; ctx.stroke();
-                    ctx.fillStyle = '#fde047'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
-                    ctx.fillText("👆 클릭: 천악 도감", x + 90, y - 11 + pulse);
-                }
-
-                ctx.restore();
-                return;
-            }
+                                if (shop.type === 'ice_canyon') {
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned.toLocaleString()}`, color: '#38bdf8', life: 65, size: 20 });
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 105, text: `🐧 고마워 펭!`, color: '#facc15', life: 75, size: 17 });
+                                } else if (shop.type === 'angel_devil') {
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned.toLocaleString()}`, color: '#facc15', life: 65, size: 20 });
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 105, text: `👼 고마워요! 😈`, color: '#fde047', life: 75, size: 17 });
+                                } else {
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned}`, color: 'gold', life: 60 });
+                                }
+                                saveGame(true);
             if (shop.type === 'ice_canyon') {
                                     floatTexts.push({ x: firstC.x, y: shop.queueY - 80, text: `+💰${totalEarned.toLocaleString()}`, color: '#38bdf8', life: 65, size: 20 });
                                     floatTexts.push({ x: firstC.x, y: shop.queueY - 105, text: `🐧 고마워 펭!`, color: '#facc15', life: 75, size: 17 });
@@ -27572,6 +27464,94 @@
 
         function drawShop(ctx, shop) {
             const x = shop.x; const y = shop.y;
+            if (shop.type === 'angel_devil') {
+                // 👼😈 [초호화 천사의 성역 & 악마의 심연 상점] 전용 3D 프리미엄 렌더러
+                ctx.save();
+                // 1. 바닥 성스러운 빛 & 심연 그림자
+                ctx.fillStyle = 'rgba(15, 10, 25, 0.6)';
+                ctx.beginPath();
+                ctx.ellipse(x + 90, y + 215, 120, 26, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 2. 기반 대리석 & 흑요석 받침
+                let baseGrad = ctx.createLinearGradient(x - 15, y + 200, x + 195, y + 225);
+                baseGrad.addColorStop(0, '#fef08a');
+                baseGrad.addColorStop(0.5, '#450a0a');
+                baseGrad.addColorStop(1, '#18181b');
+                ctx.fillStyle = baseGrad;
+                ctx.beginPath();
+                ctx.roundRect(x - 15, y + 200, 210, 22, 6);
+                ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2; ctx.stroke();
+
+                // 3. 본체 반반 벽체 (좌: 순백 천상 대리석 / 우: 칠흑 지옥불 벽돌)
+                let angelWall = ctx.createLinearGradient(x, y, x + 90, y);
+                angelWall.addColorStop(0, '#ffffff'); angelWall.addColorStop(1, '#fef9c3');
+                ctx.fillStyle = angelWall;
+                ctx.fillRect(x, y + 80, 90, 125);
+                let devilWall = ctx.createLinearGradient(x + 90, y, x + 180, y);
+                devilWall.addColorStop(0, '#7f1d1d'); devilWall.addColorStop(1, '#18181b');
+                ctx.fillStyle = devilWall;
+                ctx.fillRect(x + 90, y + 80, 90, 125);
+
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5;
+                ctx.strokeRect(x, y + 80, 180, 125);
+
+                // 4. 중앙 신성 & 파멸의 진열 창구
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath(); ctx.roundRect(x + 35, y + 105, 110, 72, 8); ctx.fill();
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.shadowColor = '#facc15'; ctx.shadowBlur = 10;
+                ctx.fillText("🪽🔱✨", x + 90, y + 148);
+                ctx.shadowBlur = 0;
+
+                // 5. 뾰족 지붕 (좌측 황금 후광 & 우측 악마 뿔 장식)
+                let roofGrad = ctx.createLinearGradient(x - 20, y, x + 200, y + 80);
+                roofGrad.addColorStop(0, '#fde047');
+                roofGrad.addColorStop(0.5, '#f59e0b');
+                roofGrad.addColorStop(1, '#dc2626');
+                ctx.fillStyle = roofGrad;
+                ctx.beginPath();
+                ctx.moveTo(x - 25, y + 80);
+                ctx.lineTo(x + 90, y - 5);
+                ctx.lineTo(x + 205, y + 80);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; ctx.stroke();
+
+                // 지붕 꼭대기 천사 헤일로 & 악마 삼지창
+                ctx.fillStyle = '#fef08a';
+                ctx.font = '22px Arial';
+                ctx.fillText("😇", x + 65, y + 15);
+                ctx.fillText("😈", x + 115, y + 15);
+
+                // 6. 상점 간판
+                ctx.fillStyle = '#1e1035';
+                ctx.beginPath(); ctx.roundRect(x + 20, y + 36, 140, 36, 8); ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5; ctx.stroke();
+                ctx.fillStyle = '#fef08a';
+                ctx.font = 'bold 13.5px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText("👼 천악 상점 😈", x + 90, y + 59);
+
+                // 상호작용 알림 캡슐
+                let pDist = (typeof player !== 'undefined') ? Math.hypot(player.x - (x + 90), player.y - (y + 120)) : 999;
+                if (pDist < 160) {
+                    let pulse = Math.sin(Date.now() * 0.005) * 3;
+                    ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+                    ctx.beginPath(); ctx.roundRect(x + 30, y - 26 + pulse, 120, 22, 11); ctx.fill();
+                    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.8; ctx.stroke();
+                    ctx.fillStyle = '#fde047'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+                    ctx.fillText("👆 클릭: 천악 도감", x + 90, y - 11 + pulse);
+                }
+
+                ctx.restore();
+                return;
+            }
             if (shop.type === 'ice_canyon') {
                 // ❄️⛏️ [초호화 혹한의 고대 화석 상점] 얼음 협곡 전용 3D 프리미엄 렌더러
                 ctx.save();
@@ -28750,7 +28730,7 @@
             // 👼😈 신규 지역: 천사의 성역 | 악마의 심연 경계선 (Y: -9000, 레벨 135 진입 가능)
             ctx.strokeStyle = '#facc15'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -9000); ctx.lineTo(GAME_WIDTH, -9000); ctx.stroke();
             ctx.fillStyle = '#fde047'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
-            ctx.fillText("👼 천사의 성역 | 😈 악마의 심연", GAME_WIDTH / 2, -9020);
+            ctx.fillText("👼 천사의 성역 | 😈 악마의 심연 (레벨 135 진입 가능)", GAME_WIDTH / 2, -9020);
 
             // ❄️ 얼음의 협곡 경계선 (Y: -8000, 관리자 전용)
             ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -8000); ctx.lineTo(GAME_WIDTH, -8000); ctx.stroke();
