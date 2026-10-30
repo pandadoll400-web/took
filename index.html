@@ -811,11 +811,11 @@
                     <button onclick="closeWeqwxe3EventModal(); openRingMinigameTeamSelect();" style="padding: 9px 16px; background: linear-gradient(135deg, #a855f7, #9333ea); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(168, 85, 247, 0.4);">참여하기</button>
                 </div>
 
-                <!-- 4. 집10채 생성 -->
+                <!-- 4. 집 10채 & 캔디콘 상점 생성 (15분 오픈) -->
                 <div style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid #f97316; border-radius: 12px; padding: 12px; text-align: left; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div style="font-weight: 900; font-size: 15px; color: #fb923c;">🏘️ 집 10채 생성</div>
-                        <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">사탕 마을에 집 10채 소환 및 즉시 이동!</div>
+                        <div style="font-weight: 900; font-size: 15px; color: #fb923c;">🏘️ 집 10채 &amp; 캔디콘 상점 생성</div>
+                        <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">사탕 마을에 집 10채와 캔디콘 상점 15분간 소환 &amp; 즉시 이동!</div>
                     </div>
                     <button onclick="toggleCandyVillageHouses();" style="padding: 9px 16px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(249, 115, 22, 0.4);">생성/이동</button>
                 </div>
@@ -824,9 +824,18 @@
                 <div style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid #eab308; border-radius: 12px; padding: 12px; text-align: left; display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <div style="font-weight: 900; font-size: 15px; color: #facc15;">🍬 캔디콘 콜렉트</div>
-                        <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">모든 지형에 캔디콘 15개씩 드롭 &amp; 수집!</div>
+                        <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">모든 지형에 캔디콘 15개씩 드롭 (개당 10~15개 획득)!</div>
                     </div>
                     <button onclick="triggerCandyCornCollectEvent();" style="padding: 9px 16px; background: linear-gradient(135deg, #eab308, #ca8a04); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(234, 179, 8, 0.4);">발동하기</button>
+                </div>
+
+                <!-- 6. 천사와 악마 피하기 (신규 미니게임) -->
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid #ef4444; border-radius: 12px; padding: 12px; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 900; font-size: 15px; color: #f87171;">👼😈 천사와 악마 피하기</div>
+                        <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">돌진하는 천사와 악마를 피해 우주에서 악마 스킨 탈출 (3분)!</div>
+                    </div>
+                    <button onclick="closeWeqwxe3EventModal(); startDodgeFarmersGame(true, 'angel_devil');" style="padding: 9px 16px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(239, 68, 68, 0.4);">참여하기</button>
                 </div>
             </div>
 
@@ -5896,9 +5905,10 @@
             // 20개 링 초기 스폰 (천사악마 지형: X 70 ~ 530, Y 4250 ~ 5850)
             spawnInitialRings(20);
 
-            // 플레이어를 얼음 협곡 위 천사악마 지형으로 워프
+            // 플레이어를 얼음 협곡 위 천사악마 지형으로 워프 & 카메라 즉시 동기화
             player.x = GAME_WIDTH / 2;
             player.y = -9500;
+            cameraY = -9500 - GAME_HEIGHT / 2;
 
             const hud = document.getElementById('ring-minigame-hud');
             if (hud) hud.style.display = 'flex';
@@ -6029,6 +6039,14 @@
                 floatTexts.push({ x: player.x, y: player.y - 100, text: '🎁 럭키블록 5개 지급!', color: '#facc15', life: 120, size: 24 });
             }
             if (typeof saveGame === 'function') saveGame(true);
+
+            // 135레벨 미만 플레이어 3분 미니게임 종료 후 안전하게 일반 광장으로 귀환
+            if (!isAdmin() && level < 135 && player.y <= -8970) {
+                player.x = GAME_WIDTH / 2;
+                player.y = 500;
+                cameraY = 0;
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '⏱️ 대전 종료: 광장으로 안전하게 복귀했습니다!', color: '#38bdf8', life: 100 });
+            }
 
             alert(`🎉 [천사 vs 악마 링 모으기 대전 종료!]\n\n⏱️ 3분 동안 진행된 대전이 완료되었습니다!\n\n👼 천사팀 최종 점수: 2,400개\n😈 악마팀 최종 점수: 2,000개\n\n💍 내가 직접 수집한 링: ${ringMinigamePlayerRings}개\n🎁 대전 완주 보너스: 캔디콘 +1,000개 지급!${luckyBlockMsg}\n🍬 현재 보유 캔디콘: ${candyCorn.toLocaleString()}개`);
             if (typeof window.onRingMinigameFinished === 'function') {
@@ -6195,7 +6213,8 @@
         }
         window.triggerCandyCornCollectEvent = triggerCandyCornCollectEvent;
 
-        // 🏘️ [집 10채 생성 및 이동]
+        // 🏘️ [집 10채 & 캔디콘 상점 생성 및 15분 오픈]
+        let candyVillageExpireTime = 0;
         function toggleCandyVillageHouses() {
             if (!isUserWeqwxe3(currentUser)) {
                 alert('❌ weqwxe3 전용 이벤트입니다!');
@@ -6204,12 +6223,14 @@
             closeWeqwxe3EventModal();
 
             window.candyHousesSpawned = true;
+            window.adminCandyCornShopSpawned = true; // 상점도 같이 생성!
+            candyVillageExpireTime = Date.now() + 15 * 60 * 1000; // 15분 동안 오픈!
             player.x = GAME_WIDTH / 2;
             player.y = 2050;
             cameraY = player.y - GAME_HEIGHT / 2;
 
-            floatTexts.push({ x: player.x, y: player.y - 80, text: '🏘️ 사탕 마을에 10채의 집이 소환되었습니다!', color: '#fb923c', life: 120, size: 22 });
-            alert('🏘️ [사탕 마을 집 10채 생성 완료!]\n\n사탕 마을(Y: 2000~3400)에 10채의 할로윈 테마 주택이 생성되었습니다!\n사탕 마을 중심가로 즉시 워프했습니다.');
+            floatTexts.push({ x: player.x, y: player.y - 80, text: '🏘️ 사탕 마을 집 10채 & 캔디콘 상점 15분 오픈!', color: '#fb923c', life: 140, size: 22 });
+            alert('🏘️ [사탕 마을 집 10채 & 캔디콘 상점 15분 오픈!]\n\n사탕 마을(Y: 2000~3600)에 10채의 할로윈 주택과 캔디콘 상점이 15분 동안 생성되었습니다!\n사탕 마을 중심가로 즉시 워프했습니다.');
         }
         window.toggleCandyVillageHouses = toggleCandyVillageHouses;
 
@@ -6234,6 +6255,11 @@
         // 🛑 [계정 전환 및 로그아웃 시 진행 중이던 모든 미니게임/이벤트 즉시 완전 종료 및 초기화]
         function resetAllEventsAndMinigames() {
             if (typeof stopAllMinigames === 'function') stopAllMinigames();
+            if (isRingMinigameActive && !isAdmin() && level < 135 && player.y <= -8970) {
+                player.x = GAME_WIDTH / 2;
+                player.y = 500;
+                cameraY = 0;
+            }
             isRingMinigameActive = false;
             ringMinigameRings = [];
             const ringHud = document.getElementById('ring-minigame-hud');
@@ -6242,6 +6268,8 @@
             if (ringModal) ringModal.style.display = 'none';
             window.groundCandyCorns = [];
             window.candyHousesSpawned = false;
+            window.adminCandyCornShopSpawned = false;
+            candyVillageExpireTime = 0;
             if (typeof closeWeqwxe3EventModal === 'function') closeWeqwxe3EventModal();
             if (typeof closeAdminPanelModal === 'function') closeAdminPanelModal();
         }
@@ -12894,10 +12922,20 @@
                         }
                     }
                 }
-                // 🏘️ [할로윈 캔디 마을] 집 10채 (유저 요청: 출시 제외 및 제거)
+                // 🏘️ [할로윈 캔디 마을] 집 10채 클릭 감지 (이벤트 오픈 시)
+                if (window.candyHousesSpawned && Array.isArray(candyVillageHouses)) {
+                    for (let h of candyVillageHouses) {
+                        let hDist = Math.hypot(cx - h.x, cy - h.y);
+                        let hpDist = Math.hypot(player.x - h.x, player.y - h.y);
+                        if (hDist < 85 || (isSpacebar && hpDist < 105)) {
+                            openTrickOrTreatModal(h.id);
+                            return;
+                        }
+                    }
+                }
 
-                // 🏪 [캔디콘 비밀 상점] 클릭 감지 (어드민 계정 전용)
-                if (isAdmin()) {
+                // 🏪 [캔디콘 비밀 상점] 클릭 감지 (어드민 / 집 10채 생성 시 / weqwxe3 전용)
+                if (isAdmin() || window.candyHousesSpawned || window.adminCandyCornShopSpawned || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser))) {
                     let shopX = GAME_WIDTH / 2;
                     let shopY = 3600;
                     let sDist = Math.hypot(cx - shopX, cy - shopY);
@@ -16154,7 +16192,7 @@
                 state.active = false;
                 state.carryingSkin = false;
                 state.farmers = [];
-                alert("⏱️ [시간 초과]\n\n3분이 모두 경과하여 미니게임이 종료되었습니다.\n서양 검사 스킨 탈출에 실패했습니다!");
+                alert(state.mode === 'angel_devil' ? "⏱️ [시간 초과]\n\n3분이 모두 경과하여 미니게임이 종료되었습니다.\n악마 스킨 탈출에 실패했습니다!" : "⏱️ [시간 초과]\n\n3분이 모두 경과하여 미니게임이 종료되었습니다.\n서양 검사 스킨 탈출에 실패했습니다!");
                 if (typeof onMinigame2Completed === 'function') onMinigame2Completed();
                 return;
             }
@@ -16218,7 +16256,7 @@
                     if (state.carryingSkin) {
                         state.skinPos = { x: player.x, y: player.y };
                         state.carryingSkin = false;
-                        floatTexts.push({ x: player.x, y: player.y - 90, text: '⚠️ 서양 검사 스킨을 떨어뜨렸습니다! (현재 위치에 떨어짐)', color: '#f59e0b', life: 90, size: 20 });
+                        floatTexts.push({ x: player.x, y: player.y - 90, text: (state.mode === 'angel_devil' ? '⚠️ 악마 스킨을 떨어뜨렸습니다! (현재 위치에 떨어짐)' : '⚠️ 서양 검사 스킨을 떨어뜨렸습니다! (현재 위치에 떨어짐)'), color: '#f59e0b', life: 90, size: 20 });
                     }
 
                     // 일반 지형으로 강제 후퇴
@@ -16230,7 +16268,7 @@
                     // 플레이어 주변 농부 제거 (후퇴 즉시 연쇄 충돌 방지)
                     state.farmers = state.farmers.filter(farm => farm.y < 0);
 
-                    floatTexts.push({ x: 300, y: 420, text: '💥 성난 거대 농부와 충돌! 일반 지형으로 강제 후퇴되었습니다!', color: '#ef4444', life: 100, size: 22 });
+                    floatTexts.push({ x: 300, y: 420, text: (state.mode === 'angel_devil' ? '💥 천사/악마와 충돌! 일반 지형으로 강제 후퇴되었습니다!' : '💥 성난 거대 농부와 충돌! 일반 지형으로 강제 후퇴되었습니다!'), color: '#ef4444', life: 100, size: 22 });
                     break;
                 }
             }
@@ -16303,7 +16341,8 @@
             if (redLightGreenLightState.active && redLightGreenLightState.carryingSkin) {
                 drawCarryingSkinBadge(ctx, 'hacker');
             } else if (dodgeFarmersState.active && dodgeFarmersState.carryingSkin) {
-                drawCarryingSkinBadge(ctx, 'western_swordsman');
+                let carrySkin = (dodgeFarmersState.mode === 'angel_devil') ? 'devil' : 'western_swordsman';
+                drawCarryingSkinBadge(ctx, carrySkin);
             }
         }
 
@@ -16313,8 +16352,9 @@
             let now = Date.now() * 0.003;
             let bob = Math.sin(now * 3) * 8;
             let isHacker = (skinType === 'hacker');
-            let color = isHacker ? '#22c55e' : '#38bdf8';
-            let title = isHacker ? '💻 [클릭 / SPACE] 사이버 해커 스킨 줍기' : '🤺 [클릭 / SPACE] 서양 검사 스킨 줍기';
+            let isDevil = (skinType === 'devil');
+            let color = isHacker ? '#22c55e' : (isDevil ? '#ef4444' : '#38bdf8');
+            let title = isHacker ? '💻 [클릭 / SPACE] 사이버 해커 스킨 줍기' : (isDevil ? '😈 [클릭 / SPACE] 악마 스킨 줍기' : '🤺 [클릭 / SPACE] 서양 검사 스킨 줍기');
 
             // 바닥 거대 네온 아우라 & 회전 링
             ctx.strokeStyle = color;
@@ -16327,7 +16367,7 @@
 
             // 바닥 수직 광선 기둥 (원거리에서도 한눈에 발견 가능!)
             let beamGrad = ctx.createLinearGradient(x, y + 25, x, y - 90);
-            beamGrad.addColorStop(0, isHacker ? 'rgba(34, 197, 94, 0.45)' : 'rgba(56, 189, 248, 0.45)');
+            beamGrad.addColorStop(0, isHacker ? 'rgba(34, 197, 94, 0.45)' : (isDevil ? 'rgba(239, 68, 68, 0.45)' : 'rgba(56, 189, 248, 0.45)'));
             beamGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
             ctx.fillStyle = beamGrad;
             ctx.fillRect(x - 24, y - 90, 48, 115);
@@ -16356,6 +16396,15 @@
                 ctx.fillStyle = '#ffffff';
                 ctx.font = 'bold 8px monospace';
                 ctx.fillText('0101', -9, 8);
+            } else if (isDevil) {
+                // 악마 붉은 뿔 & 날개 & 눈
+                ctx.fillStyle = '#dc2626';
+                ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#1c1917';
+                ctx.beginPath(); ctx.moveTo(-9, -7); ctx.lineTo(-16, -19); ctx.lineTo(-3, -11); ctx.closePath(); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(9, -7); ctx.lineTo(16, -19); ctx.lineTo(3, -11); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath(); ctx.arc(-5, -2, 2.5, 0, Math.PI * 2); ctx.arc(5, -2, 2.5, 0, Math.PI * 2); ctx.fill();
             } else {
                 // 서양 검사 모자 & 깃털 & 레이피어
                 ctx.fillStyle = '#1e3a8a';
@@ -16601,8 +16650,9 @@
             let now = Date.now() * 0.004;
             let bob = Math.sin(now * 4) * 4;
             let isHacker = (skinType === 'hacker');
-            let color = isHacker ? '#22c55e' : '#38bdf8';
-            let title = isHacker ? '💻 해커 스킨 운반 중!' : '🤺 서양 검사 운반 중!';
+            let isDevil = (skinType === 'devil');
+            let color = isHacker ? '#22c55e' : (isDevil ? '#ef4444' : '#38bdf8');
+            let title = isHacker ? '💻 해커 스킨 운반 중!' : (isDevil ? '😈 악마 스킨 운반 중!' : '🤺 서양 검사 운반 중!');
 
             ctx.translate(player.x, player.y - 70 + bob);
 
@@ -16754,7 +16804,7 @@
             }
 
             // ----------------------------------------------------
-            // 2. [미니게임 2: 농부 피하기] HUD
+            // 2. [미니게임 2: 농부 피하기 / 천사&악마 피하기] HUD
             // ----------------------------------------------------
             else if (dodgeFarmersState.active) {
                 const state = dodgeFarmersState;
@@ -16766,12 +16816,13 @@
                 ctx.save();
                 ctx.translate(GAME_WIDTH / 2, 40);
 
-                let topW = 340;
+                let isAngelDevil = (state.mode === 'angel_devil');
+                let topW = isAngelDevil ? 360 : 340;
                 let topH = 48;
                 ctx.fillStyle = 'rgba(15, 23, 42, 0.94)';
-                ctx.strokeStyle = '#f59e0b';
+                ctx.strokeStyle = isAngelDevil ? '#ef4444' : '#f59e0b';
                 ctx.lineWidth = 2;
-                ctx.shadowColor = '#f59e0b';
+                ctx.shadowColor = isAngelDevil ? '#ef4444' : '#f59e0b';
                 ctx.shadowBlur = 12;
                 ctx.beginPath();
                 ctx.roundRect(-topW / 2, -topH / 2, topW, topH, 12);
@@ -16787,15 +16838,15 @@
 
                 ctx.font = 'bold 12px Arial';
                 ctx.fillStyle = '#ffffff';
-                ctx.fillText('👨‍🌾 거대 농부 피하기 (빈 통로로 회피)', -topW / 2 + 82, -8);
+                ctx.fillText(isAngelDevil ? '👼😈 천사와 악마 피하기 (빈 통로로 회피)' : '👨‍🌾 거대 농부 피하기 (빈 통로로 회피)', -topW / 2 + 82, -8);
 
                 ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
                 if (state.carryingSkin) {
-                    ctx.fillStyle = '#38bdf8';
-                    ctx.fillText('🤺 서양 검사 운반 중! ➔ 빈 통로로 내려가세요!', -topW / 2 + 14, 12);
+                    ctx.fillStyle = isAngelDevil ? '#f87171' : '#38bdf8';
+                    ctx.fillText(isAngelDevil ? '😈 악마 스킨 운반 중! ➔ 빈 통로로 내려가세요!' : '🤺 서양 검사 운반 중! ➔ 빈 통로로 내려가세요!', -topW / 2 + 14, 12);
                 } else {
                     ctx.fillStyle = '#cbd5e1';
-                    ctx.fillText('🚀 우주 지역(맨 위)으로 올라가 서양 검사 스킨을 들으세요!', -topW / 2 + 14, 12);
+                    ctx.fillText(isAngelDevil ? '🚀 우주 지역으로 올라가 [악마] 스킨을 들으세요!' : '🚀 우주 지역(맨 위)으로 올라가 서양 검사 스킨을 들으세요!', -topW / 2 + 14, 12);
                 }
 
                 ctx.restore();
@@ -22702,8 +22753,8 @@
         window.equipOrViewCandyKingSkin = equipOrViewCandyKingSkin;
 
         function openCandyCornShopModal() {
-            if (!isAdmin()) {
-                alert('🔒 캔디콘 상점은 관리자 전용 상점입니다.');
+            if (!isAdmin() && !window.candyHousesSpawned && !window.adminCandyCornShopSpawned && !(typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser))) {
+                alert('🔒 캔디콘 상점은 이벤트 오픈 시 이용 가능합니다.');
                 return;
             }
             const modal = document.getElementById('candycorn-shop-modal');
@@ -23207,6 +23258,14 @@
             if (typeof updateRedLightGreenLightLoop === 'function') updateRedLightGreenLightLoop();
             if (typeof updateDodgeFarmersLoop === 'function') updateDodgeFarmersLoop();
             if (typeof updateLuck15Timer === 'function') updateLuck15Timer();
+
+            // 🏘️ 사탕 마을 집 10채 및 캔디콘 상점 15분 만료 체크
+            if (window.candyHousesSpawned && candyVillageExpireTime > 0 && Date.now() >= candyVillageExpireTime) {
+                window.candyHousesSpawned = false;
+                window.adminCandyCornShopSpawned = false;
+                candyVillageExpireTime = 0;
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '⏱️ 사탕 마을 집 10채 & 캔디콘 상점 15분 종료!', color: '#fb923c', life: 120, size: 20 });
+            }
             if (inFarmDimension) {
                 updateFarmDimension();
                 return;
@@ -23267,19 +23326,19 @@
             } else { player.walkTimer = 0; }
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
-            const maxBottomLimit = isAdmin() ? 3950 : 3450; // 공개 서버 하단 길 연장(집 생성 편의), Y:3600 상점은 미출시
+            const maxBottomLimit = 3950; // 사탕 마을(집 10채) 및 Y:3600 캔디콘 상점까지 자유롭게 이동 가능
             player.y = Math.max(-10750, Math.min(maxBottomLimit - player.radius, player.y));
             
             // 🔒 맨 마지막 지역: 얼음의 협곡(Y: -8000 이하) 이번주 토요일 21:30 공개 및 레벨 125 체크
-            if (!isIceCanyonEventStarted() && player.y <= -7970 && player.y >= -9000) {
+            if (!isRingMinigameActive && !isIceCanyonEventStarted() && player.y <= -7970 && player.y >= -9000) {
                 player.y = -7960;
                 if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음의 협곡은 이번주 토요일(10/24) 21:30에 공개됩니다!`, color: '#38bdf8', life: 60 });
-            } else if (!isAdmin() && level < 125 && player.y <= -7970 && player.y >= -9000) {
+            } else if (!isAdmin() && !isRingMinigameActive && level < 125 && player.y <= -7970 && player.y >= -9000) {
                 player.y = -7960;
                 if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 얼음의 협곡: 레벨 125 달성 시 입장 가능!`, color: '#38bdf8', life: 50 });
             }
-            // 👼😈 천악 지형 (Y: -9000 ~ -10800): 레벨 135 진입 제한
-            if (!isAdmin() && level < 135 && player.y <= -8970) {
+            // 👼😈 천악 지형 (Y: -9000 ~ -10800): 레벨 135 진입 제한 (3분 천악 링 모으기 대전 진행 중에는 레벨 무관 자유 진입 및 플레이 허용!)
+            if (!isAdmin() && !isRingMinigameActive && level < 135 && player.y <= -8970) {
                 player.y = -8960;
                 if (Math.random() < 0.08) floatTexts.push({ x: player.x, y: player.y - 40, text: `🔒 천사의 성역 & 악마의 심연: 레벨 135 달성 시 입장 가능!`, color: '#facc15', life: 50 });
             }
@@ -23339,7 +23398,7 @@
             }
 
             let targetCamY = player.y - GAME_HEIGHT / 2 + 100;
-            targetCamY = Math.max(-10800, Math.min(isAdmin() ? 2850 : 1800, targetCamY));
+            targetCamY = Math.max(-10800, Math.min(3450, targetCamY));
             cameraY += (targetCamY - cameraY) * 0.1;
 
             trees.forEach(tree => {
@@ -29435,8 +29494,8 @@
                 });
             }
 
-            // 🏪 [캔디콘 비밀 상점] (어드민 계정 전용)
-            if (isAdmin()) {
+            // 🏪 [캔디콘 비밀 상점] (집 10채 생성 시 상점도 함께 생성 & 어드민 및 weqwxe3)
+            if (isAdmin() || window.candyHousesSpawned || window.adminCandyCornShopSpawned || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser))) {
                 renderList.push({ type: 'candyCornShop', obj: { x: GAME_WIDTH / 2, y: 3600 }, y: 3600 });
             }
 
