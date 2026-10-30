@@ -12791,7 +12791,16 @@
         let level = 1; let xp = 0; let maxXp = 20;
         let money = 0;
         let candyCorn = (function() {
-            try { return parseInt(localStorage.getItem('player_candy_corn') || '0', 10) || 0; } catch(e) { return 0; }
+            try {
+                // 🍬 [정식 출시] 모든 유저 최초 0개 시작
+                const releaseInitKey = 'candy_corn_official_release_v1';
+                if (!localStorage.getItem(releaseInitKey)) {
+                    localStorage.setItem(releaseInitKey, 'true');
+                    localStorage.setItem('player_candy_corn', '0');
+                    return 0;
+                }
+                return parseInt(localStorage.getItem('player_candy_corn') || '0', 10) || 0;
+            } catch(e) { return 0; }
         })();
         window.candyCorn = candyCorn;
         function updateCandyCorn(amount = 0) {
@@ -19003,17 +19012,32 @@
             maxXp = Math.floor(20 * Math.pow(1.095, level - 1));
             xp = Math.min(data.xp || 0, maxXp - 1);
             money = data.money || 0;
-            // 🍬 캔디콘 세이브 복구 (클라우드/로컬 세이브 완벽 동기화)
-            if (typeof data.candyCorn === 'number') {
-                candyCorn = data.candyCorn;
-                window.candyCorn = candyCorn;
-            } else {
+            // 🍬 캔디콘 세이브 복구 (최초 정식 출시 시 모든 유저 0개 시작, 이후 획득량 정상 저장)
+            const releaseUserKey = 'candy_corn_user_reset_v1_' + (currentUser ? currentUser.toLowerCase() : 'guest');
+            if (!localStorage.getItem(releaseUserKey)) {
+                candyCorn = 0;
+                window.candyCorn = 0;
+                if (data) data.candyCorn = 0;
                 try {
-                    const uKey = currentUser ? ('player_candy_corn_' + currentUser.toLowerCase()) : 'player_candy_corn';
-                    const localCC = parseInt(localStorage.getItem(uKey) || localStorage.getItem('player_candy_corn') || '0', 10);
-                    candyCorn = isNaN(localCC) ? 0 : localCC;
-                    window.candyCorn = candyCorn;
+                    localStorage.setItem(releaseUserKey, 'true');
+                    localStorage.setItem('player_candy_corn', '0');
+                    if (currentUser) {
+                        localStorage.setItem('player_candy_corn_' + currentUser.toLowerCase(), '0');
+                    }
                 } catch(e) {}
+                if (typeof saveGame === 'function') saveGame(true);
+            } else {
+                if (typeof data.candyCorn === 'number') {
+                    candyCorn = data.candyCorn;
+                    window.candyCorn = candyCorn;
+                } else {
+                    try {
+                        const uKey = currentUser ? ('player_candy_corn_' + currentUser.toLowerCase()) : 'player_candy_corn';
+                        const localCC = parseInt(localStorage.getItem(uKey) || localStorage.getItem('player_candy_corn') || '0', 10);
+                        candyCorn = isNaN(localCC) ? 0 : localCC;
+                        window.candyCorn = candyCorn;
+                    } catch(e) {}
+                }
             }
             if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
             axeLevel = data.axeLevel || 0;
@@ -22684,7 +22708,7 @@
             } else { player.walkTimer = 0; }
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
-            const maxBottomLimit = isAdmin() ? 3950 : 2050; // 사탕 상점(Y: 1680)까지 오픈, 집10채/하단상점은 미출시
+            const maxBottomLimit = isAdmin() ? 3950 : 3450; // 공개 서버 하단 길 연장(집 생성 편의), Y:3600 상점은 미출시
             player.y = Math.max(-10750, Math.min(maxBottomLimit - player.radius, player.y));
             
             // 🔒 맨 마지막 지역: 얼음의 협곡(Y: -8000 이하) 이번주 토요일 21:30 공개 및 레벨 125 체크
@@ -28675,28 +28699,28 @@
             ctx.fillStyle = '#cf3a24'; ctx.fillRect(0, -1000, GAME_WIDTH, 1000); 
             // 🌿 일반 지역 연장 (Y: 1150까지 잔디 대지 확장)
             ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1150); 
-            // 🍭🎃 [전체 서버] 달콤한 사탕 지형 & 사탕 나무 지형 (Y: 1150 ~ 2100)
-            let candyBgGrad = ctx.createLinearGradient(0, 1150, 0, 2100);
+            // 🍭🎃 [전체 서버] 달콤한 사탕 지형 & 사탕 마을 길 (Y: 1150 ~ 3600 연장 - 집 생성 편의)
+            let candyBgGrad = ctx.createLinearGradient(0, 1150, 0, 3600);
             candyBgGrad.addColorStop(0, '#1c132b');
             candyBgGrad.addColorStop(0.3, '#2a1645');
             candyBgGrad.addColorStop(0.7, '#1f1035');
             candyBgGrad.addColorStop(1, '#130924');
             ctx.fillStyle = candyBgGrad;
-            ctx.fillRect(0, 1150, GAME_WIDTH, 950);
+            ctx.fillRect(0, 1150, GAME_WIDTH, 2450);
 
             // 중앙 캔디 조약돌 길 (Cobblestone Street: X 230 ~ 370)
             ctx.fillStyle = 'rgba(45, 25, 75, 0.85)';
-            ctx.fillRect(230, 1150, 140, 950);
+            ctx.fillRect(230, 1150, 140, 2450);
             ctx.strokeStyle = '#f472b6';
             ctx.lineWidth = 1.5;
             ctx.setLineDash([8, 12]);
-            ctx.beginPath(); ctx.moveTo(230, 1150); ctx.lineTo(230, 2100); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(370, 1150); ctx.lineTo(370, 2100); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(230, 1150); ctx.lineTo(230, 3600); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(370, 1150); ctx.lineTo(370, 3600); ctx.stroke();
             ctx.setLineDash([]);
 
-            // 길 위 조약돌 패턴
+            // 길 위 조약돌 패턴 (Y: 1170 ~ 3580)
             ctx.fillStyle = 'rgba(244, 114, 182, 0.15)';
-            for (let ry = 1170; ry < 2080; ry += 65) {
+            for (let ry = 1170; ry < 3580; ry += 65) {
                 let rx1 = 260 + (Math.sin(ry * 0.05) * 20);
                 let rx2 = 330 + (Math.cos(ry * 0.04) * 20);
                 ctx.beginPath(); ctx.ellipse(rx1, ry, 16, 10, 0.2, 0, Math.PI * 2); ctx.fill();
@@ -28705,9 +28729,9 @@
 
             // 반짝이는 별사탕 마법 입자 효과
             let candyTime = Date.now() * 0.002;
-            for (let cp = 0; cp < 30; cp++) {
+            for (let cp = 0; cp < 40; cp++) {
                 let cpx = ((cp * 97 + candyTime * 25) % GAME_WIDTH);
-                let cpy = 1160 + ((cp * 73 + cp * cp * 19) % 900);
+                let cpy = 1160 + ((cp * 73 + cp * cp * 19) % 2380);
                 let ccol = (cp % 4 === 0) ? '#f472b6' : (cp % 4 === 1 ? '#facc15' : (cp % 4 === 2 ? '#38bdf8' : '#c084fc'));
                 let calpha = 0.3 + Math.sin(candyTime * 3 + cp) * 0.35;
                 ctx.fillStyle = ccol;
@@ -28911,73 +28935,11 @@
                     } else if (t.type === 'cave') {
                         trunkGrad.addColorStop(0, '#2d3436'); trunkGrad.addColorStop(0.5, '#636e72'); trunkGrad.addColorStop(1, '#1e272e');
                     } else if (t.type === 'halloween') {
-                        // 🍭✨ [전체 서버] 초호화 마법 사탕 나무 (Candy Tree) 렌더링!
-                        let candyTime = Date.now() * 0.003;
-                        
-                        // 1. 달콤한 솜사탕/젤리 다층 수관
-                        let cloudGrad1 = ctx.createRadialGradient(-35, -70, 15, -35, -70, t.radius * 0.85);
-                        cloudGrad1.addColorStop(0, '#ff9ff3'); cloudGrad1.addColorStop(1, '#f368e0');
-                        ctx.fillStyle = cloudGrad1;
-                        ctx.beginPath(); ctx.arc(-55, -45, t.radius * 0.75, 0, Math.PI * 2); ctx.fill();
-
-                        let cloudGrad2 = ctx.createRadialGradient(45, -65, 15, 45, -65, t.radius * 0.85);
-                        cloudGrad2.addColorStop(0, '#54a0ff'); cloudGrad2.addColorStop(1, '#2e86de');
-                        ctx.fillStyle = cloudGrad2;
-                        ctx.beginPath(); ctx.arc(55, -45, t.radius * 0.75, 0, Math.PI * 2); ctx.fill();
-
-                        let cloudGrad3 = ctx.createRadialGradient(0, -110, 20, 0, -110, t.radius * 0.95);
-                        cloudGrad3.addColorStop(0, '#feca57'); cloudGrad3.addColorStop(0.5, '#ff6b6b'); cloudGrad3.addColorStop(1, '#ee5253');
-                        ctx.fillStyle = cloudGrad3;
-                        ctx.beginPath(); ctx.arc(0, -100, t.radius * 0.9, 0, Math.PI * 2); ctx.fill();
-
-                        let cloudGrad4 = ctx.createRadialGradient(0, -50, 20, 0, -50, t.radius * 1.05);
-                        cloudGrad4.addColorStop(0, '#1dd1a1'); cloudGrad4.addColorStop(1, '#10ac84');
-                        ctx.fillStyle = cloudGrad4;
-                        ctx.beginPath(); ctx.arc(0, -45, t.radius * 0.95, 0, Math.PI * 2); ctx.fill();
-
-                        // 2. 나무에 매달린 거대한 소용돌이 롤리팝 2개
-                        ctx.save();
-                        ctx.translate(-75, -95);
-                        ctx.rotate(candyTime);
-                        let lpGrad1 = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
-                        lpGrad1.addColorStop(0, '#ffffff'); lpGrad1.addColorStop(0.5, '#ff4757'); lpGrad1.addColorStop(1, '#ff6b81');
-                        ctx.fillStyle = lpGrad1;
-                        ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
-                        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
-                        ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 1.5); ctx.stroke();
-                        ctx.restore();
-
-                        ctx.save();
-                        ctx.translate(75, -95);
-                        ctx.rotate(-candyTime);
-                        let lpGrad2 = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
-                        lpGrad2.addColorStop(0, '#ffffff'); lpGrad2.addColorStop(0.5, '#2ed573'); lpGrad2.addColorStop(1, '#1e90ff');
-                        ctx.fillStyle = lpGrad2;
-                        ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
-                        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
-                        ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 1.5); ctx.stroke();
-                        ctx.restore();
-
-                        // 3. 나무 꼭대기 빛나는 신화 별사탕 킹캔디 장식 (Star Candy King Crown)
-                        ctx.save();
-                        ctx.translate(0, -195 + Math.sin(candyTime * 3) * 6);
-                        ctx.shadowColor = '#facc15'; ctx.shadowBlur = 18;
-                        ctx.fillStyle = '#fef08a';
-                        ctx.font = '34px Arial';
-                        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                        ctx.fillText("⭐👑", 0, 0);
-                        ctx.restore();
-
-                        // 4. 반짝이는 달콤한 설탕 가루 & 젤리 방울
-                        for (let sp = 0; sp < 8; sp++) {
-                            let spAngle = candyTime * 2 + (sp * Math.PI / 4);
-                            let spDist = (t.radius * 0.7) + Math.sin(candyTime * 3 + sp) * 20;
-                            let spx = Math.cos(spAngle) * spDist;
-                            let spy = -70 + Math.sin(spAngle) * (spDist * 0.55);
-                            let spCol = (sp % 3 === 0) ? '#fde047' : ((sp % 3 === 1) ? '#ffffff' : '#f472b6');
-                            ctx.fillStyle = spCol;
-                            ctx.beginPath(); ctx.arc(spx, spy, 3.5, 0, Math.PI * 2); ctx.fill();
-                        }
+                        // 🍭 페퍼민트 사탕 지팡이 나무 기둥 (Candy Cane Peppermint)
+                        trunkGrad.addColorStop(0, '#ff4757');
+                        trunkGrad.addColorStop(0.3, '#ffffff');
+                        trunkGrad.addColorStop(0.6, '#ff6b81');
+                        trunkGrad.addColorStop(1, '#ffffff');
                     } else if (t.type === 'angel_devil') {
                         // 👼😈 반천사 반악마 나무 기둥 (천사: 순백/황금, 악마: 흑요석/지옥불)
                         trunkGrad.addColorStop(0, '#ffffff'); trunkGrad.addColorStop(0.48, '#fde047'); trunkGrad.addColorStop(0.52, '#ef4444'); trunkGrad.addColorStop(1, '#18181b');
@@ -29062,121 +29024,72 @@
                             ctx.fill(); ctx.stroke();
                         });
                     } else if (t.type === 'halloween') {
-                        if (isAdmin()) {
-                            // 🍭✨ [어드민 전용] 초호화 마법 사탕 나무 (Candy Tree) 렌더링!
-                            let candyTime = Date.now() * 0.003;
-                            
-                            // 1. 달콤한 솜사탕/젤리 다층 수관
-                            let cloudGrad1 = ctx.createRadialGradient(-35, -70, 15, -35, -70, t.radius * 0.85);
-                            cloudGrad1.addColorStop(0, '#ff9ff3'); cloudGrad1.addColorStop(1, '#f368e0');
-                            ctx.fillStyle = cloudGrad1;
-                            ctx.beginPath(); ctx.arc(-55, -45, t.radius * 0.75, 0, Math.PI * 2); ctx.fill();
+                        // 🍭✨ [전체 서버 정식 출시] 초호화 마법 사탕 나무 (Candy Tree) - 구 폐허 부러진 고목 완전 제거
+                        let candyTime = Date.now() * 0.003;
+                        
+                        // 1. 달콤한 솜사탕/젤리 다층 수관
+                        let cloudGrad1 = ctx.createRadialGradient(-35, -70, 15, -35, -70, t.radius * 0.85);
+                        cloudGrad1.addColorStop(0, '#ff9ff3'); cloudGrad1.addColorStop(1, '#f368e0');
+                        ctx.fillStyle = cloudGrad1;
+                        ctx.beginPath(); ctx.arc(-55, -45, t.radius * 0.75, 0, Math.PI * 2); ctx.fill();
 
-                            let cloudGrad2 = ctx.createRadialGradient(45, -65, 15, 45, -65, t.radius * 0.85);
-                            cloudGrad2.addColorStop(0, '#54a0ff'); cloudGrad2.addColorStop(1, '#2e86de');
-                            ctx.fillStyle = cloudGrad2;
-                            ctx.beginPath(); ctx.arc(55, -45, t.radius * 0.75, 0, Math.PI * 2); ctx.fill();
+                        let cloudGrad2 = ctx.createRadialGradient(45, -65, 15, 45, -65, t.radius * 0.85);
+                        cloudGrad2.addColorStop(0, '#54a0ff'); cloudGrad2.addColorStop(1, '#2e86de');
+                        ctx.fillStyle = cloudGrad2;
+                        ctx.beginPath(); ctx.arc(55, -45, t.radius * 0.75, 0, Math.PI * 2); ctx.fill();
 
-                            let cloudGrad3 = ctx.createRadialGradient(0, -110, 20, 0, -110, t.radius * 0.95);
-                            cloudGrad3.addColorStop(0, '#feca57'); cloudGrad3.addColorStop(0.5, '#ff6b6b'); cloudGrad3.addColorStop(1, '#ee5253');
-                            ctx.fillStyle = cloudGrad3;
-                            ctx.beginPath(); ctx.arc(0, -100, t.radius * 0.9, 0, Math.PI * 2); ctx.fill();
+                        let cloudGrad3 = ctx.createRadialGradient(0, -110, 20, 0, -110, t.radius * 0.95);
+                        cloudGrad3.addColorStop(0, '#feca57'); cloudGrad3.addColorStop(0.5, '#ff6b6b'); cloudGrad3.addColorStop(1, '#ee5253');
+                        ctx.fillStyle = cloudGrad3;
+                        ctx.beginPath(); ctx.arc(0, -100, t.radius * 0.9, 0, Math.PI * 2); ctx.fill();
 
-                            let cloudGrad4 = ctx.createRadialGradient(0, -50, 20, 0, -50, t.radius * 1.05);
-                            cloudGrad4.addColorStop(0, '#1dd1a1'); cloudGrad4.addColorStop(1, '#10ac84');
-                            ctx.fillStyle = cloudGrad4;
-                            ctx.beginPath(); ctx.arc(0, -45, t.radius * 0.95, 0, Math.PI * 2); ctx.fill();
+                        let cloudGrad4 = ctx.createRadialGradient(0, -50, 20, 0, -50, t.radius * 1.05);
+                        cloudGrad4.addColorStop(0, '#1dd1a1'); cloudGrad4.addColorStop(1, '#10ac84');
+                        ctx.fillStyle = cloudGrad4;
+                        ctx.beginPath(); ctx.arc(0, -45, t.radius * 0.95, 0, Math.PI * 2); ctx.fill();
 
-                            // 2. 나무에 매달린 거대한 소용돌이 롤리팝 2개
-                            // 좌측 롤리팝
-                            ctx.save();
-                            ctx.translate(-75, -95);
-                            ctx.rotate(candyTime);
-                            let lpGrad1 = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
-                            lpGrad1.addColorStop(0, '#ffffff'); lpGrad1.addColorStop(0.5, '#ff4757'); lpGrad1.addColorStop(1, '#ff6b81');
-                            ctx.fillStyle = lpGrad1;
-                            ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
-                            ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
-                            ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 1.5); ctx.stroke();
-                            ctx.restore();
+                        // 2. 나무에 매달린 거대한 소용돌이 롤리팝 2개
+                        ctx.save();
+                        ctx.translate(-75, -95);
+                        ctx.rotate(candyTime);
+                        let lpGrad1 = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
+                        lpGrad1.addColorStop(0, '#ffffff'); lpGrad1.addColorStop(0.5, '#ff4757'); lpGrad1.addColorStop(1, '#ff6b81');
+                        ctx.fillStyle = lpGrad1;
+                        ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
+                        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
+                        ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 1.5); ctx.stroke();
+                        ctx.restore();
 
-                            // 우측 롤리팝
-                            ctx.save();
-                            ctx.translate(75, -95);
-                            ctx.rotate(-candyTime);
-                            let lpGrad2 = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
-                            lpGrad2.addColorStop(0, '#ffffff'); lpGrad2.addColorStop(0.5, '#2ed573'); lpGrad2.addColorStop(1, '#1e90ff');
-                            ctx.fillStyle = lpGrad2;
-                            ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
-                            ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
-                            ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 1.5); ctx.stroke();
-                            ctx.restore();
+                        ctx.save();
+                        ctx.translate(75, -95);
+                        ctx.rotate(-candyTime);
+                        let lpGrad2 = ctx.createRadialGradient(0, 0, 5, 0, 0, 25);
+                        lpGrad2.addColorStop(0, '#ffffff'); lpGrad2.addColorStop(0.5, '#2ed573'); lpGrad2.addColorStop(1, '#1e90ff');
+                        ctx.fillStyle = lpGrad2;
+                        ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2); ctx.fill();
+                        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
+                        ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 1.5); ctx.stroke();
+                        ctx.restore();
 
-                            // 3. 나무 꼭대기 빛나는 신화 별사탕 킹캔디 장식 (Star Candy King Crown)
-                            ctx.save();
-                            ctx.translate(0, -195 + Math.sin(candyTime * 3) * 6);
-                            ctx.shadowColor = '#facc15'; ctx.shadowBlur = 18;
-                            ctx.fillStyle = '#fef08a';
-                            ctx.font = '34px Arial';
-                            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                            ctx.fillText("⭐👑", 0, 0);
-                            ctx.restore();
+                        // 3. 나무 꼭대기 빛나는 신화 별사탕 킹캔디 장식 (Star Candy King Crown)
+                        ctx.save();
+                        ctx.translate(0, -195 + Math.sin(candyTime * 3) * 6);
+                        ctx.shadowColor = '#facc15'; ctx.shadowBlur = 18;
+                        ctx.fillStyle = '#fef08a';
+                        ctx.font = '34px Arial';
+                        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                        ctx.fillText("⭐👑", 0, 0);
+                        ctx.restore();
 
-                            // 4. 반짝이는 달콤한 설탕 가루 & 젤리 방울
-                            for (let sp = 0; sp < 8; sp++) {
-                                let spAngle = candyTime * 2 + (sp * Math.PI / 4);
-                                let spDist = (t.radius * 0.7) + Math.sin(candyTime * 3 + sp) * 20;
-                                let spx = Math.cos(spAngle) * spDist;
-                                let spy = -70 + Math.sin(spAngle) * (spDist * 0.55);
-                                let spCol = (sp % 3 === 0) ? '#fde047' : ((sp % 3 === 1) ? '#ffffff' : '#f472b6');
-                                ctx.fillStyle = spCol;
-                                ctx.beginPath(); ctx.arc(spx, spy, 3.5, 0, Math.PI * 2); ctx.fill();
-                            }
-                        } else {
-                            // 💥 [일반 유저] 두동강 난 부러진 나무
-                            ctx.fillStyle = '#2d3436';
-                            ctx.beginPath();
-                            ctx.moveTo(-t.trunkRadius * 0.9, trunkBottom);
-                            ctx.lineTo(-t.trunkRadius * 0.8, 10);
-                            ctx.lineTo(-18, -12);
-                            ctx.lineTo(-8, 5);
-                            ctx.lineTo(5, -22);
-                            ctx.lineTo(15, -6);
-                            ctx.lineTo(t.trunkRadius * 0.8, 12);
-                            ctx.lineTo(t.trunkRadius * 0.9, trunkBottom);
-                            ctx.closePath();
-                            ctx.fill();
-                            ctx.strokeStyle = '#1b1464'; ctx.lineWidth = 2.5; ctx.stroke();
-
-                            ctx.save();
-                            ctx.translate(65, 38);
-                            ctx.rotate(0.55);
-                            ctx.fillStyle = 'rgba(0,0,0,0.35)';
-                            ctx.beginPath(); ctx.ellipse(0, 16, 48, 15, 0, 0, Math.PI * 2); ctx.fill();
-
-                            ctx.fillStyle = '#78350f';
-                            ctx.beginPath(); ctx.ellipse(-20, 0, 26, 20, -0.2, 0, Math.PI * 2); ctx.fill();
-                            ctx.strokeStyle = '#451a03'; ctx.lineWidth = 2; ctx.stroke();
-
-                            ctx.fillStyle = '#9a3412';
-                            ctx.beginPath(); ctx.ellipse(18, -4, 25, 18, 0.25, 0, Math.PI * 2); ctx.fill();
-                            ctx.strokeStyle = '#451a03'; ctx.lineWidth = 2; ctx.stroke();
-
-                            ctx.strokeStyle = '#000000'; ctx.lineWidth = 2.5;
-                            ctx.beginPath(); ctx.moveTo(-4, -20); ctx.lineTo(1, 4); ctx.lineTo(-3, 20); ctx.stroke();
-
-                            ctx.fillStyle = '#1c1917';
-                            ctx.beginPath(); ctx.moveTo(-15, -6); ctx.lineTo(-8, -12); ctx.lineTo(-4, -5); ctx.fill();
-                            ctx.beginPath(); ctx.moveTo(8, -10); ctx.lineTo(16, -15); ctx.lineTo(19, -7); ctx.fill();
-                            ctx.restore();
-
-                            let smk = Date.now() * 0.002;
-                            for (let s = 0; s < 3; s++) {
-                                let sx = Math.sin(smk + s * 2) * 16 + 10;
-                                let sy = -((smk * 20 + s * 15) % 45);
-                                ctx.fillStyle = 'rgba(148, 163, 184, 0.22)';
-                                ctx.beginPath(); ctx.arc(sx, sy, 7 + s * 2, 0, Math.PI * 2); ctx.fill();
-                            }
+                        // 4. 반짝이는 달콤한 설탕 가루 & 젤리 방울
+                        for (let sp = 0; sp < 8; sp++) {
+                            let spAngle = candyTime * 2 + (sp * Math.PI / 4);
+                            let spDist = (t.radius * 0.7) + Math.sin(candyTime * 3 + sp) * 20;
+                            let spx = Math.cos(spAngle) * spDist;
+                            let spy = -70 + Math.sin(spAngle) * (spDist * 0.55);
+                            let spCol = (sp % 3 === 0) ? '#fde047' : ((sp % 3 === 1) ? '#ffffff' : '#f472b6');
+                            ctx.fillStyle = spCol;
+                            ctx.beginPath(); ctx.arc(spx, spy, 3.5, 0, Math.PI * 2); ctx.fill();
                         }
                     } else if (t.type === 'angel_devil') {
                         // 👼😈 [반천사 반악마 나무] (좌측 천사 + 우측 악마)
