@@ -755,7 +755,7 @@
 
                 <!-- 🍭🎃 [어드민 전용] 사탕 나무 & 캔디콘 상점 버튼 4종 -->
                 <button onclick="adminWarpToCandyTree()" style="padding: 10px; background: linear-gradient(135deg, #ec4899, #f43f5e); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.45);">🍭 [신규] 사탕 나무로 즉시 이동 (Y: 1350)</button>
-                <button onclick="adminToggleCandyCornShop()" style="padding: 10px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.45);">🏪 [신규] 캔디콘 상점 생성 토글 (하단 Y: 3450)</button>
+                <button onclick="adminToggleCandyCornShop()" style="padding: 10px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.45);">🏪 [신규] 캔디콘 상점 토글 (평소 손님상점 밑 / 집 생성 시 맨 밑)</button>
                 <button onclick="player.x = 300; player.y = -9500; closeAdminPanelModal(); floatTexts.push({ x: 300, y: -9580, text: '👼😈 천사악마 지형으로 이동 완료! (Lv 135)', color: '#facc15', life: 80, size: 20 });" style="padding: 10px; background: linear-gradient(135deg, #fef08a, #ef4444); color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(250, 204, 21, 0.45);">👼😈 [신규] 천사악마 지형 워프 (Lv 135, Y: -9500)</button>
                 <!-- 링 미니게임 테스터 버튼 제거됨 (코드는 보존) -->
                 <button onclick="adminAddCandyCorn()" style="padding: 10px; background: linear-gradient(135deg, #eab308, #ca8a04); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.45);">🍬 [신규] 캔디콘 +1,000개 즉시 충전</button>
@@ -12933,12 +12933,11 @@
                     }
                 }
 
-                // 🏪 [캔디콘 비밀 상점] 클릭 감지 (어드민 / weqwxe3 전용 - 위치 Y: 3450)
+                // 🏪 [캔디콘 비밀 상점] 클릭 감지 (평소: 손님 줄서는 상점 밑 Y: 2020 / 집 10채 생성 시: 집 10채 밑 Y: 3450)
                 if (isAdmin() || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) || window.adminCandyCornShopSpawned) {
-                    let shopX = GAME_WIDTH / 2;
-                    let shopY = 3450;
-                    let sDist = Math.hypot(cx - shopX, cy - shopY);
-                    let spDist = Math.hypot(player.x - shopX, player.y - shopY);
+                    let pos = (typeof getCandyCornShopPos === 'function') ? getCandyCornShopPos() : { x: GAME_WIDTH / 2, y: window.candyHousesSpawned ? 3450 : 2020 };
+                    let sDist = Math.hypot(cx - pos.x, cy - pos.y);
+                    let spDist = Math.hypot(player.x - pos.x, player.y - pos.y);
                     if (sDist < 110 || (isSpacebar && spDist < 125)) {
                         openCandyCornShopModal();
                         return;
@@ -13236,6 +13235,15 @@
             { id: 10, x: 485, y: 3250, name: '👑 킹캔디 팰리스', resident: '캔디 국왕', icon: '👑', roofCol: '#eab308', wallCol: '#713f12', giftTime: 0 }
         ];
         window.candyVillageHouses = candyVillageHouses;
+
+        // 🏪 캔디콘 상점 위치 동적 계산 함수:
+        // 평소에는 손님 줄 서있는 상점 바로 밑(Y: 2020), 집 10채가 생성되면 집 10채 밑(Y: 3450)으로 자동 이동!
+        function getCandyCornShopPos() {
+            let x = GAME_WIDTH / 2; // 도로 정중앙 X: 300
+            let y = window.candyHousesSpawned ? 3450 : 2020;
+            return { x, y };
+        }
+        window.getCandyCornShopPos = getCandyCornShopPos;
 
         // 🏪 어드민 전용 캔디콘 상점 생성 여부 플래그
         let adminCandyCornShopSpawned = false;
@@ -23085,9 +23093,10 @@
         function adminToggleCandyCornShop() {
             adminCandyCornShopSpawned = !adminCandyCornShopSpawned;
             window.adminCandyCornShopSpawned = adminCandyCornShopSpawned;
+            let pos = (typeof getCandyCornShopPos === 'function') ? getCandyCornShopPos() : { x: GAME_WIDTH / 2, y: 2020 };
             if (adminCandyCornShopSpawned) {
-                alert('🏪 캔디 지형 하단(Y: 3450)에 캔디콘 상점이 생성되었습니다!');
-                floatTexts.push({ x: player.x, y: player.y - 80, text: '🏪 캔디콘 상점 생성 완료! (Y: 3450)', color: '#f59e0b', life: 85, size: 20 });
+                alert(`🏪 캔디콘 상점이 생성되었습니다! (위치: Y ${pos.y})`);
+                floatTexts.push({ x: player.x, y: player.y - 80, text: `🏪 캔디콘 상점 생성 완료! (Y: ${pos.y})`, color: '#f59e0b', life: 85, size: 20 });
             } else {
                 alert('🏪 캔디콘 상점이 제거되었습니다.');
                 floatTexts.push({ x: player.x, y: player.y - 80, text: '🏪 캔디콘 상점 제거 완료.', color: '#94a3b8', life: 75 });
@@ -29546,9 +29555,10 @@
                 });
             }
 
-            // 🏪 [캔디콘 비밀 상점] (어드민 및 weqwxe3 전용, Y: 3450 위치로 조금 위로 이동)
+            // 🏪 [캔디콘 비밀 상점] (평소: 손님 줄 서있는 상점 밑 Y: 2020 / 집 10채 생성 시: 집 10채 밑 Y: 3450)
             if (isAdmin() || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) || window.adminCandyCornShopSpawned) {
-                renderList.push({ type: 'candyCornShop', obj: { x: GAME_WIDTH / 2, y: 3450 }, y: 3450 });
+                let pos = (typeof getCandyCornShopPos === 'function') ? getCandyCornShopPos() : { x: GAME_WIDTH / 2, y: window.candyHousesSpawned ? 3450 : 2020 };
+                renderList.push({ type: 'candyCornShop', obj: { x: pos.x, y: pos.y }, y: pos.y });
             }
 
             // 💍 링 모으기 미니게임 스폰된 링 렌더 등록 (모든 참여 플레이어에게 정상 표시!)
