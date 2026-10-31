@@ -14488,6 +14488,8 @@
             });
             if (tab === 'axe') updateAxeUI();
             if (tab === 'limited') updateLimitedUI();
+            if (tab === 'skin') updateShopSkinUI();
+            if (tab === 'lucky') updateShopLuckyUI();
         }
 
         // 🪓 도끼 상점 도끼 일러스트 캔버스 렌더러
@@ -14665,7 +14667,7 @@
             { id: 'kraken', name: '크라켄', price: 0, icon: '🦑', isReward: true, desc: '크라켄의 씨앗 수확 보상 (75%)' },
             { id: 'infected_gorilla', name: '감염된 고릴라', price: 0, icon: '🦍💜', isReward: true, desc: '크라켄의 씨앗 수확 보상 (22%)' },
             { id: 'frost_dragon', name: '서리룡', price: 0, icon: '🐉❄️', isReward: true, desc: '크라켄의 씨앗 초희귀 수확 보상 (3%)' },
-            { id: 'pumpkin_winged_demon', name: '호박 날개 대악마', price: 0, icon: '🎃🪽', isReward: true, desc: '캔디콘 1,000개 할로윈 럭키블록 초신화 보상' },
+            { id: 'pumpkin_winged_demon', name: '호박 날개 대악마', price: 1000000, icon: '🎃🪽', isReward: false, desc: '시즌 한정 스킨 (1일 뒤 사라집니다 - 11월 1일 21:00 종료)' },
             { id: 'candy_king', name: '별사탕 캔디 국왕', price: 0, icon: '👑🍬', isReward: true, desc: '캔디콘 1,000개 할로윈 럭키블록 신화 보상' },
             { id: 'halloween_forge', name: '할로윈 포지', price: 2000, icon: '🎃🗡️', isReward: true, desc: '캔디콘 상점 2,000 캔디 구매 스킨' },
             { id: 'ax_combination', name: '도끼 콤비네이션', price: 0, icon: '🪓⚡', isReward: true, adminOnly: true, desc: '크래프팅 머신 [고대 도끼] 조합 스킨' },
@@ -15236,22 +15238,136 @@
         }
 
 
+        function isLuckyBlockShopUnlocked() {
+            if (window._live9PmTestStartTime !== undefined && window._live9PmTestStartTime !== null) {
+                return (Date.now() - window._live9PmTestStartTime) >= 0;
+            }
+            return Date.now() >= LIVE_9PM_TARGET_TIMESTAMP;
+        }
+        window.isLuckyBlockShopUnlocked = isLuckyBlockShopUnlocked;
+
+        function updateShopLuckyUI() {
+            const luckySec = document.getElementById('shop-lucky');
+            if (!luckySec) return;
+
+            if (!isLuckyBlockShopUnlocked()) {
+                const diff = Math.max(0, LIVE_9PM_TARGET_TIMESTAMP - Date.now());
+                const totalSec = Math.floor(diff / 1000);
+                const hours = Math.floor(totalSec / 3600);
+                const minutes = Math.floor((totalSec % 3600) / 60);
+                const seconds = totalSec % 60;
+                const timeText = diff > 0 ? `${hours}시간 ${minutes}분 ${seconds}초 후 공개` : '잠시 후 공개!';
+
+                luckySec.innerHTML = `
+                    <div style="background: rgba(15, 23, 42, 0.9); border: 2px dashed #a855f7; border-radius: 16px; padding: 45px 20px; text-align: center; margin: 15px 0; box-shadow: 0 4px 25px rgba(0,0,0,0.6);">
+                        <div style="font-size: 42px; margin-bottom: 12px; filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6));">👑🎁✨</div>
+                        <div style="font-size: 20px; font-weight: 950; color: #c084fc; letter-spacing: -0.5px; text-shadow: 0 0 12px rgba(192, 132, 252, 0.6);">오늘 9시 포지 인사할 때 공개!</div>
+                        <div style="font-size: 13.5px; font-weight: bold; color: #facc15; margin-top: 8px;">⏳ ${timeText}</div>
+                        <div style="font-size: 12px; color: #cbd5e1; margin-top: 6px;">천악 럭키블록 뽑기는 오늘 9시 포지 등장과 함께 정식 공개됩니다.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            luckySec.innerHTML = `
+                <div style="background: radial-gradient(circle at top, rgba(30, 27, 75, 0.9), rgba(15, 23, 42, 0.98)); border: 2px solid #a855f7; border-radius: 16px; padding: 16px 12px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(168, 85, 247, 0.35);">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 2px;">
+                        <span style="font-size: 22px;">👼😈</span>
+                        <h3 style="margin: 0; color: #facc15; font-size: 21px; font-weight: 900; letter-spacing: -0.5px; text-shadow: 0 0 12px rgba(250, 204, 21, 0.7);">천악 럭키블록</h3>
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 12px;">
+                        순백의 천사와 칠흑의 악마가 깃든 초신화 럭키블록! (스킨 파편 언박싱)
+                    </div>
+
+                    <div style="display: flex; justify-content: center; margin-bottom: 14px;">
+                        <canvas id="angel-demon-lucky-canvas" width="130" height="130" style="filter: drop-shadow(0 8px 20px rgba(234, 179, 8, 0.45));"></canvas>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 16px;">
+                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #38bdf8; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
+                            <span style="position: absolute; top: -6px; background: #0284c7; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">50%</span>
+                            <canvas id="lucky-prev-jellyfish" width="48" height="48" style="margin-top: 4px;"></canvas>
+                            <span style="font-size: 10.5px; font-weight: bold; color: #7dd3fc; margin-top: 2px;">해파리</span>
+                        </div>
+                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #f97316; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
+                            <span style="position: absolute; top: -6px; background: #ea580c; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">25%</span>
+                            <canvas id="lucky-prev-phoenix" width="48" height="48" style="margin-top: 4px;"></canvas>
+                            <span style="font-size: 10.5px; font-weight: bold; color: #fdba74; margin-top: 2px;">피닉스</span>
+                        </div>
+                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #facc15; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
+                            <span style="position: absolute; top: -6px; background: #ca8a04; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">15%</span>
+                            <canvas id="lucky-prev-angel" width="48" height="48" style="margin-top: 4px;"></canvas>
+                            <span style="font-size: 10.5px; font-weight: bold; color: #fef08a; margin-top: 2px;">천사</span>
+                        </div>
+                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #ef4444; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
+                            <span style="position: absolute; top: -6px; background: #dc2626; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">9%</span>
+                            <canvas id="lucky-prev-devil" width="48" height="48" style="margin-top: 4px;"></canvas>
+                            <span style="font-size: 10.5px; font-weight: bold; color: #fca5a5; margin-top: 2px;">악마</span>
+                        </div>
+                        <div style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(239, 68, 68, 0.3)); border: 1.5px solid #eab308; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative; box-shadow: 0 0 10px rgba(234, 179, 8, 0.35);">
+                            <span style="position: absolute; top: -6px; background: linear-gradient(90deg, #eab308, #ef4444); color: white; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 6px;">1%</span>
+                            <canvas id="lucky-prev-etheron" width="48" height="48" style="margin-top: 4px;"></canvas>
+                            <span style="font-size: 10px; font-weight: 900; color: #fde047; margin-top: 2px;">에테론</span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; min-height: 70px;">
+                            <div style="font-size: 12px; font-weight: bold; color: #e2e8f0; margin-bottom: 6px;">1x Lucky Block</div>
+                            <button onclick="buyLuckyBlocks(1, 10000)" style="width: 100%; padding: 8px 4px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(46, 204, 113, 0.4);">💰 10,000</button>
+                        </div>
+                        <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid #f59e0b; border-radius: 10px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; min-height: 70px; position: relative;">
+                            <span style="position: absolute; top: -8px; background: #ea580c; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">BEST</span>
+                            <div style="font-size: 12px; font-weight: bold; color: #fef08a; margin-bottom: 6px;">10x Lucky Blocks</div>
+                            <button onclick="buyLuckyBlocks(10, 100000)" style="width: 100%; padding: 8px 4px; background: #f59e0b; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);">💰 100,000</button>
+                        </div>
+                        <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid #ec4899; border-radius: 10px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; min-height: 70px; position: relative;">
+                            <span style="position: absolute; top: -8px; background: #ec4899; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">BEST</span>
+                            <div style="font-size: 12px; font-weight: bold; color: #f472b6; margin-bottom: 6px;">30x Lucky Blocks</div>
+                            <button onclick="buyLuckyBlocks(30, 300000)" style="width: 100%; padding: 8px 4px; background: #ec4899; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4);">💰 300,000</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            setTimeout(() => {
+                drawPreviewCanvas('lucky-prev-jellyfish', 'jellyfish');
+                drawPreviewCanvas('lucky-prev-phoenix', 'phoenix');
+                drawPreviewCanvas('lucky-prev-angel', 'angel');
+                drawPreviewCanvas('lucky-prev-devil', 'devil');
+                drawPreviewCanvas('lucky-prev-etheron', 'etheron');
+            }, 20);
+        }
+        window.updateShopLuckyUI = updateShopLuckyUI;
+
         setInterval(() => {
             const luckySec = document.getElementById('shop-lucky');
-            if (luckySec && luckySec.style.display === 'block') {
+            if (luckySec && luckySec.style.display === 'block' && isLuckyBlockShopUnlocked()) {
                 drawAngelDevilLuckyBlock('angel-demon-lucky-canvas');
+            }
+            const skinSec = document.getElementById('shop-skin');
+            if (skinSec && skinSec.style.display === 'block') {
+                const prevCanvas = document.getElementById('preview-shop-pumpkin_winged_demon');
+                if (prevCanvas) {
+                    drawPreviewCanvas('preview-shop-pumpkin_winged_demon', 'pumpkin_winged_demon');
+                }
             }
         }, 50);
 
         // 👑 [럭키블럭 개편] 스킨 완제품 대신 스킨 파편 드롭 & 크래프트 머신 조합
         function buyLuckyBlocks(count, price) {
-            alert('🔒 10월 31일 9시에 공개됩니다!');
-            return;
-
-            if (money >= price) {
-                money -= price;
-                updateMoney();
+            if (!isLuckyBlockShopUnlocked()) {
+                alert('🔒 오늘 저녁 9시에 포지가 인사할 때 정식 공개됩니다!');
+                return;
             }
+
+            if (money < price) {
+                alert(`❌ 돈이 부족합니다!\n\n현재 보유: ${money.toLocaleString()}원\n필요 금액: ${price.toLocaleString()}원`);
+                return;
+            }
+
+            money -= price;
+            updateMoney();
 
             const shardDrops = [];
             for (let i = 0; i < count; i++) {
@@ -15269,10 +15385,10 @@
                     rarityColor = '#38bdf8';
                     rarityName = '일반 (50%)';
                 } else if (rand < 75) {
-                    wonShard = '천사 조각';
+                    wonShard = '피닉스 조각';
                     wonCount = 1;
-                    shardIcon = '👼';
-                    rarityColor = '#fef08a';
+                    shardIcon = '🦅';
+                    rarityColor = '#f97316';
                     rarityName = '희귀 (25%)';
                 } else if (rand < 90) {
                     wonShard = '천사 조각';
@@ -15315,7 +15431,7 @@
                     metaByName[d.name] = d;
                 });
 
-                const shardOrder = ['에테론 조각', '악마 조각', '천사 조각', '해파리 조각'];
+                const shardOrder = ['에테론 조각', '악마 조각', '천사 조각', '피닉스 조각', '해파리 조각'];
                 itemsEl.innerHTML = shardOrder.filter(name => totalsByName[name]).map(name => {
                     const meta = metaByName[name];
                     return `
@@ -15344,22 +15460,127 @@
 
             floatTexts.push({ x: player.x, y: player.y - 100, text: `🎁 럭키블럭 ${count}개에서 스킨 파편 획득!`, color: '#facc15', life: 100, size: 22 });
         }
+        window.buyLuckyBlocks = buyLuckyBlocks;
+
+        // 🎃 [시즌 스킨: 호박 날개 대악마 (1,000,000원 & 내일 저녁 9시 사라짐)]
+        const PUMPKIN_WINGED_DEMON_EXPIRE_TIME = new Date('2026-11-01T21:00:00+09:00').getTime(); // 내일(11월 1일) 저녁 9시 (21:00 KST)
 
         function updateShopSkinUI() {
             const list = document.getElementById('skin-list');
             if (!list) return;
-            // 🔒 유저 요청: 상점에 시즌 스킨 탭에 있는 모든 스킨 내려주고 "10월 31일 9시에 공개!"만 표시
+
+            const now = Date.now();
+            const isExpired = now >= PUMPKIN_WINGED_DEMON_EXPIRE_TIME;
+
+            if (isExpired) {
+                list.innerHTML = `
+                    <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px dashed #64748b; border-radius: 14px; padding: 35px 15px; text-align: center; color: #94a3b8; margin: 15px 0;">
+                        <div style="font-size: 34px; margin-bottom: 8px;">🔒⌛</div>
+                        <div style="font-size: 16px; font-weight: 900; color: #cbd5e1;">호박 날개 대악마 판매 기간 종료</div>
+                        <div style="font-size: 12px; color: #64748b; margin-top: 4px;">1일 한정 판매가 만료되어 상점에서 사라졌습니다.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const diff = PUMPKIN_WINGED_DEMON_EXPIRE_TIME - now;
+            const totalSec = Math.floor(diff / 1000);
+            const hours = Math.floor(totalSec / 3600);
+            const minutes = Math.floor((totalSec % 3600) / 60);
+            const seconds = totalSec % 60;
+            const timerText = `${hours}시간 ${minutes}분 ${seconds}초 남음`;
+
+            const isOwned = ownedSkins.includes('pumpkin_winged_demon');
+            const isEquipped = equippedSkin === 'pumpkin_winged_demon';
+
+            let btnHtml = '';
+            if (isOwned) {
+                if (isEquipped) {
+                    btnHtml = `<button disabled style="padding: 10px 16px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13.5px;">장착중</button>`;
+                } else {
+                    btnHtml = `<button onclick="equipSkin('pumpkin_winged_demon')" style="padding: 10px 16px; background: #3498db; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13.5px; cursor: pointer; box-shadow: 0 3px 10px rgba(52, 152, 219, 0.4);">장착하기</button>`;
+                }
+            } else {
+                btnHtml = `<button onclick="buyPumpkinWingedDemonSkin()" style="padding: 10px 16px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13.5px; cursor: pointer; box-shadow: 0 3px 10px rgba(249, 115, 22, 0.4);">1,000,000원 구매</button>`;
+            }
+
             list.innerHTML = `
-                <div style="background: rgba(15, 23, 42, 0.9); border: 2px dashed #f59e0b; border-radius: 16px; padding: 45px 20px; text-align: center; margin: 15px 0; box-shadow: 0 4px 25px rgba(0,0,0,0.6);">
-                    <div style="font-size: 42px; margin-bottom: 12px; filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.6));">🔒🎃✨</div>
-                    <div style="font-size: 20px; font-weight: 950; color: #facc15; letter-spacing: -0.5px; text-shadow: 0 0 12px rgba(250, 204, 21, 0.6);">10월 31일 9시에 공개!</div>
-                    <div style="font-size: 13px; color: #cbd5e1; margin-top: 8px;">시즌 한정 스킨 라인업이 10월 31일 저녁 9시에 정식 공개됩니다.</div>
+                <div style="background: radial-gradient(circle at top, rgba(30, 27, 75, 0.9), rgba(15, 23, 42, 0.95)); border: 2px solid #f97316; border-radius: 16px; padding: 14px 14px; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(249, 115, 22, 0.35);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 10px;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span style="font-size: 20px;">🎃🪽</span>
+                            <span style="font-size: 17px; font-weight: 950; color: #fb923c;">호박 날개 대악마</span>
+                            <span style="background: #ea580c; color: white; font-size: 10px; font-weight: 900; padding: 2px 6px; border-radius: 6px;">시즌 한정</span>
+                        </div>
+                        <div style="font-size: 12px; color: #facc15; font-weight: 900;">
+                            💰 1,000,000원
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 12px;">
+                        <div style="background: rgba(0,0,0,0.4); border: 1.5px solid rgba(249, 115, 22, 0.5); border-radius: 12px; padding: 6px; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="preview-shop-pumpkin_winged_demon" width="70" height="90"></canvas>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 13px; font-weight: 900; color: #f87171; display: flex; align-items: center; gap: 4px;">
+                                <span>⏳</span> 1일 뒤에 사라집니다!
+                            </div>
+                            <div style="font-size: 11.5px; color: #cbd5e1; margin-top: 4px; line-height: 1.4;">
+                                내일 저녁 9시(21:00)가 되면 상점에서 완전히 사라집니다.
+                            </div>
+                            <div style="font-size: 11.5px; color: #fde047; font-weight: bold; margin-top: 5px; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px; display: inline-block;">
+                                ⏱️ 남은 판매 시간: ${timerText}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
+                        ${btnHtml}
+                    </div>
                 </div>
             `;
+
+            setTimeout(() => {
+                drawPreviewCanvas('preview-shop-pumpkin_winged_demon', 'pumpkin_winged_demon');
+            }, 20);
         }
+        window.updateShopSkinUI = updateShopSkinUI;
+
+        function buyPumpkinWingedDemonSkin() {
+            if (Date.now() >= PUMPKIN_WINGED_DEMON_EXPIRE_TIME) {
+                alert('⏳ 판매 기간이 종료되어 더 이상 구매할 수 없습니다! (내일 9시 만료)');
+                if (typeof updateShopSkinUI === 'function') updateShopSkinUI();
+                return;
+            }
+            if (ownedSkins.includes('pumpkin_winged_demon')) {
+                alert('이미 보유하고 있는 스킨입니다!');
+                return;
+            }
+            const PRICE = 1000000;
+            if (money < PRICE) {
+                alert(`❌ 돈이 부족합니다!\n\n현재 보유: ${money.toLocaleString()}원\n필요 금액: ${PRICE.toLocaleString()}원`);
+                return;
+            }
+            money -= PRICE;
+            updateMoney();
+            ownedSkins.push('pumpkin_winged_demon');
+            equippedSkin = 'pumpkin_winged_demon';
+            saveGame(true);
+            if (typeof updateShopSkinUI === 'function') updateShopSkinUI();
+            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+            if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '🎃🪽 호박 날개 대악마 스킨 획득 & 장착!', color: '#fb923c', life: 120, size: 22 });
+            }
+            alert('🎉 [시즌 한정 스킨 구매 완료!]\n\n초호화 [호박 날개 대악마] 스킨을 1,000,000원에 구매하고 자동 장착했습니다!\n(가방의 스킨 탭에서도 확인하실 수 있습니다)');
+        }
+        window.buyPumpkinWingedDemonSkin = buyPumpkinWingedDemonSkin;
 
         function buySkin(skinId) {
-            alert('🔒 10월 31일 9시에 공개됩니다!');
+            if (skinId === 'pumpkin_winged_demon') {
+                buyPumpkinWingedDemonSkin();
+                return;
+            }
+            alert('🔒 다른 스킨은 10월 31일 9시에 공개됩니다!');
             return;
         }
 
@@ -15450,6 +15671,9 @@
             } else if (skinId === 'etheron') {
                 scale = (pCanvas.width < 60) ? 0.50 : 0.56;
                 yOffset = 14;
+            } else if (skinId === 'pumpkin_winged_demon') {
+                scale = (pCanvas.width < 60) ? 0.40 : 0.46;
+                yOffset = 18;
             }
             pCtx.save();
             pCtx.translate(pCanvas.width / 2, pCanvas.height / 2 + yOffset);
@@ -31003,18 +31227,11 @@ const LIVE_9PM_TIMELINE = [
 window._live9PmTriggeredSteps = new Set();
 window._live9PmSyncedThisSession = false;
 
-// 복구된 테스트 시작 시각 불러오기 (실제 브라우저 새로고침(F5) 시에도 테스트 지속 지원)
+// 🔒 공개 서버 및 화면 상단 HUD 오염 방지: 저장된 테스트 데이터 즉시 완전 소거
 try {
-    const savedTestStart = localStorage.getItem('live_9pm_test_start_time');
-    if (savedTestStart) {
-        const startNum = parseInt(savedTestStart, 10);
-        if (Date.now() - startNum < 1500 * 1000) {
-            window._live9PmTestStartTime = startNum;
-        } else {
-            localStorage.removeItem('live_9pm_test_start_time');
-        }
-    }
+    localStorage.removeItem('live_9pm_test_start_time');
 } catch (e) {}
+window._live9PmTestStartTime = null;
 
 function get9PmEventElapsedSeconds() {
     if (window._live9PmTestStartTime !== undefined && window._live9PmTestStartTime !== null) {
@@ -31119,6 +31336,11 @@ function checkAndTick9PmLiveEvent() {
                 showForgeBroadcast(step.text, step.dur);
             }
 
+            // 👑 포지 첫 인사(T=0) 시점에 천악 럭키블록 상점 실시간 정식 언락 공개
+            if (step.t === 0) {
+                if (typeof updateShopLuckyUI === 'function') updateShopLuckyUI();
+            }
+
             // 각 단계별 액션 즉시 실행
             if (step.action === 'activate_luck') {
                 const remainSec = Math.max(0, 910 - currentT);
@@ -31158,6 +31380,11 @@ function checkAndTick9PmLiveEvent() {
         dodgeFarmersState.active = false;
         dodgeFarmersState.carryingSkin = false;
         dodgeFarmersState.farmers = [];
+    }
+
+    // 테스트 모드가 만료 시점을 지난 경우 자동 정리
+    if (currentT > LIVE_9PM_TOTAL_DURATION && window._live9PmTestStartTime !== null && window._live9PmTestStartTime !== undefined) {
+        stop9PmEventTest();
     }
 
     update9PmUIStatus(true, currentT);
@@ -31239,16 +31466,13 @@ function update9PmUIStatus(isActive, currentT) {
     }
 }
 
-// 🧪 [테스트 함수들]
+// 🧪 [weqwxe3 관리자 전용 테스트 함수들 - 인게임 HUD 절대 미노출, 모달 내부 전용]
 function start9PmEventTest(jumpSec = 0) {
     if (typeof stopAllMinigames === 'function') stopAllMinigames();
     const banner = document.getElementById('forge-broadcast-banner');
     if (banner) banner.style.display = 'none';
 
     window._live9PmTestStartTime = Date.now() - (jumpSec * 1000);
-    try {
-        localStorage.setItem('live_9pm_test_start_time', window._live9PmTestStartTime.toString());
-    } catch(e) {}
 
     window._live9PmTriggeredSteps = new Set();
     window._live9PmSyncedThisSession = false;
@@ -31334,38 +31558,21 @@ function simulate9PmRefresh() {
 }
 window.simulate9PmRefresh = simulate9PmRefresh;
 
+// ⏳ 화면 상단 공개 HUD: 공개 서버 및 일반 유저에게 절대 테스트/디버그 정보 노출 금지
 function updateCountdownHUD() {
     const hud = document.getElementById('admin-abuse-countdown-hud');
     const titleEl = document.getElementById('countdown-hud-title');
     const timerEl = document.getElementById('countdown-hud-timer');
     if (!titleEl || !timerEl) return;
 
-    const isTestMode = (window._live9PmTestStartTime !== undefined && window._live9PmTestStartTime !== null);
-    if (isTestMode) {
-        if (hud) hud.style.display = 'block';
-        const currentT = get9PmEventElapsedSeconds();
-        titleEl.innerText = '🎃 9시 이벤트 테스트 중';
-        titleEl.style.color = '#38bdf8';
-        timerEl.innerText = `진행: T = ${Math.floor(currentT)}초`;
-        timerEl.style.color = '#facc15';
-        return;
-    }
-
     const now = new Date();
+    // ⏳ [관리자남용 타이머] 2026년 10월 31일 저녁 9시 (21:00:00 KST)
     const target = new Date(2026, 9, 31, 21, 0, 0);
     const diffMs = target - now;
 
     if (diffMs <= 0) {
-        const currentT = (Date.now() - LIVE_9PM_TARGET_TIMESTAMP) / 1000;
-        if (currentT <= LIVE_9PM_TOTAL_DURATION) {
-            if (hud) hud.style.display = 'block';
-            titleEl.innerText = '🔥 9시 라이브 이벤트';
-            titleEl.style.color = '#ef4444';
-            timerEl.innerText = `진행 중 (T = ${Math.floor(currentT)}초)`;
-            timerEl.style.color = '#facc15';
-        } else {
-            if (hud) hud.style.display = 'none';
-        }
+        // 9시가 도달하면 상단 카운트다운 HUD는 깔끔하게 자동 숨김
+        if (hud) hud.style.display = 'none';
     } else {
         if (hud) hud.style.display = 'block';
         const totalSec = Math.floor(diffMs / 1000);
