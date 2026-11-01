@@ -452,7 +452,7 @@
         </div>
 
 <!-- ⏳ [화면 상단 HUD] 관리자남용까지 카운트다운 (오늘 20:30 오픈) -->
-        <div id="admin-abuse-countdown-hud" style="position: absolute; top: 58px; left: 50%; transform: translateX(-50%); z-index: 45; pointer-events: none; text-align: center; background: rgba(15, 12, 28, 0.85); border: 1.5px solid rgba(250, 204, 21, 0.5); padding: 5px 16px; border-radius: 12px; backdrop-filter: blur(6px); box-shadow: 0 4px 18px rgba(0,0,0,0.5), 0 0 14px rgba(250, 204, 21, 0.25);">
+        <div id="admin-abuse-countdown-hud" onclick="teleportToForgeStage()" title="클릭하여 포지 콘서트 무대로 즉시 이동" style="position: absolute; top: 58px; left: 50%; transform: translateX(-50%); z-index: 45; pointer-events: auto; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-align: center; background: rgba(15, 12, 28, 0.85); border: 1.5px solid rgba(250, 204, 21, 0.5); padding: 5px 16px; border-radius: 12px; backdrop-filter: blur(6px); box-shadow: 0 4px 18px rgba(0,0,0,0.5), 0 0 14px rgba(250, 204, 21, 0.25);">
             <div id="countdown-hud-title" style="font-size: 11.5px; font-weight: 900; color: #facc15; letter-spacing: 0.5px; text-shadow: 0 0 8px rgba(250, 204, 21, 0.6);">관리자남용까지</div>
             <div id="countdown-hud-timer" style="font-size: 14.5px; font-weight: 950; font-family: monospace, sans-serif; color: #ffffff; letter-spacing: 1px; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">00일 00시간 00분 00초</div>
         </div>
@@ -514,6 +514,46 @@
                 </div>
             </div>
         </div>
+        <!-- 🏴‍☠️🌑 [시즌1 다크 공지 팝업창: season1's last abuse] -->
+        <div id="season1-last-abuse-modal" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 120; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); justify-content: center; align-items: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;">
+            <div style="background: radial-gradient(circle at center, #120e1d 0%, #040307 100%); border: 2px solid rgba(239, 68, 68, 0.5); border-radius: 22px; padding: 30px 24px; width: 92%; max-width: 430px; box-shadow: 0 25px 70px rgba(0,0,0,0.95), 0 0 40px rgba(239, 68, 68, 0.3); text-align: center; color: white; position: relative; box-sizing: border-box;">
+                
+                <!-- 우측 상단 닫기 X 버튼 -->
+                <button onclick="closeSeason1NoticeModal(false)" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; width: 32px; height: 32px; border-radius: 50%; font-size: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.5)'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.color='#cbd5e1'">✕</button>
+
+                <!-- 칠흑의 검정 이미지 그래픽 배너 (검정 이미지에 season1's last abuse) -->
+                <div style="background: #000000; border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 14px; padding: 22px 14px; margin-bottom: 22px; box-shadow: inset 0 0 35px rgba(255, 255, 255, 0.04), 0 8px 24px rgba(0,0,0,0.85);">
+                    <div style="font-family: 'Cinzel', 'Times New Roman', Georgia, serif; font-size: 15px; font-weight: 700; color: #a1a1aa; letter-spacing: 4px; text-transform: lowercase; margin-bottom: 4px;">
+                        season1's
+                    </div>
+                    <div style="font-family: 'Cinzel', 'Times New Roman', Georgia, serif; font-size: 32px; font-weight: 950; letter-spacing: 2px; text-transform: lowercase; background: linear-gradient(180deg, #ffffff 0%, #ef4444 65%, #991b1b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 25px rgba(239, 68, 68, 0.55);">
+                        last abuse
+                    </div>
+                </div>
+
+                <!-- 공지 본문 내용 -->
+                <div style="font-size: 18.5px; font-weight: 950; color: #ffffff; margin-bottom: 10px; line-height: 1.4; letter-spacing: -0.4px;">
+                    시즌1 마지막 업데이트 에 참여하세요!
+                </div>
+                <div style="font-size: 15.5px; font-weight: 850; color: #facc15; margin-bottom: 12px; text-shadow: 0 0 12px rgba(250, 204, 21, 0.45);">
+                    11월1일 오전 9시 컴백!
+                </div>
+                <div style="font-size: 15px; font-weight: 800; color: #64748b; letter-spacing: 3px; margin-bottom: 26px;">
+                    ㅅ........
+                </div>
+
+                <!-- 하단 액션 버튼들 -->
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="closeSeason1NoticeModal(true)" style="flex: 1; padding: 12px 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; color: #94a3b8; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'; this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.06)'; this.style.color='#94a3b8'">
+                        오늘 하루 보지 않기
+                    </button>
+                    <button onclick="closeSeason1NoticeModal(false); if(typeof teleportToForgeStage==='function') teleportToForgeStage();" style="flex: 1.2; padding: 12px 16px; background: linear-gradient(135deg, #ef4444, #b91c1c); border: none; border-radius: 12px; color: #ffffff; font-size: 14.5px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 18px rgba(239,68,68,0.5); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 22px rgba(239,68,68,0.7)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 18px rgba(239,68,68,0.5)'">
+                        확인 및 무대 입장 🎪
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="login-modal-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 100;">
             <div id="login-modal" style="position: relative; background: #12101c; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; padding: 34px 28px; width: 88%; max-width: 360px; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.85); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
                 <!-- 우측 상단 닫기 X 버튼 -->
@@ -841,6 +881,25 @@
 
             <!-- 탭 2: 9시 이벤트 제어 및 실시간 테스트 대시보드 -->
             <div id="weqwxe3-section-9pm" style="display: none; padding: 14px 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid #facc15; border-radius: 14px; margin-top: 5px; text-align: center;">
+<div style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.18), rgba(250, 204, 21, 0.18)); border: 2px solid #facc15; border-radius: 12px; padding: 12px; margin-bottom: 14px; text-align: center;">
+                    <div style="font-size: 15px; font-weight: 950; color: #facc15; margin-bottom: 4px;">
+                        🔥 11월 1일 오늘 신규 9시 이벤트: 포지 콘서트 댄스 쇼
+                    </div>
+                    <div style="font-size: 11.5px; color: #e2e8f0; margin-bottom: 10px;">
+                        오늘 저녁 9시 시작 & 매 1시간마다 15분씩 포지 하우스와 포지 케이크가 춤을 춥니다!
+                    </div>
+                    <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 8px;">
+                        <button onclick="window._forceForgeDanceTest = !window._forceForgeDanceTest; updateCountdownHUD(); alert(window._forceForgeDanceTest ? '🕺 [테스트 ON] 포지 & 케이크 댄스가 즉시 시작되었습니다!' : '⏹️ [테스트 OFF] 실시간 스케줄 모드로 복귀했습니다.');" style="flex: 1; padding: 9px; background: linear-gradient(135deg, #ec4899, #be185d); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 3px 8px rgba(236, 72, 153, 0.4);">
+                            🕺 포지 & 케이크 댄스 즉시 테스트 토글
+                        </button>
+                        <button onclick="teleportToForgeStage(); closeWeqwxe3EventModal();" style="flex: 1; padding: 9px; background: linear-gradient(135deg, #38bdf8, #0284c7); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 3px 8px rgba(56, 189, 248, 0.4);">
+                            🎪 콘서트 무대로 즉시 이동
+                        </button>
+                    </div>
+                    <button onclick="showForgeBroadcast('Forge: 오늘 밤 포지 라이브 콘서트가 시작되었습니다! 모두 무대로 모이세요!', 6000);" style="width: 100%; padding: 8px; background: rgba(250, 204, 21, 0.15); border: 1.5px solid #facc15; color: #facc15; border-radius: 8px; font-weight: 900; font-size: 11.5px; cursor: pointer;">
+                        📢 [Forge 방송] 오늘 밤 무대 개막 멘트 송출
+                    </button>
+                </div>
                 <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px;">
                     <span style="font-size: 24px;">🎃⏱️</span>
                     <h4 style="margin: 0; color: #facc15; font-size: 16.5px; font-weight: 950;">10월 31일 9시 라이브 이벤트 제어실</h4>
@@ -12966,6 +13025,44 @@
             }
 
             // 🌾 신비한 차원 농장 내부 클릭 감지
+                        // 🌴🏴‍☠️ [어드민 전용] 흔들리는 야자나무 & 해적 상점 상호작용
+            if (typeof isAdmin === 'function' && isAdmin() && window.piratePalmTree) {
+                let palmDist = Math.hypot(cx - window.piratePalmTree.x, cy - window.piratePalmTree.y);
+                let palmPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - window.piratePalmTree.x, player.y - window.piratePalmTree.y) : 999;
+                if (palmDist < 85 || (isSpacebar && palmPlayerDist < 100)) {
+                    shakePiratePalmTree();
+                    return;
+                }
+                // 해적 상점 및 해적 대기열 클릭 대사
+                let shopDist = Math.hypot(cx - 300, cy - 2150);
+                if (shopDist < 110) {
+                    if (typeof floatTexts !== 'undefined') {
+                        floatTexts.push({
+                            x: 300, y: 2110,
+                            text: '☠️ 외눈의 잭: "럼주를 원하나, 아니면 신비한 보물 지도를 원하나?"',
+                            color: '#facc15', life: 100, size: 20
+                        });
+                    }
+                    return;
+                }
+            }
+
+            // 🎪 [공개 서버] 포지 콘서트 무대 클릭 대사
+            if (!(typeof isAdmin === 'function' && isAdmin())) {
+                let stageDist = Math.hypot(cx - 300, cy - 1770);
+                if (stageDist < 120) {
+                    if (typeof floatTexts !== 'undefined') {
+                        const isDancing = (typeof isForgeDancingTime === 'function' && isForgeDancingTime());
+                        floatTexts.push({
+                            x: 300, y: 1720,
+                            text: isDancing ? '🔨 포지: "이 리듬을 느껴봐! 오늘 밤 댄스는 멈추지 않아!"' : '🎂 케이크: "잠시 후 시작될 정각 댄스 쇼를 기대해주세요!"',
+                            color: '#facc15', life: 110, size: 20
+                        });
+                    }
+                    return;
+                }
+            }
+
             if (inFarmDimension) {
                 handleFarmDimensionClick(cx, cy, isSpacebar);
                 return;
@@ -13461,8 +13558,13 @@
         // 🏪 캔디콘 상점 위치 동적 계산 함수:
         // 평소에는 손님 줄 서있는 상점 바로 밑(Y: 2020), 집 10채가 생성되면 집 10채 밑(Y: 3450)으로 자동 이동!
         function getCandyCornShopPos() {
+            // 어드민 계정에서는 사탕 상점 완전 제거 (해적 상점 전용)
+            if (typeof isAdmin === 'function' && isAdmin()) {
+                return { x: -9999, y: -9999 };
+            }
             let x = GAME_WIDTH / 2; // 도로 정중앙 X: 300
-            let y = window.candyHousesSpawned ? 3450 : 2020;
+            // 공개 서버에서는 콘서트 무대(Y: 1600~1950) 남쪽(Y: 2350)에 배치하여 충돌 방지
+            let y = window.candyHousesSpawned ? 3450 : 2350;
             return { x, y };
         }
         window.getCandyCornShopPos = getCandyCornShopPos;
@@ -30210,46 +30312,14 @@
             ctx.fillStyle = '#cf3a24'; ctx.fillRect(0, -1000, GAME_WIDTH, 1000); 
             // 🌿 일반 지역 연장 (Y: 1150까지 잔디 대지 확장)
             ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1150); 
-            // 🍭🎃 [전체 서버] 달콤한 사탕 지형 & 사탕 마을 길 (Y: 1150 ~ 3600 연장 - 집 생성 편의)
-            let candyBgGrad = ctx.createLinearGradient(0, 1150, 0, 3600);
-            candyBgGrad.addColorStop(0, '#1c132b');
-            candyBgGrad.addColorStop(0.3, '#2a1645');
-            candyBgGrad.addColorStop(0.7, '#1f1035');
-            candyBgGrad.addColorStop(1, '#130924');
-            ctx.fillStyle = candyBgGrad;
-            ctx.fillRect(0, 1150, GAME_WIDTH, 2450);
-
-            // 중앙 캔디 조약돌 길 (Cobblestone Street: X 230 ~ 370)
-            ctx.fillStyle = 'rgba(45, 25, 75, 0.85)';
-            ctx.fillRect(230, 1150, 140, 2450);
-            ctx.strokeStyle = '#f472b6';
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([8, 12]);
-            ctx.beginPath(); ctx.moveTo(230, 1150); ctx.lineTo(230, 3600); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(370, 1150); ctx.lineTo(370, 3600); ctx.stroke();
-            ctx.setLineDash([]);
-
-            // 길 위 조약돌 패턴 (Y: 1170 ~ 3580)
-            ctx.fillStyle = 'rgba(244, 114, 182, 0.15)';
-            for (let ry = 1170; ry < 3580; ry += 65) {
-                let rx1 = 260 + (Math.sin(ry * 0.05) * 20);
-                let rx2 = 330 + (Math.cos(ry * 0.04) * 20);
-                ctx.beginPath(); ctx.ellipse(rx1, ry, 16, 10, 0.2, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.ellipse(rx2, ry + 25, 18, 11, -0.2, 0, Math.PI * 2); ctx.fill();
+            // 🗺️ [11월 1일 신규 지형]
+            // 어드민: 사탕 지형 제거 & 해적 지형 (난파선, 흔들리는 야자나무, 해적 상점 대기열)
+            // 공개 서버: 사탕 지형 제거 & 포지 라이브 콘서트 무대 (포지 하우스 & 포지 케이크 댄스)
+            if (typeof isAdmin === 'function' && isAdmin()) {
+                drawAdminPirateTerrain(ctx);
+            } else {
+                drawPublicForgeConcertStage(ctx);
             }
-
-            // 반짝이는 별사탕 마법 입자 효과
-            let candyTime = Date.now() * 0.002;
-            for (let cp = 0; cp < 40; cp++) {
-                let cpx = ((cp * 97 + candyTime * 25) % GAME_WIDTH);
-                let cpy = 1160 + ((cp * 73 + cp * cp * 19) % 2380);
-                let ccol = (cp % 4 === 0) ? '#f472b6' : (cp % 4 === 1 ? '#facc15' : (cp % 4 === 2 ? '#38bdf8' : '#c084fc'));
-                let calpha = 0.3 + Math.sin(candyTime * 3 + cp) * 0.35;
-                ctx.fillStyle = ccol;
-                ctx.globalAlpha = Math.max(0.1, calpha);
-                ctx.beginPath(); ctx.arc(cpx, cpy, (cp % 3 === 0) ? 3 : 2, 0, Math.PI * 2); ctx.fill();
-            }
-            ctx.globalAlpha = 1.0;
 
             // 🔮 핑크 물음표 지형 삭제 완료 - 캔디 조약돌 길과 지형이 Y: 4000 상점까지 시원하게 이어집니다.
 
@@ -31982,26 +32052,45 @@ function updateCountdownHUD() {
     const hud = document.getElementById('admin-abuse-countdown-hud');
     const titleEl = document.getElementById('countdown-hud-title');
     const timerEl = document.getElementById('countdown-hud-timer');
-    if (!titleEl || !timerEl) return;
+    if (!titleEl || !timerEl || !hud) return;
 
+    hud.style.display = 'block';
     const now = new Date();
-    // ⏳ [관리자남용 타이머] 2026년 10월 31일 저녁 9시 (21:00:00 KST)
-    const target = new Date(2026, 9, 31, 21, 0, 0);
-    const diffMs = target - now;
+    // ⏳ [오늘 11월 1일 신규 9시 이벤트] 2026년 11월 1일 저녁 9시 (21:00:00 KST)
+    const target = new Date(2026, 10, 1, 21, 0, 0);
 
-    if (diffMs <= 0) {
-        // 9시가 도달하면 상단 카운트다운 HUD는 깔끔하게 자동 숨김
-        if (hud) hud.style.display = 'none';
-    } else {
-        if (hud) hud.style.display = 'block';
-        const totalSec = Math.floor(diffMs / 1000);
-        const days = Math.floor(totalSec / 86400);
-        const hours = Math.floor((totalSec % 86400) / 3600);
-        const minutes = Math.floor((totalSec % 3600) / 60);
-        const seconds = totalSec % 60;
-        titleEl.innerText = '관리자남용까지';
+    if (window._forceForgeDanceTest) {
+        titleEl.innerText = '🔥 포지 & 케이크 댄스 쇼 [테스트 중] 🔥';
+        titleEl.style.color = '#ef4444';
+        timerEl.innerText = '🕺 댄스 동작 중 [🎪 무대 바로가기 클릭]';
+        timerEl.style.color = '#fef08a';
+        return;
+    }
+
+    if (typeof isForgeDancingTime === 'function' && isForgeDancingTime()) {
+        const remSec = (14 - now.getMinutes()) * 60 + (59 - now.getSeconds());
+        const remMin = Math.floor(remSec / 60);
+        const remS = remSec % 60;
+        titleEl.innerText = '🔥 9시 포지 & 케이크 댄스 파티 LIVE! 🔥';
+        titleEl.style.color = '#ef4444';
+        timerEl.innerText = `남은 댄스 시간: ${remMin}분 ${remS < 10 ? '0' : ''}${remS}초 [🎪 무대 바로가기]`;
+        timerEl.style.color = '#facc15';
+    } else if (now < target) {
+        const diffSec = Math.floor((target - now) / 1000);
+        const hours = Math.floor(diffSec / 3600);
+        const minutes = Math.floor((diffSec % 3600) / 60);
+        const seconds = diffSec % 60;
+        titleEl.innerText = '🎪 11월 1일 신규 9시 포지 무대 개막까지';
         titleEl.style.color = '#facc15';
-        timerEl.innerText = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
+        timerEl.innerText = `${hours}시간 ${minutes}분 ${seconds < 10 ? '0' : ''}${seconds}초 [🎪 무대 바로가기]`;
+        timerEl.style.color = '#ffffff';
+    } else {
+        // 21:00 이후 매시간 15분~59분 (휴식 모드)
+        const nextMin = 59 - now.getMinutes();
+        const nextSec = 59 - now.getSeconds();
+        titleEl.innerText = '🎪 포지 콘서트 무대 (휴식 중)';
+        titleEl.style.color = '#38bdf8';
+        timerEl.innerText = `다음 댄스 쇼: ${nextMin}분 ${nextSec < 10 ? '0' : ''}${nextSec}초 뒤 [🎪 무대 이동]`;
         timerEl.style.color = '#ffffff';
     }
 }
@@ -32045,7 +32134,718 @@ window.showForgeBroadcast = showForgeBroadcast;
         } else {
             checkAndInitTreeBusterIntro(false);
         }
-    </script>
+    
+
+// ============================================================================
+// 🏴‍☠️ [어드민 전용 해적 지형] & 🎪 [공개 서버 포지 라이브 콘서트 무대] 엔진
+// ============================================================================
+
+// 🌴 흔들리는 해적 야자나무 & 코코넛 물리 상태
+window.piratePalmTree = {
+    x: 450,
+    y: 1720,
+    shakeTimer: 0,
+    lastShake: 0,
+    coconuts: []
+};
+
+// 🌴 야자나무 흔들기 실행 함수 (E키, 스페이스바, 클릭)
+function shakePiratePalmTree() {
+    const now = Date.now();
+    if (now - window.piratePalmTree.lastShake < 700) return;
+    window.piratePalmTree.lastShake = now;
+    window.piratePalmTree.shakeTimer = 45; // 45프레임 흔들림
+
+    // 1~3개의 코코넛 생성 및 낙하
+    const count = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < count; i++) {
+        window.piratePalmTree.coconuts.push({
+            x: 450 + (Math.random() - 0.5) * 55,
+            y: 1630,
+            targetY: 1730 + Math.random() * 35,
+            vy: 2 + Math.random() * 2.5,
+            bounce: 2,
+            collected: false
+        });
+    }
+
+    if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+        floatTexts.push({
+            x: 450,
+            y: 1600,
+            text: '🌴 야자나무를 세차게 흔들었다! 🥥 코코넛이 후두둑 떨어집니다!',
+            color: '#22c55e',
+            life: 90,
+            size: 20
+        });
+    }
+}
+window.shakePiratePalmTree = shakePiratePalmTree;
+
+// 🎪 포지 & 케이크 댄스 스케줄 판정 함수
+// 시작: 오늘 저녁 9시 (2026-11-01 21:00:00 KST)
+// 그 뒤: 매 1시간마다 15분씩 춤춤 (매시 0분 ~ 15분)
+function isForgeDancingTime() {
+    if (window._forceForgeDanceTest) return true;
+    const now = new Date();
+    // 2026년 11월 1일 21:00:00 KST
+    const startTarget = new Date(2026, 10, 1, 21, 0, 0);
+    if (now < startTarget) return false;
+    // 21:00 이후 매 1시간마다 15분씩 춤춤 (0분 ~ 14분 59초)
+    return now.getMinutes() < 15;
+}
+window.isForgeDancingTime = isForgeDancingTime;
+
+// 🎪 포지 콘서트 무대로 즉시 텔레포트
+function teleportToForgeStage() {
+    if (typeof player === 'undefined') return;
+    player.x = 300;
+    player.y = 1900;
+    if (typeof cameraY !== 'undefined') cameraY = player.y - canvas.height / 2;
+    if (typeof floatTexts !== 'undefined') {
+        floatTexts.push({
+            x: player.x,
+            y: player.y - 70,
+            text: '🎪 포지 라이브 콘서트 무대에 도착했습니다!',
+            color: '#facc15',
+            life: 120,
+            size: 22
+        });
+    }
+}
+window.teleportToForgeStage = teleportToForgeStage;
+
+// 🏴‍☠️ [어드민 전용 해적 지형 렌더링: Y 1150 ~ 3600]
+function drawAdminPirateTerrain(ctx) {
+    const time = Date.now() * 0.002;
+
+    // 1. 모래사장 및 해변 배경 (Y: 1150 ~ 3600)
+    let sandGrad = ctx.createLinearGradient(0, 1150, 0, 3600);
+    sandGrad.addColorStop(0, '#e9c46a');
+    sandGrad.addColorStop(0.3, '#f4a261');
+    sandGrad.addColorStop(0.7, '#deb887');
+    sandGrad.addColorStop(1, '#d4a373');
+    ctx.fillStyle = sandGrad;
+    ctx.fillRect(0, 1150, GAME_WIDTH, 2450);
+
+    // 좌우 에메랄드 바다 해안선 (X: 0~35, GAME_WIDTH-35~GAME_WIDTH)
+    ctx.fillStyle = '#0077b6';
+    ctx.fillRect(0, 1150, 35, 2450);
+    ctx.fillRect(GAME_WIDTH - 35, 1150, 35, 2450);
+
+    // 파도 거품 애니메이션
+    ctx.fillStyle = 'rgba(202, 240, 248, 0.75)';
+    for (let wy = 1170; wy < 3600; wy += 80) {
+        let waveLeft = Math.sin(time + wy * 0.02) * 8;
+        let waveRight = Math.cos(time + wy * 0.02) * 8;
+        ctx.beginPath(); ctx.ellipse(35 + waveLeft, wy, 10, 26, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(GAME_WIDTH - 35 + waveRight, wy, 10, 26, 0, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // 모래 언덕 물결선
+    ctx.strokeStyle = 'rgba(180, 120, 60, 0.25)';
+    ctx.lineWidth = 2;
+    for (let dy = 1200; dy < 3580; dy += 130) {
+        ctx.beginPath();
+        ctx.moveTo(40, dy);
+        ctx.bezierCurveTo(200, dy + 15, 400, dy - 15, GAME_WIDTH - 40, dy);
+        ctx.stroke();
+    }
+
+    // 🏴‍☠️ [요소 1] 난파선 (Shipwreck) - X: 150, Y: 1500
+    drawShipwreck(ctx, 150, 1500, time);
+
+    // 🌴 [요소 2] 나무를 흔드는 야자나무 (Shakable Pirate Palm Tree) - X: 450, Y: 1720
+    drawShakablePiratePalmTree(ctx, 450, 1720, time);
+
+    // ☠️🛒 [요소 3] 해적 상점 및 줄 서 있는 해적들 (Pirate Shop with Queuing Pirates) - X: 300, Y: 2150
+    drawPirateShopAndQueue(ctx, 300, 2150, time);
+}
+
+// 🏴‍☠️ 난파선 렌더링 (부러진 돛대, 찢어진 해적 깃발, 대포, 보물상자, 금화)
+function drawShipwreck(ctx, x, y, time) {
+    ctx.save();
+    ctx.translate(x, y);
+
+    // 주변 모래 퇴적 언덕
+    ctx.fillStyle = '#d4a373';
+    ctx.beginPath();
+    ctx.ellipse(0, 45, 95, 30, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 15도 기울어진 거대한 반파 난파선 선체
+    ctx.save();
+    ctx.rotate(-0.25);
+
+    // 선체 어두운 참나무 목재
+    ctx.fillStyle = '#2c1810';
+    ctx.beginPath();
+    ctx.moveTo(-75, 20);
+    ctx.quadraticCurveTo(-20, -35, 75, -20);
+    ctx.lineTo(85, 35);
+    ctx.quadraticCurveTo(0, 50, -75, 20);
+    ctx.fill();
+
+    // 나무 판자 리벳 선
+    ctx.strokeStyle = '#4a2c1a';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-65, 0); ctx.lineTo(75, -5);
+    ctx.moveTo(-60, 20); ctx.lineTo(80, 15);
+    ctx.stroke();
+
+    // 깨진 포문 & 튀어나온 녹슨 황동 대포
+    ctx.fillStyle = '#111';
+    ctx.fillRect(10, 5, 18, 14);
+    ctx.fillStyle = '#5c4d3c';
+    ctx.beginPath();
+    ctx.ellipse(28, 12, 16, 6, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 부러진 거대한 중앙 돛대
+    ctx.fillStyle = '#3e2723';
+    ctx.fillRect(-10, -50, 14, 55);
+    // 부러져 옆으로 꺾인 돛대 상단
+    ctx.save();
+    ctx.translate(-3, -50);
+    ctx.rotate(0.7);
+    ctx.fillRect(0, -45, 12, 45);
+
+    // 찢어진 검은 해골 깃발 (Jolly Roger) 휘날림
+    let flagWave = Math.sin(time * 3.5) * 0.15;
+    ctx.save();
+    ctx.translate(12, -45);
+    ctx.rotate(flagWave);
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(25, -5, 45, 5);
+    ctx.lineTo(40, 25);
+    ctx.quadraticCurveTo(20, 20, 0, 18);
+    ctx.closePath();
+    ctx.fill();
+    // 깃발 위 해골 마크 ☠️
+    ctx.font = '15px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('☠️', 22, 16);
+    ctx.restore();
+
+    ctx.restore(); // 부러진 돛대 restore
+    ctx.restore(); // 기울어진 선체 restore
+
+    // 흩어진 금화 상자 & 쏟아진 보물
+    ctx.fillStyle = '#5d4037';
+    ctx.fillRect(45, 30, 32, 22);
+    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2;
+    ctx.strokeRect(45, 30, 32, 22);
+    // 열린 상자 뚜껑
+    ctx.fillStyle = '#4e342e';
+    ctx.beginPath(); ctx.moveTo(45, 30); ctx.lineTo(55, 15); ctx.lineTo(87, 15); ctx.lineTo(77, 30); ctx.fill();
+
+    // 쏟아진 금화 (반짝임)
+    ctx.fillStyle = '#facc15';
+    for (let c = 0; c < 8; c++) {
+        let cx = 52 + (c * 7) % 36;
+        let cy = 40 + Math.sin(c * 1.5) * 6;
+        ctx.beginPath(); ctx.arc(cx, cy, 3.5, 0, Math.PI * 2); ctx.fill();
+    }
+    // 해골 장식
+    ctx.font = '18px sans-serif';
+    ctx.fillText('💀', -50, 48);
+
+    // 난파선 명판 배너
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillRect(-65, -80, 130, 24);
+    ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; ctx.strokeRect(-65, -80, 130, 24);
+    ctx.fillStyle = '#facc15'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('🏴‍☠️ 전설의 난파선', 0, -64);
+
+    ctx.restore();
+}
+
+// 🌴 흔들리는 해적 야자나무 렌더링
+function drawShakablePiratePalmTree(ctx, x, y, time) {
+    const pt = window.piratePalmTree;
+    let sway = 0;
+    if (pt.shakeTimer > 0) {
+        sway = Math.sin(Date.now() * 0.04) * (pt.shakeTimer * 0.35);
+        pt.shakeTimer--;
+    } else {
+        sway = Math.sin(time * 0.8) * 3;
+    }
+
+    ctx.save();
+    ctx.translate(x, y);
+
+    // 나무 밑동 모래
+    ctx.fillStyle = '#d4a373';
+    ctx.beginPath(); ctx.ellipse(0, 25, 45, 16, 0, 0, Math.PI * 2); ctx.fill();
+
+    // 굴곡진 갈색 야자나무 기둥
+    ctx.strokeStyle = '#8d5b2c';
+    ctx.lineWidth = 18;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(0, 20);
+    ctx.quadraticCurveTo(20 + sway * 0.5, -45, sway, -115);
+    ctx.stroke();
+
+    // 나무 마디 텍스처
+    ctx.strokeStyle = '#5c3818';
+    ctx.lineWidth = 2.5;
+    for (let seg = 10; seg > -110; seg -= 16) {
+        let segX = (seg > -50) ? (20 + sway * 0.5) * (-seg / 50) * 0.5 : sway * (seg / -115);
+        ctx.beginPath();
+        ctx.moveTo(segX - 8, seg);
+        ctx.lineTo(segX + 8, seg + 3);
+        ctx.stroke();
+    }
+
+    // 야자수 왕관 잎사귀 (상단 X: sway, Y: -115)
+    ctx.save();
+    ctx.translate(sway, -115);
+
+    // 달린 코코넛 4개
+    ctx.fillStyle = '#5c3818';
+    ctx.beginPath(); ctx.arc(-7, 6, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(7, 7, 6.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(0, 11, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(-2, 17, 5.5, 0, Math.PI * 2); ctx.fill();
+
+    // 무성한 초록색 열대 잎사귀 8가닥
+    for (let f = 0; f < 8; f++) {
+        let fAngle = (f / 8) * Math.PI * 2 + (sway * 0.015);
+        ctx.save();
+        ctx.rotate(fAngle);
+        let leafGrad = ctx.createLinearGradient(0, 0, 65, 30);
+        leafGrad.addColorStop(0, '#15803d');
+        leafGrad.addColorStop(0.6, '#22c55e');
+        leafGrad.addColorStop(1, '#166534');
+        ctx.fillStyle = leafGrad;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(35, -14, 70, 10);
+        ctx.quadraticCurveTo(35, 16, 0, 0);
+        ctx.fill();
+        ctx.restore();
+    }
+    ctx.restore(); // 왕관 restore
+
+    // 낙하 중이거나 떨어진 코코넛 업데이트 & 렌더링
+    if (Array.isArray(pt.coconuts) && pt.coconuts.length > 0) {
+        for (let i = pt.coconuts.length - 1; i >= 0; i--) {
+            let c = pt.coconuts[i];
+            // 낙하 물리
+            if (c.y < c.targetY) {
+                c.y += c.vy;
+                c.vy += 0.4;
+            } else {
+                c.y = c.targetY;
+                if (c.bounce > 0) {
+                    c.vy = -c.bounce * 1.5;
+                    c.bounce--;
+                }
+            }
+
+            // 플레이어 근접 수집 체크 (35px)
+            if (typeof player !== 'undefined' && !c.collected) {
+                let dist = Math.hypot(player.x - c.x, player.y - c.y);
+                if (dist < 38) {
+                    c.collected = true;
+                    if (typeof money !== 'undefined') money += 1000;
+                    if (typeof floatTexts !== 'undefined') {
+                        floatTexts.push({
+                            x: c.x,
+                            y: c.y - 30,
+                            text: '🥥 신선한 코코넛 획득! (+1,000 골드)',
+                            color: '#facc15',
+                            life: 80,
+                            size: 18
+                        });
+                    }
+                }
+            }
+
+            if (c.collected) {
+                pt.coconuts.splice(i, 1);
+                continue;
+            }
+
+            // 바닥 코코넛 렌더링
+            ctx.save();
+            ctx.translate(c.x - x, c.y - y);
+            ctx.font = '22px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🥥', 0, 0);
+            ctx.restore();
+        }
+    }
+
+    // 플레이어가 근처에 있을 때 상호작용 안내 띄우기 (거리 85px)
+    if (typeof player !== 'undefined') {
+        let pDist = Math.hypot(player.x - x, player.y - y);
+        if (pDist < 90) {
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(-85, -155, 170, 26, 8);
+            ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#4ade80';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🌴 [E / 스페이스] 나무 흔들기', 0, -138);
+        }
+    }
+
+    ctx.restore();
+}
+
+// ☠️🛒 해적 상점 및 줄 서 있는 해적 NPC들 렌더링
+function drawPirateShopAndQueue(ctx, x, y, time) {
+    ctx.save();
+    ctx.translate(x, y);
+
+    // 1. 해적 암시장 상점 카운터 (X: 0, Y: 0)
+    ctx.fillStyle = '#3e2723';
+    ctx.fillRect(-85, -20, 170, 44);
+    ctx.strokeStyle = '#8d6e63'; ctx.lineWidth = 2;
+    ctx.strokeRect(-85, -20, 170, 44);
+
+    // 줄무늬 차양 천막 (빨강 & 검정)
+    for (let s = -85; s < 85; s += 20) {
+        ctx.fillStyle = ((s / 20) % 2 === 0) ? '#dc2626' : '#1e293b';
+        ctx.fillRect(s, -55, 20, 35);
+    }
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(-88, -25, 176, 8);
+
+    // 상점 간판: ☠️ 해적 암시장
+    ctx.fillStyle = 'rgba(0,0,0,0.8)';
+    ctx.fillRect(-70, -78, 140, 22);
+    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.5;
+    ctx.strokeRect(-70, -78, 140, 22);
+    ctx.fillStyle = '#fef08a'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('☠️ 해적 밀수 상점 ☠️', 0, -62);
+
+    // 화약통 & 럼주병 장식
+    ctx.font = '20px sans-serif';
+    ctx.fillText('🧨', -95, 10);
+    ctx.fillText('🍺', 95, 10);
+
+    // 카운터 안쪽 상인 NPC: 외눈의 잭
+    ctx.font = '26px sans-serif';
+    ctx.fillText('🦜', -20, -18);
+    ctx.fillText('🧔‍♂️', 0, -18);
+    // 상인 대사 말풍선
+    const shopTalkIdx = Math.floor(time * 0.3) % 3;
+    const shopTalks = [
+        "밀수품만 취급한다!",
+        "해골 섬 지도를 사겠나?",
+        "줄 선 녀석들 밀지 마라!"
+    ];
+    ctx.fillStyle = 'rgba(0,0,0,0.85)';
+    ctx.beginPath(); ctx.roundRect(-75, -112, 150, 22, 6); ctx.fill();
+    ctx.strokeStyle = '#facc15'; ctx.stroke();
+    ctx.fillStyle = '#fef08a'; ctx.font = 'bold 11px sans-serif';
+    ctx.fillText('외눈의 잭: ' + shopTalks[shopTalkIdx], 0, -97);
+
+    // 2. 카운터 앞에 줄 서 있는 해적 NPC 4명 (Queue)
+    const pirates = [
+        { name: '선장 바르보', emoji: '🧑‍✈️', coat: '#dc2626', quote: '럼주 3통 내놓아라!' },
+        { name: '칼잡이 릭', emoji: '🥷', coat: '#2563eb', quote: '보물 지도는 내 거다!' },
+        { name: '포수 밥', emoji: '🧔', coat: '#059669', quote: '대포알 20발 주문이오!' },
+        { name: '감시원 핍', emoji: '🤠', coat: '#7c3aed', quote: '앞사람 빨리 좀...!' }
+    ];
+
+    pirates.forEach((p, idx) => {
+        let py = 65 + (idx * 68);
+        let px = Math.sin(time * 1.5 + idx) * 3; // 제자리 들썩임
+
+        // 대기열 발판
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.beginPath(); ctx.ellipse(px, py + 18, 20, 8, 0, 0, Math.PI * 2); ctx.fill();
+
+        // 해적 스프라이트
+        ctx.font = '28px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(p.emoji, px, py + 8);
+
+        // 해적 이름 & 말풍선 (주기적 순환)
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+        ctx.beginPath(); ctx.roundRect(px - 65, py - 32, 130, 20, 6); ctx.fill();
+        ctx.strokeStyle = p.coat; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10px sans-serif';
+        ctx.fillText(p.name + ': ' + p.quote, px, py - 18);
+    });
+
+    ctx.restore();
+}
+
+// 🎪 [공개 서버 포지 라이브 콘서트 무대 렌더링: Y 1150 ~ 3600]
+function drawPublicForgeConcertStage(ctx) {
+    const time = Date.now() * 0.002;
+    const now = new Date();
+    const isDancing = isForgeDancingTime();
+
+    // 1. 심야 콘서트 아레나 바닥
+    let stageBg = ctx.createLinearGradient(0, 1150, 0, 3600);
+    stageBg.addColorStop(0, '#0a0a14');
+    stageBg.addColorStop(0.3, '#141126');
+    stageBg.addColorStop(0.7, '#100e20');
+    stageBg.addColorStop(1, '#06050b');
+    ctx.fillStyle = stageBg;
+    ctx.fillRect(0, 1150, GAME_WIDTH, 2450);
+
+    // 네온 그리드 플로어 라인
+    ctx.strokeStyle = isDancing ? 'rgba(236, 72, 153, 0.25)' : 'rgba(56, 189, 248, 0.15)';
+    ctx.lineWidth = 1.5;
+    for (let lx = 30; lx < GAME_WIDTH; lx += 60) {
+        ctx.beginPath(); ctx.moveTo(lx, 1150); ctx.lineTo(lx, 3600); ctx.stroke();
+    }
+    for (let ly = 1170; ly < 3600; ly += 75) {
+        ctx.beginPath(); ctx.moveTo(0, ly); ctx.lineTo(GAME_WIDTH, ly); ctx.stroke();
+    }
+
+    // 2. 화려한 무빙 라이트 레이저 스포트라이트
+    drawConcertSpotlights(ctx, time, isDancing);
+
+    // 3. 콘서트 무대 구조물 (X: 300, Y: 1750)
+    drawStageStructure(ctx, 300, 1750, time, isDancing, now);
+
+    // 4. 무대 위 댄서: 포지 하우스 & 포지 케이크
+    drawStagePerformers(ctx, 300, 1750, time, isDancing, now);
+}
+
+// 🔦 무빙 라이트 스포트라이트
+function drawConcertSpotlights(ctx, time, isDancing) {
+    const speed = isDancing ? 2.5 : 0.8;
+    const colors = ['rgba(244, 63, 94, 0.22)', 'rgba(56, 189, 248, 0.22)', 'rgba(168, 85, 247, 0.22)', 'rgba(250, 204, 21, 0.22)'];
+    
+    // 4개 코너 스포트라이트
+    const corners = [
+        { x: 50, y: 1550 }, { x: GAME_WIDTH - 50, y: 1550 },
+        { x: 70, y: 2050 }, { x: GAME_WIDTH - 70, y: 2050 }
+    ];
+
+    corners.forEach((c, idx) => {
+        let angle = Math.sin(time * speed + idx * 1.5) * 0.7 + (idx % 2 === 0 ? 0.6 : -0.6);
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.rotate(angle);
+        ctx.fillStyle = colors[idx % colors.length];
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-45, 320);
+        ctx.lineTo(45, 320);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    });
+}
+
+// 🎪 콘서트 무대 구조물 (덱, 스피커 타워, LED 전광판, 미러볼)
+function drawStageStructure(ctx, cx, cy, time, isDancing, now) {
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    // 메인 무대 덱 (Width: 380, Height: 160)
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(-190, -80, 380, 160);
+    // 무대 테두리 골드 & 핑크 LED 네온 스트립
+    ctx.strokeStyle = isDancing ? (Math.sin(time * 8) > 0 ? '#ec4899' : '#facc15') : '#38bdf8';
+    ctx.lineWidth = 3.5;
+    ctx.strokeRect(-190, -80, 380, 160);
+
+    // 좌우 스테이지 계단
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(-215, -30, 25, 60);
+    ctx.fillRect(190, -30, 25, 60);
+
+    // 대형 스피커 타워 (좌 / 우)
+    [-170, 130].forEach((sx) => {
+        ctx.fillStyle = '#020617';
+        ctx.fillRect(sx, -75, 40, 95);
+        ctx.strokeStyle = '#334155'; ctx.lineWidth = 2;
+        ctx.strokeRect(sx, -75, 40, 95);
+        // 우퍼 스피커 2단
+        let pulse = isDancing ? (Math.sin(time * 12) * 2) : 0;
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath(); ctx.arc(sx + 20, -50, 12 + pulse, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(sx + 20, -15, 14 + pulse, 0, Math.PI * 2); ctx.fill();
+        // 댄스 중 음파 링 방출
+        if (isDancing) {
+            ctx.strokeStyle = 'rgba(250, 204, 21, 0.4)';
+            ctx.beginPath(); ctx.arc(sx + 20, -30, 26 + (Date.now() % 400) * 0.08, 0, Math.PI * 2); ctx.stroke();
+        }
+    });
+
+    // 상단 트러스 구조 & 대형 LED 전광판 (X: 0, Y: -125)
+    ctx.fillStyle = '#090d16';
+    ctx.fillRect(-175, -145, 350, 48);
+    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2;
+    ctx.strokeRect(-175, -145, 350, 48);
+
+    // 전광판 텍스트 및 이퀄라이저
+    if (isDancing) {
+        ctx.fillStyle = '#facc15';
+        ctx.font = 'bold 17px monospace, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('⚡ FORGE LIVE CONCERT ⚡', 0, -126);
+
+        // 비트 이퀄라이저 바 12개
+        for (let eq = -140; eq <= 140; eq += 24) {
+            let eqH = 4 + Math.abs(Math.sin(time * 6 + eq)) * 12;
+            ctx.fillStyle = (eq % 48 === 0) ? '#ec4899' : '#38bdf8';
+            ctx.fillRect(eq, -114, 16, eqH);
+        }
+    } else {
+        const startTarget = new Date(2026, 10, 1, 21, 0, 0);
+        let statusTitle = '';
+        let statusSub = '';
+        if (now < startTarget) {
+            const diffSec = Math.floor((startTarget - now) / 1000);
+            const hours = Math.floor(diffSec / 3600);
+            const minutes = Math.floor((diffSec % 3600) / 60);
+            const seconds = diffSec % 60;
+            statusTitle = '🎪 9시 포지 무대 대개막 카운트다운';
+            statusSub = `개막까지: ${hours}시간 ${minutes}분 ${seconds}초`;
+        } else {
+            const nextMin = 59 - now.getMinutes();
+            const nextSec = 59 - now.getSeconds();
+            statusTitle = '🎪 포지 라이브 무대 (휴식 중)';
+            statusSub = `다음 댄스 쇼: ${nextMin}분 ${nextSec}초 뒤`;
+        }
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 13.5px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(statusTitle, 0, -128);
+        ctx.fillStyle = '#fef08a';
+        ctx.font = 'bold 12px monospace';
+        ctx.fillText(statusSub, 0, -108);
+    }
+
+    // 중앙 회전 디스코 미러볼 (Y: -155)
+    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, -180); ctx.lineTo(0, -160); ctx.stroke();
+    ctx.fillStyle = '#e2e8f0';
+    ctx.beginPath(); ctx.arc(0, -160, 14, 0, Math.PI * 2); ctx.fill();
+    // 반짝이 조각
+    ctx.fillStyle = isDancing ? '#facc15' : '#94a3b8';
+    ctx.fillRect(-6, -164, 4, 4); ctx.fillRect(2, -162, 4, 4);
+
+    ctx.restore();
+}
+
+// 🕺 무대 위 출연진: 포지 하우스 & 포지 케이크 댄스 연출
+function drawStagePerformers(ctx, cx, cy, time, isDancing, now) {
+    const houseX = cx - 65;
+    const houseY = cy + 20;
+    const cakeX = cx + 65;
+    const cakeY = cy + 20;
+
+    let bounce = 0;
+    let tiltHouse = 0;
+    let tiltCake = 0;
+    let scalePulse = 1.0;
+
+    if (isDancing) {
+        const beat = Date.now() * 0.009;
+        bounce = Math.abs(Math.sin(beat * 1.5)) * 24;
+        tiltHouse = Math.sin(beat) * 0.2;
+        tiltCake = -Math.sin(beat + 0.4) * 0.2;
+        scalePulse = 1.0 + Math.sin(beat * 2) * 0.08;
+
+        // 댄스 파티클: 음표, 별, 하트, 폭죽
+        const particleIcons = ['🎵', '🎶', '✨', '💖', '🎉', '🍰', '🔨'];
+        for (let p = 0; p < 4; p++) {
+            let px = cx + Math.sin(time * 3 + p * 2) * 110;
+            let py = cy - bounce - (Date.now() * 0.06 + p * 40) % 110;
+            ctx.font = '16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(particleIcons[(p + Math.floor(time * 2)) % particleIcons.length], px, py);
+        }
+    } else {
+        bounce = Math.sin(time * 1.2) * 2;
+    }
+
+    // 1. 포지 하우스 렌더링
+    ctx.save();
+    ctx.translate(houseX, houseY - bounce);
+    ctx.rotate(tiltHouse);
+    ctx.scale(1.25 * scalePulse, 1.25 * scalePulse);
+    if (typeof drawCharacter === 'function') {
+        drawCharacter(ctx, { facing: 1 }, 0, 0, false, isDancing ? (Date.now() * 0.05) : 0, 'forge_house');
+    }
+    ctx.restore();
+
+    // 2. 포지 케이크 렌더링
+    ctx.save();
+    ctx.translate(cakeX, cakeY - bounce);
+    ctx.rotate(tiltCake);
+    ctx.scale(1.25 * scalePulse, 1.25 * scalePulse);
+    if (typeof drawCharacter === 'function') {
+        drawCharacter(ctx, { facing: -1 }, 0, 0, false, isDancing ? (Date.now() * 0.05) : 0, 'forge_cake');
+    }
+    ctx.restore();
+
+    // 3. 말풍선 렌더링
+    if (isDancing) {
+        const dialogIdx = Math.floor(time * 0.4) % 3;
+        const houseDialogs = ["🔥 리듬에 몸을 맡겨!", "🔨 오늘 밤은 댄스 파티다!", "⚡ 1시간마다 15분간 논스톱!"];
+        const cakeDialogs = ["🎂 달콤 바삭 케이크 스텝!", "💖 신규 업데이트 컴백 무대!", "✨ 포지와 함께 춤을!"];
+
+        // 포지 하우스 말풍선
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+        ctx.beginPath(); ctx.roundRect(houseX - 80, houseY - bounce - 85, 160, 24, 8); ctx.fill();
+        ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.fillStyle = '#fef08a'; ctx.font = 'bold 11.5px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(houseDialogs[dialogIdx], houseX, houseY - bounce - 69);
+
+        // 포지 케이크 말풍선
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+        ctx.beginPath(); ctx.roundRect(cakeX - 80, cakeY - bounce - 85, 160, 24, 8); ctx.fill();
+        ctx.strokeStyle = '#ec4899'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.fillStyle = '#fbcfe8'; ctx.font = 'bold 11.5px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(cakeDialogs[dialogIdx], cakeX, cakeY - bounce - 69);
+    } else {
+        // 휴식 모드 말풍선
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.beginPath(); ctx.roundRect(cx - 100, cy - 65, 200, 22, 6); ctx.fill();
+        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.fillStyle = '#cbd5e1'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('포지 & 케이크 휴식 중 ☕ 정각 쇼 대기', cx, cy - 50);
+    }
+}
+
+// 🌑 [시즌1 다크 공지 팝업창 열기/닫기 제어]
+function openSeason1NoticeModal() {
+    const modal = document.getElementById('season1-last-abuse-modal');
+    if (modal) modal.style.display = 'flex';
+}
+window.openSeason1NoticeModal = openSeason1NoticeModal;
+
+function closeSeason1NoticeModal(dontShowToday = false) {
+    const modal = document.getElementById('season1-last-abuse-modal');
+    if (modal) modal.style.display = 'none';
+    if (dontShowToday) {
+        try {
+            const todayKey = 'hide_season1_abuse_modal_' + new Date().toDateString();
+            localStorage.setItem(todayKey, 'true');
+        } catch(e) {}
+    }
+}
+window.closeSeason1NoticeModal = closeSeason1NoticeModal;
+
+// 자동 실행 체크 (오늘 하루 보지 않기를 누르지 않은 경우 오픈)
+try {
+    const todayKey = 'hide_season1_abuse_modal_' + new Date().toDateString();
+    if (localStorage.getItem(todayKey) !== 'true') {
+        setTimeout(openSeason1NoticeModal, 600);
+    }
+} catch(e) {}
+
+</script>
 
     <!-- 🎃 트릭 오어 트릿 & 사탕 교환 모달 -->
     <div id="trick-or-treat-modal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #2e1065, #09090b); color: white; padding: 22px 20px; border-radius: 20px; width: 92%; max-width: 440px; max-height: 88vh; overflow-y: auto; display: none; border: 2.5px solid #f97316; z-index: 950; box-shadow: 0 20px 65px rgba(0,0,0,0.95), 0 0 35px rgba(249, 115, 22, 0.4); text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
