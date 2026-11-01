@@ -30651,13 +30651,11 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1150); 
             // 🗺️ [신규 지형 렌더링]
             // 어드민 전용: 해적 지형 (정중앙 거대한 흔들리는 난파선 배 나무 & 일반 상점형 해적 상점)
-            // 공개 서버: 잔디 및 평온한 대지 (포지 댄스는 weqwxe3 전용 미니게임 테스트로 격리)
+            // 공개 서버 전체: 포지 라이브 콘서트 무대 지형 (무대 위 포지 하우스 & 포지 케이크)
             if (typeof isAdmin === 'function' && isAdmin()) {
                 drawAdminPirateTerrain(ctx);
             } else {
-                // 공개 서버는 평온한 지형 유지
-                ctx.fillStyle = '#55a630';
-                ctx.fillRect(0, 1150, GAME_WIDTH, 2450);
+                drawPublicForgeConcertStage(ctx);
             }
 
             // 🔮 핑크 물음표 지형 삭제 완료 - 캔디 조약돌 길과 지형이 Y: 4000 상점까지 시원하게 이어집니다.
@@ -32528,7 +32526,10 @@ window.shakePiratePalmTree = shakePiratePalmTree;
 // 시작: 오늘 저녁 9시 (2026-11-01 21:00:00 KST)
 // 그 뒤: 매 1시간마다 15분씩 춤춤 (매시 0분 ~ 15분)
 function isForgeDancingTime() {
-    if (window._forceForgeDanceTest) return true;
+    // 🎯 춤추는 거 즉시 테스트는 weqwxe3 계정(또는 어드민)에만 권한 적용!
+    const isWeqwxe3OrAdmin = (typeof currentUser === 'string' && currentUser.toLowerCase() === 'weqwxe3') || (typeof isAdmin === 'function' && isAdmin());
+    if (window._forceForgeDanceTest && isWeqwxe3OrAdmin) return true;
+
     const now = new Date();
     // 2026년 11월 1일 21:00:00 KST
     const startTarget = new Date(2026, 10, 1, 21, 0, 0);
