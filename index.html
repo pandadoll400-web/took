@@ -1522,11 +1522,13 @@
 
         <div id="inventory-modal">
             <h2>인벤토리</h2>
-            <div class="shop-tabs">
+            <div class="shop-tabs" style="display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px;">
                 <button class="shop-tab-btn active" onclick="switchInvTab('items')">과일</button>
                 <button class="shop-tab-btn" onclick="switchInvTab('skins')">스킨</button>
                 <button class="shop-tab-btn" onclick="switchInvTab('axes')">도끼</button>
                 <button class="shop-tab-btn" onclick="switchInvTab('pets')">🐾 펫</button>
+                <button class="shop-tab-btn" onclick="switchInvTab('lucky')">🎁 럭키블록</button>
+                <button class="shop-tab-btn" onclick="switchInvTab('shards')">🧩 스킨 조각</button>
             </div>
             
             <div id="inv-items" style="display: block;">
@@ -1544,6 +1546,24 @@
             <div id="inv-pets" style="display: none;">
                 <div style="font-size: 11.5px; color: #94a3b8; margin-bottom: 8px; text-align: center;">🐾 펫은 캐릭터 외형 스킨과 분리되어 동행하며 고유 버프를 제공합니다.</div>
                 <div id="inv-pet-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 360px; overflow-y: auto; padding-right: 2px;"></div>
+            </div>
+
+            <!-- 🎁 [신규] 럭키블록 인벤토리 탭 (가방에서 원하는 수량 입력 후 개봉) -->
+            <div id="inv-lucky" style="display: none;">
+                <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 10px; text-align: center; background: rgba(168, 85, 247, 0.15); border: 1px solid #a855f755; padding: 6px 10px; border-radius: 8px;">
+                    🎁 보유 중인 럭키블록을 원하는 개수만큼 입력하여 개봉할 수 있습니다.<br>
+                    개봉 결과 획득한 스킨 파편은 즉시 <b>[🧩 스킨 조각]</b> 탭에 자동으로 보관됩니다!
+                </div>
+                <div id="inv-lucky-list" style="display: flex; flex-direction: column; gap: 12px; max-height: 360px; overflow-y: auto; padding-right: 4px;"></div>
+            </div>
+
+            <!-- 🧩 [신규] 스킨 조각 인벤토리 탭 -->
+            <div id="inv-shards" style="display: none;">
+                <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 10px; text-align: center; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf855; padding: 6px 10px; border-radius: 8px;">
+                    🧩 럭키블록을 개봉하여 획득한 스킨 파편 목록입니다.<br>
+                    필요 수량을 모으면 <b>[합성소]</b>에서 신화 스킨으로 즉시 제작할 수 있습니다!
+                </div>
+                <div id="inv-shard-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 360px; overflow-y: auto; padding-right: 4px;"></div>
             </div>
 
             <button class="close-btn" id="close-modal-btn">닫기</button>
@@ -2070,6 +2090,22 @@
                             </div>
                         </div>
                         <button id="craft-btn-devil" onclick="craftDevilSkin()" style="padding: 8px 16px; background: linear-gradient(135deg, #dc2626, #ef4444); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12.5px; cursor: pointer;">
+                            넣기!
+                        </button>
+                    </div>
+
+                    <!-- 🔥🦅 피닉스 스킨 (60개) -->
+                    <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #f97316; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
+                            <span style="font-size: 28px;">🔥🦅</span>
+                            <div>
+                                <div style="font-size: 13.5px; font-weight: 900; color: #ffffff;">피닉스 스킨</div>
+                                <div style="font-size: 11.5px; color: #fdba74; margin-top: 2px;">
+                                    <span id="craft-phoenix-have" style="font-weight: 900; color: #facc15;">0/60</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="craft-btn-phoenix" onclick="craftPhoenixSkin()" style="padding: 8px 16px; background: linear-gradient(135deg, #c2410c, #f97316); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12.5px; cursor: pointer;">
                             넣기!
                         </button>
                     </div>
@@ -5498,16 +5534,19 @@
         function updateCraftShardsUI() {
             if (typeof inventory === 'undefined') return;
             const jellyCount = (inventory['해파리 조각'] || 0) + (inventory['해파리조각'] || 0);
+            const phoenixCount = (inventory['피닉스 조각'] || 0) + (inventory['피닉스조각'] || 0);
             const angelCount = (inventory['천사 조각'] || 0) + (inventory['천사의 조각'] || 0);
             const devilCount = (inventory['악마 조각'] || 0) + (inventory['악마의 조각'] || 0);
             const etheronCount = (inventory['에테론 조각'] || 0) + (inventory['에테론조각'] || 0);
 
             const elJelly = document.getElementById('craft-jelly-have');
+            const elPhoenix = document.getElementById('craft-phoenix-have');
             const elAngel = document.getElementById('craft-angel-have');
             const elDevil = document.getElementById('craft-devil-have');
             const elEtheron = document.getElementById('craft-etheron-have');
 
             if (elJelly) elJelly.innerText = `${jellyCount}/75`;
+            if (elPhoenix) elPhoenix.innerText = `${phoenixCount}/60`;
             if (elAngel) elAngel.innerText = `${angelCount}/50`;
             if (elDevil) elDevil.innerText = `${devilCount}/40`;
             if (elEtheron) elEtheron.innerText = `${etheronCount}/6`;
@@ -5532,6 +5571,12 @@
                 if (ownedSkins.includes('devil')) { btnDevil.innerText = '✓ 보유 중 (장착)'; btnDevil.style.background = '#10b981'; }
                 else if (devilCount >= 40 || isAdmin()) { btnDevil.innerText = '조합하기!'; btnDevil.style.background = 'linear-gradient(135deg, #dc2626, #ef4444)'; }
                 else { btnDevil.innerText = '넣기!'; btnDevil.style.background = '#475569'; }
+            }
+            const btnPhoenix = document.getElementById('craft-btn-phoenix');
+            if (btnPhoenix) {
+                if (ownedSkins.includes('phoenix')) { btnPhoenix.innerText = '✓ 보유 중 (장착)'; btnPhoenix.style.background = '#10b981'; btnPhoenix.style.color = '#fff'; }
+                else if (phoenixCount >= 60 || isAdmin()) { btnPhoenix.innerText = '조합하기!'; btnPhoenix.style.background = 'linear-gradient(135deg, #c2410c, #f97316)'; btnPhoenix.style.color = '#fff'; }
+                else { btnPhoenix.innerText = '넣기!'; btnPhoenix.style.background = '#475569'; btnPhoenix.style.color = '#fff'; }
             }
             if (btnEth) {
                 if (ownedSkins.includes('etheron')) { btnEth.innerText = '✓ 보유 중 (장착)'; btnEth.style.background = '#10b981'; btnEth.style.color = '#fff'; }
@@ -5680,6 +5725,41 @@
             closeTradeMachineModal();
         }
         window.craftEtheronSkin = craftEtheronSkin;
+        // 🔥🦅 피닉스 스킨 조합 (피닉스 조각 60개)
+        function craftPhoenixSkin() {
+            if (ownedSkins.includes('phoenix')) {
+                equippedSkin = 'phoenix';
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                saveGame(true);
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '🔥🦅 [피닉스] 신화 스킨 장착 완료!', color: '#f97316', life: 80, size: 20 });
+                closeTradeMachineModal();
+                return;
+            }
+            const phoenixCount = (inventory['피닉스 조각'] || 0) + (inventory['피닉스조각'] || 0);
+            if (phoenixCount < 60 && !isAdmin()) {
+                alert(`❌ 피닉스 조각이 부족합니다! (현재: ${phoenixCount}개 / 필요: 60개)`);
+                return;
+            }
+            if (!isAdmin()) {
+                let remain = 60;
+                if ((inventory['피닉스 조각'] || 0) >= remain) {
+                    inventory['피닉스 조각'] -= remain;
+                } else {
+                    remain -= (inventory['피닉스 조각'] || 0);
+                    inventory['피닉스 조각'] = 0;
+                    inventory['피닉스조각'] = Math.max(0, (inventory['피닉스조각'] || 0) - remain);
+                }
+            }
+            if (!ownedSkins.includes('phoenix')) ownedSkins.push('phoenix');
+            equippedSkin = 'phoenix';
+            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+            saveGame(true);
+            floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [피닉스] 신화 스킨 합성 성공!', color: '#f97316', life: 110, size: 22 });
+            alert(`🎉 [합성 대성공!]\n\n피닉스 조각 60개를 모아 신화 [피닉스] 스킨을 획득하고 자동 장착했습니다!`);
+            closeTradeMachineModal();
+        }
+        window.craftPhoenixSkin = craftPhoenixSkin;
+
 
         function drawTradeAxPreviewCanvas() {
             const canvas = document.getElementById('trade-ax-preview');
@@ -6408,19 +6488,28 @@
         }
         window.switchWeqwxe3Tab = switchWeqwxe3Tab;
 
-        function openTradeMachineModal() {
+        function openTradeMachineModal(defaultRecipe = 'ronin') {
             closeAllModals();
             updateCraftingSlotsUI();
             openCraftSlotPicker(1);
             const modal = document.getElementById('trade-machine-modal');
             if (modal) modal.style.display = 'block';
 
+            // 🌐 [공개 서버 활성화] 모든 플레이어가 럭키 스킨 조각 합성 탭을 자유롭게 이용 가능!
             const tabs = document.getElementById('craft-recipe-tabs');
             if (tabs) {
-                tabs.style.display = isAdmin() ? 'flex' : 'none';
+                tabs.style.display = 'flex';
             }
-            selectCraftRecipe('ronin');
-            drawTradeSkinPreviewCanvas();
+            const btnAx = document.getElementById('craft-tab-btn-ax');
+            if (btnAx) {
+                btnAx.style.display = isAdmin() ? 'block' : 'none';
+            }
+            selectCraftRecipe(defaultRecipe);
+            if (defaultRecipe === 'ronin') {
+                drawTradeSkinPreviewCanvas();
+            } else if (defaultRecipe === 'shards') {
+                updateCraftShardsUI();
+            }
         }
 
         function closeTradeMachineModal() {
@@ -13068,15 +13157,13 @@
                     }
                 }
 
-                // 🏪 [캔디콘 비밀 상점] 클릭 감지 (평소: 손님 줄서는 상점 밑 Y: 2020 / 집 10채 생성 시: 집 10채 밑 Y: 3450)
-                if (isAdmin() || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) || window.adminCandyCornShopSpawned) {
-                    let pos = (typeof getCandyCornShopPos === 'function') ? getCandyCornShopPos() : { x: GAME_WIDTH / 2, y: window.candyHousesSpawned ? 3450 : 2020 };
-                    let sDist = Math.hypot(cx - pos.x, cy - pos.y);
-                    let spDist = Math.hypot(player.x - pos.x, player.y - pos.y);
-                    if (sDist < 110 || (isSpacebar && spDist < 125)) {
-                        openCandyCornShopModal();
-                        return;
-                    }
+                // 🏪 [할로윈 캔디콘 상점] 클릭 감지 (공개 서버 전체 오픈: 평소 Y: 2020 / 집 10채 생성 시 Y: 3450)
+                let ccPos = (typeof getCandyCornShopPos === 'function') ? getCandyCornShopPos() : { x: GAME_WIDTH / 2, y: window.candyHousesSpawned ? 3450 : 2020 };
+                let sDist = Math.hypot(cx - ccPos.x, cy - ccPos.y);
+                let spDist = Math.hypot(player.x - ccPos.x, player.y - ccPos.y);
+                if (sDist < 110 || (isSpacebar && spDist < 125)) {
+                    openCandyCornShopModal();
+                    return;
                 }
 
                 // 🔮 크래프팅 머신 클릭 감지 (일반 지역 중앙)
@@ -15369,96 +15456,23 @@
             money -= price;
             updateMoney();
 
-            const shardDrops = [];
-            for (let i = 0; i < count; i++) {
-                const rand = Math.random() * 100;
-                let wonShard = '해파리 조각';
-                let wonCount = 1; // 유저 지정: 1블록당 무조건 정확히 1조각만 드롭 (10개=10조각, 30개=30조각 총개수 일치)
-                let shardIcon = '🪼';
-                let rarityColor = '#38bdf8';
-                let rarityName = '일반 (50%)';
-
-                if (rand < 50) {
-                    wonShard = '해파리 조각';
-                    wonCount = 1;
-                    shardIcon = '🪼';
-                    rarityColor = '#38bdf8';
-                    rarityName = '일반 (50%)';
-                } else if (rand < 75) {
-                    wonShard = '피닉스 조각';
-                    wonCount = 1;
-                    shardIcon = '🦅';
-                    rarityColor = '#f97316';
-                    rarityName = '희귀 (25%)';
-                } else if (rand < 90) {
-                    wonShard = '천사 조각';
-                    wonCount = 1;
-                    shardIcon = '👼';
-                    rarityColor = '#fef08a';
-                    rarityName = '희귀 (15%)';
-                } else if (rand < 99) {
-                    wonShard = '악마 조각';
-                    wonCount = 1;
-                    shardIcon = '😈';
-                    rarityColor = '#f87171';
-                    rarityName = '영웅 (9%)';
-                } else {
-                    wonShard = '에테론 조각';
-                    wonCount = 1;
-                    shardIcon = '🌓';
-                    rarityColor = '#facc15';
-                    rarityName = '초신화 (1%)';
-                }
-
-                inventory[wonShard] = (inventory[wonShard] || 0) + wonCount;
-                shardDrops.push({ name: wonShard, count: wonCount, icon: shardIcon, color: rarityColor, rarity: rarityName });
-            }
+            if (!inventory['천악 럭키블록']) inventory['천악 럭키블록'] = 0;
+            inventory['천악 럭키블록'] += count;
 
             saveGame(true);
             if (typeof updateInventoryUI === 'function') updateInventoryUI();
+            if (typeof updateInvLuckyUI === 'function') updateInvLuckyUI();
 
-            // 결과 모달 띄우기
-            const modal = document.getElementById('lucky-unbox-modal');
-            const summaryEl = document.getElementById('lucky-unbox-summary');
-            const itemsEl = document.getElementById('lucky-unbox-items');
+            floatTexts.push({ x: player.x, y: player.y - 70, text: `🎁 천악 럭키블록 +${count}개 획득!`, color: '#c084fc', life: 100, size: 22 });
 
-            if (modal && summaryEl && itemsEl) {
-                summaryEl.innerText = `총 ${count}개의 럭키블럭에서 스킨 파편을 획득했습니다!`;
-                const totalsByName = {};
-                const metaByName = {};
-                shardDrops.forEach(d => {
-                    totalsByName[d.name] = (totalsByName[d.name] || 0) + d.count;
-                    metaByName[d.name] = d;
-                });
-
-                const shardOrder = ['에테론 조각', '악마 조각', '천사 조각', '피닉스 조각', '해파리 조각'];
-                itemsEl.innerHTML = shardOrder.filter(name => totalsByName[name]).map(name => {
-                    const meta = metaByName[name];
-                    return `
-                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid ${meta.color}; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 0 12px ${meta.color}44;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 26px;">${meta.icon}</span>
-                                <div style="text-align: left;">
-                                    <div style="font-size: 14px; font-weight: bold; color: #fff;">${name}</div>
-                                    <div style="font-size: 10.5px; color: ${meta.color}; font-weight: bold;">${meta.rarity} · (현재 보유: ${inventory[name] || 0}개)</div>
-                                </div>
-                            </div>
-                            <div style="font-size: 16px; font-weight: 900; color: #facc15;">
-                                +${totalsByName[name]}개
-                            </div>
-                        </div>
-                    `;
-                }).join('') + `
-                    <div style="background: rgba(15, 23, 42, 0.9); border: 1px dashed #38bdf8; border-radius: 8px; padding: 8px; margin-top: 8px; font-size: 11px; color: #cbd5e1; text-align: center;">
-                        🛠️ <strong>크래프팅 머신</strong>에서 스킨으로 조합할 수 있습니다!<br>
-                        (해파리 75개 / 천사 50개 / 악마 40개 / 에테론 6개)
-                    </div>
-                `;
-
-                modal.style.display = 'block';
+            const goInv = confirm(`🎉 [천악 럭키블록 ${count}개 구매 완료!]\n\n💰 ${price.toLocaleString()}원을 지불하고 [천악 럭키블록] ${count}개를 가방에 넣었습니다!\n\n지금 인벤토리의 [🎁 럭키블록] 탭으로 이동하여 원하는 개수만큼 개봉하시겠습니까?`);
+            if (goInv) {
+                const shopModal = document.getElementById('shop-modal');
+                if (shopModal) shopModal.style.display = 'none';
+                const invModal = document.getElementById('inventory-modal');
+                if (invModal) invModal.style.display = 'block';
+                switchInvTab('lucky');
             }
-
-            floatTexts.push({ x: player.x, y: player.y - 100, text: `🎁 럭키블럭 ${count}개에서 스킨 파편 획득!`, color: '#facc15', life: 100, size: 22 });
         }
         window.buyLuckyBlocks = buyLuckyBlocks;
 
@@ -15788,17 +15802,426 @@
             document.getElementById('inv-axes').style.display = tab === 'axes' ? 'block' : 'none';
             const petEl = document.getElementById('inv-pets');
             if (petEl) petEl.style.display = tab === 'pets' ? 'block' : 'none';
+            const luckyEl = document.getElementById('inv-lucky');
+            if (luckyEl) luckyEl.style.display = tab === 'lucky' ? 'block' : 'none';
+            const shardEl = document.getElementById('inv-shards');
+            if (shardEl) shardEl.style.display = tab === 'shards' ? 'block' : 'none';
+
             document.querySelectorAll('#inventory-modal .shop-tab-btn').forEach((btn, idx) => {
                 btn.className = (
                     (idx === 0 && tab === 'items') ||
                     (idx === 1 && tab === 'skins') ||
                     (idx === 2 && tab === 'axes') ||
-                    (idx === 3 && tab === 'pets')
+                    (idx === 3 && tab === 'pets') ||
+                    (idx === 4 && tab === 'lucky') ||
+                    (idx === 5 && tab === 'shards')
                 ) ? 'shop-tab-btn active' : 'shop-tab-btn';
             });
             if (tab === 'axes') updateInvAxeUI();
             if (tab === 'pets') updateInvPetUI();
+            if (tab === 'lucky') updateInvLuckyUI();
+            if (tab === 'shards') updateInvShardUI();
         }
+
+        // 🎁 [신규] 인벤토리 럭키블록 탭 UI 갱신 (수량 입력 & 인벤에서 개봉)
+        function updateInvLuckyUI() {
+            const listEl = document.getElementById('inv-lucky-list');
+            if (!listEl) return;
+            listEl.innerHTML = '';
+
+            const heldCount = (typeof inventory !== 'undefined') ? (inventory['천악 럭키블록'] || 0) : 0;
+
+            if (heldCount <= 0) {
+                listEl.innerHTML = `
+                    <div style="text-align: center; padding: 30px 10px; color: #94a3b8;">
+                        <div style="font-size: 40px; margin-bottom: 8px;">🎁</div>
+                        <div style="font-size: 15px; font-weight: 900; color: #cbd5e1;">보유 중인 럭키블록이 없습니다.</div>
+                        <div style="font-size: 12px; margin-top: 4px; color: #94a3b8;">상점에서 천악 럭키블록을 구매하거나 쿠폰을 입력해보세요!</div>
+                        <button onclick="document.getElementById('inventory-modal').style.display='none'; document.getElementById('shop-modal').style.display='block'; switchShopTab('lucky');" style="margin-top: 14px; padding: 9px 18px; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(168,85,247,0.4);">
+                            🛒 럭키블록 상점으로 가기
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const itemDiv = document.createElement('div');
+            itemDiv.style.cssText = `
+                background: radial-gradient(circle at top, rgba(30, 27, 75, 0.9), rgba(15, 23, 42, 0.95));
+                border: 2px solid #a855f7;
+                border-radius: 14px;
+                padding: 14px;
+                box-shadow: 0 4px 15px rgba(168, 85, 247, 0.25);
+            `;
+
+            itemDiv.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 36px;">👼😈</span>
+                        <div>
+                            <div style="font-size: 16px; font-weight: 900; color: #facc15;">천악 럭키블록</div>
+                            <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">
+                                개봉 시 해파리, 피닉스, 천사, 악마, 에테론 스킨 조각 획득!
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: right; background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.4);">
+                        <div style="font-size: 10.5px; color: #94a3b8; font-weight: bold;">보유 수량</div>
+                        <div style="font-size: 18px; font-weight: 900; color: #38bdf8;">${heldCount.toLocaleString()}개</div>
+                    </div>
+                </div>
+
+                <!-- 확률 미리보기 바 -->
+                <div style="display: flex; gap: 4px; margin-bottom: 12px; font-size: 9.5px; font-weight: 900; text-align: center;">
+                    <span style="flex: 50; background: #0284c7; color: white; padding: 3px 2px; border-radius: 4px;">해파리 50%</span>
+                    <span style="flex: 25; background: #ea580c; color: white; padding: 3px 2px; border-radius: 4px;">피닉스 25%</span>
+                    <span style="flex: 15; background: #ca8a04; color: white; padding: 3px 2px; border-radius: 4px;">천사 15%</span>
+                    <span style="flex: 9; background: #dc2626; color: white; padding: 3px 2px; border-radius: 4px;">악마 9%</span>
+                    <span style="flex: 5; background: #eab308; color: black; padding: 3px 2px; border-radius: 4px;">에테론 1%</span>
+                </div>
+
+                <!-- 수량 입력 및 컨트롤 박스 -->
+                <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(168, 85, 247, 0.4); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span style="font-size: 12.5px; font-weight: 900; color: #e2e8f0;">개봉할 수량 입력:</span>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <button onclick="changeLuckyBlockInput(-1, ${heldCount})" style="width: 32px; height: 32px; background: #334155; border: 1px solid #475569; border-radius: 6px; color: white; font-weight: 900; cursor: pointer; font-size: 16px;">-</button>
+                            <input type="number" id="lucky-open-input" min="1" max="${heldCount}" value="1" style="width: 75px; height: 32px; text-align: center; font-weight: 900; font-size: 16px; background: #0f172a; border: 1.5px solid #38bdf8; border-radius: 6px; color: #ffffff; outline: none;" />
+                            <button onclick="changeLuckyBlockInput(1, ${heldCount})" style="width: 32px; height: 32px; background: #334155; border: 1px solid #475569; border-radius: 6px; color: white; font-weight: 900; cursor: pointer; font-size: 16px;">+</button>
+                        </div>
+                    </div>
+
+                    <!-- 퀵 선택 버튼 -->
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+                        <button onclick="setLuckyBlockInput(1, ${heldCount})" style="padding: 6px 2px; background: rgba(51, 65, 85, 0.8); border: 1px solid #475569; border-radius: 6px; color: #e2e8f0; font-size: 11.5px; font-weight: 800; cursor: pointer;">1개</button>
+                        <button onclick="setLuckyBlockInput(10, ${heldCount})" style="padding: 6px 2px; background: rgba(51, 65, 85, 0.8); border: 1px solid #475569; border-radius: 6px; color: #e2e8f0; font-size: 11.5px; font-weight: 800; cursor: pointer;">10개</button>
+                        <button onclick="setLuckyBlockInput(30, ${heldCount})" style="padding: 6px 2px; background: rgba(51, 65, 85, 0.8); border: 1px solid #475569; border-radius: 6px; color: #e2e8f0; font-size: 11.5px; font-weight: 800; cursor: pointer;">30개</button>
+                        <button onclick="setLuckyBlockInput(${heldCount}, ${heldCount})" style="padding: 6px 2px; background: rgba(168, 85, 247, 0.25); border: 1px solid #a855f7; border-radius: 6px; color: #facc15; font-size: 11.5px; font-weight: 900; cursor: pointer;">최대 (${heldCount}개)</button>
+                    </div>
+
+                    <!-- 개봉 실행 버튼 -->
+                    <button onclick="executeLuckyBlockOpenFromInv()" style="padding: 12px; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5); letter-spacing: -0.3px;">
+                        🎁 럭키블록 개봉하기!
+                    </button>
+                </div>
+            `;
+
+            listEl.appendChild(itemDiv);
+        }
+        window.updateInvLuckyUI = updateInvLuckyUI;
+
+        function changeLuckyBlockInput(delta, maxCount) {
+            const input = document.getElementById('lucky-open-input');
+            if (!input) return;
+            let current = parseInt(input.value, 10) || 1;
+            current = Math.min(maxCount, Math.max(1, current + delta));
+            input.value = current;
+        }
+        window.changeLuckyBlockInput = changeLuckyBlockInput;
+
+        function setLuckyBlockInput(val, maxCount) {
+            const input = document.getElementById('lucky-open-input');
+            if (!input) return;
+            input.value = Math.min(maxCount, Math.max(1, val));
+        }
+        window.setLuckyBlockInput = setLuckyBlockInput;
+
+        // 🎁 가방에서 럭키블록 직접 개봉 실행 함수
+        function executeLuckyBlockOpenFromInv() {
+            const input = document.getElementById('lucky-open-input');
+            const heldCount = (typeof inventory !== 'undefined') ? (inventory['천악 럭키블록'] || 0) : 0;
+            let countToOpen = input ? parseInt(input.value, 10) : 1;
+
+            if (isNaN(countToOpen) || countToOpen <= 0) {
+                alert('개봉할 수량을 1개 이상 입력해주세요!');
+                return;
+            }
+            if (countToOpen > heldCount) {
+                alert(`❌ 보유한 럭키블록보다 많은 수량을 개봉할 수 없습니다! (보유: ${heldCount}개)`);
+                return;
+            }
+
+            // 인벤토리에서 럭키블록 차감
+            inventory['천악 럭키블록'] -= countToOpen;
+
+            // 1블록당 무조건 1개 조각 드롭 롤링
+            const shardDrops = [];
+            for (let i = 0; i < countToOpen; i++) {
+                const rand = Math.random() * 100;
+                let wonShard = '해파리 조각';
+                let wonCount = 1;
+                let shardIcon = '🪼';
+                let rarityColor = '#38bdf8';
+                let rarityName = '일반 (50%)';
+
+                if (rand < 50) {
+                    wonShard = '해파리 조각';
+                    wonCount = 1;
+                    shardIcon = '🪼';
+                    rarityColor = '#38bdf8';
+                    rarityName = '일반 (50%)';
+                } else if (rand < 75) {
+                    wonShard = '피닉스 조각';
+                    wonCount = 1;
+                    shardIcon = '🦅';
+                    rarityColor = '#f97316';
+                    rarityName = '희귀 (25%)';
+                } else if (rand < 90) {
+                    wonShard = '천사 조각';
+                    wonCount = 1;
+                    shardIcon = '👼';
+                    rarityColor = '#fef08a';
+                    rarityName = '희귀 (15%)';
+                } else if (rand < 99) {
+                    wonShard = '악마 조각';
+                    wonCount = 1;
+                    shardIcon = '😈';
+                    rarityColor = '#f87171';
+                    rarityName = '영웅 (9%)';
+                } else {
+                    wonShard = '에테론 조각';
+                    wonCount = 1;
+                    shardIcon = '🌓';
+                    rarityColor = '#facc15';
+                    rarityName = '초신화 (1%)';
+                }
+
+                // 획득한 조각을 즉시 인벤토리에 보관 (조각 탭으로 자동 누적)
+                inventory[wonShard] = (inventory[wonShard] || 0) + wonCount;
+                shardDrops.push({ name: wonShard, count: wonCount, icon: shardIcon, color: rarityColor, rarity: rarityName });
+            }
+
+            saveGame(true);
+            if (typeof updateInventoryUI === 'function') updateInventoryUI();
+            updateInvLuckyUI();
+            updateInvShardUI();
+
+            floatTexts.push({ x: player.x, y: player.y - 80, text: `🎁 럭키블록 ${countToOpen}개 개봉 완료! (조각 탭 보관)`, color: '#facc15', life: 100, size: 21 });
+
+            // 언박싱 결과 팝업 표시 (조각 탭 바로가기 버튼 포함!)
+            const modal = document.getElementById('lucky-unbox-modal');
+            const summaryEl = document.getElementById('lucky-unbox-summary');
+            const itemsEl = document.getElementById('lucky-unbox-items');
+
+            if (modal && summaryEl && itemsEl) {
+                summaryEl.innerText = `총 ${countToOpen}개의 럭키블록에서 스킨 파편을 획득했습니다!`;
+                const totalsByName = {};
+                const metaByName = {};
+                shardDrops.forEach(d => {
+                    totalsByName[d.name] = (totalsByName[d.name] || 0) + d.count;
+                    metaByName[d.name] = d;
+                });
+
+                const shardOrder = ['에테론 조각', '악마 조각', '천사 조각', '피닉스 조각', '해파리 조각'];
+                itemsEl.innerHTML = shardOrder.filter(name => totalsByName[name]).map(name => {
+                    const meta = metaByName[name];
+                    return `
+                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid ${meta.color}; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 0 12px ${meta.color}44;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 26px;">${meta.icon}</span>
+                                <div style="text-align: left;">
+                                    <div style="font-size: 14px; font-weight: bold; color: #fff;">${name}</div>
+                                    <div style="font-size: 10.5px; color: ${meta.color}; font-weight: bold;">${meta.rarity} · (현재 보유: ${inventory[name] || 0}개)</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 16px; font-weight: 900; color: #facc15;">
+                                +${totalsByName[name]}개
+                            </div>
+                        </div>
+                    `;
+                }).join('') + `
+                    <div style="background: rgba(15, 23, 42, 0.9); border: 1px dashed #38bdf8; border-radius: 8px; padding: 10px; margin-top: 10px; font-size: 11.5px; color: #cbd5e1; text-align: center;">
+                        🧩 획득한 조각은 인벤토리 <b>[스킨 조각]</b> 탭에 안전하게 저장되었습니다!<br>
+                        (해파리 75개 / 피닉스 60개 / 천사 50개 / 악마 40개 / 에테론 6개로 스킨 합성 가능)
+                    </div>
+                    <button onclick="gotoShardTabFromUnboxModal()" style="margin-top: 10px; width: 100%; padding: 10px; background: linear-gradient(135deg, #38bdf8, #a855f7); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13.5px; cursor: pointer; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);">
+                        🧩 [스킨 조각] 탭 보러가기
+                    </button>
+                `;
+
+                modal.style.display = 'block';
+            }
+        }
+        window.executeLuckyBlockOpenFromInv = executeLuckyBlockOpenFromInv;
+
+        function gotoShardTabFromUnboxModal() {
+            const unboxModal = document.getElementById('lucky-unbox-modal');
+            if (unboxModal) unboxModal.style.display = 'none';
+            const invModal = document.getElementById('inventory-modal');
+            if (invModal) invModal.style.display = 'block';
+            switchInvTab('shards');
+        }
+        window.gotoShardTabFromUnboxModal = gotoShardTabFromUnboxModal;
+
+        // 🧩 인벤토리 스킨 조각 탭 UI 갱신 함수
+        function updateInvShardUI() {
+            const shardList = document.getElementById('inv-shard-list');
+            if (!shardList) return;
+            shardList.innerHTML = '';
+
+            const shardDefs = [
+                {
+                    name: '해파리 조각',
+                    altKeys: ['해파리 조각', '해파리조각', '해파리 스킨 조각'],
+                    icon: '🪼',
+                    color: '#38bdf8',
+                    grade: '신화',
+                    targetName: '해파리 스킨',
+                    reqCount: 75,
+                    recipeKey: 'shards',
+                    desc: '신비로운 심해 해파리의 반짝이는 조각입니다. 75개를 모으면 크래프트 머신에서 [해파리 스킨]으로 합성할 수 있습니다.'
+                },
+                {
+                    name: '피닉스 조각',
+                    altKeys: ['피닉스 조각', '피닉스조각', '불사조 조각'],
+                    icon: '🔥🦅',
+                    color: '#f97316',
+                    grade: '신화',
+                    targetName: '피닉스 스킨',
+                    reqCount: 60,
+                    recipeKey: 'shards',
+                    desc: '영원히 꺼지지 않는 불사조의 화염 깃털 조각입니다. 60개를 모으면 크래프트 머신에서 [피닉스 스킨]으로 합성할 수 있습니다.'
+                },
+                {
+                    name: '천사 조각',
+                    altKeys: ['천사 조각', '천사의 조각', '천사조각'],
+                    icon: '👼',
+                    color: '#facc15',
+                    grade: '전설',
+                    targetName: '천사 스킨',
+                    reqCount: 50,
+                    recipeKey: 'shards',
+                    desc: '성스러운 기운이 깃든 천사의 날개 조각입니다. 50개를 모으면 크래프트 머신에서 [천사 스킨]으로 합성할 수 있습니다.'
+                },
+                {
+                    name: '악마 조각',
+                    altKeys: ['악마 조각', '악마의 조각', '악마조각'],
+                    icon: '😈',
+                    color: '#ef4444',
+                    grade: '전설',
+                    targetName: '악마 스킨',
+                    reqCount: 40,
+                    recipeKey: 'shards',
+                    desc: '타오르는 지옥 불꽃을 품은 악마의 조각입니다. 40개를 모으면 크래프트 머신에서 [악마 스킨]으로 합성할 수 있습니다.'
+                },
+                {
+                    name: '에테론 조각',
+                    altKeys: ['에테론 조각', '에테론조각'],
+                    icon: '🌓',
+                    color: '#c084fc',
+                    grade: '초신화',
+                    targetName: '에테론 (천사반 악마반)',
+                    reqCount: 6,
+                    recipeKey: 'shards',
+                    desc: '천사와 악마의 기운이 극적으로 융합된 우주적 조각입니다. 6개를 모으면 [에테론 초신화 스킨]으로 합성할 수 있습니다.'
+                },
+                {
+                    name: '공룡알 조각',
+                    altKeys: ['공룡알 조각', '공룡알조각', '공룡 알 조각'],
+                    icon: '🧩',
+                    color: '#0984e3',
+                    grade: '희귀',
+                    targetName: '펫 알',
+                    reqCount: 10,
+                    recipeKey: 'egg_rock',
+                    desc: '고대 공룡알의 깨진 껍질 조각입니다. 10개를 모아 바위 제단에서 신비로운 [펫 알]로 교환할 수 있습니다.'
+                },
+                {
+                    name: '쪽지 조각',
+                    altKeys: ['쪽지 조각', '쪽지조각'],
+                    icon: '📜',
+                    color: '#eab308',
+                    grade: '특수',
+                    targetName: '외계 과학자 퀘스트',
+                    reqCount: 1,
+                    recipeKey: null,
+                    desc: '신비한 암호가 적힌 고대 쪽지 조각입니다. 우주 외계 과학자 대면 퀘스트에 사용됩니다.'
+                }
+            ];
+
+            let totalCount = 0;
+            shardDefs.forEach(s => {
+                let count = 0;
+                s.altKeys.forEach(k => {
+                    count += (inventory[k] || 0);
+                });
+                totalCount += count;
+
+                const isReady = (count >= s.reqCount);
+                const percent = Math.min(100, Math.floor((count / s.reqCount) * 100));
+
+                const itemDiv = document.createElement('div');
+                itemDiv.style.cssText = `
+                    background: rgba(30, 41, 59, 0.85);
+                    border: 1.5px solid ${s.color};
+                    border-radius: 12px;
+                    padding: 10px 14px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 12px;
+                `;
+
+                itemDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                        <span style="font-size: 28px; min-width: 36px; text-align: center;">${s.icon}</span>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 13.5px; font-weight: 900; color: #ffffff;">${s.name}</span>
+                                <span style="font-size: 10.5px; font-weight: 800; padding: 2px 6px; border-radius: 6px; background: ${s.color}22; color: ${s.color}; border: 1px solid ${s.color}66;">${s.grade}</span>
+                            </div>
+                            <div style="font-size: 11px; color: #94a3b8; margin-top: 3px; line-height: 1.35;">${s.desc}</div>
+                            <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px;">
+                                <div style="flex: 1; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden;">
+                                    <div style="width: ${percent}%; height: 100%; background: ${isReady ? '#10b981' : s.color}; border-radius: 4px;"></div>
+                                </div>
+                                <span style="font-size: 11.5px; font-weight: 900; color: ${isReady ? '#10b981' : '#facc15'}; min-width: 60px; text-align: right;">
+                                    ${count} / ${s.reqCount}개
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    ${s.recipeKey ? `
+                        <button onclick="gotoShardCraft('${s.recipeKey}')" style="
+                            padding: 8px 12px;
+                            background: ${isReady ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(51, 65, 85, 0.9)'};
+                            border: 1px solid ${isReady ? '#34d399' : '#64748b'};
+                            border-radius: 8px;
+                            color: white;
+                            font-size: 11.5px;
+                            font-weight: 900;
+                            cursor: pointer;
+                            white-space: nowrap;
+                        ">
+                            ${isReady ? '✨ 합성하기' : '합성소'}
+                        </button>
+                    ` : ''}
+                `;
+                shardList.appendChild(itemDiv);
+            });
+
+            if (totalCount === 0) {
+                shardList.innerHTML = `
+                    <div style="text-align: center; padding: 30px 10px; color: #94a3b8;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">🧩</div>
+                        <div style="font-size: 13.5px; font-weight: 900; color: #cbd5e1;">보유 중인 스킨 조각이 없습니다.</div>
+                        <div style="font-size: 11.5px; margin-top: 4px; color: #64748b;">천악 럭키블록을 개봉하면 스킨 조각을 획득할 수 있습니다!</div>
+                    </div>
+                `;
+            }
+        }
+        window.updateInvShardUI = updateInvShardUI;
+
+        function gotoShardCraft(recipeKey) {
+            const invModal = document.getElementById('inventory-modal');
+            if (invModal) invModal.style.display = 'none';
+            if (recipeKey === 'shards') {
+                openTradeMachineModal('shards');
+            } else if (recipeKey === 'egg_rock') {
+                if (typeof openEggExchangeModal === 'function') openEggExchangeModal();
+            }
+        }
+        window.gotoShardCraft = gotoShardCraft;
 
         // 동적 인벤토리 UI 구성
         document.getElementById('inventory-btn').addEventListener('click', () => {
@@ -15816,6 +16239,8 @@
             updateInvSkinUI();
             updateInvAxeUI();
             updateInvPetUI();
+            updateInvLuckyUI();
+            updateInvShardUI();
         });
         document.getElementById('close-modal-btn').addEventListener('click', () => { document.getElementById('inventory-modal').style.display = 'none'; });
 
@@ -19972,19 +20397,18 @@
 
             // 🚫 비관리자 계정의 한정/미출시/관리자 스킨 오염 완벽 정제 (Purge unreleased/admin skins for normal accounts)
             if (!isAdmin()) {
-                const adminOnlyIds = ['admin_sword', 'ax_combination', 'jellyfish'];
+                // 해파리 스킨은 조각 합성으로 누구나 획득 가능하므로 제외!
+                const adminOnlyIds = ['admin_sword', 'ax_combination'];
                 ownedSkins = ownedSkins.filter(id => !adminOnlyIds.includes(id));
 
-                // 관리자 계정 접속 후 유출된 미달성 도감/업적 스킨 회수
+                // 관리자 계정 접속 후 유출된 미달성 도감/업적 스킨 회수 (단, 조각 합성/럭키블록으로 획득 가능한 스킨은 보존)
                 if (fishCollection.length < 16) ownedSkins = ownedSkins.filter(id => id !== 'snorkeling_fisher');
                 if (radioactiveCollection.length < 24) ownedSkins = ownedSkins.filter(id => id !== 'mad_scientist');
                 if (caveCollection.length < 16) ownedSkins = ownedSkins.filter(id => id !== 'archaeologist');
                 if (fossilCollection.length < 20) ownedSkins = ownedSkins.filter(id => id !== 'penguin');
                 if (candyCollection.length < 6) ownedSkins = ownedSkins.filter(id => id !== 'candy_king');
-                if (angelDevilCollection.length < 10) ownedSkins = ownedSkins.filter(id => id !== 'angel' && id !== 'etheron');
                 if ((inventory['깨진호박'] || 0) <= 0) ownedSkins = ownedSkins.filter(id => id !== 'reaper');
                 if (bossKills < 1) ownedSkins = ownedSkins.filter(id => id !== 'cerberus');
-                if (frostDragonKills < 30) ownedSkins = ownedSkins.filter(id => id !== 'phoenix');
             }
 
             equippedSkin = (data.equippedSkin && ownedSkins.includes(data.equippedSkin)) ? data.equippedSkin : 'default';
@@ -23190,10 +23614,7 @@
         window.equipOrViewCandyKingSkin = equipOrViewCandyKingSkin;
 
         function openCandyCornShopModal() {
-            if (!isAdmin() && !(typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) && !window.adminCandyCornShopSpawned) {
-                alert('🔒 캔디콘 상점은 관리자 및 weqwxe3 전용 상점입니다.');
-                return;
-            }
+            // 🌐 [공개 서버 전체 오픈] 모든 유저가 정상적으로 캔디콘 상점 이용 가능!
             const modal = document.getElementById('candycorn-shop-modal');
             if (!modal) return;
             const myCornEl = document.getElementById('cc-shop-my-corn');
@@ -23226,7 +23647,7 @@
             if (candyCorn >= price) {
                 updateCandyCorn(-price);
             } else if (isAdmin()) {
-                updateCandyCorn(-candyCorn);
+                // 관리자 무료 테스트 시 보유 캔디콘을 초기화하지 않음
             }
             if (!ownedAxes.includes(5)) {
                 ownedAxes.push(5);
@@ -23255,7 +23676,7 @@
             if (candyCorn >= price) {
                 updateCandyCorn(-price);
             } else if (isAdmin()) {
-                updateCandyCorn(-candyCorn);
+                // 관리자 무료 테스트 시 보유 캔디콘을 초기화하지 않음
             }
 
             const rand = Math.random() * 100;
@@ -23339,7 +23760,7 @@
             if (candyCorn >= price) {
                 updateCandyCorn(-price);
             } else if (isAdmin()) {
-                updateCandyCorn(-candyCorn);
+                // 관리자 무료 테스트 시 보유 캔디콘을 초기화하지 않음
             }
             if (!ownedSkins.includes('halloween_forge')) {
                 ownedSkins.push('halloween_forge');
@@ -23377,7 +23798,7 @@
             if (candyCorn >= price) {
                 updateCandyCorn(-price);
             } else if (isAdmin()) {
-                updateCandyCorn(-candyCorn);
+                // 관리자 무료 테스트 시 보유 캔디콘을 초기화하지 않음
             }
 
             const rand = Math.random() * 100;
@@ -29938,11 +30359,9 @@
                 });
             }
 
-            // 🏪 [캔디콘 비밀 상점] (평소: 손님 줄 서있는 상점 밑 Y: 2020 / 집 10채 생성 시: 집 10채 밑 Y: 3450)
-            if (isAdmin() || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) || window.adminCandyCornShopSpawned) {
-                let pos = (typeof getCandyCornShopPos === 'function') ? getCandyCornShopPos() : { x: GAME_WIDTH / 2, y: window.candyHousesSpawned ? 3450 : 2020 };
-                renderList.push({ type: 'candyCornShop', obj: { x: pos.x, y: pos.y }, y: pos.y });
-            }
+            // 🏪 [할로윈 캔디콘 상점] (공개 서버 전체 오픈: 평소 Y: 2020 / 집 10채 생성 시 Y: 3450)
+            let ccDrawPos = (typeof getCandyCornShopPos === 'function') ? getCandyCornShopPos() : { x: GAME_WIDTH / 2, y: window.candyHousesSpawned ? 3450 : 2020 };
+            renderList.push({ type: 'candyCornShop', obj: { x: ccDrawPos.x, y: ccDrawPos.y }, y: ccDrawPos.y });
 
             // 💍 링 모으기 미니게임 스폰된 링 렌더 등록 (모든 참여 플레이어에게 정상 표시!)
             if (isRingMinigameActive && Array.isArray(ringMinigameRings)) {
