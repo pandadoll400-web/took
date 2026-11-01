@@ -891,10 +891,10 @@
             <div id="weqwxe3-section-9pm" style="display: none; padding: 14px 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid #facc15; border-radius: 14px; margin-top: 5px; text-align: center;">
 <div style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.18), rgba(250, 204, 21, 0.18)); border: 2px solid #facc15; border-radius: 12px; padding: 12px; margin-bottom: 14px; text-align: center;">
                     <div style="font-size: 15px; font-weight: 950; color: #facc15; margin-bottom: 4px;">
-                        🔥 11월 1일 오늘 신규 9시 이벤트: 포지 콘서트 댄스 쇼
+                        🔥 11월 1일 오늘 신규 10시 이벤트: 포지 콘서트 댄스 쇼
                     </div>
                     <div style="font-size: 11.5px; color: #e2e8f0; margin-bottom: 10px;">
-                        오늘 저녁 9시 시작 & 매 1시간마다 15분씩 포지 하우스와 포지 케이크가 춤을 춥니다!
+                        오늘 저녁 10시 시작 & 매 1시간마다 15분씩 포지 하우스와 포지 케이크가 춤을 춥니다!
                     </div>
                     <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 8px;">
                         <button onclick="window._forceForgeDanceTest = !window._forceForgeDanceTest; updateCountdownHUD(); alert(window._forceForgeDanceTest ? '🕺 [테스트 ON] 포지 & 케이크 댄스가 즉시 시작되었습니다!' : '⏹️ [테스트 OFF] 실시간 스케줄 모드로 복귀했습니다.');" style="flex: 1; padding: 9px; background: linear-gradient(135deg, #ec4899, #be185d); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 3px 8px rgba(236, 72, 153, 0.4);">
@@ -24976,10 +24976,11 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             ctx.save(); ctx.translate(x, y);
             
             let skin = forceSkin ? forceSkin : ((char === player) ? equippedSkin : 'default');
+            let isMoving = !!(walkTimer && walkTimer > 0);
             let walkAngle = walkTimer ? Math.sin(walkTimer * 0.15) * 15 : 0;
             let bobbing = walkTimer ? Math.abs(Math.sin(walkTimer * 0.15)) * 3 : 0;
             if(isShaking) { bobbing = Math.random() * 2; walkAngle = 0; }
-            let facing = char.facing || 1;
+            let facing = (char && char.facing) ? char.facing : 1;
 
             let useSkin = (skin === 'snorkeling_fisher' || skin === 'mad_scientist' || skin === 'archaeologist') ? 'default' : skin;
             if (useSkin === 'pumpkin_winged_demon') {
@@ -33100,25 +33101,25 @@ function shakePiratePalmTree() {
 window.shakePiratePalmTree = shakePiratePalmTree;
 
 // 🎪 포지 & 케이크 댄스 스케줄 판정 함수
-// 시작: 오늘 저녁 8시 30분 (2026-11-01 20:30:00 KST)
-// 그 뒤: 매 1시간마다 15분씩 춤춤 (매시 0분 ~ 15분)
+// 시작: 오늘 저녁 10시 정각 (2026-11-01 22:00:00 KST로 연기 반영)
+// 그 뒤: 매 1시간마다 15분씩 춤춤 (매시 0분 ~ 14분 59초)
 function isForgeDancingTime() {
     if (window._concertDancing) return true;
     // 🎯 춤추는 거 즉시 테스트는 weqwxe3 계정(또는 어드민)에만 권한 적용!
     const isWeqwxe3OrAdmin = (typeof currentUser === 'string' && currentUser.toLowerCase() === 'weqwxe3') || (typeof isAdmin === 'function' && isAdmin());
     if (window._forceForgeDanceTest && isWeqwxe3OrAdmin) return true;
 
-    // 8:30 라이브 이벤트 콘서트 타임 체크
-    if (typeof get830PmEventElapsedSeconds === 'function') {
-        const curT = get830PmEventElapsedSeconds();
+    // 9:00 라이브 이벤트 콘서트 타임 체크 (T=20초~80초 동안 무대 댄스)
+    if (typeof get9PmEventElapsedSeconds === 'function') {
+        const curT = get9PmEventElapsedSeconds();
         if (curT !== null && curT >= 20 && curT < 80) return true;
     }
 
     const now = new Date();
-    // 2026년 11월 1일 20:30:00 KST
-    const startTarget = new Date(2026, 10, 1, 21, 0, 0);
+    // ⏳ 유저 요청: 15분 포지 댄스 쇼 10시(22:00)로 연기
+    const startTarget = new Date(2026, 10, 1, 22, 0, 0);
     if (now < startTarget) return false;
-    // 20:30 이후 매 1시간마다 15분씩 춤춤 (0분 ~ 14분 59초)
+    // 22:00 이후 매 1시간마다 15분씩 춤춤 (0분 ~ 14분 59초)
     return now.getMinutes() < 15;
 }
 window.isForgeDancingTime = isForgeDancingTime;
