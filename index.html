@@ -426,7 +426,7 @@
         <canvas id="gameCanvas"></canvas>
         <div id="money-display">💰 0</div>
         <!-- 🍬 캔디콘 HUD (어드민 접속 시 좌측 상단에 머니 디스플레이 바로 아래 표시) -->
-        <div id="candy-corn-hud" style="position: absolute; top: 100px; left: 15px; background: rgba(15, 23, 42, 0.92); color: #facc15; border: 1.5px solid #f59e0b; padding: 6px 14px; border-radius: 18px; font-size: 13px; font-weight: 900; z-index: 15; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(0,0,0,0.7); pointer-events: none;">
+        <div id="candy-corn-hud" style="display: none !important; pointer-events: none;">
             🍬 캔디콘: 0개
         </div>
         <div id="level-container">
@@ -6136,7 +6136,7 @@
             cameraY = -9500 - GAME_HEIGHT / 2;
 
             const hud = document.getElementById('ring-minigame-hud');
-            if (hud) hud.style.display = 'flex';
+            if (hud) hud.style.display = 'none';
 
             floatTexts.push({ x: player.x, y: player.y - 80, text: `💍 ${team === 'angel' ? '👼 천사팀 (흰색링)' : '😈 악마팀 (검정링)'} 대전 시작! (3분)`, color: team === 'angel' ? '#fde047' : '#ef4444', life: 120, size: 22 });
         }
@@ -13034,7 +13034,7 @@
                     return;
                 }
                 // 해적 상점 및 해적 대기열 클릭 대사
-                let shopDist = Math.hypot(cx - 300, cy - 2150);
+                let shopDist = Math.hypot(cx - 300, cy - 1760);
                 if (shopDist < 110) {
                     if (typeof floatTexts !== 'undefined') {
                         floatTexts.push({
@@ -13049,7 +13049,7 @@
 
             // 🎪 [공개 서버] 포지 콘서트 무대 클릭 대사
             if (!(typeof isAdmin === 'function' && isAdmin())) {
-                let stageDist = Math.hypot(cx - 300, cy - 1770);
+                let stageDist = Math.hypot(cx - 300, cy - 1460);
                 if (stageDist < 120) {
                     if (typeof floatTexts !== 'undefined') {
                         const isDancing = (typeof isForgeDancingTime === 'function' && isForgeDancingTime());
@@ -16482,11 +16482,7 @@
                 progress: 0, maxProgress: 450, shakeAngle: 0,
                 unlocked: false, price: 30000000, reqLevel: 125, color1: '#e0f2fe', color2: '#38bdf8', drops: [16, 26] 
             },
-            {
-                id: 'halloween', type: 'halloween', x: GAME_WIDTH / 2, y: 1350, radius: 140, trunkRadius: 40,
-                name: '사탕 나무', progress: 0, maxProgress: 300, shakeAngle: 0,
-                unlocked: true, price: 0, reqLevel: 1, color1: '#ff7675', color2: '#fd79a8', drops: [2, 4]
-            },
+
             {
                 id: 'angel_devil', type: 'angel_devil', x: GAME_WIDTH / 2, y: -9800, radius: 155, trunkRadius: 48,
                 name: '천사악마 나무', progress: 0, maxProgress: 300, shakeAngle: 0,
@@ -16505,7 +16501,6 @@
             { type: 'radioactive', name: '방사능 상점', x: 420, y: -4300, frontX: shopFrontX, queueY: -4150, queue: [] },
             { type: 'ocean', name: '바다 상점', x: 420, y: -5300, frontX: shopFrontX, queueY: -5150, queue: [] },
             { type: 'cave', name: '동굴 상점', x: 420, y: -6300, frontX: shopFrontX, queueY: -6150, queue: [] },
-            { type: 'halloween', name: '할로윈 상점', x: 420, y: 1680, frontX: shopFrontX, queueY: 1820, queue: [] },
             { type: 'space', name: '우주 상점', x: 420, y: -7300, frontX: shopFrontX, queueY: -7150, queue: [] },
             { type: 'ice_canyon', name: '얼음 협곡 상점', x: 420, y: -8300, frontX: shopFrontX, queueY: -8150, queue: [] },
             { type: 'angel_devil', name: '천악 상점', x: 420, y: -9400, frontX: shopFrontX, queueY: -9250, queue: [] }
@@ -16521,19 +16516,20 @@
 
         // 🎃 호박 융합 머신 삭제됨 (크래프팅 머신만 유지)
 
-        // 지붕/벽 색상 수동 할당 (위의 객체 리터럴 단순화를 위해)
-        shops[0].roofColor = '#c0392b'; shops[0].wallColor = '#e6c280';
-        shops[1].roofColor = '#8e44ad'; shops[1].wallColor = '#b08d57';
-        shops[2].roofColor = '#111'; shops[2].wallColor = '#4f5b66';
-        shops[3].roofColor = '#fbc531'; shops[3].wallColor = '#273c75';
-        shops[4].roofColor = '#c7ecee'; shops[4].wallColor = '#535c68';
-        shops[5].roofColor = '#27ae60'; shops[5].wallColor = '#1e272e';
-        shops[6].roofColor = '#00cec9'; shops[6].wallColor = '#0984e3';
-        shops[7].roofColor = '#636e72'; shops[7].wallColor = '#2d3436';
-        shops[8].roofColor = '#8e44ad'; shops[8].wallColor = '#e67e22';
-        shops[9].roofColor = '#00f2fe'; shops[9].wallColor = '#1e272e';
-        shops[10].roofColor = '#74b9ff'; shops[10].wallColor = '#dff9fb';
-        shops[11].roofColor = '#9b59b6'; shops[11].wallColor = '#2c3e50';
+        // 지붕/벽 색상 안전 할당 (사탕 상점 완전 제거 반영)
+        shops.forEach(s => {
+            if (s.type === 'normal') { s.roofColor = '#c0392b'; s.wallColor = '#e6c280'; }
+            else if (s.type === 'fire') { s.roofColor = '#8e44ad'; s.wallColor = '#b08d57'; }
+            else if (s.type === 'twisted') { s.roofColor = '#111'; s.wallColor = '#4f5b66'; }
+            else if (s.type === 'electric') { s.roofColor = '#fbc531'; s.wallColor = '#273c75'; }
+            else if (s.type === 'ice') { s.roofColor = '#c7ecee'; s.wallColor = '#535c68'; }
+            else if (s.type === 'radioactive') { s.roofColor = '#27ae60'; s.wallColor = '#1e272e'; }
+            else if (s.type === 'ocean') { s.roofColor = '#00cec9'; s.wallColor = '#0984e3'; }
+            else if (s.type === 'cave') { s.roofColor = '#636e72'; s.wallColor = '#2d3436'; }
+            else if (s.type === 'space') { s.roofColor = '#00f2fe'; s.wallColor = '#1e272e'; }
+            else if (s.type === 'ice_canyon') { s.roofColor = '#74b9ff'; s.wallColor = '#dff9fb'; }
+            else if (s.type === 'angel_devil') { s.roofColor = '#9b59b6'; s.wallColor = '#2c3e50'; }
+        });
 
         // Firebase 연동 및 계정 관리
         const firebaseConfig = {
@@ -30344,9 +30340,15 @@
             ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -7000); ctx.lineTo(GAME_WIDTH, -7000); ctx.stroke();
             ctx.fillStyle = '#a29bfe'; ctx.fillText("🚀 미지의 영역: 우주 지역 (레벨 105 진입 가능)", GAME_WIDTH / 2, -7020);
 
-            ctx.strokeStyle = '#ec4899'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1150); ctx.lineTo(GAME_WIDTH, 1150); ctx.stroke();
-            ctx.fillStyle = '#f472b6'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
-            ctx.fillText("🍭 달콤한 사탕 나무 & 사탕 상점 (Candy Land)", GAME_WIDTH / 2, 1185);
+            if (typeof isAdmin === 'function' && isAdmin()) {
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1150); ctx.lineTo(GAME_WIDTH, 1150); ctx.stroke();
+                ctx.fillStyle = '#fde047'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
+                ctx.fillText("🏴‍☠️ [어드민 전용] 해적의 만 (Pirate Cove)", GAME_WIDTH / 2, 1185);
+            } else {
+                ctx.strokeStyle = '#ec4899'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1150); ctx.lineTo(GAME_WIDTH, 1150); ctx.stroke();
+                ctx.fillStyle = '#f472b6'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
+                ctx.fillText("🎪 [신규 무대] 포지 라이브 콘서트 아레나 (Forge Live Stage)", GAME_WIDTH / 2, 1185);
+            }
 
             ctx.strokeStyle = '#e67e22'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(GAME_WIDTH, 0); ctx.stroke();
             ctx.fillStyle = '#d35400'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText("🔥 위험: 불꽃 지역 (레벨 3 진입 가능)", GAME_WIDTH / 2, -20);
@@ -30415,23 +30417,7 @@
                 renderList.push({ type: 'craftingMachine', obj: craftingMachine, y: craftingMachine.y });
             }
 
-            // 🏘️ [할로윈 캔디 마을] 집 10채 생성 토글 (weqwxe3 이벤트 버튼 또는 관리자)
-            if (window.candyHousesSpawned && Array.isArray(candyVillageHouses)) {
-                candyVillageHouses.forEach(h => {
-                    renderList.push({ type: 'candyHouse', obj: h, y: h.y });
-                });
-            }
-
-            // 🍬 [캔디콘 콜렉트 이벤트] 전 지형에 떨어진 캔디콘 렌더링
-            if (Array.isArray(window.groundCandyCorns) && window.groundCandyCorns.length > 0) {
-                window.groundCandyCorns.forEach(cc => {
-                    renderList.push({ type: 'groundCandyCorn', obj: cc, y: cc.y });
-                });
-            }
-
-            // 🏪 [할로윈 캔디콘 상점] (공개 서버 전체 오픈: 평소 Y: 2020 / 집 10채 생성 시 Y: 3450)
-            let ccDrawPos = (typeof getCandyCornShopPos === 'function') ? getCandyCornShopPos() : { x: GAME_WIDTH / 2, y: window.candyHousesSpawned ? 3450 : 2020 };
-            renderList.push({ type: 'candyCornShop', obj: { x: ccDrawPos.x, y: ccDrawPos.y }, y: ccDrawPos.y });
+            // 🚫 사탕 마을 집, 바닥 캔디콘, 캔디콘 상점 완전 제거 완료 (무대/해적 지형 전용)
 
             // 💍 링 모으기 미니게임 스폰된 링 렌더 등록 (모든 참여 플레이어에게 정상 표시!)
             if (isRingMinigameActive && Array.isArray(ringMinigameRings)) {
@@ -32143,7 +32129,7 @@ window.showForgeBroadcast = showForgeBroadcast;
 // 🌴 흔들리는 해적 야자나무 & 코코넛 물리 상태
 window.piratePalmTree = {
     x: 450,
-    y: 1720,
+    y: 1480,
     shakeTimer: 0,
     lastShake: 0,
     coconuts: []
@@ -32200,7 +32186,7 @@ window.isForgeDancingTime = isForgeDancingTime;
 function teleportToForgeStage() {
     if (typeof player === 'undefined') return;
     player.x = 300;
-    player.y = 1900;
+    player.y = 1620;
     if (typeof cameraY !== 'undefined') cameraY = player.y - canvas.height / 2;
     if (typeof floatTexts !== 'undefined') {
         floatTexts.push({
@@ -32253,13 +32239,13 @@ function drawAdminPirateTerrain(ctx) {
     }
 
     // 🏴‍☠️ [요소 1] 난파선 (Shipwreck) - X: 150, Y: 1500
-    drawShipwreck(ctx, 150, 1500, time);
+    drawShipwreck(ctx, 150, 1420, time);
 
     // 🌴 [요소 2] 나무를 흔드는 야자나무 (Shakable Pirate Palm Tree) - X: 450, Y: 1720
-    drawShakablePiratePalmTree(ctx, 450, 1720, time);
+    drawShakablePiratePalmTree(ctx, 450, 1480, time);
 
     // ☠️🛒 [요소 3] 해적 상점 및 줄 서 있는 해적들 (Pirate Shop with Queuing Pirates) - X: 300, Y: 2150
-    drawPirateShopAndQueue(ctx, 300, 2150, time);
+    drawPirateShopAndQueue(ctx, 300, 1760, time);
 }
 
 // 🏴‍☠️ 난파선 렌더링 (부러진 돛대, 찢어진 해적 깃발, 대포, 보물상자, 금화)
@@ -32611,10 +32597,10 @@ function drawPublicForgeConcertStage(ctx) {
     drawConcertSpotlights(ctx, time, isDancing);
 
     // 3. 콘서트 무대 구조물 (X: 300, Y: 1750)
-    drawStageStructure(ctx, 300, 1750, time, isDancing, now);
+    drawStageStructure(ctx, 300, 1460, time, isDancing, now);
 
     // 4. 무대 위 댄서: 포지 하우스 & 포지 케이크
-    drawStagePerformers(ctx, 300, 1750, time, isDancing, now);
+    drawStagePerformers(ctx, 300, 1460, time, isDancing, now);
 }
 
 // 🔦 무빙 라이트 스포트라이트
@@ -32624,8 +32610,8 @@ function drawConcertSpotlights(ctx, time, isDancing) {
     
     // 4개 코너 스포트라이트
     const corners = [
-        { x: 50, y: 1550 }, { x: GAME_WIDTH - 50, y: 1550 },
-        { x: 70, y: 2050 }, { x: GAME_WIDTH - 70, y: 2050 }
+        { x: 50, y: 1350 }, { x: GAME_WIDTH - 50, y: 1350 },
+        { x: 70, y: 1750 }, { x: GAME_WIDTH - 70, y: 1750 }
     ];
 
     corners.forEach((c, idx) => {
