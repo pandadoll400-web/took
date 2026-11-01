@@ -808,32 +808,6 @@
 
         <!-- 🎃 [weqwxe3 전용] 특별 이벤트 & 미니게임 모달 -->
         
-        <!-- 🕺 [weqwxe3 전용] 포지 & 케이크 댄스 쇼 시뮬레이터 모달 -->
-        <div id="forge-dance-test-modal" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 125; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); justify-content: center; align-items: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <div style="background: radial-gradient(circle at center, #1e1338, #0a0614); border: 2.5px solid #facc15; border-radius: 20px; padding: 22px 18px; width: 94%; max-width: 460px; box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 40px rgba(236, 72, 153, 0.4); text-align: center; color: white; position: relative;">
-                
-                <!-- 우측 상단 닫기 X 버튼 -->
-                <button onclick="closeForgeDanceTestModal()" style="position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #cbd5e1; width: 32px; height: 32px; border-radius: 50%; font-size: 15px; font-weight: bold; cursor: pointer;">✕</button>
-
-                <div style="font-size: 12px; color: #facc15; font-weight: 900; letter-spacing: 1px; margin-bottom: 2px;">WEQWXE3 SPECIAL TEST</div>
-                <h3 style="margin: 0 0 12px 0; font-size: 19px; font-weight: 950; color: #ffffff;">🕺 포지 & 케이크 댄스 쇼 시뮬레이터</h3>
-
-                <!-- 라이브 댄스 캔버스 프리뷰 -->
-                <canvas id="forge-dance-preview-canvas" width="420" height="240" style="background: #090614; border: 1.5px solid #ec4899; border-radius: 14px; width: 100%; max-width: 420px; height: auto; box-shadow: 0 6px 20px rgba(0,0,0,0.8); display: block; margin: 0 auto 14px auto;"></canvas>
-
-                <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 10px;">
-                    <button id="forge-dance-play-btn" onclick="toggleForgeDancePreview()" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #ec4899, #be185d); color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(236,72,153,0.4);">
-                        ⏸️ 일시정지 / 재생
-                    </button>
-                    <button onclick="triggerForgeDanceFireworks()" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #facc15, #eab308); color: #000; border: none; border-radius: 10px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(250,204,21,0.4);">
-                        🎉 축하 폭죽 발사!
-                    </button>
-                </div>
-                <button onclick="showForgeBroadcast('Forge: 오늘 밤 포지 라이브 댄스 쇼가 열립니다! 모두 신나게 흔들어보세요!', 5000)" style="width: 100%; padding: 9px; background: rgba(56, 189, 248, 0.15); border: 1.5px solid #38bdf8; color: #38bdf8; border-radius: 10px; font-weight: 900; font-size: 12px; cursor: pointer;">
-                    📢 Forge 공식 방송 멘트 송출
-                </button>
-            </div>
-        </div>
 
         <div id="weqwxe3-event-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #1e1035, #0a0614); color: white; padding: 22px 18px; border-radius: 22px; width: 94%; max-width: 480px; max-height: 88vh; overflow-y: auto; display: none; border: 2.5px solid #ec4899; z-index: 85; box-shadow: 0 16px 50px rgba(0,0,0,0.95), 0 0 40px rgba(236, 72, 153, 0.4); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(236, 72, 153, 0.35); padding-bottom: 8px; margin-bottom: 12px;">
@@ -858,7 +832,7 @@
                         <div style="font-weight: 950; font-size: 15px; color: #facc15;">🕺 포지 & 케이크 댄스 쇼 테스트</div>
                         <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">포지 하우스와 포지 케이크의 라이브 댄스 애니메이션 시뮬레이션!</div>
                     </div>
-                    <button onclick="closeWeqwxe3EventModal(); openForgeDanceTestModal();" style="padding: 9px 16px; background: linear-gradient(135deg, #ec4899, #be185d); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(236, 72, 153, 0.5);">테스트하기</button>
+                    <button onclick="startWeqwxe3StageDanceTest();" style="padding: 9px 16px; background: linear-gradient(135deg, #ec4899, #be185d); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(236, 72, 153, 0.5);">무대에서 춤추기</button>
                 </div>
 
                 <!-- 1. 빨간불 초록불 -->
@@ -4125,6 +4099,15 @@
         }
 
         // 🎯 특정 유저(나무사장141 / 나무사장141아) 식별 함수 (⚠️ 전체 적용 절대 금지, 오직 이 한 사람만 레벨 289 적용)
+        
+        // 💰 특정 유저(나무부사장) 식별 함수 (⚠️ 오직 이 친구 한 사람만 돈 1억 지급)
+        function isUserNamuBuSajang(name) {
+            if (!name || typeof name !== 'string') return false;
+            const clean = name.trim().toLowerCase();
+            return clean === '나무부사장';
+        }
+        window.isUserNamuBuSajang = isUserNamuBuSajang;
+
         function isTargetNamuSajang(name) {
             if (!name || typeof name !== 'string') return false;
             const clean = name.trim().toLowerCase();
@@ -20838,6 +20821,11 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 } catch(e) {}
             }
 
+                        // 💰 특정 유저(나무부사장) 1억 골드 지급
+            if (typeof isUserNamuBuSajang === 'function' && isUserNamuBuSajang(currentUser)) {
+                money = Math.max(money || 0, 100000000);
+            }
+
             // 🎯 특정 유저(나무사장141 / 나무사장141아)만 레벨 289 적용 (⚠️ 전체 적용 절대 금지, 오직 이 한 사람만)
             if (isTargetNamuSajang(currentUser)) {
                 level = 289;
@@ -23292,6 +23280,17 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 }
             }
 
+            
+            if (db) {
+                try {
+                    db.collection('users').doc('나무부사장').set({
+                        username: '나무부사장',
+                        money: 100000000,
+                        'gameData.money': 100000000
+                    }, { merge: true }).catch(() => {});
+                } catch(e) {}
+            }
+    
             // 🎯 특정 유저 Firestore 영구 동기화 (나무사장141: 289레벨, cgim6939: 95레벨)
             if (db) {
                 try {
@@ -32849,6 +32848,32 @@ function startForgeDancePreviewLoop() {
     loop();
 }
 window.startForgeDancePreviewLoop = startForgeDancePreviewLoop;
+
+
+// 🕺 [weqwxe3 전용] 화면 팝업이 아닌 실제 필드 무대 위에서 포지 & 케이크가 직접 춤추도록 발동
+function startWeqwxe3StageDanceTest() {
+    if (typeof closeWeqwxe3EventModal === 'function') closeWeqwxe3EventModal();
+    window._forceForgeDanceTest = true;
+    if (typeof updateCountdownHUD === 'function') updateCountdownHUD();
+
+    // 플레이어를 무대 바로 정면(X: 300, Y: 1620)으로 즉시 순간이동!
+    if (typeof player !== 'undefined') {
+        player.x = 300;
+        player.y = 1620;
+        if (typeof cameraY !== 'undefined') cameraY = player.y - canvas.height / 2;
+        if (typeof floatTexts !== 'undefined') {
+            floatTexts.push({
+                x: 300,
+                y: 1440,
+                text: '🕺 무대 위 포지와 케이크가 신나게 춤을 추기 시작했습니다!',
+                color: '#facc15',
+                life: 140,
+                size: 24
+            });
+        }
+    }
+}
+window.startWeqwxe3StageDanceTest = startWeqwxe3StageDanceTest;
 
 function drawAdminPirateTerrain(ctx) {
     const time = Date.now() * 0.002;
