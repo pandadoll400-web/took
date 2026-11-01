@@ -24055,7 +24055,17 @@
             { chance: 0.09, grade: '디바인', color: '#ec4899', xp: 3000, price: 400000, items: ['천사의 링', '악마의 링'] }
         ];
 
+        
+        // 🏴‍☠️ [어드민 전용] 난파선(배 나무) 드롭 테이블
+        const shipwreckDropTables = [
+            { chance: 0.50, items: ['난파선 고목 판자'], price: 50000, xp: 80, color: '#8d5b2c' },
+            { chance: 0.30, items: ['녹슨 해적 단검'], price: 120000, xp: 180, color: '#94a3b8' },
+            { chance: 0.15, items: ['해적의 보물 금화'], price: 300000, xp: 400, color: '#facc15' },
+            { chance: 0.05, items: ['검은 수염의 나침반'], price: 1000000, xp: 1500, color: '#ef4444' }
+        ];
+
         function getTables(type) {
+            if (type === 'shipwreck') return shipwreckDropTables;
             if (type === 'angel_devil') return angelDevilDropTables;
             if (type === 'space') return spaceDropTables;
             if (type === 'halloween') return halloweenDropTables;
@@ -24098,7 +24108,21 @@
             let customerSkin = null;
             let rewardCorn = 0;
 
-            if (type === 'space') {
+            if (type === 'pirate') {
+                // 🏴‍☠️ [어드민 전용 해적 상점] 주민 손님 (난파선 판자, 과일, 보물 구매)
+                const pirateRequests = [
+                    { item: '난파선 고목 판자', price: 60000 },
+                    { item: '사과', price: 30000 },
+                    { item: '녹슨 해적 단검', price: 150000 },
+                    { item: '해적의 보물 금화', price: 350000 }
+                ];
+                let chosen = pirateRequests[Math.floor(Math.random() * pirateRequests.length)];
+                fruit = chosen.item;
+                amount = Math.floor(Math.random() * 2) + 1; // 1~2개 요구
+                reward = chosen.price * amount;
+                rewardCorn = 0;
+                customerSkin = 'default';
+            } else if (type === 'space') {
                 let tables = spaceDropTables;
                 let r = Math.random(), cum = 0, tier = tables[0];
                 for (let t of tables) { cum += t.chance; if (r <= cum) { tier = t; break; } }
@@ -24212,6 +24236,7 @@
         }
 
         function update() {
+            syncAdminPirateObjects();
             if (typeof updateRedLightGreenLightLoop === 'function') updateRedLightGreenLightLoop();
             if (typeof updateDodgeFarmersLoop === 'function') updateDodgeFarmersLoop();
             if (typeof updateLuck15Timer === 'function') updateLuck15Timer();
@@ -29092,6 +29117,82 @@
         }
 
         function drawShop(ctx, shop) {
+            if (shop.type === 'pirate') {
+                // 🏴‍☠️ [어드민 전용 해적 상점] 일반 상점처럼 주민이 줄 서는 밀수 상점 카운터
+                const x = shop.x; const y = shop.y;
+                ctx.save();
+                
+                // 바닥 모래 그림자
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(x + 90, y + 210, 100, 24, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 상점 목재 기반
+                ctx.fillStyle = '#2c1810';
+                ctx.beginPath();
+                ctx.roundRect(x - 10, y + 195, 200, 22, 6);
+                ctx.fill();
+                ctx.strokeStyle = '#8d5b2c'; ctx.lineWidth = 2; ctx.stroke();
+
+                // 상점 벽체 (오래된 해적선 판자 목재)
+                let pirateWall = ctx.createLinearGradient(x, y, x + 180, y);
+                pirateWall.addColorStop(0, '#3e2723');
+                pirateWall.addColorStop(0.5, '#4e342e');
+                pirateWall.addColorStop(1, '#2c1810');
+                ctx.fillStyle = pirateWall;
+                ctx.fillRect(x, y + 80, 180, 125);
+                ctx.strokeStyle = '#8d6e63'; ctx.lineWidth = 2.5;
+                ctx.strokeRect(x, y + 80, 180, 125);
+
+                // 판자 리벳 무늬
+                ctx.strokeStyle = '#1b1008'; ctx.lineWidth = 1.5;
+                for (let py = y + 105; py < y + 200; py += 25) {
+                    ctx.beginPath(); ctx.moveTo(x, py); ctx.lineTo(x + 180, py); ctx.stroke();
+                }
+
+                // 중앙 창구 카운터
+                ctx.fillStyle = '#100a06';
+                ctx.beginPath(); ctx.roundRect(x + 35, y + 105, 110, 72, 8); ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2; ctx.stroke();
+
+                // 창구 안 상인 NPC (외눈의 잭 & 앵무새)
+                ctx.font = '24px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText("🦜🧔‍♂️", x + 90, y + 148);
+
+                // 빨강 & 검정 줄무늬 해적 차양 지붕
+                for (let bx = x - 15; bx < x + 195; bx += 25) {
+                    ctx.fillStyle = (((bx - x + 15) / 25) % 2 === 0) ? '#dc2626' : '#1e293b';
+                    ctx.beginPath();
+                    ctx.moveTo(bx, y + 80);
+                    ctx.lineTo(bx + 12.5, y + 25);
+                    ctx.lineTo(bx + 25, y + 80);
+                    ctx.fill();
+                }
+                // 지붕 꼭대기 해적 깃발
+                ctx.strokeStyle = '#8d5b2c'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(x + 90, y + 25); ctx.lineTo(x + 90, y - 10); ctx.stroke();
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(x + 90, y - 10, 35, 20);
+                ctx.font = '14px sans-serif'; ctx.fillText('☠️', x + 107, y + 5);
+
+                // 화약통 & 럼주병
+                ctx.font = '22px sans-serif';
+                ctx.fillText('🧨', x + 15, y + 200);
+                ctx.fillText('🍺', x + 165, y + 200);
+
+                // 상점 간판 배너: ☠️ 해적 암시장
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+                ctx.beginPath(); ctx.roundRect(x + 10, y + 55, 160, 24, 6); ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.fillStyle = '#fef08a'; ctx.font = 'bold 12.5px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText('☠️ 해적 암시장 (상점) ☠️', x + 90, y + 71);
+
+                ctx.restore();
+                return;
+            }
+
             const x = shop.x; const y = shop.y;
             if (shop.type === 'angel_devil') {
                 // 👼😈 [초호화 천사의 성역 & 악마의 심연 상점] 전용 3D 프리미엄 렌더러
@@ -30497,6 +30598,19 @@
                 } else if (item.type === 'tree') {
                     let t = item.obj;
                     ctx.save(); ctx.translate(t.x, t.y); ctx.rotate(t.shakeAngle);
+                    if (t.type === 'shipwreck') {
+                        // 🏴‍☠️ [어드민 전용 난파선 배 나무] 플레이어가 팰 때마다 ctx.rotate(t.shakeAngle)로 배가 거세게 흔들림!
+                        drawShipwreckTree(ctx, t);
+                        if (t.progress > 0) {
+                            ctx.fillStyle = 'black'; ctx.fillRect(-45, -155, 90, 14);
+                            let maxP = t.maxProgress;
+                            let pW = (t.progress / maxP) * 86;
+                            ctx.fillStyle = '#facc15'; ctx.fillRect(-43, -153, pW, 10);
+                        }
+                        ctx.restore();
+                        return;
+                    }
+
                     
                     let trunkBottom = t.radius * 1.4;
                     ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(0, trunkBottom, t.radius * 0.9, 25, 0, 0, Math.PI*2); ctx.fill();
@@ -32202,6 +32316,159 @@ function teleportToForgeStage() {
 window.teleportToForgeStage = teleportToForgeStage;
 
 // 🏴‍☠️ [어드민 전용 해적 지형 렌더링: Y 1150 ~ 3600]
+
+// 🏴‍☠️ [어드민 전용] 흔들리는 난파선 배(나무 오브젝트) & 일반 상점형 해적 상점
+const adminShipwreckTree = {
+    id: 'shipwreck',
+    type: 'shipwreck',
+    x: 230,
+    y: 1450,
+    radius: 130,
+    trunkRadius: 65,
+    name: '난파선',
+    progress: 0,
+    maxProgress: 280,
+    shakeAngle: 0,
+    unlocked: true,
+    price: 0,
+    reqLevel: 1,
+    color1: '#8d5b2c',
+    color2: '#3e2723',
+    drops: [3, 7]
+};
+
+const adminPirateShop = {
+    type: 'pirate',
+    name: '해적 상점',
+    x: 420,
+    y: 1720,
+    frontX: 350,
+    queueY: 1860,
+    queue: [],
+    roofColor: '#dc2626',
+    wallColor: '#2c1810'
+};
+
+// 어드민 접속 여부에 따라 난파선 나무 & 해적 상점을 실시간 동기화
+function syncAdminPirateObjects() {
+    const isAdm = (typeof isAdmin === 'function' && isAdmin());
+    
+    if (typeof trees !== 'undefined') {
+        const treeIdx = trees.findIndex(t => t.id === 'shipwreck');
+        if (isAdm) {
+            if (treeIdx === -1) trees.push(adminShipwreckTree);
+        } else {
+            if (treeIdx !== -1) trees.splice(treeIdx, 1);
+        }
+    }
+
+    if (typeof shops !== 'undefined') {
+        const shopIdx = shops.findIndex(s => s.type === 'pirate');
+        if (isAdm) {
+            if (shopIdx === -1) shops.push(adminPirateShop);
+        } else {
+            if (shopIdx !== -1) shops.splice(shopIdx, 1);
+        }
+    }
+}
+window.syncAdminPirateObjects = syncAdminPirateObjects;
+
+
+// 🏴‍☠️ 난파선 배 나무 렌더링 함수 (중심 0,0 - t.shakeAngle에 의해 흔들림)
+function drawShipwreckTree(ctx, t) {
+    // 모래 퇴적 언덕
+    ctx.fillStyle = '#d4a373';
+    ctx.beginPath();
+    ctx.ellipse(0, 50, 110, 32, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 15도 기울어진 거대한 나무 해적선 선체
+    ctx.save();
+    ctx.rotate(-0.25);
+
+    // 선체 참나무 목재
+    let hullGrad = ctx.createLinearGradient(-85, -20, 85, 40);
+    hullGrad.addColorStop(0, '#5c3818');
+    hullGrad.addColorStop(0.5, '#3e2723');
+    hullGrad.addColorStop(1, '#2c1810');
+    ctx.fillStyle = hullGrad;
+    ctx.beginPath();
+    ctx.moveTo(-85, 20);
+    ctx.quadraticCurveTo(-25, -45, 85, -25);
+    ctx.lineTo(95, 40);
+    ctx.quadraticCurveTo(0, 58, -85, 20);
+    ctx.fill();
+    ctx.strokeStyle = '#8d5b2c'; ctx.lineWidth = 3; ctx.stroke();
+
+    // 나무 판자 리벳 선
+    ctx.strokeStyle = '#4a2c1a'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-75, 0); ctx.lineTo(85, -5);
+    ctx.moveTo(-70, 22); ctx.lineTo(90, 18);
+    ctx.stroke();
+
+    // 포문 & 녹슨 황동 대포
+    ctx.fillStyle = '#111'; ctx.fillRect(15, 8, 20, 15);
+    ctx.fillStyle = '#8d6e63'; ctx.beginPath(); ctx.ellipse(32, 15, 18, 7, 0.2, 0, Math.PI * 2); ctx.fill();
+
+    // 부러진 거대한 중앙 나무 돛대
+    ctx.fillStyle = '#4e342e'; ctx.fillRect(-12, -65, 16, 70);
+    // 꺾인 돛대 상단
+    ctx.save();
+    ctx.translate(-4, -65);
+    ctx.rotate(0.7);
+    ctx.fillRect(0, -50, 14, 50);
+
+    // 찢어진 검은 해골 깃발 (Jolly Roger) 휘날림
+    let flagWave = Math.sin(Date.now() * 0.007) * 0.15;
+    ctx.save();
+    ctx.translate(14, -50);
+    ctx.rotate(flagWave);
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(28, -6, 50, 6);
+    ctx.lineTo(44, 28);
+    ctx.quadraticCurveTo(22, 22, 0, 20);
+    ctx.closePath();
+    ctx.fill();
+    ctx.font = '16px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('☠️', 25, 18);
+    ctx.restore();
+    ctx.restore();
+
+    ctx.restore(); // 돛대/선체 restore
+
+    // 흩어진 금화 상자 & 보물
+    ctx.fillStyle = '#5d4037'; ctx.fillRect(45, 35, 34, 24);
+    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2; ctx.strokeRect(45, 35, 34, 24);
+    // 쏟아진 금화
+    ctx.fillStyle = '#facc15';
+    for (let c = 0; c < 8; c++) {
+        let cx = 52 + (c * 7) % 36;
+        let cy = 45 + Math.sin(c * 1.5) * 6;
+        ctx.beginPath(); ctx.arc(cx, cy, 3.5, 0, Math.PI * 2); ctx.fill();
+    }
+    // 해골 장식
+    ctx.font = '20px sans-serif'; ctx.fillText('💀', -60, 52);
+
+    // 배 명판 배너
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+    ctx.beginPath(); ctx.roundRect(-80, -95, 160, 26, 6); ctx.fill();
+    ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#facc15'; ctx.font = 'bold 12.5px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('🏴‍☠️ [나무] 흔들리는 난파선', 0, -78);
+
+    // 벌목 안내 라벨
+    if (typeof player !== 'undefined' && Math.hypot(player.x - t.x, player.y - t.y - 80) < t.trunkRadius + player.radius + 60 && player.targetTree !== t) {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+        ctx.beginPath(); ctx.roundRect(-75, -125, 150, 24, 6); ctx.fill();
+        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 11.5px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('👆 배 흔들기 (클릭/스페이스)', 0, -109);
+    }
+}
+window.drawShipwreckTree = drawShipwreckTree;
+
 function drawAdminPirateTerrain(ctx) {
     const time = Date.now() * 0.002;
 
@@ -32237,15 +32504,6 @@ function drawAdminPirateTerrain(ctx) {
         ctx.bezierCurveTo(200, dy + 15, 400, dy - 15, GAME_WIDTH - 40, dy);
         ctx.stroke();
     }
-
-    // 🏴‍☠️ [요소 1] 난파선 (Shipwreck) - X: 150, Y: 1500
-    drawShipwreck(ctx, 150, 1420, time);
-
-    // 🌴 [요소 2] 나무를 흔드는 야자나무 (Shakable Pirate Palm Tree) - X: 450, Y: 1720
-    drawShakablePiratePalmTree(ctx, 450, 1480, time);
-
-    // ☠️🛒 [요소 3] 해적 상점 및 줄 서 있는 해적들 (Pirate Shop with Queuing Pirates) - X: 300, Y: 2150
-    drawPirateShopAndQueue(ctx, 300, 1760, time);
 }
 
 // 🏴‍☠️ 난파선 렌더링 (부러진 돛대, 찢어진 해적 깃발, 대포, 보물상자, 금화)
