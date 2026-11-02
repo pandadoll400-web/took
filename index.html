@@ -640,6 +640,10 @@
             <div style="width: 240px; height: 10px; background: rgba(0,0,0,0.6); border: 1.5px solid #38bdf8; border-radius: 6px; overflow: hidden; margin-top: 6px;">
                 <div id="boat-race-prog-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #38bdf8, #22c55e); transition: width 0.1s linear;"></div>
             </div>
+            <div style="display: flex; gap: 14px; margin-top: 8px;">
+                <button onpointerdown="window.boatSteerLeft=true" onpointerup="window.boatSteerLeft=false" onpointerleave="window.boatSteerLeft=false" style="padding: 7px 18px; background: rgba(56, 189, 248, 0.25); border: 1.5px solid #38bdf8; color: #fff; border-radius: 8px; font-size: 14.5px; font-weight: 900; user-select: none; cursor: pointer;">◀ 좌회전</button>
+                <button onpointerdown="window.boatSteerRight=true" onpointerup="window.boatSteerRight=false" onpointerleave="window.boatSteerRight=false" style="padding: 7px 18px; background: rgba(56, 189, 248, 0.25); border: 1.5px solid #38bdf8; color: #fff; border-radius: 8px; font-size: 14.5px; font-weight: 900; user-select: none; cursor: pointer;">우회전 ▶</button>
+            </div>
             <button onclick="exitBoatRace()" style="margin-top: 8px; padding: 4px 12px; background: rgba(239, 68, 68, 0.25); border: 1px solid #ef4444; color: #fca5a5; border-radius: 6px; font-size: 11.5px; font-weight: 900; cursor: pointer;">🛑 레이스 나가기</button>
         </div>
 
@@ -13915,7 +13919,9 @@
         canvas.addEventListener('mousedown', e => {
             let pos = getPos(e.clientX, e.clientY);
             if (window.inBoatRaceDimension && window.boatRaceState && window.boatRaceState.active) {
-                window.boatRaceState.boatX = pos.x;
+                window.boatRaceState.boatX = Math.max(45, Math.min(GAME_WIDTH - 45, pos.x));
+                window._boatTargetX = pos.x;
+                window._isBoatDragging = true;
                 return;
             }
             if (typeof handleFishingMouseDown === 'function' && handleFishingMouseDown(pos)) {
@@ -13942,12 +13948,20 @@
             } else { handleTreeClick(pos.x, pos.y + cameraY); }
         });
         canvas.addEventListener('mousemove', e => {
+            if (window.inBoatRaceDimension && window.boatRaceState && window.boatRaceState.active) {
+                let pos = getPos(e.clientX, e.clientY);
+                if (e.buttons > 0 || window._isBoatDragging) {
+                    window.boatRaceState.boatX = Math.max(45, Math.min(GAME_WIDTH - 45, pos.x));
+                    window._boatTargetX = pos.x;
+                }
+                return;
+            }
             if (joystick.active) {
                 let pos = getPos(e.clientX, e.clientY);
                 joystick.x = pos.x; joystick.y = pos.y; updateJoyMath();
             }
         });
-        const resetJoyMouse = () => { joystick.active = false; joystick.dx = 0; joystick.dy = 0; joystick.id = null; };
+        const resetJoyMouse = () => { joystick.active = false; joystick.dx = 0; joystick.dy = 0; joystick.id = null; window._isBoatDragging = false; window._boatTargetX = null; };
         canvas.addEventListener('mouseup', e => {
             if (typeof handleFishingMouseUp === 'function') handleFishingMouseUp();
             resetJoyMouse(e);
@@ -13955,6 +13969,12 @@
 
         canvas.addEventListener('touchstart', e => {
             if(e.target === canvas) e.preventDefault();
+            if (window.inBoatRaceDimension && window.boatRaceState && window.boatRaceState.active) {
+                let t = e.changedTouches[0]; let pos = getPos(t.clientX, t.clientY);
+                window.boatRaceState.boatX = Math.max(45, Math.min(GAME_WIDTH - 45, pos.x));
+                window._boatTargetX = pos.x;
+                return;
+            }
             for(let i=0; i<e.changedTouches.length; i++) {
                 let t = e.changedTouches[i]; let pos = getPos(t.clientX, t.clientY);
                 // 🌾 농장 차원 내에서는 밭 및 상점 터치를 조이스틱보다 최우선 처리!
@@ -13986,6 +14006,12 @@
         }, {passive: false});
         canvas.addEventListener('touchmove', e => {
             if(e.target === canvas) e.preventDefault();
+            if (window.inBoatRaceDimension && window.boatRaceState && window.boatRaceState.active) {
+                let t = e.changedTouches[0]; let pos = getPos(t.clientX, t.clientY);
+                window.boatRaceState.boatX = Math.max(45, Math.min(GAME_WIDTH - 45, pos.x));
+                window._boatTargetX = pos.x;
+                return;
+            }
             for(let i=0; i<e.changedTouches.length; i++) {
                 let t = e.changedTouches[i]; let pos = getPos(t.clientX, t.clientY);
                 if (joystick.active && joystick.id === t.identifier) { joystick.x = pos.x; joystick.y = pos.y; updateJoyMath(); }
@@ -13995,6 +14021,7 @@
             for(let i=0; i<e.changedTouches.length; i++) {
                 let t = e.changedTouches[i];
                 if (joystick.active && joystick.id === t.identifier) resetJoyMouse();
+                if (window.inBoatRaceDimension) window._boatTargetX = null;
             }
         });
 
@@ -29081,9 +29108,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 }
 
                 ctx.restore();
-            } else if (useSkin === 'money_man') {
-                // 💵 머니맨 (Money Man) - Image 5 손그림 충실 재현
-                // 원형 코인 몸체, 안테나, 큰 '
+            } else if (useSkin === 'forge_cake') {
                 // 🎂🔨 최고 관리자 전용 스킨: 포지 케이크 (대장장이 케이크 골렘)
                 // 유저 스케치 100% 충실 재현: 3단 케이크 몸체, 반짝이는 만화 눈동자 & 미소,
                 // 좌측 배면 용광로 굴뚝 & 3개 화로 슬릿 & 피어오르는 연기, 우측 'Forge' 팻말,
@@ -30013,14 +30038,498 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 ctx.restore();
                 ctx.restore();
 
+            
+            } else if (useSkin === 'money_man') {
+                // 💵 머니맨 (Money Man) - Image 5 손그림 충실 재현
+                // 원형 코인 몸체, 안테나, 가슴 중앙 큰 $, 양손에 '10' 코인과 'money' 팻말, 두 발 보행
+                ctx.save();
+                ctx.translate(0, -bobbing);
+
+                // 1. 바닥 그림자
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(0, 15, 18, 6, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                let walkSwing = (walkAngle * Math.PI) / 180;
+
+                // 2. 다리 & 신발 (두 발 보행 모션)
+                ctx.save();
+                ctx.translate(-7, 6);
+                ctx.rotate(walkSwing);
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(-2.5, 0, 5, 8);
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.roundRect(-5, 6, 8, 4, 1.5);
+                ctx.fill();
+                ctx.restore();
+
+                ctx.save();
+                ctx.translate(7, 6);
+                ctx.rotate(-walkSwing);
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(-2.5, 0, 5, 8);
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.roundRect(-3, 6, 8, 4, 1.5);
+                ctx.fill();
+                ctx.restore();
+
+                // 3. 머리/몸체 상단 좌측 안테나
+                ctx.save();
+                ctx.translate(-10, -18);
+                ctx.rotate(-0.45);
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(0, -14);
+                ctx.stroke();
+                let antGlow = ctx.createRadialGradient(0, -14, 1, 0, -14, 5);
+                antGlow.addColorStop(0, '#fef08a');
+                antGlow.addColorStop(0.6, '#eab308');
+                antGlow.addColorStop(1, '#ca8a04');
+                ctx.fillStyle = antGlow;
+                ctx.beginPath();
+                ctx.arc(0, -14, 4.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                // 4. 원형 코인 몸체
+                let coinGrad = ctx.createRadialGradient(-4, -10, 4, 0, -6, 20);
+                coinGrad.addColorStop(0, '#fef08a');
+                coinGrad.addColorStop(0.35, '#facc15');
+                coinGrad.addColorStop(0.8, '#eab308');
+                coinGrad.addColorStop(1, '#ca8a04');
+                ctx.fillStyle = coinGrad;
+                ctx.beginPath();
+                ctx.arc(0, -6, 18, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#b45309';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(0, -6, 15, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // 5. 얼굴: 눈과 미소
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.ellipse(-6, -11, 2, 3, 0, 0, Math.PI * 2);
+                ctx.ellipse(6, -11, 2, 3, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(-7, -12, 0.8, 0, Math.PI * 2);
+                ctx.arc(5, -12, 0.8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#78350f';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.arc(0, -7, 5, 0.2, Math.PI - 0.2);
+                ctx.stroke();
+
+                // 6. 가슴 중앙 큰 달러 기호 ($)
+                ctx.fillStyle = '#15803d';
+                ctx.font = 'bold 15px Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(String.fromCharCode(36), 0, 1);
+
+                // 7. 좌측 팔 & '10' 원형 코인
+                ctx.save();
+                ctx.translate(-16, -4);
+                ctx.rotate(-0.2 + Math.sin(walkAngle * 0.1) * 0.2);
+                ctx.strokeStyle = '#b45309';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(-7, 2);
+                ctx.stroke();
+                ctx.translate(-9, 2);
+                ctx.fillStyle = '#fde047';
+                ctx.beginPath();
+                ctx.arc(0, 0, 7.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#ca8a04';
+                ctx.lineWidth = 1.2;
+                ctx.stroke();
+                ctx.fillStyle = '#713f12';
+                ctx.font = 'bold 7.5px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('10', 0, 0.5);
+                ctx.restore();
+
+                // 8. 우측 팔 & 'money' 팻말
+                ctx.save();
+                ctx.translate(16, -4);
+                ctx.rotate(0.2 - Math.sin(walkAngle * 0.1) * 0.2);
+                ctx.strokeStyle = '#b45309';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(8, -4);
+                ctx.stroke();
+                ctx.translate(11, -7);
+                ctx.fillStyle = '#92400e';
+                ctx.fillRect(-1.5, 0, 3, 14);
+                ctx.fillStyle = '#fef3c7';
+                ctx.strokeStyle = '#78350f';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.roundRect(-4, -13, 26, 13, 2);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#166534';
+                ctx.font = '900 8px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('money', 9, -6.5);
+                ctx.restore();
+
+                ctx.restore();
+            } else if (useSkin === 'book_and_pencil') {
+                // 📖✏️ 책과 연필 (Book and Pencil) - Image 5 손그림 충실 재현
+                // 책과 연필이 다정하게 손을 꼭 잡고 걷는 콤비 스킨!
+                ctx.save();
+                ctx.translate(0, -bobbing);
+
+                // 1. 좌측 책 캐릭터 (Book)
+                ctx.save();
+                ctx.translate(-13, 0);
+                // 책 다리 2개
+                ctx.fillStyle = '#334155';
+                ctx.fillRect(-6, 12, 4, 7); ctx.fillRect(2, 12, 4, 7);
+                // 책 본체 (파란색 양장본 바인딩)
+                ctx.fillStyle = '#2563eb';
+                ctx.beginPath(); ctx.roundRect(-12, -14, 22, 26, 3); ctx.fill();
+                ctx.strokeStyle = '#1d4ed8'; ctx.lineWidth = 1.5; ctx.stroke();
+                // 책 종이 옆면 & 북마크 리본
+                ctx.fillStyle = '#f8fafc'; ctx.fillRect(-10, -12, 4, 22);
+                ctx.fillStyle = '#ef4444'; ctx.fillRect(-3, 8, 3, 7);
+                // 책 얼굴 (눈 & 미소)
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(-2, -5, 2, 5); ctx.fillRect(4, -5, 2, 5);
+                ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1.2;
+                ctx.beginPath(); ctx.arc(2, 2, 2.5, 0.2, Math.PI - 0.2); ctx.stroke();
+                // 책 팻말 ('book')
+                ctx.save();
+                ctx.translate(-14 * facing, -12);
+                ctx.fillStyle = '#f1f5f9'; ctx.fillRect(-9, -6, 18, 10);
+                ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1; ctx.strokeRect(-9, -6, 18, 10);
+                ctx.fillStyle = '#1e293b'; ctx.font = 'bold 7px Arial'; ctx.textAlign = 'center'; ctx.fillText('book', 0, 1.5);
+                ctx.restore();
+                ctx.restore();
+
+                // 2. 우측 연필 캐릭터 (Pencil)
+                ctx.save();
+                ctx.translate(13, 0);
+                // 연필 다리 2개
+                ctx.fillStyle = '#334155';
+                ctx.fillRect(-5, 12, 3.5, 7); ctx.fillRect(1.5, 12, 3.5, 7);
+                // 연필 본체 (노란색 육각 연필 몸체)
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillRect(-6, -10, 12, 22);
+                ctx.strokeStyle = '#d97706'; ctx.lineWidth = 1.2; ctx.strokeRect(-6, -10, 12, 22);
+                // 연필 깎인 목재 콘 (#fed7aa) & 흑연 심 (#1e293b)
+                ctx.fillStyle = '#fed7aa';
+                ctx.beginPath(); ctx.moveTo(-6, -10); ctx.lineTo(6, -10); ctx.lineTo(0, -22); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#1e293b';
+                ctx.beginPath(); ctx.moveTo(-2.5, -17); ctx.lineTo(2.5, -17); ctx.lineTo(0, -22); ctx.closePath(); ctx.fill();
+                // 연필 얼굴 (눈 & 미소)
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(-3, -3, 1.8, 3.5); ctx.fillRect(1.5, -3, 1.8, 3.5);
+                ctx.strokeStyle = '#78350f'; ctx.lineWidth = 1.2;
+                ctx.beginPath(); ctx.arc(0, 3, 2, 0.2, Math.PI - 0.2); ctx.stroke();
+                // 연필 팻말 ('PEN')
+                ctx.save();
+                ctx.translate(14 * facing, -10);
+                ctx.fillStyle = '#fef08a'; ctx.fillRect(-8, -6, 16, 10);
+                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1; ctx.strokeRect(-8, -6, 16, 10);
+                ctx.fillStyle = '#1e293b'; ctx.font = 'bold 7px Arial'; ctx.textAlign = 'center'; ctx.fillText('PEN', 0, 1.5);
+                ctx.restore();
+                ctx.restore();
+
+                // 3. 중앙: 책과 연필의 손 맞잡기!
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.moveTo(-4, 0); ctx.lineTo(4, 0); ctx.stroke();
+                ctx.fillStyle = '#fde047'; ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI * 2); ctx.fill();
+
+                ctx.restore();
+            } else if (useSkin === 'clock_and_diamond') {
+                // ⏰💎 시계와 다이아 (시간과 다이아) - Image 5 손그림 충실 재현
+                // 모자 쓴 시계(2.0 팻말) & 빛나는 다이아몬드가 손을 맞잡은 콤비 스킨!
+                ctx.save();
+                ctx.translate(0, -bobbing);
+
+                // 1. 좌측 시계 캐릭터 (Clock)
+                ctx.save();
+                ctx.translate(-13, 0);
+                // 시계 다리
+                ctx.fillStyle = '#475569'; ctx.fillRect(-5, 12, 3.5, 7); ctx.fillRect(1.5, 12, 3.5, 7);
+                // 둥근 시계 몸체
+                ctx.fillStyle = '#f8fafc';
+                ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2; ctx.stroke();
+                // 시계 위 페도라 모자 (#334155)
+                ctx.fillStyle = '#334155';
+                ctx.beginPath(); ctx.ellipse(0, -14, 13, 3, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.roundRect(-7, -21, 14, 8, 2); ctx.fill();
+                // 시계 바늘 (2시 방향) & 눈, 미소
+                ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.moveTo(0, 1); ctx.lineTo(0, -6); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, 1); ctx.lineTo(5, -2); ctx.stroke();
+                // 눈 & 입
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(-5, -3, 1.8, 2.5); ctx.fillRect(3.5, -3, 1.8, 2.5);
+                ctx.strokeStyle = '#b45309'; ctx.beginPath(); ctx.arc(0, 5, 2.5, 0.2, Math.PI - 0.2); ctx.stroke();
+                // '2.0' 팻말
+                ctx.save();
+                ctx.translate(-14 * facing, -12);
+                ctx.fillStyle = '#fef08a'; ctx.fillRect(-8, -6, 16, 10);
+                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1; ctx.strokeRect(-8, -6, 16, 10);
+                ctx.fillStyle = '#1e293b'; ctx.font = 'bold 7.5px Arial'; ctx.textAlign = 'center'; ctx.fillText('2.0', 0, 1.5);
+                ctx.restore();
+                ctx.restore();
+
+                // 2. 우측 다이아몬드 캐릭터 (Diamond)
+                ctx.save();
+                ctx.translate(13, 0);
+                // 다이아 다리
+                ctx.fillStyle = '#475569'; ctx.fillRect(-5, 12, 3.5, 7); ctx.fillRect(1.5, 12, 3.5, 7);
+                // 다이아몬드 다각형 몸체
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath();
+                ctx.moveTo(-13, -4); ctx.lineTo(-7, -13); ctx.lineTo(7, -13); ctx.lineTo(13, -4); ctx.lineTo(0, 11);
+                ctx.closePath(); ctx.fill();
+                ctx.strokeStyle = '#0284c7'; ctx.lineWidth = 1.6; ctx.stroke();
+                // 패싯 크리스탈 라인
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'; ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(-13, -4); ctx.lineTo(13, -4);
+                ctx.moveTo(-7, -13); ctx.lineTo(-3, -4); ctx.lineTo(0, 11);
+                ctx.moveTo(7, -13); ctx.lineTo(3, -4); ctx.lineTo(0, 11);
+                ctx.stroke();
+                // 다이아 얼굴
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(-3, -2, 1.8, 2.8); ctx.fillRect(1.5, -2, 1.8, 2.8);
+                ctx.strokeStyle = '#0369a1'; ctx.beginPath(); ctx.arc(0, 3, 2.2, 0.2, Math.PI - 0.2); ctx.stroke();
+                ctx.restore();
+
+                // 3. 중앙 손잡기
+                ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2.8; ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.moveTo(-3, 2); ctx.lineTo(3, 2); ctx.stroke();
+
+                ctx.restore();
+            } else if (useSkin === 'black_hole_ufo') {
+                // 🛸🕳️ 블랙홀 우주선 (b.u) - Image 5 손그림 충실 재현
+                // 상단 블랙홀 왜곡 눈알 + 비행접시 캐노피 + 하단 2개 로봇 다리
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 하단 로봇 보행 다리 2개
+                ctx.strokeStyle = '#64748b'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+                ctx.save();
+                ctx.translate(-8, 9);
+                ctx.rotate((walkAngle * Math.PI) / 180);
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-2, 8); ctx.lineTo(3, 13); ctx.stroke();
+                ctx.restore();
+
+                ctx.save();
+                ctx.translate(8, 9);
+                ctx.rotate((-walkAngle * Math.PI) / 180);
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(2, 8); ctx.lineTo(-3, 13); ctx.stroke();
+                ctx.restore();
+
+                // 2. 비행접시 원반 링 (UFO Saucer)
+                ctx.fillStyle = '#7c3aed';
+                ctx.beginPath(); ctx.ellipse(0, 4, 25, 7, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#c084fc'; ctx.lineWidth = 1.5; ctx.stroke();
+                // 원반 둘레 네온 라이트
+                for (let li = -18; li <= 18; li += 9) {
+                    ctx.fillStyle = (Math.sin(t * 3 + li) > 0) ? '#38bdf8' : '#facc15';
+                    ctx.beginPath(); ctx.arc(li, 4.5, 1.8, 0, Math.PI * 2); ctx.fill();
+                }
+
+                // 3. 우주선 중앙 돔 & 표정 ('b.u' 마크)
+                ctx.fillStyle = '#a855f7';
+                ctx.beginPath(); ctx.ellipse(0, -2, 13, 9, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#d8b4fe'; ctx.lineWidth = 1.2; ctx.stroke();
+                // 귀여운 눈 & 미소
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath(); ctx.arc(-4, -2, 1.6, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(4, -2, 1.6, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#3b0764'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(0, 1, 2, 0.2, Math.PI - 0.2); ctx.stroke();
+                // b.u 텍스트
+                ctx.fillStyle = '#fef08a'; ctx.font = 'bold 8px monospace'; ctx.textAlign = 'center'; ctx.fillText('b.u', 0, 13);
+
+                // 4. 상단 블랙홀 강착원반 & 신비로운 눈알 (Black Hole Eye)
+                ctx.save();
+                ctx.translate(0, -17);
+                // 강착원반 빛의 왜곡
+                let bhGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 20);
+                bhGrad.addColorStop(0, '#000000');
+                bhGrad.addColorStop(0.35, '#3b0764');
+                bhGrad.addColorStop(0.7, '#ec4899');
+                bhGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+                ctx.fillStyle = bhGrad;
+                ctx.beginPath(); ctx.ellipse(0, 0, 24, 7, 0, 0, Math.PI * 2); ctx.fill();
+                // 중앙 블랙홀 안구 (Eye)
+                ctx.fillStyle = '#020617';
+                ctx.beginPath(); ctx.ellipse(0, 0, 9, 5, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#22d3ee';
+                ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(1, -1, 1, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+
+                ctx.restore();
+            } else if (useSkin === 'pi_314') {
+                // 🥧🔢 3.14 (Pi 3.14) - Image 5 손그림 충실 재현
+                // 그리스 문자 π 형태의 몸체, 상단 가로바에 눈 & '3.14159265' 리본, 두 다리 보행
+                ctx.save();
+                ctx.translate(0, -bobbing);
+
+                // 1. 파이(π) 형태의 굵은 바디
+                let piGrad = ctx.createLinearGradient(-16, -20, 16, 20);
+                piGrad.addColorStop(0, '#f43f5e');
+                piGrad.addColorStop(1, '#e11d48');
+                ctx.fillStyle = piGrad;
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.8;
+
+                // 상단 가로바
+                ctx.beginPath();
+                ctx.roundRect(-16, -16, 32, 9, 3);
+                ctx.fill(); ctx.stroke();
+
+                // 좌측 다리 기둥 (곡선)
+                ctx.save();
+                ctx.translate(-7, -7);
+                ctx.rotate((walkAngle * 0.7 * Math.PI) / 180);
+                ctx.beginPath();
+                ctx.moveTo(-4, 0); ctx.quadraticCurveTo(-10, 14, -13, 22); ctx.lineTo(-6, 23); ctx.quadraticCurveTo(-3, 14, 2, 0);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+                // 신발
+                ctx.fillStyle = '#0f172a'; ctx.fillRect(-15, 20, 11, 5);
+                ctx.restore();
+
+                // 우측 다리 기둥 (직선)
+                ctx.save();
+                ctx.translate(7, -7);
+                ctx.rotate((-walkAngle * 0.7 * Math.PI) / 180);
+                ctx.fillStyle = piGrad;
+                ctx.beginPath();
+                ctx.moveTo(-3, 0); ctx.lineTo(-1, 23); ctx.lineTo(5, 23); ctx.lineTo(3, 0);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+                // 신발
+                ctx.fillStyle = '#0f172a'; ctx.fillRect(-2, 20, 10, 5);
+                ctx.restore();
+
+                // 2. 상단 바에 귀여운 두 눈
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.ellipse(-6, -11.5, 2.5, 3.2, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(6, -11.5, 2.5, 3.2, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath(); ctx.arc(-6, -11.5, 1.4, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(6, -11.5, 1.4, 0, Math.PI * 2); ctx.fill();
+
+                // 3. 하단 '3.14159265' 팻말 리본
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath(); ctx.roundRect(-22, 27, 44, 11, 3); ctx.fill();
+                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1; ctx.stroke();
+                ctx.fillStyle = '#1e293b'; ctx.font = 'bold 7.5px monospace'; ctx.textAlign = 'center';
+                ctx.fillText('3.14159265', 0, 35.5);
+
+                // 수학 파티클
+                let pTime = Date.now() * 0.003;
+                ctx.font = '9px Arial'; ctx.fillStyle = '#facc15';
+                ctx.fillText('π', -18, -18 + Math.sin(pTime) * 3);
+                ctx.fillStyle = '#38bdf8';
+                ctx.fillText('Σ', 18, -18 - Math.sin(pTime) * 3);
+
+                ctx.restore();
+            } else if (useSkin === 'fire_and_space') {
+                // 🔥🪐 불과 행성 (Fire and space) - Image 5 손그림 충실 재현
+                // 불꽃 캐릭터 & 토성 고리 우주 행성 캐릭터가 손을 꼭 맞잡은 콤비 스킨!
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.004;
+
+                // 1. 좌측 불꽃 캐릭터 (Fire)
+                ctx.save();
+                ctx.translate(-13, 0);
+                // 다리
+                ctx.fillStyle = '#334155'; ctx.fillRect(-5, 12, 3.5, 7); ctx.fillRect(1.5, 12, 3.5, 7);
+                // 불꽃 외형 (일렁이는 화염 콘)
+                let flameWiggle = Math.sin(t * 3) * 2;
+                ctx.fillStyle = '#ea580c';
+                ctx.beginPath();
+                ctx.moveTo(0, -22 + flameWiggle);
+                ctx.quadraticCurveTo(-14, -10, -12, 4);
+                ctx.quadraticCurveTo(-10, 14, 0, 14);
+                ctx.quadraticCurveTo(10, 14, 12, 4);
+                ctx.quadraticCurveTo(14, -10, 0, -22 + flameWiggle);
+                ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.6; ctx.stroke();
+                // 안쪽 둥근 얼굴
+                ctx.fillStyle = '#fed7aa';
+                ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI * 2); ctx.fill();
+                // 눈 & 미소
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(-3, -2, 1.8, 2.5); ctx.fillRect(1.5, -2, 1.8, 2.5);
+                ctx.strokeStyle = '#c2410c'; ctx.lineWidth = 1.2;
+                ctx.beginPath(); ctx.arc(0, 2.5, 2.5, 0.2, Math.PI - 0.2); ctx.stroke();
+                ctx.restore();
+
+                // 2. 우측 행성 캐릭터 (Space)
+                ctx.save();
+                ctx.translate(13, 0);
+                // 다리
+                ctx.fillStyle = '#334155'; ctx.fillRect(-5, 12, 3.5, 7); ctx.fillRect(1.5, 12, 3.5, 7);
+                // 행성 구체 (#4f46e5)
+                ctx.fillStyle = '#4f46e5';
+                ctx.beginPath(); ctx.arc(0, 0, 11, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#818cf8'; ctx.lineWidth = 1.5; ctx.stroke();
+                // 토성 고리 (#fde047)
+                ctx.save();
+                ctx.rotate(-0.25);
+                ctx.strokeStyle = '#fde047'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.ellipse(0, 0, 17, 5, 0, 0, Math.PI * 2); ctx.stroke();
+                ctx.restore();
+                // 눈 & 미소
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(-3.5, -2, 2, 2.5); ctx.fillRect(1.5, -2, 2, 2.5);
+                ctx.strokeStyle = '#fde047'; ctx.lineWidth = 1.2;
+                ctx.beginPath(); ctx.arc(0, 3, 2.5, 0.2, Math.PI - 0.2); ctx.stroke();
+                ctx.restore();
+
+                // 3. 중앙 손잡기
+                ctx.strokeStyle = '#f97316'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.moveTo(-4, 2); ctx.lineTo(4, 2); ctx.stroke();
+
+                // 4. 하단 'Fire and space' 팻말
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+                ctx.beginPath(); ctx.roundRect(-25, 25, 50, 12, 4); ctx.fill();
+                ctx.strokeStyle = '#f97316'; ctx.lineWidth = 1.2; ctx.stroke();
+                ctx.fillStyle = '#fef08a'; ctx.font = 'bold 7px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText('Fire and space', 0, 33.5);
+
+                ctx.restore();
             } else {
+                let charColors = (char && char.colors) ? char.colors : { shirt: '#2980b9', skin: '#f1c40f', hat: '#27ae60' };
                 ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, 25, 20, 8, 0, 0, Math.PI*2); ctx.fill();
                 ctx.translate(0, -bobbing);
                 ctx.fillStyle = '#2c3e50';
                 ctx.save(); ctx.translate(-8, 15); ctx.rotate((walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
                 ctx.save(); ctx.translate(8, 15); ctx.rotate((-walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
                 let torsoGrad = ctx.createLinearGradient(0, -10, 0, 15);
-                let shirtCol = char.colors.shirt;
+                let shirtCol = charColors.shirt;
                 if (skin === 'snorkeling_fisher') shirtCol = '#0984e3';
                 else if (skin === 'mad_scientist') shirtCol = '#ecf0f1';
                 else if (skin === 'archaeologist') shirtCol = '#bfa181';
@@ -30038,7 +30547,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                         ctx.save();
                         ctx.translate(-10 * facing, -2);
                         ctx.rotate((-0.3 + chopCycle * 0.3) * facing);
-                        ctx.fillStyle = char.colors.skin;
+                        ctx.fillStyle = charColors.skin;
                         ctx.fillRect(-4, -14, 8, 16);
                         ctx.beginPath(); ctx.arc(0, -14, 4, 0, Math.PI*2); ctx.fill();
                         ctx.restore();
@@ -30047,7 +30556,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                         ctx.save();
                         ctx.translate(12 * facing, -4);
                         ctx.rotate(swingRot * facing);
-                        ctx.fillStyle = char.colors.skin;
+                        ctx.fillStyle = charColors.skin;
                         ctx.fillRect(-4, -14, 8, 18);
                         ctx.beginPath(); ctx.arc(0, -14, 4.5, 0, Math.PI*2); ctx.fill();
 
@@ -30061,7 +30570,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                         ctx.save();
                         ctx.translate(-18 * facing, 0);
                         ctx.rotate((-walkAngle * Math.PI)/180);
-                        ctx.fillStyle = char.colors.skin;
+                        ctx.fillStyle = charColors.skin;
                         ctx.fillRect(-4, 0, 8, 15);
                         ctx.beginPath(); ctx.arc(0, 15, 4, 0, Math.PI*2); ctx.fill();
                         ctx.restore();
@@ -30069,7 +30578,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                         ctx.save();
                         ctx.translate(16 * facing, 0);
                         ctx.rotate(((walkAngle * 0.4) * Math.PI)/180 + 0.1 * facing);
-                        ctx.fillStyle = char.colors.skin;
+                        ctx.fillStyle = charColors.skin;
                         ctx.fillRect(-4, 0, 8, 15);
                         ctx.beginPath(); ctx.arc(0, 15, 4, 0, Math.PI*2); ctx.fill();
                         
@@ -30079,16 +30588,16 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                         ctx.restore();
                     }
                 } else if (isShaking) {
-                    let sE = Math.sin(player.shakeTimer * 1.5) * 10; ctx.fillStyle = char.colors.skin;
+                    let sE = Math.sin(player.shakeTimer * 1.5) * 10; ctx.fillStyle = charColors.skin;
                     ctx.save(); ctx.translate(-15, 0); ctx.rotate(-Math.PI/4); ctx.fillRect(-4, -20 + sE, 8, 20); ctx.beginPath(); ctx.arc(0, -22 + sE, 6, 0, Math.PI*2); ctx.fill(); ctx.restore();
                     ctx.save(); ctx.translate(15, 0); ctx.rotate(Math.PI/4); ctx.fillRect(-4, -20 - sE, 8, 20); ctx.beginPath(); ctx.arc(0, -22 - sE, 6, 0, Math.PI*2); ctx.fill(); ctx.restore();
                 } else {
-                    ctx.fillStyle = char.colors.skin;
+                    ctx.fillStyle = charColors.skin;
                     ctx.save(); ctx.translate(-18, 0); ctx.rotate((-walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
                     ctx.save(); ctx.translate(18, 0); ctx.rotate((walkAngle * Math.PI)/180); ctx.fillRect(-4, 0, 8, 15); ctx.restore();
                 }
                 let headGrad = ctx.createRadialGradient(0, -20, 5, 0, -20, 15);
-                headGrad.addColorStop(0, '#ffffff'); headGrad.addColorStop(1, char.colors.skin);
+                headGrad.addColorStop(0, '#ffffff'); headGrad.addColorStop(1, charColors.skin);
                 ctx.fillStyle = headGrad; ctx.beginPath(); ctx.arc(0, -20, 15, 0, Math.PI*2); ctx.fill();
                 
                 if (char.shopType === 'radioactive') {
@@ -30148,7 +30657,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     ctx.fillStyle = '#5d4037';
                     ctx.fillRect(-12, -35, 24, 4);
                 } else {
-                    ctx.fillStyle = skin === 'snorkeling_fisher' ? '#fdcb6e' : char.colors.hat;
+                    ctx.fillStyle = skin === 'snorkeling_fisher' ? '#fdcb6e' : charColors.hat;
                     ctx.beginPath(); ctx.ellipse(0, -32, 22, 6, 0, 0, Math.PI*2); ctx.fill();
                     ctx.beginPath(); ctx.arc(0, -32, 14, Math.PI, 0); ctx.fill();
                 }
@@ -33278,6 +33787,13 @@ window.startRingMinigameLive830 = startRingMinigameLive9Pm; // 레거시 호환
 // ⏱️ 실시간 틱 루프 (250ms마다 호출): 9:00 도달 시 새로고침 없이 즉시 자동 재생 및 단계별 진행
 function checkAndTick9PmLiveEvent() {
     const currentT = get9PmEventElapsedSeconds();
+    const isTestMode = (typeof window !== 'undefined' && window._live9PmTestStartTime !== undefined && window._live9PmTestStartTime !== null);
+
+    // 이벤트 시작 전이거나 이미 이벤트 총 시간이 종료된 경우 (테스트 모드가 아닐 때)
+    if (!isTestMode && (currentT === null || currentT < 0 || currentT > LIVE_9PM_TOTAL_DURATION)) {
+        update9PmUIStatus(false, currentT);
+        return;
+    }
 
     // 이벤트 시작 전인 경우
     if (currentT === null || currentT < 0) {
@@ -34037,11 +34553,25 @@ function updateBoatRace() {
     const dt = 1 / 60;
     bs.timeLeft = Math.max(0, bs.timeLeft - dt);
 
-    // 좌우 조작 (A/D or 좌우 화살표)
+    // 좌우 조작 (키보드, 모바일 조이스틱, 조향 버튼, 직접 터치/마우스 드래그 전방위 지원)
     let moveDir = 0;
-    if (bs.keys['ArrowLeft'] || bs.keys['a'] || bs.keys['A']) moveDir -= 1;
-    if (bs.keys['ArrowRight'] || bs.keys['d'] || bs.keys['D']) moveDir += 1;
-    bs.boatX += moveDir * 280 * dt;
+    if (bs.keys['ArrowLeft'] || bs.keys['a'] || bs.keys['A'] || (typeof keys !== 'undefined' && (keys['ArrowLeft'] || keys['KeyA'] || keys['a'] || keys['Left']))) moveDir -= 1;
+    if (bs.keys['ArrowRight'] || bs.keys['d'] || bs.keys['D'] || (typeof keys !== 'undefined' && (keys['ArrowRight'] || keys['KeyD'] || keys['d'] || keys['Right']))) moveDir += 1;
+
+    if (typeof joystick !== 'undefined' && joystick.active) {
+        moveDir += joystick.dx;
+    }
+    if (window.boatSteerLeft) moveDir -= 1;
+    if (window.boatSteerRight) moveDir += 1;
+
+    if (window._boatTargetX !== undefined && window._boatTargetX !== null) {
+        let diff = window._boatTargetX - bs.boatX;
+        if (Math.abs(diff) > 4) {
+            moveDir += Math.sign(diff) * Math.min(1.2, Math.abs(diff) / 35);
+        }
+    }
+
+    bs.boatX += moveDir * 380 * dt;
     bs.boatX = Math.max(45, Math.min(GAME_WIDTH - 45, bs.boatX));
 
     // 전진 거리 누적
@@ -35269,7 +35799,7 @@ window.closeSeason1NoticeModal = closeSeason1NoticeModal;
 try {
     const todayKey = 'hide_season1_abuse_modal_' + new Date().toDateString();
     if (localStorage.getItem(todayKey) !== 'true') {
-        setTimeout(openSeason1NoticeModal, 600);
+        // setTimeout(openSeason1NoticeModal, 600); // 새로고침 시 자동 팝업 차단
     }
 } catch(e) {}
 
