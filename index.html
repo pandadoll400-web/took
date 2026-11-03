@@ -38,18 +38,18 @@
         #level-container {
             position: absolute; top: 10px; left: 50%;
             transform: translateX(-50%);
-            display: flex; align-items: center; justify-content: center; gap: 6px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
             pointer-events: none; z-index: 15; white-space: nowrap;
-            max-width: 140px;
+            max-width: 220px;
         }
         #level-text {
-            color: white; font-size: 13px; font-weight: 800;
+            color: white; font-size: 14px; font-weight: 800;
             text-shadow: 2px 2px 4px #000; margin-bottom: 0;
             pointer-events: auto; cursor: pointer; white-space: nowrap;
         }
         #xp-bar-bg {
             background: rgba(0,0,0,0.6); border: 1.5px solid #fff;
-            border-radius: 6px; height: 10px; width: 80px;
+            border-radius: 6px; height: 13px; width: 115px;
             overflow: hidden; position: relative;
         }
         #xp-bar-fill {
@@ -65,13 +65,13 @@
                 top: 8px; right: 8px; font-size: 11px; padding: 4px 8px; border-radius: 14px;
             }
             #level-container {
-                top: 8px; gap: 4px; max-width: 130px;
+                top: 8px; gap: 6px; max-width: 180px;
             }
             #level-text {
-                font-size: 11.5px;
+                font-size: 12px;
             }
             #xp-bar-bg {
-                width: 65px; height: 9px;
+                width: 95px; height: 11px;
             }
         }
 
@@ -4588,6 +4588,17 @@
                 localStorage.setItem('treeGameSave_weqwxe3', JSON.stringify(getSaveData()));
                 localStorage.setItem('player_candy_corn_weqwxe3', (candyCorn || 0).toString());
             } catch(e) {}
+
+            // 🌟 weqwxe3 접속 시 일반 지형 중앙(X: 300, Y: 500) & 카메라 0 안전 스폰 보장
+            if (typeof player !== 'undefined') {
+                player.x = 300;
+                player.y = 500;
+                player.vx = 0;
+                player.vy = 0;
+                player.targetTree = null;
+            }
+            cameraY = 0;
+            window._isConcertLocked = false;
         }
 
         // 👽 우주 나무 외계 과학자 & 감염된 고릴라 실험실 퀘스트 상태 (10월 17일 토요일 밤 10시 공개 / 어드민은 언제든 사전 오픈)
@@ -16882,63 +16893,65 @@ window.claimPirateShipSkin = claimPirateShipSkin;
 
             const itemDiv = document.createElement('div');
             itemDiv.style.cssText = `
-                background: radial-gradient(circle at top, rgba(30, 27, 75, 0.9), rgba(15, 23, 42, 0.95));
+                background: radial-gradient(circle at top, rgba(30, 27, 75, 0.95), rgba(15, 23, 42, 0.98));
                 border: 2px solid #a855f7;
                 border-radius: 14px;
                 padding: 14px;
-                box-shadow: 0 4px 15px rgba(168, 85, 247, 0.25);
+                box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
             `;
 
             itemDiv.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span style="font-size: 36px;">👼😈</span>
-                        <div>
-                            <div style="font-size: 16px; font-weight: 900; color: #facc15;">천악 럭키블록</div>
-                            <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">
-                                개봉 시 해파리, 피닉스, 천사, 악마, 에테론 스킨 조각 획득!
-                            </div>
-                        </div>
+                <!-- 1. 확률 뱃지 바 (첨부 이미지 media_1793710154930_2d67b7ef.png 그대로 구현) -->
+                <div style="display: flex; gap: 4px; width: 100%; font-size: 11px; font-weight: 900; text-align: center; justify-content: center;">
+                    <div style="flex: 50; background: #0077cc; color: #ffffff; padding: 8px 4px; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 4px rgba(255,255,255,0.3);">
+                        해파리 50%
                     </div>
-                    <div style="text-align: right; background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.4);">
-                        <div style="font-size: 10.5px; color: #94a3b8; font-weight: bold;">보유 수량</div>
-                        <div style="font-size: 18px; font-weight: 900; color: #38bdf8;">${heldCount.toLocaleString()}개</div>
+                    <div style="flex: 25; background: #e65100; color: #ffffff; padding: 8px 4px; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 4px rgba(255,255,255,0.3);">
+                        피닉스 25%
+                    </div>
+                    <div style="flex: 15; background: #c98600; color: #ffffff; padding: 8px 4px; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 4px rgba(255,255,255,0.3);">
+                        천사<br>15%
+                    </div>
+                    <div style="flex: 9; background: #c62828; color: #ffffff; padding: 8px 4px; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 4px rgba(255,255,255,0.3);">
+                        악마<br>9%
+                    </div>
+                    <div style="flex: 5; background: #fbc02d; color: #000000; padding: 8px 4px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; line-height: 1.1; box-shadow: inset 0 0 4px rgba(0,0,0,0.3);">
+                        에<br>테<br>론<br>1%
                     </div>
                 </div>
 
-                <!-- 확률 미리보기 바 -->
-                <div style="display: flex; gap: 4px; margin-bottom: 12px; font-size: 9.5px; font-weight: 900; text-align: center;">
-                    <span style="flex: 50; background: #0284c7; color: white; padding: 3px 2px; border-radius: 4px;">해파리 50%</span>
-                    <span style="flex: 25; background: #ea580c; color: white; padding: 3px 2px; border-radius: 4px;">피닉스 25%</span>
-                    <span style="flex: 15; background: #ca8a04; color: white; padding: 3px 2px; border-radius: 4px;">천사 15%</span>
-                    <span style="flex: 9; background: #dc2626; color: white; padding: 3px 2px; border-radius: 4px;">악마 9%</span>
-                    <span style="flex: 5; background: #eab308; color: black; padding: 3px 2px; border-radius: 4px;">에테론 1%</span>
+                <!-- 2. 중앙 거대한 ? 럭키블록 박스 (종이 스케치 Image 1 그대로) -->
+                <div style="width: 110px; height: 110px; margin: 4px 0; background: linear-gradient(135deg, #1e1b4b, #3b0764); border: 3px solid #fbbf24; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(251, 191, 36, 0.45), inset 0 0 15px rgba(251, 191, 36, 0.2); position: relative;">
+                    <div style="font-size: 54px; font-weight: 900; color: #fbbf24; text-shadow: 0 0 15px #f59e0b, 2px 2px 4px #000; font-family: monospace;">?</div>
+                    <div style="position: absolute; bottom: 4px; font-size: 10px; font-weight: 900; color: #fde047; background: rgba(0,0,0,0.6); padding: 1px 6px; border-radius: 6px;">
+                        보유: ${heldCount.toLocaleString()}개
+                    </div>
                 </div>
 
-                <!-- 수량 입력 및 컨트롤 박스 -->
-                <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(168, 85, 247, 0.4); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 10px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <span style="font-size: 12.5px; font-weight: 900; color: #e2e8f0;">개봉할 수량 입력:</span>
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <button onclick="changeLuckyBlockInput(-1, ${heldCount})" style="width: 32px; height: 32px; background: #334155; border: 1px solid #475569; border-radius: 6px; color: white; font-weight: 900; cursor: pointer; font-size: 16px;">-</button>
-                            <input type="number" id="lucky-open-input" min="1" max="${heldCount}" value="1" style="width: 75px; height: 32px; text-align: center; font-weight: 900; font-size: 16px; background: #0f172a; border: 1.5px solid #38bdf8; border-radius: 6px; color: #ffffff; outline: none;" />
-                            <button onclick="changeLuckyBlockInput(1, ${heldCount})" style="width: 32px; height: 32px; background: #334155; border: 1px solid #475569; border-radius: 6px; color: white; font-weight: 900; cursor: pointer; font-size: 16px;">+</button>
-                        </div>
-                    </div>
-
-                    <!-- 퀵 선택 버튼 -->
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
-                        <button onclick="setLuckyBlockInput(1, ${heldCount})" style="padding: 6px 2px; background: rgba(51, 65, 85, 0.8); border: 1px solid #475569; border-radius: 6px; color: #e2e8f0; font-size: 11.5px; font-weight: 800; cursor: pointer;">1개</button>
-                        <button onclick="setLuckyBlockInput(10, ${heldCount})" style="padding: 6px 2px; background: rgba(51, 65, 85, 0.8); border: 1px solid #475569; border-radius: 6px; color: #e2e8f0; font-size: 11.5px; font-weight: 800; cursor: pointer;">10개</button>
-                        <button onclick="setLuckyBlockInput(30, ${heldCount})" style="padding: 6px 2px; background: rgba(51, 65, 85, 0.8); border: 1px solid #475569; border-radius: 6px; color: #e2e8f0; font-size: 11.5px; font-weight: 800; cursor: pointer;">30개</button>
-                        <button onclick="setLuckyBlockInput(${heldCount}, ${heldCount})" style="padding: 6px 2px; background: rgba(168, 85, 247, 0.25); border: 1px solid #a855f7; border-radius: 6px; color: #facc15; font-size: 11.5px; font-weight: 900; cursor: pointer;">최대 (${heldCount}개)</button>
-                    </div>
-
-                    <!-- 개봉 실행 버튼 -->
-                    <button onclick="executeLuckyBlockOpenFromInv()" style="padding: 12px; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 15px; cursor: pointer; box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5); letter-spacing: -0.3px;">
-                        🎁 럭키블록 개봉하기!
-                    </button>
+                <!-- 3. 퀵 선택 버튼 (첨부 이미지 media_1793710161700_63aa994d.png 그대로 구현) -->
+                <div style="display: flex; gap: 8px; width: 100%; justify-content: center;">
+                    <button onclick="setLuckyBlockInput(1, ${heldCount})" style="flex: 1; padding: 10px 4px; background: #1e293b; border: 1.5px solid #475569; border-radius: 10px; color: #ffffff; font-size: 13.5px; font-weight: 900; cursor: pointer; transition: 0.15s; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">1개</button>
+                    <button onclick="setLuckyBlockInput(10, ${heldCount})" style="flex: 1; padding: 10px 4px; background: #1e293b; border: 1.5px solid #475569; border-radius: 10px; color: #ffffff; font-size: 13.5px; font-weight: 900; cursor: pointer; transition: 0.15s; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">10개</button>
+                    <button onclick="setLuckyBlockInput(30, ${heldCount})" style="flex: 1; padding: 10px 4px; background: #1e293b; border: 1.5px solid #475569; border-radius: 10px; color: #ffffff; font-size: 13.5px; font-weight: 900; cursor: pointer; transition: 0.15s; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">30개</button>
+                    <button onclick="setLuckyBlockInput(${heldCount}, ${heldCount})" style="flex: 1.3; padding: 10px 4px; background: #1e1b4b; border: 2px solid #a855f7; border-radius: 10px; color: #fbbf24; font-size: 13.5px; font-weight: 900; cursor: pointer; transition: 0.15s; box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);">최대 (${heldCount}개)</button>
                 </div>
+
+                <!-- 4. 수량 입력 행: [ 1 ] 개까기 (종이 스케치 그대로) -->
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin: 4px 0;">
+                    <button onclick="changeLuckyBlockInput(-1, ${heldCount})" style="width: 36px; height: 36px; background: #334155; border: 1.5px solid #64748b; border-radius: 8px; color: white; font-weight: 900; font-size: 18px; cursor: pointer;">-</button>
+                    <input type="number" id="lucky-open-input" min="1" max="${heldCount}" value="1" style="width: 70px; height: 36px; text-align: center; font-weight: 900; font-size: 18px; background: #0f172a; border: 2px solid #38bdf8; border-radius: 8px; color: #ffffff; outline: none; box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);" />
+                    <button onclick="changeLuckyBlockInput(1, ${heldCount})" style="width: 36px; height: 36px; background: #334155; border: 1.5px solid #64748b; border-radius: 8px; color: white; font-weight: 900; font-size: 18px; cursor: pointer;">+</button>
+                    <span style="font-size: 15px; font-weight: 900; color: #f8fafc; margin-left: 2px;">개까기</span>
+                </div>
+
+                <!-- 5. 거대한 [확인!] 버튼 (종이 스케치 그대로) -->
+                <button onclick="executeLuckyBlockOpenFromInv()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #ffffff; border: 2px solid #fef08a; border-radius: 12px; font-weight: 900; font-size: 18px; cursor: pointer; box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5); text-shadow: 0 2px 4px rgba(0,0,0,0.5); letter-spacing: 1px;">
+                    확인!
+                </button>
             `;
 
             listEl.appendChild(itemDiv);
@@ -17099,44 +17112,24 @@ window.claimPirateShipSkin = claimPirateShipSkin;
         window.gotoShardTabFromUnboxModal = gotoShardTabFromUnboxModal;
 
         // 🧩 인벤토리 스킨 조각 탭 UI 갱신 함수
+        // 🧩 [종이 스케치 반영] 스킨 조각 슬롯 카드 그리드 (네모 슬롯 안 조각 아이콘 + 조각 이름 및 수량 + [합성] 버튼)
         function updateInvShardUI() {
             const shardList = document.getElementById('inv-shard-list');
             if (!shardList) return;
+            shardList.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; max-height: 420px; overflow-y: auto; padding: 4px;';
             shardList.innerHTML = '';
 
             const shardDefs = [
                 {
-                    name: '해파리 조각',
-                    altKeys: ['해파리 조각', '해파리조각', '해파리 스킨 조각'],
-                    icon: '🪼',
-                    color: '#38bdf8',
-                    grade: '신화',
-                    targetName: '해파리 스킨',
-                    reqCount: 75,
+                    name: '에테론 조각',
+                    altKeys: ['에테론 조각', '에테론조각'],
+                    icon: '🌓',
+                    color: '#c084fc',
+                    grade: '초신화',
+                    targetName: '에테론 초신화',
+                    reqCount: 6,
                     recipeKey: 'shards',
-                    desc: '신비로운 심해 해파리의 반짝이는 조각입니다. 75개를 모으면 크래프트 머신에서 [해파리 스킨]으로 합성할 수 있습니다.'
-                },
-                {
-                    name: '피닉스 조각',
-                    altKeys: ['피닉스 조각', '피닉스조각', '불사조 조각'],
-                    icon: '🔥🦅',
-                    color: '#f97316',
-                    grade: '신화',
-                    targetName: '피닉스 스킨',
-                    reqCount: 60,
-                    recipeKey: 'shards',
-                    desc: '영원히 꺼지지 않는 불사조의 화염 깃털 조각입니다. 60개를 모으면 크래프트 머신에서 [피닉스 스킨]으로 합성할 수 있습니다.'
-                },
-                {
-                    name: '천사 조각',
-                    altKeys: ['천사 조각', '천사의 조각', '천사조각'],
-                    icon: '👼',
-                    color: '#facc15',
-                    grade: '전설',
-                    targetName: '천사 스킨',
-                    reqCount: 50,
-                    recipeKey: 'shards',
-                    desc: '성스러운 기운이 깃든 천사의 날개 조각입니다. 50개를 모으면 크래프트 머신에서 [천사 스킨]으로 합성할 수 있습니다.'
+                    desc: '천사반 악마반 에테론'
                 },
                 {
                     name: '악마 조각',
@@ -17147,18 +17140,40 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     targetName: '악마 스킨',
                     reqCount: 40,
                     recipeKey: 'shards',
-                    desc: '타오르는 지옥 불꽃을 품은 악마의 조각입니다. 40개를 모으면 크래프트 머신에서 [악마 스킨]으로 합성할 수 있습니다.'
+                    desc: '지옥 악마 날개'
                 },
                 {
-                    name: '에테론 조각',
-                    altKeys: ['에테론 조각', '에테론조각'],
-                    icon: '🌓',
-                    color: '#c084fc',
-                    grade: '초신화',
-                    targetName: '에테론 (천사반 악마반)',
-                    reqCount: 6,
+                    name: '천사 조각',
+                    altKeys: ['천사 조각', '천사의 조각', '천사조각'],
+                    icon: '👼',
+                    color: '#facc15',
+                    grade: '전설',
+                    targetName: '천사 스킨',
+                    reqCount: 50,
                     recipeKey: 'shards',
-                    desc: '천사와 악마의 기운이 극적으로 융합된 우주적 조각입니다. 6개를 모으면 [에테론 초신화 스킨]으로 합성할 수 있습니다.'
+                    desc: '순백 천사 날개'
+                },
+                {
+                    name: '피닉스 조각',
+                    altKeys: ['피닉스 조각', '피닉스조각', '불사조 조각'],
+                    icon: '🦅',
+                    color: '#f97316',
+                    grade: '신화',
+                    targetName: '피닉스 스킨',
+                    reqCount: 60,
+                    recipeKey: 'shards',
+                    desc: '불사조 화염 깃털'
+                },
+                {
+                    name: '해파리 조각',
+                    altKeys: ['해파리 조각', '해파리조각', '해파리 스킨 조각'],
+                    icon: '🪼',
+                    color: '#38bdf8',
+                    grade: '신화',
+                    targetName: '해파리 스킨',
+                    reqCount: 75,
+                    recipeKey: 'shards',
+                    desc: '심해 발광 해파리'
                 },
                 {
                     name: '공룡알 조각',
@@ -17169,7 +17184,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     targetName: '펫 알',
                     reqCount: 10,
                     recipeKey: 'egg_rock',
-                    desc: '고대 공룡알의 깨진 껍질 조각입니다. 10개를 모아 바위 제단에서 신비로운 [펫 알]로 교환할 수 있습니다.'
+                    desc: '고대 공룡알 껍질'
                 },
                 {
                     name: '쪽지 조각',
@@ -17180,80 +17195,60 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     targetName: '외계 과학자 퀘스트',
                     reqCount: 1,
                     recipeKey: null,
-                    desc: '신비한 암호가 적힌 고대 쪽지 조각입니다. 우주 외계 과학자 대면 퀘스트에 사용됩니다.'
+                    desc: '암호 쪽지'
                 }
             ];
 
-            let totalCount = 0;
             shardDefs.forEach(s => {
                 let count = 0;
                 s.altKeys.forEach(k => {
                     count += (inventory[k] || 0);
                 });
-                totalCount += count;
 
                 const isReady = (count >= s.reqCount);
-                const percent = Math.min(100, Math.floor((count / s.reqCount) * 100));
 
                 const itemDiv = document.createElement('div');
                 itemDiv.style.cssText = `
-                    background: rgba(30, 41, 59, 0.85);
-                    border: 1.5px solid ${s.color};
+                    background: rgba(30, 41, 59, 0.9);
+                    border: 2px solid ${s.color};
                     border-radius: 12px;
-                    padding: 10px 14px;
+                    padding: 10px 8px;
                     display: flex;
+                    flex-direction: column;
                     align-items: center;
                     justify-content: space-between;
-                    gap: 12px;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+                    text-align: center;
                 `;
 
                 itemDiv.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                        <span style="font-size: 28px; min-width: 36px; text-align: center;">${s.icon}</span>
-                        <div style="flex: 1;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 13.5px; font-weight: 900; color: #ffffff;">${s.name}</span>
-                                <span style="font-size: 10.5px; font-weight: 800; padding: 2px 6px; border-radius: 6px; background: ${s.color}22; color: ${s.color}; border: 1px solid ${s.color}66;">${s.grade}</span>
-                            </div>
-                            <div style="font-size: 11px; color: #94a3b8; margin-top: 3px; line-height: 1.35;">${s.desc}</div>
-                            <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px;">
-                                <div style="flex: 1; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden;">
-                                    <div style="width: ${percent}%; height: 100%; background: ${isReady ? '#10b981' : s.color}; border-radius: 4px;"></div>
-                                </div>
-                                <span style="font-size: 11.5px; font-weight: 900; color: ${isReady ? '#10b981' : '#facc15'}; min-width: 60px; text-align: right;">
-                                    ${count} / ${s.reqCount}개
-                                </span>
-                            </div>
+                    <!-- 종이 스케치 형태의 네모 조각 아이콘 슬롯 -->
+                    <div style="width: 58px; height: 58px; background: rgba(15, 23, 42, 0.95); border: 2px solid ${s.color}; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 0 10px ${s.color}44; margin-bottom: 6px;">
+                        ${s.icon}
+                    </div>
+                    <div style="width: 100%;">
+                        <div style="font-size: 13px; font-weight: 900; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${s.name}
+                        </div>
+                        <div style="font-size: 12px; font-weight: 800; color: ${isReady ? '#4ade80' : '#facc15'}; margin: 3px 0;">
+                            ${count} / ${s.reqCount}개
                         </div>
                     </div>
                     ${s.recipeKey ? `
                         <button onclick="gotoShardCraft('${s.recipeKey}')" style="
-                            padding: 8px 12px;
-                            background: ${isReady ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(51, 65, 85, 0.9)'};
-                            border: 1px solid ${isReady ? '#34d399' : '#64748b'};
-                            border-radius: 8px;
-                            color: white;
-                            font-size: 11.5px;
-                            font-weight: 900;
-                            cursor: pointer;
-                            white-space: nowrap;
+                            margin-top: 6px; width: 100%; padding: 6px 0; border: none; border-radius: 6px; font-size: 12px; font-weight: 900; cursor: pointer;
+                            background: ${isReady ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #475569, #334155)'};
+                            color: white; box-shadow: ${isReady ? '0 2px 8px rgba(16, 185, 129, 0.4)' : 'none'};
                         ">
-                            ${isReady ? '✨ 합성하기' : '합성소'}
+                            ${isReady ? '✨ 합성 가능' : '합성'}
                         </button>
-                    ` : ''}
+                    ` : `
+                        <div style="margin-top: 6px; font-size: 11px; color: #94a3b8; padding: 4px 0;">보관 중</div>
+                    `}
                 `;
+
                 shardList.appendChild(itemDiv);
             });
-
-            if (totalCount === 0) {
-                shardList.innerHTML = `
-                    <div style="text-align: center; padding: 30px 10px; color: #94a3b8;">
-                        <div style="font-size: 32px; margin-bottom: 8px;">🧩</div>
-                        <div style="font-size: 13.5px; font-weight: 900; color: #cbd5e1;">보유 중인 스킨 조각이 없습니다.</div>
-                        <div style="font-size: 11.5px; margin-top: 4px; color: #64748b;">천악 럭키블록을 개봉하면 스킨 조각을 획득할 수 있습니다!</div>
-                    </div>
-                `;
-            }
         }
         window.updateInvShardUI = updateInvShardUI;
 
@@ -17269,18 +17264,51 @@ window.claimPirateShipSkin = claimPirateShipSkin;
         window.gotoShardCraft = gotoShardCraft;
 
         // 동적 인벤토리 UI 구성
+        // 🍎 [유저 요청 종이 스케치 반영] 과일 사진 슬롯 카드 그리드 (상단 과일 아이콘 + 하단 과일이름 & 보유수량)
         function updateInventoryUI() {
             const grid = document.getElementById('inventory-grid');
             if (!grid) return;
+            grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; max-height: 420px; overflow-y: auto; padding: 4px;';
             grid.innerHTML = '';
+
+            const fruitIcons = {
+                '사과': '🍎', '바나나': '🍌', '체리': '🍒', '오렌지': '🍊',
+                '포도': '🍇', '딸기': '🍓', '수박': '🍉', '망고': '🥭',
+                '복숭아': '🍑', '파인애플': '🍍', '코코넛': '🥥', '키위': '🥝',
+                '멜론': '🍈', '블루베리': '🫐', '자두': '🫐', '석류': '🍎',
+                '주황호박': '🎃', '초록호박': '🎃', '하얀호박': '🎃', '잭오랜턴': '🎃', '깨진호박': '🎃',
+                '알사탕': '🍬', '롤리팝': '🍭', '초콜릿': '🍫', '과일젤리': '🍮', '마시멜로우': '🍡', '별사탕 킹캔디': '⭐'
+            };
+
             for (const item in inventory) {
                 if (inventory[item] > 0) {
                     let color = getItemColor(item);
-                    grid.innerHTML += `<div class="grid-item" style="border: 2px solid ${color}; padding: 10px; border-radius: 10px; text-align: center; font-size: 13.5px; background: rgba(30, 41, 59, 0.7);">
-                        <strong style="color:${color}">${item}</strong><br><span style="color:#cbd5e1; font-weight:bold;">x ${inventory[item]}</span></div>`;
+                    let base = item.replace('불꽃 ', '').replace('뒤틀린 ', '').replace('전기 ', '').replace('얼음 ', '').replace('방사능 ', '').replace('심해 ', '').replace('동굴 ', '').replace('할로윈 ', '');
+                    let emoji = fruitIcons[base] || '🍎';
+                    let traitBadge = '';
+                    if (item.includes('불꽃')) traitBadge = '🔥';
+                    else if (item.includes('뒤틀린')) traitBadge = '🌪️';
+                    else if (item.includes('전기')) traitBadge = '⚡';
+                    else if (item.includes('얼음')) traitBadge = '❄️';
+                    else if (item.includes('방사능')) traitBadge = '☣️';
+                    else if (item.includes('심해')) traitBadge = '🌊';
+                    else if (item.includes('동굴')) traitBadge = '⛏️';
+
+                    grid.innerHTML += `
+                        <div class="grid-item" style="background: rgba(30, 41, 59, 0.9); border: 2px solid ${color}; border-radius: 12px; padding: 10px 4px 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.35);">
+                            <div style="position: relative; width: 52px; height: 52px; margin: 0 auto; background: radial-gradient(circle at 35% 35%, ${color}33, rgba(15, 23, 42, 0.95)); border: 2px solid ${color}; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px ${color}55;">
+                                <span style="font-size: 27px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));">${emoji}</span>
+                                ${traitBadge ? `<span style="position: absolute; bottom: -3px; right: -3px; font-size: 11px; background: rgba(0,0,0,0.85); border: 1px solid ${color}; border-radius: 50%; padding: 1px 3px;">${traitBadge}</span>` : ''}
+                            </div>
+                            <div style="margin-top: 6px; width: 100%;">
+                                <div style="font-size: 12px; font-weight: 800; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 2px #000;">${item}</div>
+                                <div style="font-size: 12.5px; font-weight: 900; color: #facc15; margin-top: 2px; text-shadow: 0 1px 2px #000;">x ${inventory[item].toLocaleString()}</div>
+                            </div>
+                        </div>
+                    `;
                 }
             }
-            if (grid.innerHTML === '') grid.innerHTML = '<p style="grid-column: span 3; text-align:center; color:#94a3b8; padding: 20px 0;">가방이 비어있습니다.</p>';
+            if (grid.innerHTML === '') grid.innerHTML = '<p style="grid-column: 1 / -1; text-align:center; color:#94a3b8; padding: 25px 0;">보유 중인 과일이 없습니다.</p>';
         }
         window.updateInventoryUI = updateInventoryUI;
 
@@ -21723,6 +21751,17 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 incubatorState = Object.assign(incubatorState, data.incubatorState);
                 if (typeof saveIncubatorState === 'function') saveIncubatorState();
             }
+
+            // 🌟 로그인 및 데이터 적용 시 일반 지형 중앙(X: 300, Y: 500) 및 카메라 0 안전 스폰
+            if (typeof player !== 'undefined') {
+                player.x = 300;
+                player.y = 500;
+                player.vx = 0;
+                player.vy = 0;
+                player.targetTree = null;
+            }
+            cameraY = 0;
+            window._isConcertLocked = false;
         }
 
         function saveGame(forceCloud = false) {
@@ -25295,26 +25334,18 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             }
 
 
-            // 🎸 1분 콘서트 타임 발동 시: 모든 플레이어 무대(X: 300, Y: 1620) 고정 및 이동 불가
-            const curEvT = (typeof get9PmEventElapsedSeconds === 'function') ? get9PmEventElapsedSeconds() : (typeof get830PmEventElapsedSeconds === 'function' ? get830PmEventElapsedSeconds() : null);
-            const inConcertTime = (curEvT !== null && curEvT >= 20 && curEvT < 80);
-            if (window._isConcertLocked && inConcertTime) {
-                player.vx = 0; player.vy = 0; player.targetTree = null;
-                player.x = 300; player.y = 1620;
-                player.walkTimer = 0;
-            } else {
-                window._isConcertLocked = false;
-                let moveX = 0, moveY = 0;
-                if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
-                if (keys.a) moveX -= 1; if (keys.d) moveX += 1;
-                
-                if (moveX !== 0 || moveY !== 0) {
-                    let mag = Math.hypot(moveX, moveY);
-                    player.vx = (moveX / mag) * player.speed; player.vy = (moveY / mag) * player.speed;
-                } else if (joystick.active) {
-                    player.vx = joystick.dx * player.speed; player.vy = joystick.dy * player.speed;
-                } else { player.vx *= 0.8; player.vy *= 0.8; }
-            }
+            // 🎸 이동 로직 (콘서트 강제 순간이동 및 화면 끌림 완전 차단)
+            window._isConcertLocked = false;
+            let moveX = 0, moveY = 0;
+            if (keys.w) moveY -= 1; if (keys.s) moveY += 1;
+            if (keys.a) moveX -= 1; if (keys.d) moveX += 1;
+            
+            if (moveX !== 0 || moveY !== 0) {
+                let mag = Math.hypot(moveX, moveY);
+                player.vx = (moveX / mag) * player.speed; player.vy = (moveY / mag) * player.speed;
+            } else if (joystick.active) {
+                player.vx = joystick.dx * player.speed; player.vy = joystick.dy * player.speed;
+            } else { player.vx *= 0.8; player.vy *= 0.8; }
 
             let isMoving = Math.hypot(player.vx, player.vy) > 0.5;
             
@@ -33714,8 +33745,16 @@ window.claimPirateShipSkin = claimPirateShipSkin;
         function startGameLoop() {
             if (!isGameLoopRunning) {
                 isGameLoopRunning = true;
+                if (typeof player !== 'undefined') {
+                    player.x = 300;
+                    player.y = 500;
+                    player.vx = 0;
+                    player.vy = 0;
+                    player.targetTree = null;
+                }
+                cameraY = 0;
+                window._isConcertLocked = false;
                 gameLoop();
-                setTimeout(checkAndTrigger9PmEventOnRefresh, 1000);
             }
         }
 
@@ -33884,21 +33923,12 @@ window._live9PmTriggeredSteps = new Set();
 window._live9PmSyncedThisSession = false;
 window._live9PmTestStartTime = null;
 
-// 💾 새로고침(F5) 또는 브라우저 재접속 시에도 테스트 시작 시간 보존 및 이어서 재생 복원
+// 💾 새로고침 시 콘서트 자동 텔레포트 차단 및 테스트 키 초기화
 try {
-    const savedTest = localStorage.getItem('live_9pm_test_start_time') || localStorage.getItem('live_830pm_test_start_time');
-    if (savedTest) {
-        const parsed = parseInt(savedTest, 10);
-        const elapsed = (Date.now() - parsed) / 1000;
-        if (!isNaN(parsed) && elapsed >= 0 && elapsed <= LIVE_9PM_TOTAL_DURATION) {
-            window._live9PmTestStartTime = parsed;
-        } else {
-            localStorage.removeItem('live_9pm_test_start_time');
-            localStorage.removeItem('live_830pm_test_start_time');
-            window._live9PmTestStartTime = null;
-        }
-    }
+    localStorage.removeItem('live_9pm_test_start_time');
+    localStorage.removeItem('live_830pm_test_start_time');
 } catch(e) {}
+window._live9PmTestStartTime = null;
 
 window._live830PmTriggeredSteps = window._live9PmTriggeredSteps;
 window._live830PmTestStartTime = window._live9PmTestStartTime;
@@ -33984,14 +34014,7 @@ function syncLive9PmEventState(currentT) {
     // 4. 콘서트 타임 동기화 (T: 20초 ~ 80초 ➔ 1분간)
     if (currentT >= 20 && currentT < 80) {
         const remainSec = Math.max(1, Math.floor(80 - currentT));
-        setConcertCinematicMode(true);
-        window._isConcertLocked = true;
         window._concertDancing = true;
-        if (typeof player !== 'undefined') {
-            player.x = 300; player.y = 1620;
-            player.vx = 0; player.vy = 0;
-            if (typeof cameraY !== 'undefined') cameraY = player.y - canvas.height / 2;
-        }
         playConcertRockMusic(remainSec);
     } else if (currentT >= 80) {
         setConcertCinematicMode(false);
@@ -34109,16 +34132,9 @@ function checkAndTick9PmLiveEvent() {
             } else if (step.action === 'start_concert') {
                 const remainSec = Math.max(0, 80 - currentT);
                 if (remainSec > 0) {
-                    setConcertCinematicMode(true);
-                    window._isConcertLocked = true;
                     window._concertDancing = true;
-                    if (typeof player !== 'undefined') {
-                        player.x = 300; player.y = 1620;
-                        player.vx = 0; player.vy = 0;
-                        if (typeof cameraY !== 'undefined') cameraY = player.y - canvas.height / 2;
-                    }
                     playConcertRockMusic(remainSec);
-                    floatTexts.push({ x: 300, y: 1540, text: '🎸🔥 FORGE LIVE CONCERT 시작! (1분간 이동 불가)', color: '#ec4899', life: 120, size: 24 });
+                    floatTexts.push({ x: 300, y: 500, text: '🎸🔥 FORGE LIVE CONCERT 시작!', color: '#ec4899', life: 120, size: 24 });
                 }
             } else if (step.action === 'start_minigame_1') {
                 // 1분 콘서트 종료 ➔ 시네마틱 모드 해제 & 플레이어 이동 잠금 해제 & 광장으로 안전 귀환!
