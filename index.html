@@ -24129,16 +24129,6 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                             }
                         }
                     }
-                    if (typeof player !== 'undefined') {
-                        if (player.y > 1000 && !window._forceFishingEventTest && !window._forceForgeDanceTest) {
-                            player.x = 300;
-                            player.y = 500;
-                            player.vx = 0;
-                            player.vy = 0;
-                            player.targetTree = null;
-                            cameraY = 0;
-                        }
-                    }
                     startTradeIncomingListener();
                     startBattleIncomingListener();
                     if (typeof refreshGuildStatus === 'function') refreshGuildStatus();
@@ -32346,7 +32336,6 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 drawPvpArena();
                 return;
             }
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
             ctx.save();
             ctx.translate(0, -cameraY);
@@ -32458,20 +32447,12 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             let renderList = [];
             fruitsOnGround.forEach(f => renderList.push({ type: 'fruit', obj: f, y: f.y }));
             renderList.push({ type: 'player', obj: player, y: player.y });
-            // 로케트 렌더링 완전 제거 (오버월드 로케트 없음)
-            if (isAlienEventStarted() && !alienQuestDone && typeof alienScientist !== 'undefined') {
-                renderList.push({ type: 'alienScientist', obj: alienScientist, y: alienScientist.y });
-            }
-            if (rocket.launched && typeof spaceReturnPad !== 'undefined') {
-                renderList.push({ type: 'spaceReturnPad', obj: spaceReturnPad, y: spaceReturnPad.y });
-            }
             
             shops.forEach(shop => {
                 shop.queue.forEach(c => renderList.push({ type: 'customer', obj: c, y: c.y }));
             });
             
             trees.forEach(t => renderList.push({ type: 'tree', obj: t, y: t.y }));
-            renderList.push({ type: 'teleporter', obj: teleporter, y: teleporter.y });
             // 할로윈 텔레포터 삭제됨
             if (typeof twistedFarmPortal !== 'undefined') {
                 renderList.push({ type: 'twistedFarmPortal', obj: twistedFarmPortal, y: twistedFarmPortal.y });
@@ -33768,6 +33749,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 }
                 cameraY = 0;
                 window._isConcertLocked = false;
+                if (typeof syncAdminPirateObjects === 'function') syncAdminPirateObjects();
                 gameLoop();
             }
         }
