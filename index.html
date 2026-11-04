@@ -34,6 +34,15 @@
             border: 2px solid #f39c12; pointer-events: none; z-index: 15;
             white-space: nowrap;
         }
+        #infinity-coin-display {
+            position: absolute; top: 48px; left: 10px;
+            background: rgba(15, 23, 42, 0.88); color: #facc15;
+            font-size: 13.5px; font-weight: 900;
+            padding: 4px 10px; border-radius: 14px;
+            border: 2px solid #38bdf8; pointer-events: none; z-index: 15;
+            white-space: nowrap; box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+            display: none;
+        }
         
         #level-container {
             position: absolute; top: 10px; left: 50%;
@@ -60,6 +69,9 @@
         @media (max-width: 520px) {
             #money-display {
                 top: 8px; left: 8px; font-size: 12px; padding: 4px 8px; border-radius: 12px;
+            }
+            #infinity-coin-display {
+                top: 38px; left: 8px; font-size: 11.5px; padding: 3px 8px; border-radius: 12px;
             }
             #user-profile-badge {
                 top: 8px; right: 8px; font-size: 11px; padding: 4px 8px; border-radius: 14px;
@@ -601,6 +613,8 @@
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
         <div id="money-display">💰 0</div>
+        <!-- ♾️ [weqwxe3 전용] 인피니티 코인 표시 (돈 밑에 배치) -->
+        <div id="infinity-coin-display">♾️ <span id="infinity-coin-amount">0</span></div>
         <!-- 🍬 캔디콘 HUD 완전 영구 제거 (지형 무대화 작업 완료) -->
         <div id="level-container">
             <div id="level-text">LV. 1</div>
@@ -1042,6 +1056,17 @@
 
             <!-- 탭 1: 미니게임 참여 목록 -->
             <div id="weqwxe3-section-minigames" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- ♾️ [신규] 머니머니 미니게임 (인피니티 코인 줍기) -->
+                <div style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(250, 204, 21, 0.22)); border: 2px solid #facc15; border-radius: 12px; padding: 12px; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 950; font-size: 15px; color: #facc15;">♾️ 머니머니 미니게임 (인피니티 코인 줍기)</div>
+                        <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">필드에 생성된 인피니티 코인을 주워 10~15개씩 획득! 머니상점에서 1.8초 머니 도끼/펫 구매!</div>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button onclick="spawnFieldInfinityCoins(30); if(typeof floatTexts!=='undefined') floatTexts.push({x: player.x, y: player.y - 70, text: '✨ 인피니티 코인 30개 추가 스폰!', color: '#38bdf8', life: 100, size: 20}); alert('✨ 필드에 인피니티 코인 30개가 추가로 스폰되었습니다!'); closeWeqwxe3EventModal();" style="padding: 9px 12px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 3px 10px rgba(56, 189, 248, 0.5);">코인 스폰</button>
+                        <button onclick="closeWeqwxe3EventModal(); openMoneyShopModal();" style="padding: 9px 12px; background: linear-gradient(135deg, #eab308, #ca8a04); color: black; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 3px 10px rgba(250, 204, 21, 0.5);">상점 열기</button>
+                    </div>
+                </div>
                 <!-- 🎣 [신규] 해적 지형 낚시 이벤트 즉시 테스트 -->
                 <div style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.22), rgba(34, 197, 94, 0.22)); border: 2px solid #38bdf8; border-radius: 12px; padding: 12px; text-align: left; display: flex; justify-content: space-between; align-items: center;">
                     <div>
@@ -4440,8 +4465,16 @@
             xp = 0;
             money = Math.max(money || 0, 15000000);
             axeLevel = 4;
-            equippedAxe = 4;
-            ownedAxes = [1, 2, 3, 4];
+            if (!Array.isArray(ownedAxes)) ownedAxes = [1, 2, 3, 4];
+            else {
+                [1, 2, 3, 4].forEach(l => { if (!ownedAxes.includes(l)) ownedAxes.push(l); });
+            }
+            if (ownedAxes.includes(6) || equippedAxe === 6) {
+                equippedAxe = 6;
+                if (!ownedAxes.includes(6)) ownedAxes.push(6);
+            } else {
+                equippedAxe = 4;
+            }
             if (typeof trees !== 'undefined' && Array.isArray(trees)) {
                 trees.forEach((t, i) => {
                     if (i <= 8) t.unlocked = true;
@@ -4486,8 +4519,16 @@
             xp = 0;
             money = Math.max(money || 0, 6000000);
             axeLevel = 4;
-            equippedAxe = 4;
-            ownedAxes = [1, 2, 3, 4];
+            if (!Array.isArray(ownedAxes)) ownedAxes = [1, 2, 3, 4];
+            else {
+                [1, 2, 3, 4].forEach(l => { if (!ownedAxes.includes(l)) ownedAxes.push(l); });
+            }
+            if (ownedAxes.includes(6) || equippedAxe === 6) {
+                equippedAxe = 6;
+                if (!ownedAxes.includes(6)) ownedAxes.push(6);
+            } else {
+                equippedAxe = 4;
+            }
             if (typeof trees !== 'undefined' && Array.isArray(trees)) {
                 trees.forEach(t => t.unlocked = true);
             }
@@ -4587,6 +4628,9 @@
             try {
                 localStorage.setItem('treeGameSave_weqwxe3', JSON.stringify(getSaveData()));
                 localStorage.setItem('player_candy_corn_weqwxe3', (candyCorn || 0).toString());
+                let savedIC = parseInt(localStorage.getItem('infinity_coins_weqwxe3') || '0', 10);
+                window.infinityCoins = isNaN(savedIC) ? 0 : savedIC;
+                if (typeof updateInfinityCoinDisplay === 'function') updateInfinityCoinDisplay(0);
             } catch(e) {}
 
             // 🌟 weqwxe3 접속 시 일반 지형 중앙(X: 300, Y: 500) & 카메라 0 안전 스폰 보장
@@ -7098,12 +7142,27 @@
             const ringModal = document.getElementById('ring-team-select-modal');
             if (ringModal) ringModal.style.display = 'none';
             window.groundCandyCorns = [];
+            window.groundInfinityCoins = [];
             window.candyCornCollectExpireTime = 0;
             window.candyHousesSpawned = false;
             window.adminCandyCornShopSpawned = false;
             candyVillageExpireTime = 0;
+            // 🎣 낚시 미니게임 완전 종료 & 타 계정 유출 차단
+            window._forceFishingEventTest = false;
+            if (window.fishingState) {
+                window.fishingState.isHoldingRod = false;
+                window.fishingState.isCharging = false;
+                window.fishingState.chargePower = 0;
+                window.fishingState.isWaitingBite = false;
+                window.fishingState.isReeling = false;
+            }
+            const chargeEl = document.getElementById('fishing-charge-container');
+            if (chargeEl) chargeEl.style.display = 'none';
+            const infDisp = document.getElementById('infinity-coin-display');
+            if (infDisp) infDisp.style.display = 'none';
             if (typeof closeWeqwxe3EventModal === 'function') closeWeqwxe3EventModal();
             if (typeof closeAdminPanelModal === 'function') closeAdminPanelModal();
+            if (typeof closeMoneyShopModal === 'function') closeMoneyShopModal();
         }
         window.resetAllEventsAndMinigames = resetAllEventsAndMinigames;
 
@@ -13706,7 +13765,8 @@
             if (isAdmin()) {
                 dmg = 300;
             } else {
-                if (equippedAxe === 5) dmg = 35;
+                if (equippedAxe === 6) dmg = 50;
+                else if (equippedAxe === 5) dmg = 35;
                     else if (equippedAxe === 4) dmg = 25;
                 else if (equippedAxe === 3) dmg = 20;
                 else if (equippedAxe === 2) dmg = 16;
@@ -13880,12 +13940,14 @@
                 }
             }
 
-            // 🪙 1. 일반 지형 (x: 515, y: 360) -> 머니 상점(동전 상점) 오픈
-            let tpDist = Math.hypot(cx - teleporter.x, cy - teleporter.y);
-            let tpPlayerDist = Math.hypot(player.x - teleporter.x, player.y - teleporter.y);
-            if (tpDist < 75 || (isSpacebar && tpPlayerDist < 90)) {
-                if (typeof openMoneyShopModal === 'function') openMoneyShopModal();
-                return;
+            // 🪙 1. [weqwxe3 전용] 일반 지형 예전 원숭이 보스전 자리 (x: 515, y: 360) -> 큰 동전 머니상점 오픈
+            if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) {
+                let tpDist = Math.hypot(cx - 515, cy - 360);
+                let tpPlayerDist = Math.hypot(player.x - 515, player.y - 360);
+                if (tpDist < 75 || (isSpacebar && tpPlayerDist < 90)) {
+                    if (typeof openMoneyShopModal === 'function') openMoneyShopModal();
+                    return;
+                }
             }
 
             // 할로윈 텔레포터 삭제됨
@@ -21034,6 +21096,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             if (inPvpArena) exitPvpArena();
             closeAdminSwordModal();
             closeAdminPanelModal();
+            if (typeof resetAllEventsAndMinigames === 'function') resetAllEventsAndMinigames();
             
             updateUserBadgeUI();
             closeAllModals(); closeLoginModal();
@@ -21085,6 +21148,15 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 // 🎃 [유저 요청] 어드민 계정에서는 이벤트 버튼 완전 삭제, 오직 weqwxe3 유저에게만 노출
                 const canUseWeqwEvent = (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) && !isAdmin();
                 weqwBtn.style.display = canUseWeqwEvent ? 'flex' : 'none';
+            }
+            const infDisp = document.getElementById('infinity-coin-display');
+            if (infDisp) {
+                if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) {
+                    infDisp.style.display = 'block';
+                    if (typeof updateInfinityCoinDisplay === 'function') updateInfinityCoinDisplay(0);
+                } else {
+                    infDisp.style.display = 'none';
+                }
             }
             if (typeof updateQuestHudBadge === 'function') updateQuestHudBadge();
         }
@@ -21784,6 +21856,9 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     localStorage.setItem('treeGameSave_' + currentUser.toLowerCase(), JSON.stringify(data));
                     localStorage.setItem('player_candy_corn_' + currentUser.toLowerCase(), (candyCorn || 0).toString());
                 }
+                if (isUserWeqwxe3(currentUser)) {
+                    localStorage.setItem('infinity_coins_weqwxe3', (window.infinityCoins || 0).toString());
+                }
             } catch(e) {}
 
             // 로그인된 계정이 있고 Firebase가 연결되어 있다면 클라우드 동기화 (forceCloud이거나 3초 경과 시)
@@ -21791,7 +21866,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 if (forceCloud && typeof flushGuildQuestBuffer === 'function') flushGuildQuestBuffer();
                 lastCloudSaveTime = Date.now();
                 try {
-                    db.collection('users').doc(currentUser.toLowerCase()).set({
+                    const cloudPayload = {
                         username: currentUser,
                         isAdmin: isAdmin(),
                         level: level,
@@ -21803,7 +21878,11 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                         alienQuestDone: alienQuestDone || false,
                         gameData: data,
                         lastSaved: Date.now()
-                    }, { merge: true }).catch(err => console.warn('Cloud save fail:', err));
+                    };
+                    if (isUserWeqwxe3(currentUser)) {
+                        cloudPayload.infinityCoins = window.infinityCoins || 0;
+                    }
+                    db.collection('users').doc(currentUser.toLowerCase()).set(cloudPayload, { merge: true }).catch(err => console.warn('Cloud save fail:', err));
                 } catch(e) {}
             }
         }
@@ -25450,6 +25529,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                         else if (equippedAxe === 3) maxP = Math.floor(tree.maxProgress * (3.2 / 5.0)); // 3.2초
                         else if (equippedAxe === 4) maxP = Math.floor(tree.maxProgress * (2.7 / 5.0)); // 2.7초 (고대 도끼)
                         else if (equippedAxe === 5) maxP = Math.floor(tree.maxProgress * (2.5 / 5.0)); // 2.5초 (Halloween omega ax)
+                        else if (equippedAxe === 6) maxP = Math.floor(tree.maxProgress * (1.8 / 5.0)); // 1.8초 (황금 머니 도끼 money ax)
                         if (hasActivePet()) {
                             maxP = Math.floor(maxP * 0.8); // 🌲 미니 스킨 펫 효과: 나무 캐는 속도 20% 감소 (벌목 시간 20% 단축)
                         }
@@ -25580,6 +25660,29 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                         updateCandyCorn(gain);
                         floatTexts.push({ x: player.x, y: player.y - 45, text: `+${gain} 🍬 캔디콘`, color: '#facc15', life: 60, size: 19 });
                     }
+                }
+            }
+
+            // ♾️ [weqwxe3 전용 머니머니 미니게임] 바닥에 떨어진 인피니티 코인 근접 픽업 (주우면 개당 10~15개 지급!)
+            if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) {
+                if (!Array.isArray(window.groundInfinityCoins)) window.groundInfinityCoins = [];
+                // 필드에 항상 20개 이상의 인피니티 코인이 유지되도록 자동 스폰
+                if (window.groundInfinityCoins.length < 20 && typeof spawnFieldInfinityCoins === 'function') {
+                    spawnFieldInfinityCoins(25 - window.groundInfinityCoins.length);
+                }
+                for (let i = window.groundInfinityCoins.length - 1; i >= 0; i--) {
+                    let coin = window.groundInfinityCoins[i];
+                    let d = Math.hypot(player.x - coin.x, player.y - coin.y);
+                    if (d < 45) {
+                        window.groundInfinityCoins.splice(i, 1);
+                        let gain = Math.floor(Math.random() * 6) + 10; // 10 ~ 15개 랜덤 지급!
+                        if (typeof updateInfinityCoinDisplay === 'function') updateInfinityCoinDisplay(gain);
+                        floatTexts.push({ x: player.x, y: player.y - 45, text: `+${gain} ♾️ 인피니티 코인!`, color: '#38bdf8', life: 60, size: 19 });
+                    }
+                }
+            } else {
+                if (Array.isArray(window.groundInfinityCoins) && window.groundInfinityCoins.length > 0) {
+                    window.groundInfinityCoins = [];
                 }
             }
 
@@ -32477,6 +32580,17 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 renderList.push({ type: 'craftingMachine', obj: craftingMachine, y: craftingMachine.y });
             }
 
+            // 🪙 [weqwxe3 전용] 원숭이 보스전 자리의 큰 황금 동전 (머니상점)
+            if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) {
+                renderList.push({ type: 'bigMoneyCoin', obj: { x: 515, y: 360 }, y: 360 });
+            }
+            // ♾️ [weqwxe3 전용] 머니머니 미니게임: 필드에 떨어진 인피니티 코인
+            if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser) && Array.isArray(window.groundInfinityCoins)) {
+                window.groundInfinityCoins.forEach(coin => {
+                    renderList.push({ type: 'groundInfinityCoin', obj: coin, y: coin.y });
+                });
+            }
+
             // 🚫 사탕 마을 집, 바닥 캔디콘, 캔디콘 상점 완전 제거 완료 (무대/해적 지형 전용)
 
             // 💍 링 모으기 미니게임 스폰된 링 렌더 등록 (모든 참여 플레이어에게 정상 표시!)
@@ -32616,6 +32730,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                         else if (equippedAxe === 3) maxP = Math.floor(t.maxProgress * (3.2 / 5.0));
                         else if (equippedAxe === 4) maxP = Math.floor(t.maxProgress * (2.7 / 5.0));
                         else if (equippedAxe === 5) maxP = Math.floor(t.maxProgress * (2.5 / 5.0));
+                        else if (equippedAxe === 6) maxP = Math.floor(t.maxProgress * (1.8 / 5.0)); // 1.8초 (황금 머니 도끼 money ax)
                         if (hasActivePet()) {
                             maxP = Math.floor(maxP * 0.8); // 🌲 미니 스킨 펫 효과
                         }
@@ -33042,6 +33157,10 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     drawDevilBoss(ctx, item.obj);
                 } else if (item.type === 'krakenBoss') {
                     drawKrakenBossInOverworld(ctx);
+                } else if (item.type === 'bigMoneyCoin') {
+                    if (typeof drawBigMoneyCoin === 'function') drawBigMoneyCoin(ctx, item.obj.x, item.obj.y);
+                } else if (item.type === 'groundInfinityCoin') {
+                    if (typeof drawGroundInfinityCoin === 'function') drawGroundInfinityCoin(ctx, item.obj);
                 }
             });
 
@@ -34521,7 +34640,13 @@ window.isPirateTerrainUser = isPirateTerrainUser;
 
 // 🎣 해적 낚시 이벤트 활성화 판정 (매 1시간마다 첫 15분간 진행: 0분 ~ 14분 59초)
 function isFishingEventActive() {
-    if (window._forceFishingEventTest) return true;
+    if (window._forceFishingEventTest) {
+        if ((typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) || (typeof isAdmin === 'function' && isAdmin())) {
+            return true;
+        }
+        window._forceFishingEventTest = false;
+        if (window.fishingState) window.fishingState.isHoldingRod = false;
+    }
     if (!isPirateTerrainUser()) return false;
     const now = new Date();
     return now.getMinutes() < 15;
@@ -36096,25 +36221,235 @@ try {
 
 
 // ============================================================
-// 🪙🍀 [신규] 머니 상점 & 행운 동전 줍기 미니게임 & 도감 (INDEX) 엔진
+// 🪙♾️ [weqwxe3 전용] 머니 상점 & 머니머니 미니게임 (인피니티 코인)
 // ============================================================
-window.cloverCoins = 0;
+window.infinityCoins = 0;
 try {
-    const savedClover = localStorage.getItem('player_clover_coins_' + (typeof currentUser === 'string' ? currentUser.toLowerCase() : 'guest'));
-    if (savedClover !== null) window.cloverCoins = Math.max(0, parseInt(savedClover, 10) || 0);
+    const savedIC = parseInt(localStorage.getItem('infinity_coins_weqwxe3') || '0', 10);
+    if (!isNaN(savedIC)) window.infinityCoins = savedIC;
 } catch(e) {}
+
+window.groundInfinityCoins = [];
+
+// 인피니티 코인 UI 갱신 및 자동 저장
+function updateInfinityCoinDisplay(delta = 0) {
+    if (typeof isUserWeqwxe3 !== 'function' || !isUserWeqwxe3(currentUser)) {
+        const infDisp = document.getElementById('infinity-coin-display');
+        if (infDisp) infDisp.style.display = 'none';
+        return;
+    }
+    window.infinityCoins = Math.max(0, (window.infinityCoins || 0) + delta);
+    try {
+        localStorage.setItem('infinity_coins_weqwxe3', window.infinityCoins.toString());
+    } catch(e) {}
+
+    const infDisp = document.getElementById('infinity-coin-display');
+    const amtEl = document.getElementById('infinity-coin-amount');
+    if (amtEl) amtEl.innerText = window.infinityCoins.toLocaleString();
+    if (infDisp) infDisp.style.display = 'block';
+
+    const shopICEl = document.getElementById('money-shop-infinity-coins');
+    if (shopICEl) shopICEl.innerText = window.infinityCoins.toLocaleString();
+}
+window.updateInfinityCoinDisplay = updateInfinityCoinDisplay;
+
+// 필드 인피니티 코인 스폰 함수 (캔디콘 줍기 유사)
+function spawnFieldInfinityCoins(count = 25) {
+    if (typeof isUserWeqwxe3 !== 'function' || !isUserWeqwxe3(currentUser)) return;
+    if (!Array.isArray(window.groundInfinityCoins)) window.groundInfinityCoins = [];
+
+    // 일반 지형 광장 및 상점 주변(X: 60~540, Y: 180~880) 위주로 스폰
+    for (let i = 0; i < count; i++) {
+        let rx = Math.floor(Math.random() * 480) + 60;
+        let ry = Math.floor(Math.random() * 700) + 180;
+        window.groundInfinityCoins.push({
+            x: rx,
+            y: ry,
+            floatOffset: Math.random() * Math.PI * 2
+        });
+    }
+}
+window.spawnFieldInfinityCoins = spawnFieldInfinityCoins;
+
+// 🪙 [weqwxe3 전용] 예전 원숭이 보스전 자리(x: 515, y: 360)의 큰 황금 동전 오브젝트 (머니상점 포탈)
+function drawBigMoneyCoin(ctx, x, y) {
+    ctx.save();
+    ctx.translate(x, y);
+
+    let time = Date.now() * 0.003;
+    let bob = Math.sin(time * 2) * 5;
+
+    // 1. 바닥 그림자 (동전 부유에 따라 크기 변화)
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.32)';
+    ctx.beginPath();
+    ctx.ellipse(0, 24, 38, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. 바닥 회전 황금 마법진 오라
+    ctx.save();
+    ctx.translate(0, 24);
+    ctx.scale(1, 0.38);
+    ctx.rotate(time * 0.8);
+    ctx.strokeStyle = 'rgba(250, 204, 21, 0.45)';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([8, 6]);
+    ctx.beginPath();
+    ctx.arc(0, 0, 42, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // 3. 큰 동전 본체 (bob 부유)
+    ctx.save();
+    ctx.translate(0, bob);
+
+    // 황금빛 아우라
+    let auraGrad = ctx.createRadialGradient(0, 0, 8, 0, 0, 46);
+    auraGrad.addColorStop(0, 'rgba(250, 204, 21, 0.45)');
+    auraGrad.addColorStop(0.7, 'rgba(234, 179, 8, 0.15)');
+    auraGrad.addColorStop(1, 'rgba(250, 204, 21, 0)');
+    ctx.fillStyle = auraGrad;
+    ctx.beginPath();
+    ctx.arc(0, 0, 46, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 3D 동전 두께 (하단 그림자 림)
+    ctx.fillStyle = '#92400e';
+    ctx.beginPath();
+    ctx.arc(0, 4, 32, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 동전 전면 그라디언트
+    let coinGrad = ctx.createRadialGradient(-8, -10, 4, 0, 0, 32);
+    coinGrad.addColorStop(0, '#fffbeb');
+    coinGrad.addColorStop(0.3, '#fef08a');
+    coinGrad.addColorStop(0.7, '#facc15');
+    coinGrad.addColorStop(1, '#ca8a04');
+    ctx.fillStyle = coinGrad;
+    ctx.strokeStyle = '#b45309';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(0, 0, 32, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // 동전 테두리 톱니/점선 홈
+    ctx.strokeStyle = 'rgba(180, 83, 9, 0.6)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.arc(0, 0, 26, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 동전 중앙 $ 기호 (스케치와 일치)
+    ctx.fillStyle = '#166534';
+    ctx.font = '900 28px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('$', 0, 1);
+
+    // 반짝임 스파클
+    let spk = Math.sin(time * 3) * 0.5 + 0.5;
+    ctx.fillStyle = `rgba(255, 255, 255, ${spk * 0.85})`;
+    ctx.beginPath();
+    ctx.arc(16, -16, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // 4. 머니 상점 안내 캡슐 뱃지
+    ctx.save();
+    ctx.translate(0, -48 + bob);
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+    ctx.strokeStyle = '#facc15';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.roundRect(-56, -13, 112, 26, 13);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#fde047';
+    ctx.font = '900 12px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🪙 머니상점 (클릭)', 0, 0);
+    ctx.restore();
+
+    ctx.restore();
+}
+window.drawBigMoneyCoin = drawBigMoneyCoin;
+
+// ♾️ [weqwxe3 전용] 바닥에 떨어진 인피니티 코인 렌더러
+function drawGroundInfinityCoin(ctx, coin) {
+    ctx.save();
+    ctx.translate(coin.x, coin.y);
+
+    let time = Date.now() * 0.005 + (coin.floatOffset || 0);
+    let bob = Math.sin(time) * 4;
+
+    // 바닥 그림자
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
+    ctx.beginPath();
+    ctx.ellipse(0, 12, 13, 4.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 공중 부유 코인
+    ctx.translate(0, bob);
+
+    // 빛나는 오라 (하늘색 & 금색)
+    let auraGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 18);
+    auraGrad.addColorStop(0, 'rgba(56, 189, 248, 0.6)');
+    auraGrad.addColorStop(0.6, 'rgba(250, 204, 21, 0.35)');
+    auraGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+    ctx.fillStyle = auraGrad;
+    ctx.beginPath();
+    ctx.arc(0, 0, 18, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 코인 외곽 골드
+    let cGrad = ctx.createRadialGradient(-3, -3, 1, 0, 0, 13);
+    cGrad.addColorStop(0, '#fffbeb');
+    cGrad.addColorStop(0.35, '#facc15');
+    cGrad.addColorStop(1, '#b45309');
+    ctx.fillStyle = cGrad;
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.arc(0, 0, 13, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // 내부 심볼: ♾️ 또는 $
+    ctx.fillStyle = '#0284c7';
+    ctx.font = '900 13px "Segoe UI Symbol", Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('♾️', 0, 0.5);
+
+    // 반짝이 점
+    let spk = Math.sin(time * 2.5) * 0.5 + 0.5;
+    ctx.fillStyle = `rgba(255, 255, 255, ${spk})`;
+    ctx.beginPath();
+    ctx.arc(6, -6, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+}
+window.drawGroundInfinityCoin = drawGroundInfinityCoin;
 
 // 머니 상점 열기
 function openMoneyShopModal() {
+    if (typeof isUserWeqwxe3 !== 'function' || !isUserWeqwxe3(currentUser)) {
+        alert('❌ weqwxe3 계정 전용 상점입니다!');
+        return;
+    }
     const modal = document.getElementById('money-shop-modal');
     if (!modal) return;
     modal.style.display = 'flex';
 
-    // 재화 UI 업데이트
-    const cloverEl = document.getElementById('money-shop-clover-coins');
-    const goldEl = document.getElementById('money-shop-gold');
-    if (cloverEl) cloverEl.innerText = (window.cloverCoins || 0).toLocaleString();
-    if (goldEl) goldEl.innerText = (typeof money === 'number' ? money : 0).toLocaleString();
+    // 재화 UI 업데이트 (인피니티 코인)
+    const icEl = document.getElementById('money-shop-infinity-coins');
+    if (icEl) icEl.innerText = (window.infinityCoins || 0).toLocaleString();
 
     // 머니 도끼 보유 여부 체크
     const axeBtn = document.getElementById('btn-buy-money-axe');
@@ -36122,11 +36457,11 @@ function openMoneyShopModal() {
                         (typeof equippedAxe !== 'undefined' && (equippedAxe === 6 || equippedAxe === 'money'));
     if (axeBtn) {
         if (hasMoneyAxe) {
-            axeBtn.innerText = '✅ 보유중 (장착)';
+            axeBtn.innerText = (equippedAxe === 6) ? '✅ 장착중' : '✅ 보유중 (장착)';
             axeBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
             axeBtn.style.color = '#fff';
         } else {
-            axeBtn.innerText = '100,000';
+            axeBtn.innerText = '100000';
             axeBtn.style.background = 'linear-gradient(135deg, #eab308, #ca8a04)';
             axeBtn.style.color = '#000';
         }
@@ -36137,11 +36472,11 @@ function openMoneyShopModal() {
     const hasMoneyPet = (typeof isPetOwned === 'function' && isPetOwned('money_pet')) || (typeof activeSkinPet !== 'undefined' && activeSkinPet === 'money_pet');
     if (petBtn) {
         if (hasMoneyPet) {
-            petBtn.innerText = '✅ 보유중 (소환)';
+            petBtn.innerText = (activeSkinPet === 'money_pet') ? '✅ 소환중' : '✅ 보유중 (소환)';
             petBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
             petBtn.style.color = '#fff';
         } else {
-            petBtn.innerText = '100,000';
+            petBtn.innerText = '100000';
             petBtn.style.background = 'linear-gradient(135deg, #eab308, #ca8a04)';
             petBtn.style.color = '#000';
         }
@@ -36158,8 +36493,7 @@ window.closeMoneyShopModal = closeMoneyShopModal;
 // 머니 상점 아이템 구매
 function buyMoneyShopItem(type) {
     const cost = 100000;
-    const canPayWithClover = (window.cloverCoins >= cost);
-    const canPayWithGold = (typeof money === 'number' && money >= cost);
+    const currentCoins = window.infinityCoins || 0;
 
     if (type === 'axe') {
         const hasAxe = (typeof ownedAxes !== 'undefined' && (ownedAxes.includes(6) || ownedAxes.includes('money') || ownedAxes.includes('money_axe')));
@@ -36167,37 +36501,35 @@ function buyMoneyShopItem(type) {
             equippedAxe = 6;
             if (typeof updateInvAxeUI === 'function') updateInvAxeUI();
             if (typeof saveGame === 'function') saveGame(true);
-            alert('🪓 [황금 머니 도끼를 장착했습니다!]\n\n$ 각인이 새겨진 거대한 황금 도끼로 나무를 빠르게 베어보세요! (1.8초)');
+            alert('🪓 [황금 머니 도끼를 장착했습니다!]\n\n$ 각인이 새겨진 거대한 황금 도끼로 나무를 빠르게 베어보세요! (벌목 속도 1.8초)');
             openMoneyShopModal();
             return;
         }
 
-        if (!canPayWithClover && !canPayWithGold) {
-            alert('❌ [재화 부족]\n\n네잎클로버 코인 또는 골드가 100,000개 필요합니다!\n\n[행운 동전 줍기] 미니게임에서 네잎클로버 코인을 모아보세요!');
+        if (currentCoins < cost) {
+            alert('❌ [인피니티 코인 부족]\n\n인피니티 코인이 100,000개 필요합니다!\n(현재: ' + currentCoins.toLocaleString() + '개)\n\n필드에 떨어진 인피니티 코인을 주워 모아보세요! (개당 10~15개 획득)');
             return;
         }
 
-        // 재화 차감 (클로버 코인 우선 차감)
-        if (canPayWithClover) {
-            window.cloverCoins -= cost;
-        } else {
-            money -= cost;
-            updateMoneyDisplay();
-        }
+        // 재화 차감
+        updateInfinityCoinDisplay(-cost);
 
         if (typeof ownedAxes !== 'undefined' && !ownedAxes.includes(6)) ownedAxes.push(6);
         if (typeof inventory !== 'undefined') inventory['money_axe'] = 1;
         equippedAxe = 6;
-        saveCloverCoins();
+        if (typeof updateInvAxeUI === 'function') updateInvAxeUI();
         if (typeof saveGame === 'function') saveGame(true);
 
-        alert('🎉 [황금 머니 도끼(money ax) 구매 성공!]\n\n$ 각인이 새겨진 황금 머니 도끼를 획득하고 자동 장착했습니다!\n\n인벤토리 [도끼] 탭에서도 언제든 확인 및 장착할 수 있습니다!');
+        alert('🎉 [황금 머니 도끼(money ax) 구매 성공!]\n\n$ 각인이 새겨진 황금 머니 도끼를 획득하고 자동 장착했습니다!\n벌목 속도 1.8초!');
         openMoneyShopModal();
     } else if (type === 'pet') {
         const hasPet = (typeof isPetOwned === 'function' && isPetOwned('money_pet'));
         if (hasPet) {
             activeSkinPet = 'money_pet';
-            try { localStorage.setItem('active_skin_pet', 'money_pet'); } catch(e) {}
+            try {
+                localStorage.setItem('active_skin_pet', 'money_pet');
+                localStorage.setItem('admin_pet_follow', 'true');
+            } catch(e) {}
             if (typeof updateInvPetUI === 'function') updateInvPetUI();
             if (typeof saveGame === 'function') saveGame(true);
             alert('🪙 [황금 머니 펫을 소환했습니다!]\n\n황금 코인 머니 펫이 플레이어 곁을 맴돌며 행운을 줍니다!');
@@ -36205,22 +36537,21 @@ function buyMoneyShopItem(type) {
             return;
         }
 
-        if (!canPayWithClover && !canPayWithGold) {
-            alert('❌ [재화 부족]\n\n네잎클로버 코인 또는 골드가 100,000개 필요합니다!\n\n[행운 동전 줍기] 미니게임에서 네잎클로버 코인을 모아보세요!');
+        if (currentCoins < cost) {
+            alert('❌ [인피니티 코인 부족]\n\n인피니티 코인이 100,000개 필요합니다!\n(현재: ' + currentCoins.toLocaleString() + '개)\n\n필드에 떨어진 인피니티 코인을 주워 모아보세요! (개당 10~15개 획득)');
             return;
         }
 
-        if (canPayWithClover) {
-            window.cloverCoins -= cost;
-        } else {
-            money -= cost;
-            updateMoneyDisplay();
-        }
+        // 재화 차감
+        updateInfinityCoinDisplay(-cost);
 
         if (typeof ownedPets !== 'undefined' && !ownedPets.includes('money_pet')) ownedPets.push('money_pet');
         activeSkinPet = 'money_pet';
-        try { localStorage.setItem('active_skin_pet', 'money_pet'); } catch(e) {}
-        saveCloverCoins();
+        try {
+            localStorage.setItem('active_skin_pet', 'money_pet');
+            localStorage.setItem('admin_pet_follow', 'true');
+        } catch(e) {}
+        if (typeof updateInvPetUI === 'function') updateInvPetUI();
         if (typeof saveGame === 'function') saveGame(true);
 
         alert('🎉 [황금 머니 펫(money pet) 구매 성공!]\n\n황금 코인 머니 펫을 획득하고 즉시 소환했습니다!\n\n플레이어를 따라다니며 황금빛 오라를 뿜어냅니다!');
@@ -36228,166 +36559,6 @@ function buyMoneyShopItem(type) {
     }
 }
 window.buyMoneyShopItem = buyMoneyShopItem;
-
-function saveCloverCoins() {
-    try {
-        const uKey = 'player_clover_coins_' + (typeof currentUser === 'string' ? currentUser.toLowerCase() : 'guest');
-        localStorage.setItem(uKey, (window.cloverCoins || 0).toString());
-    } catch(e) {}
-}
-
-// ------------------------------------------------------------
-// 🍀🪙 행운 동전 줍기 미니게임 (1분 챌린지, 캔디콘 줍기 유사)
-// ------------------------------------------------------------
-window.luckyCoinState = {
-    active: false,
-    timeLeft: 60.0,
-    coins: [],
-    roundCollected: 0
-};
-
-function startLuckyCoinMinigame() {
-    if (typeof player === 'undefined') return;
-    const ls = window.luckyCoinState;
-    ls.active = true;
-    ls.timeLeft = 60.0;
-    ls.roundCollected = 0;
-    ls.coins = [];
-
-    // 플레이어 주변에 30개의 네잎클로버 코인 스폰
-    for (let i = 0; i < 30; i++) {
-        spawnLuckyCloverCoin();
-    }
-
-    const hud = document.getElementById('lucky-coin-hud');
-    if (hud) hud.style.display = 'block';
-
-    if (typeof floatTexts !== 'undefined') {
-        floatTexts.push({
-            x: player.x,
-            y: player.y - 80,
-            text: '🍀 1분 행운 동전 줍기 시작! 네잎클로버 코인을 수집하세요!',
-            color: '#4ade80',
-            life: 130,
-            size: 22
-        });
-    }
-}
-window.startLuckyCoinMinigame = startLuckyCoinMinigame;
-
-function spawnLuckyCloverCoin() {
-    if (typeof player === 'undefined') return;
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 50 + Math.random() * 320;
-    window.luckyCoinState.coins.push({
-        x: Math.max(50, Math.min(GAME_WIDTH - 50, player.x + Math.cos(angle) * dist)),
-        y: Math.max(100, Math.min(GAME_HEIGHT - 100, player.y + Math.sin(angle) * dist)),
-        val: 2500,
-        bob: Math.random() * Math.PI * 2
-    });
-}
-
-function updateLuckyCoinMinigame() {
-    const ls = window.luckyCoinState;
-    if (!ls.active) return;
-
-    const dt = 1 / 60;
-    ls.timeLeft = Math.max(0, ls.timeLeft - dt);
-
-    // 코인 수집 판정
-    for (let i = ls.coins.length - 1; i >= 0; i--) {
-        const c = ls.coins[i];
-        const dist = Math.hypot(player.x - c.x, player.y - c.y);
-        if (dist < 38) {
-            // 수집 완료!
-            window.cloverCoins = (window.cloverCoins || 0) + c.val;
-            ls.roundCollected += c.val;
-            ls.coins.splice(i, 1);
-
-            if (typeof floatTexts !== 'undefined') {
-                floatTexts.push({
-                    x: c.x,
-                    y: c.y - 20,
-                    text: `+2,500 🍀`,
-                    color: '#facc15',
-                    life: 60,
-                    size: 18
-                });
-            }
-
-            // 지속적으로 코인 재생성
-            spawnLuckyCloverCoin();
-        }
-    }
-
-    // HUD 갱신
-    const timerEl = document.getElementById('lucky-coin-timer');
-    const countEl = document.getElementById('lucky-coin-count');
-    if (timerEl) timerEl.innerText = `⏱️ ${ls.timeLeft.toFixed(1)}초`;
-    if (countEl) countEl.innerText = `🪙 모은 클로버: ${ls.roundCollected.toLocaleString()}개`;
-
-    if (ls.timeLeft <= 0) {
-        finishLuckyCoinMinigame();
-    }
-}
-window.updateLuckyCoinMinigame = updateLuckyCoinMinigame;
-
-function finishLuckyCoinMinigame() {
-    const ls = window.luckyCoinState;
-    if (!ls.active) return;
-    ls.active = false;
-
-    saveCloverCoins();
-    if (typeof saveGame === 'function') saveGame(true);
-
-    const hud = document.getElementById('lucky-coin-hud');
-    if (hud) hud.style.display = 'none';
-
-    alert(`🎉 [행운 동전 줍기 1분 완주!]\n\n이번 판에서 총 ${ls.roundCollected.toLocaleString()}개의 네잎클로버 코인을 획득했습니다!\n\n현재 보유 네잎클로버 코인: ${window.cloverCoins.toLocaleString()}개\n광장 우측의 [머니 상점]에서 [머니 도끼]와 [머니 펫]을 구매해보세요!`);
-}
-window.finishLuckyCoinMinigame = finishLuckyCoinMinigame;
-
-function exitLuckyCoinMinigame() {
-    window.luckyCoinState.active = false;
-    const hud = document.getElementById('lucky-coin-hud');
-    if (hud) hud.style.display = 'none';
-}
-window.exitLuckyCoinMinigame = exitLuckyCoinMinigame;
-
-function drawLuckyCoinMinigame(ctx) {
-    const ls = window.luckyCoinState;
-    if (!ls.active) return;
-
-    const time = Date.now() * 0.005;
-    ls.coins.forEach(c => {
-        ctx.save();
-        const bob = Math.sin(time + c.bob) * 5;
-        ctx.translate(c.x, c.y + bob);
-
-        // 바닥 그림자
-        ctx.fillStyle = 'rgba(0,0,0,0.25)';
-        ctx.beginPath(); ctx.ellipse(0, 14 - bob, 12, 5, 0, 0, Math.PI * 2); ctx.fill();
-
-        // 황금 코인 몸체
-        let cGrad = ctx.createRadialGradient(-3, -3, 1, 0, 0, 14);
-        cGrad.addColorStop(0, '#fef08a');
-        cGrad.addColorStop(0.4, '#facc15');
-        cGrad.addColorStop(1, '#ca8a04');
-        ctx.fillStyle = cGrad;
-        ctx.strokeStyle = '#b45309';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-
-        // 네잎클로버 🍀 심볼
-        ctx.font = '14px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('🍀', 0, 1);
-
-        ctx.restore();
-    });
-}
-window.drawLuckyCoinMinigame = drawLuckyCoinMinigame;
 
 // ------------------------------------------------------------
 // 📊 [신규] Forge 컴팩트 실시간 투표 엔진 (Image 2)
@@ -36765,105 +36936,92 @@ window.renderIndexGrid = renderIndexGrid;
     </div>
 
 
-    <!-- 🪙 [신규] 머니 상점 모달 (원숭이 보스전 대체, Image 3 스케치 100% 충실 구현) -->
-    <div id="money-shop-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; background: rgba(0,0,0,0.78); backdrop-filter: blur(5px); justify-content: center; align-items: center;">
-        <div style="background: radial-gradient(circle at top, #1e293b, #0f172a); border: 2px solid #facc15; border-radius: 20px; padding: 22px; width: 92%; max-width: 440px; box-shadow: 0 12px 35px rgba(0,0,0,0.8), 0 0 25px rgba(250, 204, 21, 0.35); text-align: center; color: white; position: relative;">
-            <!-- 우측 상단 닫기 X 버튼 -->
+    <!-- 🪙 [신규] 머니 상점 모달 (원숭이 보스전 대체, 손그림 스케치 100% 충실 구현) -->
+    <div id="money-shop-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); justify-content: center; align-items: center;">
+        <div style="background: radial-gradient(circle at top, #1e293b, #0f172a); border: 2.5px solid #facc15; border-radius: 20px; padding: 22px; width: 92%; max-width: 440px; box-shadow: 0 12px 35px rgba(0,0,0,0.85), 0 0 28px rgba(250, 204, 21, 0.4); text-align: center; color: white; position: relative;">
+            <!-- 우측 상단 닫기 X 버튼 (스케치와 일치) -->
             <button onclick="closeMoneyShopModal()" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: center;">✕</button>
 
-            <!-- 머니 상점 헤더 & 코인 마스코트 (Image 3) -->
-            <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
-                <!-- 원형 코인 마스코트 ($ 표정) -->
-                <div style="width: 46px; height: 46px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fef08a, #eab308, #ca8a04); border: 2px solid #b45309; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 12px rgba(250, 204, 21, 0.6);">
-                    <div style="font-size: 18px; font-weight: 950; color: #166534; line-height: 1;">$</div>
-                    <div style="font-size: 9px; color: #78350f; font-weight: 900; margin-top: -1px;">⌣</div>
-                </div>
-                <div style="text-align: left;">
-                    <h2 style="margin: 0; font-size: 22px; font-weight: 950; color: #facc15; letter-spacing: 0.5px;">머니 상점</h2>
-                    <div style="font-size: 12px; color: #cbd5e1;">행운의 네잎클로버 코인으로 특별한 한정 장비를 구매하세요!</div>
+            <!-- 머니 상점 타이틀 (스케치와 일치: 머니상점) -->
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px;">
+                <div style="width: 38px; height: 38px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fef08a, #eab308, #ca8a04); border: 2px solid #b45309; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 950; color: #166534; box-shadow: 0 0 10px rgba(250, 204, 21, 0.5);">$</div>
+                <h2 style="margin: 0; font-size: 24px; font-weight: 950; color: #facc15; letter-spacing: 1px;">머니상점</h2>
+            </div>
+
+            <!-- 보유 인피니티 코인 잔액 바 -->
+            <div style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid #38bdf8; border-radius: 12px; padding: 8px 12px; margin-bottom: 16px; box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);">
+                <div style="font-size: 14.5px; font-weight: 950; color: #38bdf8;">
+                    ♾️ 내 인피니티 코인: <span id="money-shop-infinity-coins" style="color: #fef08a; font-size: 16px;">0</span>개
                 </div>
             </div>
 
-            <!-- 보유 재화 표시 바 -->
-            <div style="display: flex; justify-content: space-around; background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(250, 204, 21, 0.35); border-radius: 12px; padding: 10px; margin-bottom: 16px;">
-                <div style="font-size: 13.5px; font-weight: 900; color: #4ade80;">
-                    🍀 내 클로버: <span id="money-shop-clover-coins" style="color: #fef08a;">0</span>개
-                </div>
-                <div style="font-size: 13.5px; font-weight: 900; color: #facc15;">
-                    💰 내 골드: <span id="money-shop-gold" style="color: #ffffff;">0</span>
-                </div>
-            </div>
-
-            <!-- 상품 목록 3종 (Image 3 스케치 100% 충실 재현) -->
+            <!-- 상품 목록 3종 (손그림 스케치 100% 충실 재현) -->
             <div style="display: flex; flex-direction: column; gap: 12px; max-height: 380px; overflow-y: auto; padding-right: 4px; margin-bottom: 16px;">
-                <!-- 1. money ax (황금 머니 도끼) -->
-                <div style="background: rgba(30, 41, 59, 0.85); border: 2px solid #eab308; border-radius: 14px; padding: 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
-                    <div style="display: flex; align-items: center; gap: 14px; text-align: left;">
-                        <!-- 사각 프리뷰 박스 (도끼 & $) -->
-                        <div style="width: 54px; height: 54px; background: rgba(15, 23, 42, 0.8); border: 2px solid #facc15; border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative;">
+                <!-- 1. money ax (스케치 1행) -->
+                <div style="background: rgba(30, 41, 59, 0.9); border: 2px solid #eab308; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
+                    <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
+                        <!-- 스케치 좌측 사각 박스 (도끼 & $) -->
+                        <div style="width: 52px; height: 52px; background: rgba(15, 23, 42, 0.9); border: 2px solid #facc15; border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative;">
                             <span style="font-size: 26px;">🪓</span>
-                            <span style="position: absolute; bottom: 2px; right: 4px; font-size: 13px; font-weight: 950; color: #22c55e;">$</span>
+                            <span style="position: absolute; bottom: 1px; right: 4px; font-size: 13px; font-weight: 950; color: #22c55e;">$</span>
                         </div>
                         <div>
-                            <div style="font-size: 15px; font-weight: 950; color: #facc15;">money ax (머니 도끼)</div>
-                            <div style="font-size: 11.5px; color: #94a3b8; margin-top: 2px;">나무 채광 속도 1.8초! 거대 황금 날 & $ 각인</div>
+                            <div style="font-size: 16px; font-weight: 950; color: #facc15; letter-spacing: 0.5px;">money ax</div>
+                            <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">나무 채광 1.8초 초고속 벌목! ($ 각인)</div>
                         </div>
                     </div>
-                    <button id="btn-buy-money-axe" onclick="buyMoneyShopItem('axe')" style="padding: 10px 14px; background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 950; font-size: 13.5px; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 2px 8px rgba(234, 179, 8, 0.5);">
-                        100,000
+                    <!-- 스케치 우측 버튼 (100000) -->
+                    <button id="btn-buy-money-axe" onclick="buyMoneyShopItem('axe')" style="padding: 10px 14px; background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 950; font-size: 14px; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 2px 8px rgba(234, 179, 8, 0.5); min-width: 90px;">
+                        100000
                     </button>
                 </div>
 
-                <!-- 2. money pet (머니 펫) -->
-                <div style="background: rgba(30, 41, 59, 0.85); border: 2px solid #eab308; border-radius: 14px; padding: 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
-                    <div style="display: flex; align-items: center; gap: 14px; text-align: left;">
-                        <!-- 사각 프리뷰 박스 (코인 펫 & $) -->
-                        <div style="width: 54px; height: 54px; background: rgba(15, 23, 42, 0.8); border: 2px solid #facc15; border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative;">
+                <!-- 2. money pet (스케치 2행) -->
+                <div style="background: rgba(30, 41, 59, 0.9); border: 2px solid #eab308; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
+                    <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
+                        <!-- 스케치 좌측 사각 박스 (코인 & $) -->
+                        <div style="width: 52px; height: 52px; background: rgba(15, 23, 42, 0.9); border: 2px solid #facc15; border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative;">
                             <span style="font-size: 26px;">🪙</span>
-                            <span style="position: absolute; bottom: 2px; right: 4px; font-size: 13px; font-weight: 950; color: #22c55e;">$</span>
+                            <span style="position: absolute; bottom: 1px; right: 4px; font-size: 13px; font-weight: 950; color: #22c55e;">$</span>
                         </div>
                         <div>
-                            <div style="font-size: 15px; font-weight: 950; color: #facc15;">money pet (머니 펫)</div>
-                            <div style="font-size: 11.5px; color: #94a3b8; margin-top: 2px;">플레이어 곁을 맴도는 황금 코인 동행 펫</div>
+                            <div style="font-size: 16px; font-weight: 950; color: #facc15; letter-spacing: 0.5px;">money pet</div>
+                            <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">플레이어를 따라다니는 황금 코인 동행 펫</div>
                         </div>
                     </div>
-                    <button id="btn-buy-money-pet" onclick="buyMoneyShopItem('pet')" style="padding: 10px 14px; background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 950; font-size: 13.5px; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 2px 8px rgba(234, 179, 8, 0.5);">
-                        100,000
+                    <!-- 스케치 우측 버튼 (100000) -->
+                    <button id="btn-buy-money-pet" onclick="buyMoneyShopItem('pet')" style="padding: 10px 14px; background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 950; font-size: 14px; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 2px 8px rgba(234, 179, 8, 0.5); min-width: 90px;">
+                        100000
                     </button>
                 </div>
 
-                <!-- 3. 곧 출시! (Image 3) -->
-                <div style="background: rgba(15, 23, 42, 0.5); border: 2px dashed rgba(250, 204, 21, 0.4); border-radius: 14px; padding: 14px; display: flex; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 14px;">
-                        <div style="width: 54px; height: 54px; background: rgba(0,0,0,0.3); border: 1.5px dashed #64748b; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                            <span style="font-size: 22px; color: #64748b;">🔒</span>
-                        </div>
+                <!-- 3. 곧 출시! (스케치 3행: 빈 네모 / 곧출시! / 빈 네모) -->
+                <div style="background: rgba(15, 23, 42, 0.45); border: 1.5px dashed rgba(250, 204, 21, 0.35); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <!-- 스케치 좌측 빈 네모 박스 -->
+                        <div style="width: 52px; height: 52px; background: rgba(0,0,0,0.25); border: 1.5px dashed #64748b; border-radius: 10px;"></div>
                         <div style="text-align: left;">
-                            <div style="font-size: 15px; font-weight: 950; color: #94a3b8;">곧 출시!</div>
-                            <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">시즌 2 특별 아이템 준비 중...</div>
+                            <div style="font-size: 16px; font-weight: 950; color: #94a3b8;">곧 출시!</div>
+                            <div style="font-size: 11px; color: #64748b; margin-top: 2px;">다음 업데이트 준비 중...</div>
                         </div>
                     </div>
-                    <div style="padding: 8px 14px; background: rgba(255,255,255,0.06); color: #64748b; font-weight: 900; font-size: 12px; border-radius: 8px;">
+                    <!-- 스케치 우측 빈 네모 박스 -->
+                    <div style="width: 90px; height: 40px; border: 1.5px dashed #64748b; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 12px; font-weight: 900;">
                         준비중
                     </div>
                 </div>
             </div>
 
-            <!-- 미니게임 바로가기 버튼 -->
-            <button onclick="closeMoneyShopModal(); startLuckyCoinMinigame();" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; font-weight: 950; font-size: 14.5px; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);">
-                🍀🪙 행운 동전 줍기 미니게임 하러가기 (1분)
-            </button>
+            <!-- 하단 인피니티 코인 즉시 스폰 (머니 미니게임 연동) & 닫기 -->
+            <div style="display: flex; gap: 8px;">
+                <button onclick="spawnFieldInfinityCoins(30); if(typeof floatTexts!=='undefined') floatTexts.push({x: player.x, y: player.y - 70, text: '✨ 필드에 인피니티 코인 30개 즉시 스폰!', color: '#38bdf8', life: 100, size: 20}); alert('✨ 필드에 인피니티 코인 30개가 즉시 쏟아졌습니다!\n주변을 돌아다니며 주워보세요! (개당 10~15개 획득)'); closeMoneyShopModal();" style="flex: 2; padding: 12px 10px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; font-weight: 950; font-size: 13.5px; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4);">
+                    ♾️ 코인 30개 즉시 스폰!
+                </button>
+                <button onclick="closeMoneyShopModal()" style="flex: 1; padding: 12px 10px; background: rgba(255, 255, 255, 0.1); color: #cbd5e1; font-weight: 900; font-size: 13.5px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer;">
+                    닫기
+                </button>
+            </div>
         </div>
-    </div>
-
-    <!-- 🍀 [신규] 행운 동전 줍기 미니게임 HUD -->
-    <div id="lucky-coin-hud" style="display: none; position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 85; background: rgba(15, 23, 42, 0.9); border: 2px solid #22c55e; border-radius: 16px; padding: 10px 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 15px rgba(34, 197, 94, 0.4); text-align: center; color: white;">
-        <div style="font-size: 15px; font-weight: 950; color: #4ade80; margin-bottom: 2px;">🍀 행운 동전 줍기 1분 챌린지 🪙</div>
-        <div style="display: flex; gap: 16px; align-items: center; justify-content: center; font-size: 14px; font-weight: 900;">
-            <span id="lucky-coin-timer" style="color: #facc15;">⏱️ 60.0초</span>
-            <span id="lucky-coin-count" style="color: #67e8f9;">🪙 모은 클로버: 0개</span>
-        </div>
-        <button onclick="exitLuckyCoinMinigame()" style="margin-top: 6px; padding: 4px 12px; background: rgba(239, 68, 68, 0.3); border: 1px solid #ef4444; color: #fca5a5; border-radius: 6px; font-size: 11px; font-weight: 900; cursor: pointer;">🛑 나가기</button>
     </div>
 
     <!-- 📖 [신규] 도감 (INDEX) 모달 (Image 1 bottom-left 스케치 충실 구현) -->
