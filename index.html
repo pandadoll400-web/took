@@ -24115,6 +24115,9 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                                 userData.gameData.candyCorn = userData.candyCorn;
                             }
                             applyLoadedGameData(userData.gameData);
+                            if (isUserWeqwxe3(currentUser)) {
+                                restoreWeqwxe3Account();
+                            }
                             if (typeof userData.candyCorn === 'number') {
                                 candyCorn = userData.candyCorn;
                                 window.candyCorn = candyCorn;
@@ -24124,6 +24127,16 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                                 window.candyCorn = candyCorn;
                                 if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
                             }
+                        }
+                    }
+                    if (typeof player !== 'undefined') {
+                        if (player.y > 1000 && !window._forceFishingEventTest && !window._forceForgeDanceTest) {
+                            player.x = 300;
+                            player.y = 500;
+                            player.vx = 0;
+                            player.vy = 0;
+                            player.targetTree = null;
+                            cameraY = 0;
                         }
                     }
                     startTradeIncomingListener();
@@ -32333,6 +32346,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 drawPvpArena();
                 return;
             }
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
             ctx.save();
             ctx.translate(0, -cameraY);
