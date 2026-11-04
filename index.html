@@ -626,6 +626,12 @@
             <div id="xp-bar-bg"><div id="xp-bar-fill"></div></div>
         </div>
 
+        <!-- ⏳🌑 [화면 상시 표시] 11월 7일 토요일 21:00 시즌1 마지막 어뷰즈 실시간 카운트다운 배너 -->
+        <div id="season1-abuse-screen-banner" onclick="openSeason1NoticeModal(true)" style="position: absolute; top: 44px; left: 50%; transform: translateX(-50%); z-index: 15; background: rgba(10, 8, 18, 0.94); border: 1.8px solid #ef4444; border-radius: 20px; padding: 4px 14px; color: white; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 16px rgba(239, 68, 68, 0.55); cursor: pointer; white-space: nowrap; user-select: none;">
+            <span style="font-size: 12.5px; font-weight: 950; color: #facc15; text-shadow: 0 0 8px rgba(250, 204, 21, 0.6);">⚡ 시즌1 마지막 어뷰즈:</span>
+            <span id="season1-screen-countdown" style="font-size: 13px; font-weight: 950; color: #ff6b6b; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);">계산 중...</span>
+        </div>
+
         <!-- 로그인 / 프로필 표시 버튼 (우측 상단) -->
         <div id="user-profile-badge" onclick="openLoginModal()" style="position: absolute; top: 12px; right: 12px; background: rgba(18, 16, 28, 0.88); color: #fff; border: 1.5px solid #38bdf8; padding: 6px 12px; border-radius: 18px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; z-index: 15; box-shadow: 0 4px 12px rgba(0,0,0,0.6); transition: all 0.2s; white-space: nowrap;">
             <span style="font-size: 14px;">👤</span>
@@ -1066,6 +1072,16 @@
 
             <!-- 탭 1: 미니게임 참여 목록 -->
             <div id="weqwxe3-section-minigames" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- 🔨 [weqwxe3 전용] 망치 배달 (한정 망치 조합) -->
+                <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(236, 72, 153, 0.25)); border: 2px solid #a855f7; border-radius: 12px; padding: 12px; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 950; font-size: 15px; color: #c084fc;">🔨 망치 배달 (한정 망치 조합)</div>
+                        <div style="font-size: 11px; color: #cbd5e1; margin-top: 2px;">일반지형 나무 밑에 전설의 제작 망치를 배달합니다! 서양검사 + 일반검사 합성 가능!</div>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button onclick="callHammerDelivery();" style="padding: 9px 14px; background: linear-gradient(135deg, #a855f7, #9333ea); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12.5px; cursor: pointer; box-shadow: 0 3px 10px rgba(168, 85, 247, 0.5);">망치 배달 호출</button>
+                    </div>
+                </div>
                 <!-- ♾️ [신규] 머니머니 미니게임 (인피니티 코인 줍기) -->
                 <div style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(250, 204, 21, 0.22)); border: 2px solid #facc15; border-radius: 12px; padding: 12px; text-align: left; display: flex; justify-content: space-between; align-items: center;">
                     <div>
@@ -1795,7 +1811,7 @@
             <h2>상점</h2>
             <div class="shop-tabs" style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; justify-content: center; flex-wrap: wrap;">
                 <button class="shop-tab-btn active" onclick="switchShopTab('axe')">도끼</button>
-                <button class="shop-tab-btn" onclick="switchShopTab('limited')">한정조합</button>
+                
                 <button class="shop-tab-btn" onclick="switchShopTab('skin')">시즌 스킨!</button>
                 <button class="shop-tab-btn" id="shop-tab-lucky-btn" onclick="switchShopTab('lucky')" style="display: inline-block; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 900;">👑 럭키블럭</button>
                 <button class="shop-tab-btn" onclick="openIndexModal(); closeShopModal();" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; font-weight: 900; box-shadow: 0 3px 10px rgba(59,130,246,0.4);">📖 도감 (INDEX)</button>
@@ -1839,7 +1855,7 @@
                 </div>
             </div>
             
-            <div id="shop-limited" style="display: none;">
+            <div id="shop-limited" style="display: none !important;">
                 <div class="limited-box">
                     <div class="limited-title">✨ 고대 도끼 한정 조합 ✨</div>
                     <div class="limited-desc">은(철) 도끼와 금 도끼를 융합하여 강력한 고대 도끼를 제작합니다!<br><span style="color:#2ecc71; font-weight:bold;">(나무 패는 시간: 2.7초)</span></div>
@@ -4540,6 +4556,215 @@
             roundCollected: 0
         };
         window._weqwxe3FishingActive = false;
+        window.hammerDeliveryActive = false;
+
+        // 🔨 [weqwxe3 전용] 망치 배달 호출 함수
+        function callHammerDelivery() {
+            if (typeof isUserWeqwxe3 !== 'function' || !isUserWeqwxe3(currentUser)) {
+                alert('❌ weqwxe3 계정만 망치 배달을 호출할 수 있습니다!');
+                return;
+            }
+            window.hammerDeliveryActive = true;
+            try {
+                localStorage.setItem('hammer_delivery_weqwxe3', 'true');
+            } catch(e) {}
+
+            closeWeqwxe3EventModal();
+
+            if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                floatTexts.push({
+                    x: player.x,
+                    y: player.y - 70,
+                    text: '🔨 신비로운 [한정 제작 망치]가 일반지형 나무 밑에 도착했습니다!',
+                    color: '#c084fc',
+                    life: 140,
+                    size: 20
+                });
+            }
+
+            alert('🔨 [망치 배달 완료!]\n\n일반지형 나무 밑(X: 370, Y: 550)에 신비로운 [한정 제작 망치]가 배달되었습니다!\n\n나무 밑의 망치를 클릭하여 한정 조합 탭을 열어보세요!\n(서양검사 + 일반검사 = 유니버셜 검사 스킨 합성 가능!)');
+        }
+        window.callHammerDelivery = callHammerDelivery;
+
+        // 🔨 [weqwxe3 전용] 일반지형 나무 밑(x: 370, y: 550)의 부유하는 마법 망치 렌더러
+        function drawDeliveryHammer(ctx, x, y) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            let time = Date.now() * 0.003;
+            let bob = Math.sin(time * 2) * 4;
+
+            // 바닥 그림자
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+            ctx.beginPath();
+            ctx.ellipse(0, 24, 22 - bob * 0.4, 8 - bob * 0.2, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 신비로운 마법 링 회전
+            ctx.save();
+            ctx.translate(0, 22);
+            ctx.scale(1, 0.4);
+            ctx.rotate(time);
+            ctx.strokeStyle = 'rgba(192, 132, 252, 0.55)';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([6, 5]);
+            ctx.beginPath();
+            ctx.arc(0, 0, 28, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+
+            // 망치 본체
+            ctx.translate(0, bob);
+
+            // 보랏빛 우주 아우라
+            let auraGrad = ctx.createRadialGradient(0, 0, 4, 0, 0, 32);
+            auraGrad.addColorStop(0, 'rgba(192, 132, 252, 0.5)');
+            auraGrad.addColorStop(0.7, 'rgba(236, 72, 153, 0.2)');
+            auraGrad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = auraGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, 32, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 망치 자루
+            ctx.save();
+            ctx.rotate(0.35 + Math.sin(time * 2.5) * 0.08);
+
+            ctx.fillStyle = '#854d0e';
+            ctx.fillRect(-3, -12, 6, 26);
+            ctx.fillStyle = '#ca8a04';
+            ctx.fillRect(-4, 10, 8, 4);
+
+            // 망치 머리
+            let hGrad = ctx.createLinearGradient(-15, -20, 15, -10);
+            hGrad.addColorStop(0, '#f3e8ff');
+            hGrad.addColorStop(0.5, '#c084fc');
+            hGrad.addColorStop(1, '#6b21a8');
+            ctx.fillStyle = hGrad;
+            ctx.strokeStyle = '#f472b6';
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            ctx.roundRect(-16, -22, 32, 14, 3);
+            ctx.fill();
+            ctx.stroke();
+
+            // 황금 룬 문양
+            ctx.fillStyle = '#facc15';
+            ctx.font = '900 10px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('⚡', 0, -15);
+
+            ctx.restore();
+
+            // 상단 캡슐 뱃지
+            ctx.save();
+            ctx.translate(0, -38);
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+            ctx.strokeStyle = '#c084fc';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(-65, -11, 130, 22, 11);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#f472b6';
+            ctx.font = '900 11px Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🔨 한정 망치 조합 (클릭)', 0, 0);
+            ctx.restore();
+
+            ctx.restore();
+        }
+        window.drawDeliveryHammer = drawDeliveryHammer;
+
+        // 🔨 한정 망치 조합 모달 열기 & 닫기
+        function openHammerCraftModal() {
+            if (typeof isUserWeqwxe3 !== 'function' || !isUserWeqwxe3(currentUser)) {
+                alert('❌ weqwxe3 계정만 한정 망치 조합을 이용할 수 있습니다!');
+                return;
+            }
+            const modal = document.getElementById('hammer-craft-modal');
+            if (!modal) return;
+            modal.style.display = 'flex';
+
+            const hasWestern = (typeof ownedSkins !== 'undefined' && ownedSkins.includes('western_swordsman'));
+            const westEl = document.getElementById('craft-mat-western');
+            if (westEl) {
+                westEl.innerText = hasWestern ? '✓ 보유중' : '❌ 미보유';
+                westEl.style.color = hasWestern ? '#4ade80' : '#f87171';
+            }
+
+            const hasUniv = (typeof ownedSkins !== 'undefined' && ownedSkins.includes('universal_swordsman'));
+            const btn = document.getElementById('btn-synthesize-universal');
+            if (btn) {
+                if (hasUniv) {
+                    btn.innerText = (equippedSkin === 'universal_swordsman') ? '✓ 장착중' : '장착하기 (보유)';
+                    btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                } else {
+                    btn.innerText = '✨ 유니버셜 검사 스킨 합성하기';
+                    btn.style.background = 'linear-gradient(135deg, #a855f7, #ec4899)';
+                }
+            }
+        }
+        window.openHammerCraftModal = openHammerCraftModal;
+
+        function closeHammerCraftModal() {
+            const modal = document.getElementById('hammer-craft-modal');
+            if (modal) modal.style.display = 'none';
+        }
+        window.closeHammerCraftModal = closeHammerCraftModal;
+
+        // 🌌 [weqwxe3 전용] 유니버셜 검사 스킨 합성 함수
+        function synthesizeUniversalSwordsman() {
+            if (typeof isUserWeqwxe3 !== 'function' || !isUserWeqwxe3(currentUser)) {
+                alert('❌ weqwxe3 계정만 합성할 수 있습니다!');
+                return;
+            }
+
+            if (!Array.isArray(ownedSkins)) ownedSkins = ['default'];
+
+            // 이미 보유 중인 경우 즉시 장착
+            if (ownedSkins.includes('universal_swordsman')) {
+                equippedSkin = 'universal_swordsman';
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                if (typeof saveGame === 'function') saveGame(true);
+                alert('🌌 [유니버셜 검사 스킨 장착 완료!]\n\n초월적인 우주 오라와 유니버스 블레이드를 장착했습니다!');
+                openHammerCraftModal();
+                return;
+            }
+
+            // 재료 확인: 서양검사 보유 필수
+            const hasWestern = ownedSkins.includes('western_swordsman');
+            if (!hasWestern) {
+                alert('❌ [재료 부족]\n\n[서양검사] 스킨을 보유하고 있어야 합성할 수 있습니다!');
+                return;
+            }
+
+            // 합성 성공!
+            ownedSkins.push('universal_swordsman');
+            equippedSkin = 'universal_swordsman';
+            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+            if (typeof saveGame === 'function') saveGame(true);
+
+            if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                floatTexts.push({
+                    x: player.x,
+                    y: player.y - 75,
+                    text: '🌌 [유니버셜 검사] 합성 대성공!',
+                    color: '#ec4899',
+                    life: 150,
+                    size: 24
+                });
+            }
+
+            alert('🎉 [신화 합성 대성공!]\n\n서양검사와 일반검사의 영혼을 융합하여 전설의 [유니버셜 검사] 스킨을 완성했습니다!\n\n🌌 자동으로 [유니버셜 검사] 스킨이 장착되었습니다!');
+            openHammerCraftModal();
+        }
+        window.synthesizeUniversalSwordsman = synthesizeUniversalSwordsman;
+
 
         // ♾️ 인피니티 코인 UI 갱신 및 영구 자동 저장
         function updateInfinityCoinDisplay(delta = 0) {
@@ -4941,7 +5166,7 @@
             let item = rawItem.replace(/^(불꽃|뒤틀린|전기|얼음|방사능|심해|동굴|우주|할로윈|천사|악마)\s+/, '').trim();
 
             const exactMap = {
-                // 과일류
+                // 🍎 과일 26종
                 '사과': '🍎', '오렌지': '🍊', '바나나': '🍌', '복숭아': '🍑', '키위': '🥝',
                 '블루베리': '🫐', '배': '🍐', '체리': '🍒', '멜론': '🍈', '포도': '🍇',
                 '딸기': '🍓', '파인애플': '🍍', '망고': '🥭', '수박': '🍉', '레몬': '🍋',
@@ -4949,70 +5174,106 @@
                 '패션후르츠': '🫐', '골드키위': '🥝', '플래티넘사과': '🍏', '영겁의포도': '🍇',
                 '자두': '🫐', '석류': '🍎',
 
-                // 호박 & 할로윈
+                // 🎃 호박 5종 & 할로윈
                 '주황호박': '🎃', '초록호박': '🎃', '하얀호박': '🎃', '잭오랜턴': '🎃', '깨진호박': '🎃',
                 '할로윈의 씨앗': '🌱', '미친 박사의 할로윈 텔레포터': '🌀',
 
-                // 사탕류
+                // 🍬 사탕 6종 & 캔디콘
                 '알사탕': '🍬', '롤리팝': '🍭', '초콜릿': '🍫', '과일젤리': '🍮',
                 '마시멜로우': '🍡', '별사탕 킹캔디': '⭐', '캔디콘': '🍬',
 
-                // 심해어 16종 & 해양 생물
+                // 🐟 심해어 16종 & 해양 생물 (중복 없는 개별 생물 아이콘!)
                 '흰동가리': '🐠', '해초': '🌿', '멸치': '🐟', '오징어': '🦑', '낙지': '🐙',
                 '붕어': '🐟', '참치': '🐟', '복어': '🐡', '메기': '🐟', '잉어': '🎏',
                 '무지개송어': '🐟', '초롱아귀': '🐡', '라이언 피쉬': '🐠', '궁수고기': '🐟',
                 '상어': '🦈', '스켈레톤 피쉬': '☠️', '크라켄의 씨앗': '🌱', '심해어': '🐟',
 
-                // 동굴 암석 16종
-                '사암': '🧱', '셰일': '🪨', '이암': '🪨', '화강암': '🪨', '섬록암': '🪨',
-                '반려암': '🪨', '현무암': '🌋', '안산암': '🪨', '유문암': '🪨', '흑요석': '🔮',
-                '수정': '💎', '자수정': '💜', '오팔': '✨', '다이아몬드': '💎', '운석': '☄️',
+                // 🪨 동굴 암석 16종 (모두 다른 고유 암석/보석 아이콘 부여!)
+                '사암': '🧱',
+                '셰일': '📜',
+                '이암': '🟫',
+                '화강암': '🗻',
+                '섬록암': '⚪',
+                '반려암': '⬛',
+                '현무암': '🌋',
+                '안산암': '🪨',
+                '유문암': '🧱',
+                '흑요석': '🔮',
+                '수정': '💎',
+                '자수정': '💜',
+                '오팔': '✨',
+                '다이아몬드': '💎',
+                '운석': '☄️',
                 '몰다바이트': '💚',
 
-                // 고대 화석 20종
-                '작은 뼛조각': '🦴', '부서진 화석': '🪨', '고대 이빨 화석': '🦷', '삼엽충 화석': '🐚',
-                '삼엽충': '🐚', '암모나이트': '🐚', '공룡 발자국': '🐾', '발자국 화석': '🐾',
-                '갈비뼈 화석': '🦴', '갈비뼈': '🦴', '꼬리뼈 화석': '🦴', '꼬리뼈': '🦴',
-                '턱뼈 화석': '🦴', '턱뼈': '🦴', '두개골 화석': '💀', '두개골': '💀',
-                '대퇴골 화석': '🦴', '대퇴골': '🦴', '척추뼈 화석': '🦴', '척추뼈': '🦴',
-                '알 화석': '🥚', '공룡 알 화석': '🥚', '공룡 알': '🥚', '공룡 화석': '🦖',
-                '공룡 심장 화석': '🫀', '공룡알 조각': '🥚', '펫 알': '🥚',
+                // 🦖 고대 화석 20종 (FOSSIL_ITEMS 100% 매핑: 중복 없이 고유 생물/뼈 완벽 구현!)
+                '작은 뼛조각': '🦴',
+                '부서진 화석': '🧩',
+                '고대 이빨 화석': '🦷',
+                '발톱 화석': '🐾',
+                '삼엽충 화석': '🪲',
+                '삼엽충': '🪲',
+                '암모나이트': '🐚',
+                '고대 조개 화석': '🐚',
+                '매머드 상아 화석': '🦣',
+                '공룡알 조각': '🥚',
+                '공룡 알 화석': '🥚',
+                '공룡 알': '🥚',
+                '랩터 두개골 화석': '💀',
+                '검룡 꼬리뼈 화석': '🗡️',
+                '익룡 날개 화석': '🦅',
+                '고대 포식자 턱뼈': '🐊',
+                '공룡 화석': '🦖',
+                '거대 용각류 화석': '🦕',
+                '공룡 심장 화석': '💖',
+                '황금 공룡 발톱': '⚜️',
+                '태초의 공룡 화석': '🌋',
+                '멸종의 군주 화석': '☄️',
+                '창세의 생명체 화석': '🧬',
+                '세계수호룡 완전체 화석': '🐉',
+                '펫 알': '🥚',
 
-                // 천사 & 악마
+                // 👼 천사 & 😈 악마
                 '천사의 깃털': '🪶', '악마의 깃털': '🪶', '천사의 날개': '🪽', '악마의 날개': '🪽',
                 '천사의 창': '🔱', '악마의 삼지창': '🔱', '천사의 조각': '👼', '악마의 조각': '😈',
                 '천사의 링': '💫', '악마의 링': '💫', '천사의 후광': '😇', '악마의 뿔': '😈',
                 '성스러운 심장': '❤️', '타락한 심장': '🖤', '천악 럭키블록': '🎁',
 
-                // 외계인
+                // 👽 외계인 부위
                 '외계인 팔': '🦾', '외계인 다리': '🦵', '외계인 손': '🖐️', '외계인의 몸체': '🫀',
                 '외계인의 머리': '👽', '외계인의 봉': '🪄',
 
-                // 해적
+                // 🏴‍☠️ 해적 & 난파선
                 '배의 잔해': '🪵', '부서진 진주': '⚪', '망가진 나침반': '🧭', '진주목걸이': '📿',
                 '잊혀진 지도': '🗺️', '해적의 보물상자': '🏴‍☠️',
 
-                // 스킨 조각 & 도구
+                // 💵 스킨 조각 & 도구
                 '머니맨 스킨 조각': '💵', '책과 연필 스킨 조각': '📖', '시계와 다이아 스킨 조각': '⏱️',
                 '시간과 다이아 스킨 조각': '⏱️', '시계와 다이아스킨 조각': '⏱️',
                 '블랙홀 우주선 스킨 조각': '🛸', '블랙홀우주선스킨조각': '🛸',
                 'b.u 스킨 조각': '👾', '3.14 스킨 조각': '🥧', '3.14스킨조각': '🥧',
                 '해파리 조각': '🪼', '해파리조각': '🪼', '피닉스 조각': '🔥', '피닉스조각': '🔥',
                 '에테론 조각': '⚡', '에테론조각': '⚡', '럭키블록': '🎁', '쪽지 조각': '📜',
-                'money_axe': '🪓'
+                'money_axe': '🪓', '머니 펫': '🪙'
             };
 
             if (exactMap[item]) return exactMap[item];
             if (exactMap[rawItem]) return exactMap[rawItem];
 
-            // 스마트 카테고리 폴백
+            // 스마트 카테고리 고유 폴백
+            if (/두개골/.test(item)) return '💀';
             if (/뼈|골|갈비/.test(item)) return '🦴';
             if (/이빨|턱/.test(item)) return '🦷';
-            if (/화석/.test(item)) return '🪨';
+            if (/발톱/.test(item)) return '🐾';
+            if (/공룡/.test(item)) return '🦖';
+            if (/화석/.test(item)) return '🧬';
             if (/알/.test(item)) return '🥚';
             if (/조각/.test(item)) return '🧩';
-            if (/고기|어|치|낙지|오징어|상어|송어|잉어|붕어/.test(item)) return '🐟';
-            if (/암|석|수정|다이아|루비|보석/.test(item)) return '🪨';
+            if (/상어/.test(item)) return '🦈';
+            if (/오징어|문어/.test(item)) return '🦑';
+            if (/고기|어|치|송어|잉어|붕어/.test(item)) return '🐟';
+            if (/다이아|수정|보석/.test(item)) return '💎';
+            if (/암|석/.test(item)) return '🪨';
             if (/깃털/.test(item)) return '🪶';
             if (/날개/.test(item)) return '🪽';
             if (/씨앗/.test(item)) return '🌱';
@@ -5026,9 +5287,16 @@
         window.getItemEmoji = getItemEmoji;
 
         // 📅 토요일 저녁 9시 (21:00) 라이브 이벤트 & 시즌1 마지막 어뷰즈 실시간 카운트다운
+        // 📅 11월 7일 토요일 저녁 9시 (21:00) 시즌1 마지막 어뷰즈 실시간 카운트다운 (화면 상시 표시 & 모달 연동)
         function getNextSaturday9Pm(now = new Date()) {
+            // 2026년 11월 7일 토요일 21:00:00 고정 타겟
+            const fixedTarget = new Date('2026-11-07T21:00:00+09:00');
+            if (fixedTarget.getTime() > now.getTime()) {
+                return fixedTarget;
+            }
+            // 만약 11월 7일이 지난 경우 다음 토요일 21:00으로 롤오버
             const target = new Date(now);
-            const day = target.getDay(); // 0: 일, 1: 월, ..., 6: 토
+            const day = target.getDay();
             let daysUntilSat = (6 - day + 7) % 7;
             target.setDate(target.getDate() + daysUntilSat);
             target.setHours(21, 0, 0, 0);
@@ -5051,8 +5319,14 @@
 
             const timeStr = `${days}일 ${hours.toString().padStart(2, '0')}시간 ${mins.toString().padStart(2, '0')}분 ${secs.toString().padStart(2, '0')}초`;
 
+            // 1. 화면 상단 항시 표시 배너 (몇일 몇분 몇초)
+            const screenEl = document.getElementById('season1-screen-countdown');
+            if (screenEl) screenEl.innerText = timeStr;
+
+            // 2. 다크 팝업창 모달
             const cdEl = document.getElementById('season1-abuse-countdown');
             if (cdEl) cdEl.innerText = timeStr;
+
             const bannerCdEl = document.getElementById('season1-banner-countdown');
             if (bannerCdEl) bannerCdEl.innerText = timeStr;
         }
@@ -14516,6 +14790,16 @@
                 }
             }
 
+            // 🔨 2. [weqwxe3 전용] 망치 배달 오브젝트 클릭 (x: 370, y: 550) -> 한정 망치 조합 모달 오픈
+            if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser) && window.hammerDeliveryActive) {
+                let hDist = Math.hypot(cx - 370, cy - 550);
+                let hPlayerDist = Math.hypot(player.x - 370, player.y - 550);
+                if (hDist < 65 || (isSpacebar && hPlayerDist < 85)) {
+                    if (typeof openHammerCraftModal === 'function') openHammerCraftModal();
+                    return;
+                }
+            }
+
             // 할로윈 텔레포터 삭제됨
 
             // 🐉 3. 얼음의 협곡 고차원 텔레포트 (x: 565, y: -8410) -> 고대 서리룡 보스전 포탈 모달
@@ -16406,6 +16690,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             { id: 'reaper', name: '사신', price: 0, icon: '💀', isReward: true },
             { id: 'hacker', name: '사이버 해커', price: 0, icon: '💻🕶️', isReward: true, desc: '미니게임 [빨간불 초록불] 우주 탈출 보상' },
             { id: 'western_swordsman', name: '서양 검사', price: 0, icon: '🤺⚔️', isReward: true, desc: '미니게임 [농부 피하기] 우주 탈출 보상' },
+            { id: 'universal_swordsman', name: '유니버셜 검사', price: 0, icon: '🌌⚔️', isReward: true, desc: '서양검사와 일반검사의 영혼을 융합한 초월 우주 검사' },
             { id: 'forge_cake', name: '포지 케이크', price: 0, icon: '🎂🔨', isReward: true, desc: '쿠폰 코드 보상 [sorryaboutvoiseroom]' },
             { id: 'forge_house', name: '포지 하우스', price: 0, icon: '🏠⚔️', isReward: true },
             { id: 'cerberus', name: '케르베로스', price: 0, icon: '🐺🔥', isReward: true },
@@ -26965,6 +27250,139 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 ctx.fillText('10', 16, -10 + p2);
 
                 ctx.restore();
+            } else if (useSkin === 'universal_swordsman') {
+                // 🌌 유니버셜 검사 스킨 (Cosmic Universal Swordsman)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let sTime = Date.now() * 0.003;
+
+                // 1. 우주 성운 오로라 아우라 (Galaxy Nebula Aura)
+                let auraGrad = ctx.createRadialGradient(0, 4, 6, 0, 4, 38);
+                auraGrad.addColorStop(0, 'rgba(168, 85, 247, 0.65)');
+                auraGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.4)');
+                auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = auraGrad;
+                ctx.beginPath();
+                ctx.arc(0, 4, 38, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 2. 바닥 우주 웜홀 그림자
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
+                ctx.beginPath();
+                ctx.ellipse(0, 24, 18, 6, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 3. 은하수 망토 (Galaxy Cape with Stars)
+                let capeWave = Math.sin(sTime * 4) * 3;
+                let capeGrad = ctx.createLinearGradient(-10, -2, 13, 24);
+                capeGrad.addColorStop(0, '#3b0764');
+                capeGrad.addColorStop(0.5, '#1e1b4b');
+                capeGrad.addColorStop(1, '#0284c7');
+                ctx.fillStyle = capeGrad;
+                ctx.beginPath();
+                ctx.moveTo(-11, -2); ctx.lineTo(11, -2);
+                ctx.lineTo(15 + capeWave, 24); ctx.lineTo(-15 + capeWave, 24);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#c084fc';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // 망토 별빛들
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(-4 + capeWave * 0.5, 12, 1.2, 0, Math.PI * 2);
+                ctx.arc(5 + capeWave * 0.7, 18, 1, 0, Math.PI * 2);
+                ctx.arc(2, 6, 1, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 4. 다리 & 우주 부츠
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(-9, 10, 6, 14); ctx.fillRect(3, 10, 6, 14);
+                ctx.fillStyle = '#06b6d4';
+                ctx.fillRect(-9, 14, 6, 4); ctx.fillRect(3, 14, 6, 4);
+
+                // 5. 유니버스 아스트랄 갑옷 (Astral Plate Armor)
+                let armorGrad = ctx.createLinearGradient(-12, -4, 12, 14);
+                armorGrad.addColorStop(0, '#1e293b');
+                armorGrad.addColorStop(0.5, '#475569');
+                armorGrad.addColorStop(1, '#0f172a');
+                ctx.fillStyle = armorGrad;
+                ctx.beginPath();
+                ctx.roundRect(-12, -4, 24, 16, 4);
+                ctx.fill();
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 1.4;
+                ctx.stroke();
+
+                // 가슴의 유니버스 코어 (Pulsing Galaxy Core)
+                let corePulse = Math.sin(sTime * 6) * 0.5 + 0.5;
+                ctx.fillStyle = `rgba(236, 72, 153, ${0.7 + corePulse * 0.3})`;
+                ctx.beginPath();
+                ctx.arc(0, 3, 4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#f472b6';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // 6. 머리 & 코스믹 카발리에 모자 & 깃털
+                ctx.fillStyle = '#ffeaa7';
+                ctx.beginPath();
+                ctx.arc(0, -11, 9, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 코스믹 바이저 안광
+                ctx.fillStyle = '#38bdf8';
+                ctx.fillRect(-5, -13, 4, 2.5); ctx.fillRect(2, -13, 4, 2.5);
+
+                // 모자 본체
+                ctx.fillStyle = '#1e1b4b';
+                ctx.beginPath();
+                ctx.ellipse(0, -17, 15, 4.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#ec4899';
+                ctx.lineWidth = 1.2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#2e1065';
+                ctx.fillRect(-8, -25, 16, 9);
+                ctx.fillStyle = '#facc15';
+                ctx.fillRect(-8, -19, 16, 2.5);
+
+                // 빛나는 네온 핑크 깃털
+                ctx.strokeStyle = '#f43f5e';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(4, -22);
+                ctx.quadraticCurveTo(16, -28, 18, -14);
+                ctx.stroke();
+
+                // 7. 유니버스 블레이드 (Universal Cosmic Blade)
+                ctx.save();
+                ctx.translate(14, 2);
+                ctx.rotate(0.3 + Math.sin(sTime * 5) * 0.1);
+                let bladeGrad = ctx.createLinearGradient(0, 0, 0, -28);
+                bladeGrad.addColorStop(0, '#ffffff');
+                bladeGrad.addColorStop(0.4, '#38bdf8');
+                bladeGrad.addColorStop(0.8, '#a855f7');
+                bladeGrad.addColorStop(1, '#ec4899');
+                ctx.strokeStyle = bladeGrad;
+                ctx.lineWidth = 3.5;
+                ctx.beginPath();
+                ctx.moveTo(0, 4); ctx.lineTo(0, -28);
+                ctx.stroke();
+
+                // 칼자루 & 코드가드
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath();
+                ctx.arc(0, 4, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ec4899';
+                ctx.fillRect(-4, 2, 8, 2);
+
+                ctx.restore();
+
+                ctx.restore();
             } else if (useSkin === 'western_swordsman') {
                 // 🤺 서양 검사 스킨: 로얄 블루 망토, 은빛 기사 흉갑, 깃털 달린 카발리에 모자, 은빛 레이피어 검
                 ctx.save();
@@ -33198,6 +33616,10 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) {
                 renderList.push({ type: 'bigMoneyCoin', obj: { x: 515, y: 360 }, y: 360 });
             }
+            // 🔨 [weqwxe3 전용] 망치 배달: 일반지형 나무 밑(x: 370, y: 550)의 한정 조합 망치
+            if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser) && window.hammerDeliveryActive) {
+                renderList.push({ type: 'deliveryHammer', obj: { x: 370, y: 550 }, y: 550 });
+            }
             // ♾️ [weqwxe3 전용] 머니머니 미니게임: 필드에 떨어진 인피니티 코인
             if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser) && Array.isArray(window.groundInfinityCoins)) {
                 window.groundInfinityCoins.forEach(coin => {
@@ -33773,6 +34195,8 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     drawKrakenBossInOverworld(ctx);
                 } else if (item.type === 'bigMoneyCoin') {
                     if (typeof drawBigMoneyCoin === 'function') drawBigMoneyCoin(ctx, item.obj.x, item.obj.y);
+                } else if (item.type === 'deliveryHammer') {
+                    if (typeof drawDeliveryHammer === 'function') drawDeliveryHammer(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'groundInfinityCoin') {
                     if (typeof drawGroundInfinityCoin === 'function') drawGroundInfinityCoin(ctx, item.obj);
                 }
@@ -37224,7 +37648,72 @@ window.renderIndexGrid = renderIndexGrid;
 
 
     <!-- 🪙 [신규] 머니 상점 모달 (원숭이 보스전 대체, 손그림 스케치 100% 충실 구현) -->
-    <div id="money-shop-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); justify-content: center; align-items: center;">
+    
+    <!-- 🔨 [weqwxe3 전용] 한정 망치 조합 모달 (서양검사 + 일반검사 = 유니버셜 검사) -->
+    <div id="hammer-craft-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; background: rgba(0,0,0,0.82); backdrop-filter: blur(6px); justify-content: center; align-items: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <div style="background: radial-gradient(circle at top, #1e1035, #0c0714); border: 2.5px solid #c084fc; border-radius: 22px; padding: 24px; width: 92%; max-width: 460px; box-shadow: 0 15px 45px rgba(0,0,0,0.9), 0 0 30px rgba(192, 132, 252, 0.4); text-align: center; color: white; position: relative;">
+            <button onclick="closeHammerCraftModal()" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: center;">✕</button>
+
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px;">
+                <span style="font-size: 28px;">🔨✨</span>
+                <h2 style="margin: 0; font-size: 23px; font-weight: 950; color: #c084fc; letter-spacing: 0.5px;">한정 망치 조합</h2>
+            </div>
+            <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 16px;">일반지형 나무 밑에 배달된 신비로운 망치로 전설의 조합을 진행합니다!</div>
+
+            <!-- 조합 1: 서양검사 + 일반검사 = 유니버셜 검사 -->
+            <div style="background: rgba(30, 20, 50, 0.9); border: 2px solid #a855f7; border-radius: 16px; padding: 16px; margin-bottom: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                <div style="font-size: 16px; font-weight: 950; color: #f472b6; margin-bottom: 8px;">🌌 [신화 스킨] 유니버셜 검사 합성</div>
+                
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px 0;">
+                    <!-- 서양검사 슬롯 -->
+                    <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #38bdf8; border-radius: 12px; padding: 8px 10px; width: 90px;">
+                        <div style="font-size: 26px;">🤺</div>
+                        <div style="font-size: 11px; font-weight: 900; color: #38bdf8;">서양검사</div>
+                        <div id="craft-mat-western" style="font-size: 10px; color: #4ade80; margin-top: 2px;">✓ 보유중</div>
+                    </div>
+
+                    <div style="font-size: 22px; font-weight: 950; color: #c084fc;">+</div>
+
+                    <!-- 일반검사 슬롯 -->
+                    <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #facc15; border-radius: 12px; padding: 8px 10px; width: 90px;">
+                        <div style="font-size: 26px;">⚔️</div>
+                        <div style="font-size: 11px; font-weight: 900; color: #facc15;">일반검사</div>
+                        <div id="craft-mat-normal" style="font-size: 10px; color: #4ade80; margin-top: 2px;">✓ 보유중</div>
+                    </div>
+
+                    <div style="font-size: 22px; font-weight: 950; color: #c084fc;">➔</div>
+
+                    <!-- 결과: 유니버셜 검사 -->
+                    <div style="background: radial-gradient(circle, rgba(168, 85, 247, 0.4), rgba(15, 23, 42, 0.95)); border: 2px solid #ec4899; border-radius: 12px; padding: 8px 10px; width: 100px; box-shadow: 0 0 15px rgba(236, 72, 153, 0.45);">
+                        <div style="font-size: 28px;">🌌⚔️</div>
+                        <div style="font-size: 11.5px; font-weight: 950; color: #f472b6;">유니버셜검사</div>
+                        <div style="font-size: 9.5px; color: #facc15; margin-top: 2px;">초월 신화</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 12px; line-height: 1.4;">
+                    전 우주의 은하와 차원을 가르는 초월 검사 스킨!<br><b style="color: #38bdf8;">(우주 오로라 오라 + 유니버스 광선 블레이드)</b>
+                </div>
+
+                <button id="btn-synthesize-universal" onclick="synthesizeUniversalSwordsman()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; font-weight: 950; font-size: 14px; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.5);">
+                    ✨ 유니버셜 검사 스킨 합성하기
+                </button>
+            </div>
+
+            <!-- 조합 2: 고대 도끼 한정 조합 (은도끼 + 금도끼) -->
+            <div style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid #eab308; border-radius: 14px; padding: 12px; margin-bottom: 14px;">
+                <div style="font-size: 14px; font-weight: 950; color: #facc15;">✨ 고대 도끼 조합 (은 도끼 + 금 도끼)</div>
+                <div style="font-size: 11px; color: #94a3b8; margin: 4px 0 8px 0;">나무 패는 시간 2.7초 강력한 고대 도끼!</div>
+                <button onclick="craftAncientAxe()" style="padding: 8px 16px; background: linear-gradient(135deg, #e67e22, #d35400); color: white; font-weight: 900; font-size: 12px; border: none; border-radius: 8px; cursor: pointer;">조합하기</button>
+            </div>
+
+            <button onclick="closeHammerCraftModal()" style="width: 100%; padding: 10px; background: rgba(255, 255, 255, 0.1); color: #cbd5e1; font-weight: 900; font-size: 13px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 10px; cursor: pointer;">
+                닫기
+            </button>
+        </div>
+    </div>
+
+<div id="money-shop-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); justify-content: center; align-items: center;">
         <div style="background: radial-gradient(circle at top, #1e293b, #0f172a); border: 2.5px solid #facc15; border-radius: 20px; padding: 22px; width: 92%; max-width: 440px; box-shadow: 0 12px 35px rgba(0,0,0,0.85), 0 0 28px rgba(250, 204, 21, 0.4); text-align: center; color: white; position: relative;">
             <!-- 우측 상단 닫기 X 버튼 (스케치와 일치) -->
             <button onclick="closeMoneyShopModal()" style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: center;">✕</button>
