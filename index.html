@@ -1177,118 +1177,70 @@
             </div>
 
             <!-- 탭 2: 9시 이벤트 제어 및 실시간 테스트 대시보드 -->
-            <div id="weqwxe3-section-9pm" style="display: none; padding: 14px 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid #facc15; border-radius: 14px; margin-top: 5px; text-align: center;">
-<div style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.18), rgba(250, 204, 21, 0.18)); border: 2px solid #facc15; border-radius: 12px; padding: 12px; margin-bottom: 14px; text-align: center;">
-                    <div style="font-size: 15px; font-weight: 950; color: #facc15; margin-bottom: 4px;">
-                        🔥 11월 1일 오늘 신규 10시 이벤트: 포지 콘서트 댄스 쇼
-                    </div>
-                    <div style="font-size: 11.5px; color: #e2e8f0; margin-bottom: 10px;">
-                        오늘 저녁 10시 시작 & 매 1시간마다 15분씩 포지 하우스와 포지 케이크가 춤을 춥니다!
-                    </div>
-                    <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 8px;">
-                        <button onclick="window._forceForgeDanceTest = !window._forceForgeDanceTest; updateCountdownHUD(); alert(window._forceForgeDanceTest ? '🕺 [테스트 ON] 포지 & 케이크 댄스가 즉시 시작되었습니다!' : '⏹️ [테스트 OFF] 실시간 스케줄 모드로 복귀했습니다.');" style="flex: 1; padding: 9px; background: linear-gradient(135deg, #ec4899, #be185d); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 3px 8px rgba(236, 72, 153, 0.4);">
-                            🕺 포지 & 케이크 댄스 즉시 테스트 토글
-                        </button>
-                        <button onclick="teleportToForgeStage(); closeWeqwxe3EventModal();" style="flex: 1; padding: 9px; background: linear-gradient(135deg, #38bdf8, #0284c7); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 3px 8px rgba(56, 189, 248, 0.4);">
-                            🎪 콘서트 무대로 즉시 이동
-                        </button>
-                    </div>
-                    <button onclick="showForgeBroadcast('Forge: 오늘 밤 포지 라이브 콘서트가 시작되었습니다! 모두 무대로 모이세요!', 6000);" style="width: 100%; padding: 8px; background: rgba(250, 204, 21, 0.15); border: 1.5px solid #facc15; color: #facc15; border-radius: 8px; font-weight: 900; font-size: 11.5px; cursor: pointer;">
-                        📢 [Forge 방송] 오늘 밤 무대 개막 멘트 송출
-                    </button>
+            <div id="weqwxe3-section-9pm" style="display: none; padding: 14px 12px; background: rgba(15, 23, 42, 0.85); border: 1.5px solid #facc15; border-radius: 14px; margin-top: 5px; text-align: center;">
+                <div style="font-size: 16px; font-weight: 950; color: #facc15; margin-bottom: 4px;">
+                    🔥 11월 7일 토요일 21:00 피날레 라이브 이벤트 테스터
                 </div>
-                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px;">
-                    <span style="font-size: 24px;">🎸🔥</span>
-                    <h4 style="margin: 0; color: #facc15; font-size: 16.5px; font-weight: 950;">11월 1일 9:00 시즌 1 피날레 공식 라이브 이벤트 제어실</h4>
-                </div>
-                
-                <!-- 실제 8시 30분 카운트다운 배너 -->
-                <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(250, 204, 21, 0.4); border-radius: 8px; padding: 6px 10px; margin-bottom: 10px; font-size: 12px; color: #fef08a;">
-                    실제 공식 9시 정각(21:00)까지: <span id="live830pm-real-time-text" style="font-weight: 900; color: #ffffff;">계산 중...</span>
+                <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 12px; line-height: 1.4;">
+                    Forge 17단계 대사 ➔ 1.5배럭(20분) ➔ 해적낚시(30분) ➔ 보트레이스 ➔ 빨간초록불 ➔ 천사악마피하기 ➔ 망치배달(2분조합/3분소멸) ➔ 피날레코드 JaeJae
                 </div>
 
-                <!-- 현재 실행 상태 모니터 -->
-                <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #38bdf8; border-radius: 10px; padding: 10px; margin-bottom: 12px; text-align: left;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-size: 12.5px; font-weight: 900; color: #38bdf8;">📡 이벤트 실행 상태:</span>
-                        <span id="live830pm-current-status-tag" style="font-size: 11px; font-weight: 900; padding: 2px 7px; border-radius: 6px; background: #334155; color: #94a3b8;">대기 중</span>
-                    </div>
-                    <div style="font-size: 12px; color: #cbd5e1;">
-                        경과 시간: <strong id="live830pm-elapsed-text" style="color: #facc15; font-size: 13.5px;">0초</strong> / 636초
-                    </div>
-                    <div style="font-size: 11.5px; color: #94a3b8; margin-top: 3px;">
-                        현재 진행: <span id="live830pm-phase-text" style="color: #fff; font-weight: bold;">-</span>
-                    </div>
+                <!-- 테스트 시작/정지 제어 버튼 -->
+                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                    <button onclick="start9PmEventTest(0); closeWeqwxe3EventModal();" style="flex: 1.2; padding: 11px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);">
+                        🎬 [실시간] 피날레 시작 (T=0s)
+                    </button>
+                    <button onclick="stop9PmEventTest();" style="flex: 0.8; padding: 11px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer;">
+                        🛑 테스트 정지
+                    </button>
                 </div>
 
-                <!-- 메인 테스트 조작 버튼 -->
-                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                    <button onclick="start9PmEventTest(0)" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 3px 8px rgba(34, 197, 94, 0.4);">
-                        ▶️ 처음부터 테스트 (T=0s)
+                <!-- 단계별 즉시 점프 테스트 버튼들 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
+                    <button onclick="start9PmEventTest(10); closeWeqwxe3EventModal();" style="padding: 8px; background: rgba(250, 204, 21, 0.18); border: 1px solid #facc15; color: #facc15; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;">
+                        🍀 [10s] 1.5배 럭 (20분)
                     </button>
-                    <button onclick="stop9PmEventTest()" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 3px 8px rgba(239, 68, 68, 0.4);">
-                        ⏹️ 테스트 중지 & 초기화
+                    <button onclick="start9PmEventTest(24); closeWeqwxe3EventModal();" style="padding: 8px; background: rgba(56, 189, 248, 0.18); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;">
+                        🎣 [24s] 해적낚시 30분
+                    </button>
+                    <button onclick="start9PmEventTest(84); closeWeqwxe3EventModal();" style="padding: 8px; background: rgba(234, 88, 12, 0.18); border: 1px solid #ea580c; color: #fb923c; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;">
+                        🚤 [84s] 배 미니게임
+                    </button>
+                    <button onclick="start9PmEventTest(135); closeWeqwxe3EventModal();" style="padding: 8px; background: rgba(239, 68, 68, 0.18); border: 1px solid #ef4444; color: #f87171; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;">
+                        🚦 [135s] 빨강불 초록불
+                    </button>
+                    <button onclick="start9PmEventTest(315); closeWeqwxe3EventModal();" style="padding: 8px; background: rgba(168, 85, 247, 0.18); border: 1px solid #a855f7; color: #c084fc; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;">
+                        👼😈 [315s] 천사악마 피하기
+                    </button>
+                    <button onclick="start9PmEventTest(495); closeWeqwxe3EventModal();" style="padding: 8px; background: rgba(236, 72, 153, 0.18); border: 1px solid #ec4899; color: #f472b6; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;">
+                        🔨 [495s] 망치배달 (한정조합)
                     </button>
                 </div>
-                
-                <button onclick="simulate9PmRefresh()" style="width: 100%; padding: 8px; margin-bottom: 12px; background: rgba(56, 189, 248, 0.15); border: 1.5px solid #38bdf8; color: #38bdf8; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
-                    🔄 새로고침 / 중간 진입 동기화 테스트
+
+                <button onclick="start9PmEventTest(635); closeWeqwxe3EventModal();" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; border: none; border-radius: 10px; font-weight: 950; font-size: 12.5px; cursor: pointer; box-shadow: 0 3px 10px rgba(168, 85, 247, 0.4); margin-bottom: 10px;">
+                    🔑 [635s] 피날레 코드 JaeJae 공개 (럭블 20개)
                 </button>
 
-                <!-- 구간별 즉시 점프 테스트 그리드 -->
-                <div style="font-size: 12px; font-weight: 900; color: #fbbf24; margin-bottom: 6px; text-align: left;">
-                    ⚡ 구간별 즉시 점프 테스트 (클릭 시 해당 시점으로 이동):
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
-                    <button onclick="start9PmEventTest(0)" style="padding: 7px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: left;">
-                        👋 [0s] Forge: 안녕모두들
-                    </button>
-                    <button onclick="start9PmEventTest(5)" style="padding: 7px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: left;">
-                        ❓ [5s] Forge: 1.5X 럭????
-                    </button>
-                    <button onclick="start9PmEventTest(10)" style="padding: 7px; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.4); color: #4ade80; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: left; font-weight: bold;">
-                        🍀 [10s] 1.5배럭 & 시즌1종료
-                    </button>
-                    <button onclick="start9PmEventTest(15)" style="padding: 7px; background: rgba(236,72,153,0.15); border: 1px solid rgba(236,72,153,0.4); color: #f472b6; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: left; font-weight: bold;">
-                        🎉 [15s] 콘서트 타임?
-                    </button>
-                    <button onclick="start9PmEventTest(20)" style="padding: 7px; background: rgba(236,72,153,0.25); border: 1.5px solid #ec4899; color: #fbcfe8; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: left; font-weight: 900;">
-                        🎸 [20s] 1분 콘서트 (음악+동결)
-                    </button>
-                    <button onclick="start9PmEventTest(80)" style="padding: 7px; background: rgba(34,197,94,0.2); border: 1px solid rgba(34,197,94,0.5); color: #4ade80; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: left; font-weight: bold;">
-                        🎁 [80s] 락킹스킨+빨강초록(고릴라)
-                    </button>
-                    <button onclick="start9PmEventTest(260)" style="padding: 7px; background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.5); color: #f87171; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: left; font-weight: bold;">
-                        💍 [260s] 두번째 천악링 (럭블10개)
-                    </button>
-                    <button onclick="start9PmEventTest(440)" style="padding: 7px; background: rgba(245,158,11,0.2); border: 1px solid rgba(245,158,11,0.5); color: #fbbf24; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: left; font-weight: bold;">
-                        👨‍🌾 [440s] 세번째 농부피하기 (3분)
-                    </button>
-                    <button onclick="start9PmEventTest(620)" style="padding: 7px; background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.4); color: #c084fc; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: left;">
-                        🔑 [620s] 오늘의 마지막! 코드
-                    </button>
-                    <button onclick="start9PmEventTest(625)" style="padding: 7px; background: rgba(168,85,247,0.25); border: 1.5px solid #c084fc; color: #f5d0fe; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: left; font-weight: 900;">
-                        🎁 [625s] season1bye 코드
-                    </button>
-                    <button onclick="start9PmEventTest(630)" style="padding: 7px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; border-radius: 6px; font-size: 11px; cursor: pointer; text-align: left;">
-                        👋 [630s] 시즌2에 보겠죠????
-                    </button>
-                </div>
-
-                <!-- 타임라인 상세 안내 표 -->
-                <div style="background: rgba(0,0,0,0.4); border-radius: 8px; padding: 8px 10px; font-size: 11px; color: #94a3b8; text-align: left; line-height: 1.5;">
-                    <div style="color: #cbd5e1; font-weight: bold; margin-bottom: 2px;">📋 오늘 9:00 라이브 타임라인 안내:</div>
-                    • 00:00 (0s) - Forge: "안녕모두들"<br>
-                    • 00:05 (5s) - Forge: "1.5X 럭????"<br>
-                    • 00:10 (10s) - <span style="color:#4ade80; font-weight:bold;">1.5배럭 즉시 활성화</span> & Forge: "시즌 1의 종료...."<br>
-                    • 00:15 (15s) - Forge: "어쩄든 즐기자!!콘서트 타임?"<br>
-                    • 00:20~01:20 (20s~80s) - <span style="color:#ec4899; font-weight:bold;">🎸 1분 락킹 콘서트 타임</span> (전원 무대 텔레포트, 1분간 이동 불가, 락킹 BGM & 포지 댄스)<br>
-                    • 01:20 (80s) - <span style="color:#facc15; font-weight:bold;">[락킹 가수 스킨] 확정 지급</span> & Forge: "첫 미니게임" ➔ <span style="color:#34d399;">빨강불 초록불 3분 (감염된 고릴라 스킨 보상)</span><br>
-                    • 04:20 (260s) - Forge: "두번째?" ➔ <span style="color:#f87171; font-weight:bold;">천사악마 링모으기 3분</span> (천사 1900 vs 악마 2400, 종료 시 <span style="color:#facc15;">럭블 10개 인벤토리 지급</span>)<br>
-                    • 07:20 (440s) - Forge: "세번째?" ➔ <span style="color:#fbbf24; font-weight:bold;">성난 농부 피하기 3분</span><br>
-                    • 10:20 (620s) - Forge: "오늘의 마지막! 코드"<br>
-                    • 10:25 (625s) - Forge: "<span style="color:#f5d0fe; font-weight:bold;">season1bye</span>" (코드 입력창 보상 활성화)<br>
-                    • 10:30 (630s) - Forge: "시즌2에 보겠죠????" (피날레 종료)
+                <!-- 17단계 일정표 안내 -->
+                <div style="background: rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 10px; text-align: left; font-size: 10.5px; color: #94a3b8; line-height: 1.6; max-height: 140px; overflow-y: auto;">
+                    <b style="color: #facc15;">📜 11/7 저녁 9시 17단계 시퀀스:</b><br>
+                    • 00:00 (0s) - Forge: "안녕 모두들"<br>
+                    • 00:05 (5s) - Forge: "해적&한정조합"<br>
+                    • 00:10 (10s) - Forge: "먼저 1.5배 럭" (20분간 지속)<br>
+                    • 00:14 (14s) - Forge: "해적지형이 출시 됨"<br>
+                    • 00:19 (19s) - Forge: "해적지형을 위한 미니게임"<br>
+                    • 00:24 (24s) - Forge: "먼저 낚시 30분 활성화"<br>
+                    • 01:24 (84s) - Forge: "배 미니게임?"<br>
+                    • 02:10 (130s) - Forge: "내가 없는동안 이벤트는 Jae가 담당"<br>
+                    • 02:15 (135s) - Forge: "빨강불 초록불?" (3분간 진행)<br>
+                    • 05:15 (315s) - Forge: "성난광부 아뇨 천사악마 피하기!" (3분간 진행, 최대 3개)<br>
+                    • 08:15 (495s) - Forge: "한정조합 타임?" (나무밑 망치 배달, 2분조합, 3분소멸)<br>
+                    • 10:15 (615s) - Forge: "다 만들었겠죠?"<br>
+                    • 10:20 (620s) - Forge: "공백기 동안은 머니 업데이트.."<br>
+                    • 10:25 (625s) - Forge: "당장 내일...Jae 화이팅"<br>
+                    • 10:30 (630s) - Forge: "마지막 피날레 코드!"<br>
+                    • 10:35 (635s) - Forge: "JaeJae" (코드창 입력 시 럭키블록 20개!)<br>
+                    • 10:40 (640s) - Forge: "모두들 안녕"
                 </div>
             </div>
 
@@ -8729,6 +8681,30 @@
                     floatTexts.push({ x: player.x, y: player.y - 70, text: '🎁 천악 럭키블록 5개 획득!', color: '#c084fc', life: 120, size: 24 });
                 }
                 alert('🎉 [쿠폰 등록 완료!]\n\n🎁 천악 럭키블록 5개가 인벤토리에 지급되었습니다!\n가방(인벤토리)에서 확인하실 수 있습니다.');
+                closeCodeModal();
+                return;
+            }
+
+            // 🌟 [11월 7일 피날레 공식 코드] JaeJae (럭키블록 20개 지급)
+            if (val === 'jaejae' || val === 'JaeJae') {
+                if (usedCodes.includes('jaejae')) {
+                    if (msg) {
+                        msg.innerText = '이미 사용된 코드입니다.';
+                        msg.style.color = '#ef4444';
+                        msg.style.display = 'block';
+                    }
+                    if (input) input.style.borderColor = '#ef4444';
+                    return;
+                }
+                usedCodes.push('jaejae');
+                inventory['럭키블록'] = (inventory['럭키블록'] || 0) + 20;
+                if (typeof updateInventoryUI === 'function') updateInventoryUI();
+                if (typeof saveGame === 'function') saveGame(true);
+
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: player.x, y: player.y - 70, text: '🎁 럭키블록 20개 획득!', color: '#facc15', life: 140, size: 24 });
+                }
+                alert('🎉 [피날레 코드: JaeJae 등록 완료!]\n\n🎁 럭키블록 20개가 인벤토리에 지급되었습니다!\n\n시즌1 피날레에 함께해 주셔서 진심으로 감사드립니다! 🚀');
                 closeCodeModal();
                 return;
             }
@@ -19021,24 +18997,36 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 // 4개 열 (각 열 150px 폭, 정중앙 좌표: 75, 225, 375, 525)
                 const colXs = [75, 225, 375, 525];
                 // 2명 위주 (70%) 또는 3명 (30%) 스폰하여 넉넉한 회피 공간 제공
-                const numFarmers = (Math.random() < 0.3) ? 3 : 2;
+                state.waveInterval = 110; // 일정한 간격 유지 (약 350px 거리)
+                // 한 줄에 최대 3개 (2개 65%, 3개 35%), 4개는 절대 불가하여 항상 탈출로 확보!
+                const numFarmers = (Math.random() < 0.35) ? 3 : 2;
                 let cols = [0, 1, 2, 3];
                 cols.sort(() => Math.random() - 0.5);
                 let chosenCols = cols.slice(0, numFarmers);
 
-                let spawnY = player.y - 700; // 충분히 먼 위쪽에서 여유있게 다가옴
-                chosenCols.forEach(col => {
-                    state.farmers.push({
-                        col: col,
-                        x: colXs[col],
-                        y: spawnY,
-                        width: 150, // 열 150px 전체를 빈틈없이 커버
-                        height: 150,
-                        speed: 3.2, // 적당하고 피하기 수월한 속도로 조정
-                        animTimer: Math.random() * 10,
-                        subType: (state.mode === 'angel_devil') ? (Math.random() < 0.5 ? 'angel' : 'devil') : 'farmer'
+                let spawnY = player.y - 720;
+                // 이전 웨이브와 최소 300px 거리 유지 검증
+                let canSpawn = true;
+                if (state.farmers && state.farmers.length > 0) {
+                    let minY = Math.min(...state.farmers.map(f => f.y));
+                    if (spawnY - minY < 280 && minY - spawnY < 280) {
+                        canSpawn = false;
+                    }
+                }
+                if (canSpawn) {
+                    chosenCols.forEach(col => {
+                        state.farmers.push({
+                            col: col,
+                            x: colXs[col],
+                            y: spawnY,
+                            width: 145,
+                            height: 145,
+                            speed: 3.0, // 공정하고 일정한 속도
+                            animTimer: Math.random() * 10,
+                            subType: (state.mode === 'angel_devil') ? (Math.random() < 0.5 ? 'angel' : 'devil') : 'farmer'
+                        });
                     });
-                });
+                }
             }
 
             // 거대 농부 이동 및 플레이어 충돌 판정
@@ -26225,6 +26213,25 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 return;
             }
             if (typeof updateFishingLoop === 'function') updateFishingLoop();
+
+            // 🔨 망치 배달: 3분 후 자동 소멸 처리
+            if (window.hammerDeliveryActive && window.hammerDeliveryEndTime && Date.now() >= window.hammerDeliveryEndTime) {
+                window.hammerDeliveryActive = false;
+                if (typeof closeHammerCraftModal === 'function') closeHammerCraftModal();
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: 370, y: 550, text: '💨 제작 망치가 3분이 경과하여 사라졌습니다.', color: '#94a3b8', life: 100, size: 20 });
+                }
+            }
+
+            // 🔒 토요일 지형 공개 범위: 해적 지형(Y <= 3600)까지만 접근 허용
+            if (typeof player !== 'undefined' && typeof isAdmin === 'function' && !isAdmin() && typeof isUserWeqwxe3 === 'function' && !isUserWeqwxe3(currentUser)) {
+                if (player.y > 3600) {
+                    player.y = 3600;
+                    if (Math.random() < 0.04 && typeof floatTexts !== 'undefined') {
+                        floatTexts.push({ x: player.x, y: player.y - 40, text: '🔒 토요일은 해적 지형까지만 공개됩니다!', color: '#ff7675', life: 60, size: 18 });
+                    }
+                }
+            }
             syncAdminPirateObjects();
             if (typeof updateRedLightGreenLightLoop === 'function') updateRedLightGreenLightLoop();
             if (typeof updateDodgeFarmersLoop === 'function') updateDodgeFarmersLoop();
@@ -34921,7 +34928,7 @@ function isAngelDevilEventStarted() {
 window.isAngelDevilEventStarted = isAngelDevilEventStarted;
 
 // 공식 시작 시간: 2026년 11월 1일 저녁 9시 정각 (21:00:00 KST)
-const LIVE_9PM_TARGET_TIMESTAMP = 1793534400000;
+const LIVE_9PM_TARGET_TIMESTAMP = 1794052800000; // 2026년 11월 7일 토요일 21:00:00 KST
 const LIVE_9PM_TOTAL_DURATION = 636; // 전체 일정: 10분 36초
 const LIVE_830PM_TARGET_TIMESTAMP = LIVE_9PM_TARGET_TIMESTAMP; // 레거시 호환
 const LIVE_830PM_TOTAL_DURATION = LIVE_9PM_TOTAL_DURATION;
@@ -35057,18 +35064,25 @@ window.playConcertRockMusic = playConcertRockMusic;
 window.stopConcertRockMusic = stopConcertRockMusic;
 
 // 📋 글로벌 타임라인 시퀀스 정의 (오늘 9시 정각 시작)
+// 📋 [11월 7일 토요일 저녁 9:00 피날레 라이브 이벤트 타임라인]
 const LIVE_9PM_TIMELINE = [
-    { t: 0, text: 'Forge: 안녕모두들', dur: 5000, action: null },
-    { t: 5, text: 'Forge: 1.5X 럭????', dur: 5000, action: null },
-    { t: 10, text: 'Forge: 시즌 1의 종료....', dur: 5000, action: 'activate_luck' },
-    { t: 15, text: 'Forge: 어쩄든 즐기자!!콘서트 타임?', dur: 5000, action: null },
-    { t: 20, text: 'Forge: 어쩄든 즐기자!!콘서트 타임?', dur: 60000, action: 'start_concert' },
-    { t: 80, text: 'Forge: 첫 미니게임', dur: 5000, action: 'start_minigame_1' },
-    { t: 260, text: 'Forge: 두번째?', dur: 5000, action: 'start_minigame_2' },
-    { t: 440, text: 'Forge: 세번째?', dur: 5000, action: 'start_minigame_3' },
-    { t: 620, text: 'Forge: 오늘의 마지막! 코드', dur: 5000, action: null },
-    { t: 625, text: 'Forge: season1bye', dur: 5000, action: 'reveal_code' },
-    { t: 630, text: 'Forge: 시즌2에 보겠죠????', dur: 6000, action: null }
+    { t: 0,   text: 'Forge: 안녕 모두들', dur: 5000, action: null },
+    { t: 5,   text: 'Forge: 해적&한정조합', dur: 5000, action: null },
+    { t: 10,  text: 'Forge: 먼저 1.5배 럭', dur: 4000, action: 'activate_luck_20m' },
+    { t: 14,  text: 'Forge: 해적지형이 출시 됨', dur: 5000, action: 'unlock_pirate' },
+    { t: 19,  text: 'Forge: 해적지형을 위한 미니게임', dur: 5000, action: null },
+    { t: 24,  text: 'Forge: 먼저 낚시 30분 활성화', dur: 5000, action: 'activate_fishing_30m' },
+    { t: 84,  text: 'Forge: 배 미니게임?', dur: 5000, action: 'start_boat_race' },
+    { t: 130, text: 'Forge: 내가 없는동안 이벤트는 Jae가 담당', dur: 5000, action: null },
+    { t: 135, text: 'Forge: 빨강불 초록불?', dur: 5000, action: 'start_rlgl' },
+    { t: 315, text: 'Forge: 성난광부 아뇨 천사악마 피하기!', dur: 5000, action: 'start_dodge' },
+    { t: 495, text: 'Forge: 한정조합 타임?', dur: 5000, action: 'start_hammer' },
+    { t: 615, text: 'Forge: 다 만들었겠죠?', dur: 5000, action: 'craft_close' },
+    { t: 620, text: 'Forge: 공백기 동안은 머니 업데이트..', dur: 5000, action: null },
+    { t: 625, text: 'Forge: 당장 내일...Jae 화이팅', dur: 5000, action: null },
+    { t: 630, text: 'Forge: 마지막 피날레 코드!', dur: 5000, action: null },
+    { t: 635, text: 'Forge: JaeJae', dur: 5000, action: 'reveal_jaejae' },
+    { t: 640, text: 'Forge: 모두들 안녕', dur: 6000, action: null }
 ];
 const LIVE_830PM_TIMELINE = LIVE_9PM_TIMELINE; // 레거시 호환
 
@@ -35076,15 +35090,10 @@ window._live9PmTriggeredSteps = new Set();
 window._live9PmSyncedThisSession = false;
 window._live9PmTestStartTime = null;
 
-// 💾 새로고침 시 콘서트 자동 텔레포트 차단 및 테스트 키 초기화
+// 💾 새로고침 시 테스트 키 초기화
 try {
     localStorage.removeItem('live_9pm_test_start_time');
-    localStorage.removeItem('live_830pm_test_start_time');
 } catch(e) {}
-window._live9PmTestStartTime = null;
-
-window._live830PmTriggeredSteps = window._live9PmTriggeredSteps;
-window._live830PmTestStartTime = window._live9PmTestStartTime;
 
 function get9PmEventElapsedSeconds() {
     if (window._live9PmTestStartTime !== undefined && window._live9PmTestStartTime !== null) {
@@ -35093,60 +35102,23 @@ function get9PmEventElapsedSeconds() {
     return (Date.now() - LIVE_9PM_TARGET_TIMESTAMP) / 1000;
 }
 window.get9PmEventElapsedSeconds = get9PmEventElapsedSeconds;
-window.get830PmEventElapsedSeconds = get9PmEventElapsedSeconds; // 레거시 호환
 
 function isLive9PmEventActive() {
     const t = get9PmEventElapsedSeconds();
     return t !== null && t >= 0 && t <= LIVE_9PM_TOTAL_DURATION;
 }
 window.isLive9PmEventActive = isLive9PmEventActive;
-window.isLive830PmEventActive = isLive9PmEventActive; // 레거시 호환
 
-// 🎬 콘서트 시네마틱 모드 (콘서트 중 모든 버튼/돈/레벨/타이머 완전 숨김 & 콘서트 종료 시 깔끔 복구)
-function setConcertCinematicMode(isConcert) {
-    window._isConcertCinematic = isConcert;
-    const moneyDisp = document.getElementById('money-display');
-    const levelCont = document.getElementById('level-container');
-    const bottomBtns = document.getElementById('bottom-btn-group');
-    const profileBadge = document.getElementById('user-profile-badge');
-    const luckBuffs = document.getElementById('luck-buffs-wrapper');
-    const countHud = document.getElementById('admin-abuse-countdown-hud');
-
-    if (isConcert) {
-        if (moneyDisp) moneyDisp.style.display = 'none';
-        if (levelCont) levelCont.style.display = 'none';
-        if (bottomBtns) bottomBtns.style.display = 'none';
-        if (profileBadge) profileBadge.style.display = 'none';
-        if (luckBuffs) luckBuffs.style.display = 'none';
-        if (countHud) countHud.style.display = 'none';
-        if (typeof joystick !== 'undefined') joystick.active = false;
-        // 열려있는 모달 창 모두 숨김 (무대 시야 100% 확보)
-        const allModals = document.querySelectorAll('[id$="-modal"], [id$="-overlay"]');
-        allModals.forEach(m => {
-            if (m.id !== 'game-container') m.style.display = 'none';
-        });
-    } else {
-        if (moneyDisp) moneyDisp.style.display = 'block';
-        if (levelCont) levelCont.style.display = 'flex';
-        if (bottomBtns) bottomBtns.style.display = 'flex';
-        if (profileBadge) profileBadge.style.display = 'flex';
-        if (luckBuffs) luckBuffs.style.display = 'flex';
-    }
-}
-window.setConcertCinematicMode = setConcertCinematicMode;
-
-// 🔄 상태 동기화 함수: 새로고침 또는 중간 접속 시 현재 시간(T)에 맞는 상태로 완벽 복구
+// 🔄 상태 동기화 함수 (새로고침 또는 중간 접속 시 T에 맞게 정확 복원)
 function syncLive9PmEventState(currentT) {
     if (currentT < 0 || currentT > LIVE_9PM_TOTAL_DURATION) return;
 
-    // 1. 이미 지난 단계들은 트리거 완료 처리
     LIVE_9PM_TIMELINE.forEach(step => {
         if (step.t <= currentT) {
             window._live9PmTriggeredSteps.add(step.t);
         }
     });
 
-    // 2. 현재 시점에 유효한 포지 대사 방송 표시
     for (const step of LIVE_9PM_TIMELINE) {
         const stepEnd = step.t + (step.dur / 1000);
         if (currentT >= step.t && currentT < stepEnd) {
@@ -35156,92 +35128,49 @@ function syncLive9PmEventState(currentT) {
         }
     }
 
-    // 3. 1.5배 행운 버프 동기화 (T: 10초 ~ 910초 ➔ 15분간 유지)
-    if (currentT >= 10 && currentT < 910) {
-        const remainSec = Math.max(1, Math.floor(910 - currentT));
-        if (typeof activateLuck15Buff === 'function') {
-            activateLuck15Buff(remainSec * 1000);
+    // 1.5배 럭 (T: 10초 ~ 1210초, 20분간)
+    if (currentT >= 10 && currentT < 1210) {
+        const remainSec = Math.max(1, Math.floor(1210 - currentT));
+        if (typeof activateLuck15Buff === 'function') activateLuck15Buff(remainSec * 1000);
+    }
+
+    // 해적 낚시 30분 (T: 24초 ~ 1824초)
+    if (currentT >= 24 && currentT < 1824) {
+        window._globalFishing30mActive = true;
+        window._globalFishing30mEndTime = Date.now() + Math.max(1, 1824 - currentT) * 1000;
+    }
+
+    // 보트 레이스 (T: 84초 ~ 130초)
+    if (currentT >= 84 && currentT < 130) {
+        if (!window.inBoatRaceDimension && typeof startBoatRaceGame === 'function') {
+            startBoatRaceGame();
         }
+    } else if (currentT >= 130 && window.inBoatRaceDimension && typeof exitBoatRace === 'function') {
+        exitBoatRace();
     }
 
-    // 4. 콘서트 타임 동기화 (T: 20초 ~ 80초 ➔ 1분간)
-    if (currentT >= 20 && currentT < 80) {
-        const remainSec = Math.max(1, Math.floor(80 - currentT));
-        window._concertDancing = true;
-        playConcertRockMusic(remainSec);
-    } else if (currentT >= 80) {
-        setConcertCinematicMode(false);
-        window._isConcertLocked = false;
-        window._concertDancing = false;
-        stopConcertRockMusic();
-    }
-
-    // 5. 첫 미니게임: 빨강불 초록불 동기화 (T: 80초 ~ 260초 ➔ 3분간)
-    if (currentT >= 80 && currentT < 260) {
-        const remainSec = Math.max(1, Math.floor(260 - currentT));
+    // 빨강불 초록불 (T: 135초 ~ 315초, 3분간)
+    if (currentT >= 135 && currentT < 315) {
+        const remainSec = Math.max(1, Math.floor(315 - currentT));
         if (typeof startRedLightGreenLightGame === 'function') {
             startRedLightGreenLightGame(true, remainSec, false);
-            if (typeof redLightGreenLightState !== 'undefined') {
-                redLightGreenLightState.targetSkin = 'infected_gorilla';
-            }
         }
     }
 
-    // 6. 두번째 미니게임: 천사악마 링모으기 동기화 (T: 260초 ~ 440초 ➔ 3분간)
-    if (currentT >= 260 && currentT < 440) {
-        const remainSec = Math.max(1, Math.floor(440 - currentT));
-        if (typeof startRingMinigameLive9Pm === 'function') {
-            startRingMinigameLive9Pm(remainSec);
-        }
-    }
-
-    // 7. 세번째 미니게임: 성난 농부 피하기 동기화 (T: 440초 ~ 620초 ➔ 3분간)
-    if (currentT >= 440 && currentT < 620) {
-        const remainSec = Math.max(1, Math.floor(620 - currentT));
+    // 천사악마 피하기 (T: 315초 ~ 495초, 3분간)
+    if (currentT >= 315 && currentT < 495) {
+        const remainSec = Math.max(1, Math.floor(495 - currentT));
         if (typeof startDodgeFarmersGame === 'function') {
-            startDodgeFarmersGame(true, 'farmer', remainSec, false);
+            startDodgeFarmersGame(true, 'angel_devil', remainSec, false);
         }
     }
-}
-window.syncLive9PmEventState = syncLive9PmEventState;
-window.syncLive830PmEventState = syncLive9PmEventState; // 레거시 호환
 
-// 💍 [오늘 9:00 라이브 전용] 천악 링모으기 미니게임 시작 함수 (천사 1900 vs 악마 2400)
-function startRingMinigameLive9Pm(durationSec = 180) {
-    if (typeof closeRingMinigameTeamSelect === 'function') closeRingMinigameTeamSelect();
-    isRingMinigameActive = true;
-    ringMinigameTeam = 'devil'; // 오늘 피날레는 악마팀 중심 (종료 시 럭블 10개 지급)
-    ringMinigameDuration = 180;
-    ringMinigameStartTime = Date.now() - ((180 - durationSec) * 1000);
-    ringMinigameAngelScore = 0;
-    ringMinigameDevilScore = 0;
-    ringMinigamePlayerRings = 0;
-
-    // 👼😈 플레이어를 천악지형(X: 300, Y: -9500)으로 즉시 텔레포트 & 카메라 즉시 동기화
-    if (typeof player !== 'undefined') {
-        player.x = GAME_WIDTH / 2;
-        player.y = -9500;
-        player.vx = 0; player.vy = 0;
-        if (typeof cameraY !== 'undefined') cameraY = player.y - GAME_HEIGHT / 2;
+    // 망치 배달 소환 (T: 495초 ~ 675초, 3분간 유지, 2분간 조합)
+    if (currentT >= 495 && currentT < 675) {
+        window.hammerDeliveryActive = true;
+        window.hammerDeliveryEndTime = Date.now() + Math.max(1, 675 - currentT) * 1000;
     }
-
-    spawnInitialRings(30);
-
-    // 3분 카운트다운 타이머 HUD 활성화
-    const hud = document.getElementById('ring-minigame-hud');
-    if (hud) hud.style.display = 'flex';
-
-    floatTexts.push({
-        x: player.x,
-        y: player.y - 80,
-        text: '😈 [미니게임 2] 천악 링모으기 시작! (천사 1900 vs 악마 2400)',
-        color: '#ef4444',
-        life: 140,
-        size: 22
-    });
 }
-window.startRingMinigameLive9Pm = startRingMinigameLive9Pm;
-window.startRingMinigameLive830 = startRingMinigameLive9Pm; // 레거시 호환
 
 // ⏱️ 실시간 틱 루프 (250ms마다 호출): 9:00 도달 시 새로고침 없이 즉시 자동 재생 및 단계별 진행
 function checkAndTick9PmLiveEvent() {
@@ -35271,97 +35200,81 @@ function checkAndTick9PmLiveEvent() {
         if (currentT >= step.t && !window._live9PmTriggeredSteps.has(step.t)) {
             window._live9PmTriggeredSteps.add(step.t);
 
-            // 방금 도달한 단계인 경우 대사 방송 출력
             if (step.text && (currentT - step.t <= (step.dur / 1000) + 1.2)) {
                 showForgeBroadcast(step.text, step.dur);
             }
 
-            // 각 단계별 액션 즉시 실행
-            if (step.action === 'activate_luck') {
-                const remainSec = Math.max(0, 910 - currentT);
-                if (remainSec > 0 && typeof activateLuck15Buff === 'function') {
-                    activateLuck15Buff(remainSec * 1000);
+            // 1. 1.5배 럭 20분 즉시 활성화
+            if (step.action === 'activate_luck_20m') {
+                if (typeof activateLuck15Buff === 'function') {
+                    activateLuck15Buff(20 * 60 * 1000);
                 }
-            } else if (step.action === 'start_concert') {
-                const remainSec = Math.max(0, 80 - currentT);
-                if (remainSec > 0) {
-                    window._concertDancing = true;
-                    playConcertRockMusic(remainSec);
-                    floatTexts.push({ x: 300, y: 500, text: '🎸🔥 FORGE LIVE CONCERT 시작!', color: '#ec4899', life: 120, size: 24 });
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: player.x, y: player.y - 70, text: '🍀 [Forge] 20분간 1.5배 행운 버프 발동!', color: '#facc15', life: 140, size: 22 });
                 }
-            } else if (step.action === 'start_minigame_1') {
-                // 1분 콘서트 종료 ➔ 시네마틱 모드 해제 & 플레이어 이동 잠금 해제 & 광장으로 안전 귀환!
-                setConcertCinematicMode(false);
-                window._isConcertLocked = false;
-                window._concertDancing = false;
-                stopConcertRockMusic();
-
-                if (typeof player !== 'undefined') {
-                    player.x = 300; player.y = 500;
-                    player.vx = 0; player.vy = 0;
-                    if (typeof cameraY !== 'undefined') cameraY = 100;
+            }
+            // 2. 해적 지형 출시
+            else if (step.action === 'unlock_pirate') {
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: player.x, y: player.y - 70, text: '🏴‍☠️ [해적 지형 정식 출시!] 아래로 탐험을 시작하세요!', color: '#38bdf8', life: 140, size: 22 });
                 }
-
-                if (!ownedSkins.includes('rocking_singer')) {
-                    ownedSkins.push('rocking_singer');
+            }
+            // 3. 해적 낚시 30분 활성화 (지형 진입 시 전원 낚시대 제공)
+            else if (step.action === 'activate_fishing_30m') {
+                window._globalFishing30mActive = true;
+                window._globalFishing30mEndTime = Date.now() + 30 * 60 * 1000;
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: player.x, y: player.y - 70, text: '🎣 [해적 낚시 30분 오픈!] 해적 지형에서 낚시대 지급!', color: '#38bdf8', life: 150, size: 22 });
                 }
-                equippedSkin = 'rocking_singer';
-                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
-                saveGame(true);
-                floatTexts.push({ x: player.x, y: player.y - 90, text: '🎉 [콘서트 관람 보상] 락킹 가수 스킨 획득 & 장착!', color: '#facc15', life: 140, size: 24 });
-
-                // 첫 미니게임: 빨강초록불 활성화 (감염된 고릴라 스킨 완주 보상)
-                const remainSec = Math.max(0, 260 - currentT);
-                if (remainSec > 0 && typeof startRedLightGreenLightGame === 'function') {
-                    startRedLightGreenLightGame(true, remainSec, false);
-                    if (typeof redLightGreenLightState !== 'undefined') {
-                        redLightGreenLightState.targetSkin = 'infected_gorilla';
-                    }
+                alert('🎣 [Forge 해적 낚시 30분 오픈!]\n\n해적 지형에 들어가면 모든 플레이어에게 스컬 낚시대가 지급되고 낚시가 가능합니다!');
+            }
+            // 4. 배 미니게임 발동
+            else if (step.action === 'start_boat_race') {
+                if (typeof startBoatRaceGame === 'function') {
+                    startBoatRaceGame();
                 }
-            } else if (step.action === 'start_minigame_2') {
-                // 빨강초록불 정리
-                if (typeof redLightGreenLightState !== 'undefined') {
-                    redLightGreenLightState.active = false;
-                    redLightGreenLightState.carryingSkin = false;
+            }
+            // 5. 빨강불 초록불 발동 (3분)
+            else if (step.action === 'start_rlgl') {
+                if (window.inBoatRaceDimension && typeof exitBoatRace === 'function') {
+                    exitBoatRace();
                 }
-                // 두번째 미니게임: 천사악마 링모으기 (3분, 천사 1900 / 악마 2400)
-                const remainSec = Math.max(0, 440 - currentT);
-                if (remainSec > 0 && typeof startRingMinigameLive9Pm === 'function') {
-                    startRingMinigameLive9Pm(remainSec);
+                if (typeof startRedLightGreenLightGame === 'function') {
+                    startRedLightGreenLightGame(true, 180, false);
                 }
-            } else if (step.action === 'start_minigame_3') {
-                // 링모으기 종료 및 악마팀 럭키블록 10개 인벤토리 지급
-                if (isRingMinigameActive) {
-                    endRingMinigame();
-                } else {
-                    inventory['럭키블록'] = (inventory['럭키블록'] || 0) + 10;
-                    floatTexts.push({ x: player.x, y: player.y - 90, text: '🎁 [미니게임 2 보상] 럭키블록 10개 인벤토리 지급 완료!', color: '#facc15', life: 130, size: 24 });
-                    saveGame(true);
+            }
+            // 6. 천사악마 피하기 발동 (3분, 한 줄 최대 3개 & 일정 거리)
+            else if (step.action === 'start_dodge') {
+                if (typeof startDodgeFarmersGame === 'function') {
+                    startDodgeFarmersGame(true, 'angel_devil', 180, false);
                 }
-                // 광장으로 안전 복귀
-                if (typeof player !== 'undefined') {
-                    player.x = 300; player.y = 500;
-                    player.vx = 0; player.vy = 0;
-                    if (typeof cameraY !== 'undefined') cameraY = 100;
+            }
+            // 7. 한정 조합 망치 배달 (나무 밑에 3분간 출현, 2분간 조합 가능)
+            else if (step.action === 'start_hammer') {
+                window.hammerDeliveryActive = true;
+                window.hammerDeliveryEndTime = Date.now() + 3 * 60 * 1000;
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: 370, y: 550, text: '🔨 [한정조합 타임] 일반지형 나무 밑에 제작 망치가 배달되었습니다!', color: '#c084fc', life: 160, size: 22 });
                 }
-                // 세번째 미니게임: 성난 농부 피하기
-                const remainSec = Math.max(0, 620 - currentT);
-                if (remainSec > 0 && typeof startDodgeFarmersGame === 'function') {
-                    startDodgeFarmersGame(true, 'farmer', remainSec, false);
+                alert('🔨 [한정 조합 타임!]\n\n일반지형 나무 밑(X: 370, Y: 550)에 제작 망치가 배달되었습니다!\n2분 동안 서양검사 + 일반검사 = 유니버셜 검사 합성이 가능합니다!\n(망치는 3분 뒤 사라집니다)');
+            }
+            // 8. 한정 조합 종료 멘트
+            else if (step.action === 'craft_close') {
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: 370, y: 550, text: '⏱️ 한정 조합 타임 종료! (망치는 1분 후 소멸)', color: '#94a3b8', life: 120, size: 20 });
                 }
-            } else if (step.action === 'reveal_code') {
-                // 성난 농부 피하기 정리
-                if (typeof dodgeFarmersState !== 'undefined') {
-                    dodgeFarmersState.active = false;
-                    dodgeFarmersState.carryingSkin = false;
-                    dodgeFarmersState.farmers = [];
+            }
+            // 9. JaeJae 피날레 코드 공개 (럭블 20개)
+            else if (step.action === 'reveal_jaejae') {
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: player.x, y: player.y - 80, text: '🔑 [피날레 코드 공개] JaeJae (럭블 20개!)', color: '#f5d0fe', life: 180, size: 26 });
                 }
-                floatTexts.push({ x: player.x, y: player.y - 100, text: '🔑 [쿠폰 코드 공개] season1bye', color: '#f5d0fe', life: 150, size: 26 });
+                alert('🎉 [피날레 쿠폰 코드 공개!]\n\n코드: JaeJae\n\n우측 상단 [코드] 버튼을 눌러 입력하면 🎁 럭키블록 20개가 즉시 지급됩니다!');
             }
         }
     });
+    return;
 
-    // 라이브 이벤트 진행 중에만 각 구간 만료 시 자동 정리
     if (isLive9PmEventActive()) {
         if (currentT >= 80 && window._isConcertLocked) {
             setConcertCinematicMode(false);
@@ -35677,11 +35590,16 @@ function isPirateTerrainUser() {
 window.isPirateTerrainUser = isPirateTerrainUser;
 
 // 🎣 [weqwxe3 전용] 해적 낚시 미니게임 판정 (오직 weqwxe3가 활성화했을 때만 작동, 지형 진입에 따른 자동 파지 원천 차단)
+// 🎣 해적 낚시 활성화 판정: 1) 토요일 피날레 30분 이벤트 전체 개방 / 2) weqwxe3 전용 명시적 미니게임
 function isFishingEventActive() {
-    if (typeof isUserWeqwxe3 !== 'function' || !isUserWeqwxe3(currentUser)) {
-        return false;
+    // 피날레 이벤트 30분 해적 낚시 전체 유저 개방
+    if (window._globalFishing30mActive && Date.now() < (window._globalFishing30mEndTime || 0)) {
+        return true;
     }
-    return !!(window._weqwxe3FishingActive || window._forceFishingEventTest);
+    if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) {
+        return !!(window._weqwxe3FishingActive || window._forceFishingEventTest);
+    }
+    return false;
 }
 window.isFishingEventActive = isFishingEventActive;
 
@@ -35729,7 +35647,9 @@ function updateFishingLoop() {
     const fs = window.fishingState;
     if (!fs) return;
 
-    if (typeof isUserWeqwxe3 !== 'function' || !isUserWeqwxe3(currentUser)) {
+    const isGlobalActive = (window._globalFishing30mActive && Date.now() < (window._globalFishing30mEndTime || 0));
+    const isWeq = (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser));
+    if (!isGlobalActive && !isWeq) {
         fs.isHoldingRod = false;
         fs.isCharging = false;
         fs.isWaitingBite = false;
