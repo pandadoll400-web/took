@@ -1792,7 +1792,7 @@
                 <button class="shop-tab-btn active" onclick="switchShopTab('axe')">도끼</button>
                 
                 <button class="shop-tab-btn" onclick="switchShopTab('skin')">시즌 스킨!</button>
-                <button class="shop-tab-btn" id="shop-tab-lucky-btn" onclick="switchShopTab('lucky')" style="display: inline-block; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 900;">👑 럭키블럭</button>
+                <button class="shop-tab-btn" id="shop-tab-lucky-btn" onclick="switchShopTab('lucky')" style="display: inline-block; background: linear-gradient(135deg, #ea580c, #c2410c); color: #ffffff; font-weight: 900; box-shadow: 0 3px 10px rgba(234,88,12,0.45); border: 1.5px solid #fed7aa;">🏴‍☠️ 해적 럭키블럭</button>
                 <button class="shop-tab-btn" onclick="openIndexModal(); closeShopModal();" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; font-weight: 900; box-shadow: 0 3px 10px rgba(59,130,246,0.4);">📖 도감 (INDEX)</button>
             </div>
             
@@ -16592,9 +16592,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             document.getElementById('shop-limited').style.display = tab === 'limited' ? 'block' : 'none';
             document.getElementById('shop-skin').style.display = tab === 'skin' ? 'block' : 'none';
             const luckySec = document.getElementById('shop-lucky');
-            if (tab === 'lucky' && typeof updatePirateLuckyShopUI === 'function') {
-                updatePirateLuckyShopUI();
-            }
+            if (tab === 'lucky') { renderPirateLuckyShopHTML(); }
             if (luckySec) {
                 luckySec.style.display = (tab === 'lucky') ? 'block' : 'none';
             }
@@ -16609,7 +16607,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             if (tab === 'axe') updateAxeUI();
             if (tab === 'limited') updateLimitedUI();
             if (tab === 'skin') updateShopSkinUI();
-            if (tab === 'lucky') updateShopLuckyUI();
+            if (tab === 'lucky') { renderPirateLuckyShopHTML(); }
         }
 
         // 🪓 도끼 상점 도끼 일러스트 캔버스 렌더러
@@ -17406,99 +17404,103 @@ window.claimPirateShipSkin = claimPirateShipSkin;
         }
         window.isLuckyBlockShopUnlocked = isLuckyBlockShopUnlocked;
 
-        function updateShopLuckyUI() {
+        
+        // 🏴‍☠️ [스케치 충실 구현] 상점 해적 럭키블록 HTML 렌더러 (상시 100% 공개)
+        function renderPirateLuckyShopHTML() {
             const luckySec = document.getElementById('shop-lucky');
             if (!luckySec) return;
 
-            if (!isLuckyBlockShopUnlocked()) {
-                const diff = Math.max(0, LIVE_9PM_TARGET_TIMESTAMP - Date.now());
-                const totalSec = Math.floor(diff / 1000);
-                const hours = Math.floor(totalSec / 3600);
-                const minutes = Math.floor((totalSec % 3600) / 60);
-                const seconds = totalSec % 60;
-                const timeText = diff > 0 ? `${hours}시간 ${minutes}분 ${seconds}초 후 공개` : '잠시 후 공개!';
-
-                luckySec.innerHTML = `
-                    <div style="background: rgba(15, 23, 42, 0.9); border: 2px dashed #a855f7; border-radius: 16px; padding: 45px 20px; text-align: center; margin: 15px 0; box-shadow: 0 4px 25px rgba(0,0,0,0.6);">
-                        <div style="font-size: 42px; margin-bottom: 12px; filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6));">👑🎁✨</div>
-                        <div style="font-size: 20px; font-weight: 950; color: #c084fc; letter-spacing: -0.5px; text-shadow: 0 0 12px rgba(192, 132, 252, 0.6);">오늘 9시 포지 인사할 때 공개!</div>
-                        <div style="font-size: 13.5px; font-weight: bold; color: #facc15; margin-top: 8px;">⏳ ${timeText}</div>
-                        <div style="font-size: 12px; color: #cbd5e1; margin-top: 6px;">천악 럭키블록 뽑기는 오늘 9시 포지 등장과 함께 정식 공개됩니다.</div>
-                    </div>
-                `;
-                return;
-            }
-
             luckySec.innerHTML = `
-                <div style="background: radial-gradient(circle at top, rgba(30, 27, 75, 0.9), rgba(15, 23, 42, 0.98)); border: 2px solid #a855f7; border-radius: 16px; padding: 16px 12px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(168, 85, 247, 0.35);">
-                    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 2px;">
-                        <span style="font-size: 22px;">👼😈</span>
-                        <h3 style="margin: 0; color: #facc15; font-size: 21px; font-weight: 900; letter-spacing: -0.5px; text-shadow: 0 0 12px rgba(250, 204, 21, 0.7);">천악 럭키블록</h3>
-                    </div>
-                    <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 12px;">
-                        순백의 천사와 칠흑의 악마가 깃든 초신화 럭키블록! (스킨 파편 언박싱)
+                <div style="background: radial-gradient(circle at top, #2c1810, #0f172a); border: 2.5px solid #f97316; border-radius: 16px; padding: 18px 14px; text-align: center; margin: 10px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.7), 0 0 20px rgba(249, 115, 22, 0.35);">
+                    <!-- 🏴‍☠️ [스케치 충실 구현] 치솟은 곡선 날개 + 꽂힌 칼 + 해적 안대 해적 럭키블록 -->
+                    <div style="position: relative; width: 245px; height: 110px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center;">
+                        <!-- 좌측 해적 곡선 윙 -->
+                        <div style="position: absolute; left: 0; transform-origin: 92% 70%; animation: pirateWingFlapLeft 1.3s ease-in-out infinite;">
+                            <svg width="84" height="66" viewBox="0 0 84 66">
+                                <defs>
+                                    <linearGradient id="pWingGradL_s" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#fb923c"/>
+                                        <stop offset="50%" stop-color="#c2410c"/>
+                                        <stop offset="100%" stop-color="#431407"/>
+                                    </linearGradient>
+                                    <filter id="pWingGlowL_s" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#f97316" flood-opacity="0.85"/>
+                                    </filter>
+                                </defs>
+                                <path d="M 80 50 C 58 44, 32 28, 5 7 C 14 26, 30 38, 48 40 C 35 50, 52 59, 72 54 Z" fill="url(#pWingGradL_s)" stroke="#fb923c" stroke-width="2" filter="url(#pWingGlowL_s)"/>
+                                <path d="M 80 50 C 52 35, 25 21, 8 9" fill="none" stroke="#fed7aa" stroke-width="1.8" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+
+                        <!-- 중앙 해적 큐브 박스 (꽂힌 칼 + 해적 안대) -->
+                        <div style="width: 78px; height: 74px; background: linear-gradient(135deg, #78350f, #451a03); border: 3px solid #fb923c; border-radius: 14px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 0 24px rgba(249,115,22,0.75), inset 0 2px 4px rgba(254,215,170,0.3); z-index: 2;">
+                            <!-- 꽂힌 해적 칼 -->
+                            <div style="position: absolute; top: -30px; left: 24px; transform: rotate(-24deg); filter: drop-shadow(0 3px 6px rgba(0,0,0,0.85));">
+                                <svg width="30" height="40" viewBox="0 0 30 40">
+                                    <path d="M 15 0 C 20 11, 18 23, 14 27 L 12 27 C 9 21, 10 11, 15 0 Z" fill="#f1f5f9" stroke="#475569" stroke-width="1.2"/>
+                                    <rect x="7" y="26" width="14" height="4" rx="2" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+                                    <rect x="12" y="30" width="4" height="6" fill="#78350f"/>
+                                    <circle cx="14" cy="38" r="2.5" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+                                </svg>
+                            </div>
+                            <!-- 해적 안대 & 맹렬한 눈빛 -->
+                            <div style="position: relative; width: 54px; height: 30px; display: flex; align-items: center; justify-content: space-around;">
+                                <div style="width: 14px; height: 14px; background: #ffffff; border-radius: 50%; border: 2px solid #000; position: relative; box-shadow: 0 0 6px rgba(255,255,255,0.8);">
+                                    <div style="position: absolute; top: 3px; left: 3px; width: 6px; height: 6px; background: #ef4444; border-radius: 50%;"></div>
+                                </div>
+                                <div style="position: relative; width: 20px; height: 20px;">
+                                    <div style="position: absolute; top: -14px; left: -14px; width: 48px; height: 2px; background: #1c1917; transform: rotate(-28deg); box-shadow: 0 1px 2px #000;"></div>
+                                    <div style="width: 18px; height: 18px; background: #1c1917; border: 1.8px solid #78716c; border-radius: 50% 50% 60% 60%; box-shadow: 0 3px 6px rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; color: #fde047; font-size: 10px; font-weight: 950;">☠️</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 우측 해적 곡선 윙 -->
+                        <div style="position: absolute; right: 0; transform-origin: 92% 70%; animation: pirateWingFlapRight 1.3s ease-in-out infinite;">
+                            <svg width="84" height="66" viewBox="0 0 84 66">
+                                <path d="M 80 50 C 58 44, 32 28, 5 7 C 14 26, 30 38, 48 40 C 35 50, 52 59, 72 54 Z" fill="url(#pWingGradL_s)" stroke="#fb923c" stroke-width="2" filter="url(#pWingGlowL_s)"/>
+                                <path d="M 80 50 C 52 35, 25 21, 8 9" fill="none" stroke="#fed7aa" stroke-width="1.8" stroke-linecap="round"/>
+                            </svg>
+                        </div>
                     </div>
 
-                    <div style="display: flex; justify-content: center; margin-bottom: 14px;">
-                        <canvas id="angel-demon-lucky-canvas" width="130" height="130" style="filter: drop-shadow(0 8px 20px rgba(234, 179, 8, 0.45));"></canvas>
+                    <div style="font-size: 14.5px; font-weight: 950; color: #fed7aa; margin-bottom: 4px; letter-spacing: 0.5px;">
+                        🏴‍☠️ 전설의 해적 럭키블록
+                    </div>
+                    <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 12px;">
+                        조각을 30개 모으면 해당 전설 스킨이 자동으로 영구 잠금 해제됩니다!
                     </div>
 
-                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 16px;">
-                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #38bdf8; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
-                            <span style="position: absolute; top: -6px; background: #0284c7; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">50%</span>
-                            <canvas id="lucky-prev-jellyfish" width="48" height="48" style="margin-top: 4px;"></canvas>
-                            <span style="font-size: 10.5px; font-weight: bold; color: #7dd3fc; margin-top: 2px;">해파리</span>
-                        </div>
-                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #f97316; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
-                            <span style="position: absolute; top: -6px; background: #ea580c; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">25%</span>
-                            <canvas id="lucky-prev-phoenix" width="48" height="48" style="margin-top: 4px;"></canvas>
-                            <span style="font-size: 10.5px; font-weight: bold; color: #fdba74; margin-top: 2px;">피닉스</span>
-                        </div>
-                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #facc15; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
-                            <span style="position: absolute; top: -6px; background: #ca8a04; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">15%</span>
-                            <canvas id="lucky-prev-angel" width="48" height="48" style="margin-top: 4px;"></canvas>
-                            <span style="font-size: 10.5px; font-weight: bold; color: #fef08a; margin-top: 2px;">천사</span>
-                        </div>
-                        <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #ef4444; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative;">
-                            <span style="position: absolute; top: -6px; background: #dc2626; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 5px; border-radius: 6px;">9%</span>
-                            <canvas id="lucky-prev-devil" width="48" height="48" style="margin-top: 4px;"></canvas>
-                            <span style="font-size: 10.5px; font-weight: bold; color: #fca5a5; margin-top: 2px;">악마</span>
-                        </div>
-                        <div style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(239, 68, 68, 0.3)); border: 1.5px solid #eab308; border-radius: 10px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; position: relative; box-shadow: 0 0 10px rgba(234, 179, 8, 0.35);">
-                            <span style="position: absolute; top: -6px; background: linear-gradient(90deg, #eab308, #ef4444); color: white; font-size: 8px; font-weight: 900; padding: 1px 4px; border-radius: 6px;">1%</span>
-                            <canvas id="lucky-prev-etheron" width="48" height="48" style="margin-top: 4px;"></canvas>
-                            <span style="font-size: 10px; font-weight: 900; color: #fde047; margin-top: 2px;">에테론</span>
-                        </div>
-                    </div>
+                    <!-- 4개 해적 스킨 조각 게이지 컨테이너 (스케치 중앙 4칸 게이지) -->
+                    <div id="pirate-lucky-pieces-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px;"></div>
 
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; min-height: 70px;">
-                            <div style="font-size: 12px; font-weight: bold; color: #e2e8f0; margin-bottom: 6px;">1x Lucky Block</div>
-                            <button onclick="buyLuckyBlocks(1, 10000)" style="width: 100%; padding: 8px 4px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(46, 204, 113, 0.4);">💰 10,000</button>
-                        </div>
-                        <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid #f59e0b; border-radius: 10px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; min-height: 70px; position: relative;">
-                            <span style="position: absolute; top: -8px; background: #ea580c; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">BEST</span>
-                            <div style="font-size: 12px; font-weight: bold; color: #fef08a; margin-bottom: 6px;">10x Lucky Blocks</div>
-                            <button onclick="buyLuckyBlocks(10, 100000)" style="width: 100%; padding: 8px 4px; background: #f59e0b; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);">💰 100,000</button>
-                        </div>
-                        <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid #ec4899; border-radius: 10px; padding: 8px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; min-height: 70px; position: relative;">
-                            <span style="position: absolute; top: -8px; background: #ec4899; color: white; font-size: 8.5px; font-weight: 900; padding: 1px 6px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.4);">BEST</span>
-                            <div style="font-size: 12px; font-weight: bold; color: #f472b6; margin-bottom: 6px;">30x Lucky Blocks</div>
-                            <button onclick="buyLuckyBlocks(30, 300000)" style="width: 100%; padding: 8px 4px; background: #ec4899; color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4);">💰 300,000</button>
-                        </div>
+                    <!-- 1개 / 10개 / 30개 구매 버튼 (스케치 하단 3개 버튼) -->
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="buyPirateLuckyPieces(1, 1000)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: 1.5px solid #fed7aa; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(234,88,12,0.4);">
+                            조각 1개<br><span style="font-size: 11px; color: #fef08a;">1,000 골드</span>
+                        </button>
+                        <button onclick="buyPirateLuckyPieces(10, 9500)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #d97706, #b45309); color: white; border: 1.5px solid #fed7aa; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(217,119,6,0.4);">
+                            조각 10개<br><span style="font-size: 11px; color: #fef08a;">9,500 골드</span>
+                        </button>
+                        <button onclick="buyPirateLuckyPieces(30, 27000)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #7c2d12, #431407); color: white; border: 2px solid #facc15; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(124,45,18,0.5);">
+                            조각 30개<br><span style="font-size: 11px; color: #fde047;">27,000 골드</span>
+                        </button>
                     </div>
                 </div>
             `;
 
-            setTimeout(() => {
-                drawPreviewCanvas('lucky-prev-jellyfish', 'jellyfish');
-                drawPreviewCanvas('lucky-prev-phoenix', 'phoenix');
-                drawPreviewCanvas('lucky-prev-angel', 'angel');
-                drawPreviewCanvas('lucky-prev-devil', 'devil');
-                drawPreviewCanvas('lucky-prev-etheron', 'etheron');
-            }, 20);
+            if (typeof updatePirateLuckyShopUI === 'function') {
+                updatePirateLuckyShopUI();
+            }
+        }
+        window.renderPirateLuckyShopHTML = renderPirateLuckyShopHTML;
+
+        // updateShopLuckyUI가 호출되더라도 해적 럭키블록을 항상 표시
+        function updateShopLuckyUI() {
+            renderPirateLuckyShopHTML();
         }
         window.updateShopLuckyUI = updateShopLuckyUI;
+
 
         setInterval(() => {
             const luckySec = document.getElementById('shop-lucky');
