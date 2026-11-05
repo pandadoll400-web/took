@@ -607,6 +607,33 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.06); }
         }
+    
+        /* 🪽 [스케치 충실 구현] 럭키블록 유려한 곡선 날개 날개짓 애니메이션 */
+        @keyframes wingFlapLeft {
+            0%, 100% { transform: rotate(0deg) translateY(0px) scale(1); }
+            50% { transform: rotate(-14deg) translateY(-6px) scale(1.05); }
+        }
+        @keyframes wingFlapRight {
+            0%, 100% { transform: scaleX(-1) rotate(0deg) translateY(0px) scale(1); }
+            50% { transform: scaleX(-1) rotate(-14deg) translateY(-6px) scale(1.05); }
+        }
+        @keyframes pirateWingFlapLeft {
+            0%, 100% { transform: rotate(0deg) translateY(0px) scale(1); }
+            50% { transform: rotate(-16deg) translateY(-8px) scale(1.06); }
+        }
+        @keyframes pirateWingFlapRight {
+            0%, 100% { transform: scaleX(-1) rotate(0deg) translateY(0px) scale(1); }
+            50% { transform: scaleX(-1) rotate(-16deg) translateY(-8px) scale(1.06); }
+        }
+        @keyframes angelFlapLeft {
+            0%, 100% { transform: rotate(0deg) translateY(0px); }
+            50% { transform: rotate(-12deg) translateY(-5px); }
+        }
+        @keyframes devilFlapRight {
+            0%, 100% { transform: scaleX(-1) rotate(0deg) translateY(0px); }
+            50% { transform: scaleX(-1) rotate(-15deg) translateY(-6px); }
+        }
+
     </style>
 </head>
 <body>
@@ -1824,13 +1851,56 @@
             <!-- 👑 [ADMIN 전용] 천악 럭키블록 상점 섹션 -->
             <div id="shop-lucky" style="display: none; padding-top: 6px;">
                 <div style="background: radial-gradient(circle at top, #2c1810, #0f172a); border: 2.5px solid #f97316; border-radius: 16px; padding: 18px 14px; text-align: center; margin: 10px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.7), 0 0 20px rgba(249, 115, 22, 0.35);">
-                    <div style="position: relative; width: 200px; height: 95px; margin: 0 auto 10px auto; display: flex; align-items: center; justify-content: center;">
-                        <div style="position: absolute; left: 6px; font-size: 38px; filter: drop-shadow(0 0 6px #f97316);">🦇</div>
-                        <div style="width: 74px; height: 70px; background: linear-gradient(135deg, #78350f, #451a03); border: 3px solid #fb923c; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 0 18px rgba(249,115,22,0.6); z-index: 2;">
-                            <div style="position: absolute; top: -20px; right: 2px; font-size: 26px; transform: rotate(32deg); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));">🗡️</div>
-                            <div style="font-size: 32px; filter: drop-shadow(0 0 4px #000);">👁️‍🗨️</div>
+                    <!-- 🏴‍☠️ [스케치 충실 구현] 치솟은 곡선 날개 + 꽂힌 칼 + 해적 안대 해적 럭키블록 -->
+                    <div style="position: relative; width: 245px; height: 110px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center;">
+                        <!-- 좌측 해적 곡선 윙 -->
+                        <div style="position: absolute; left: 0; transform-origin: 92% 70%; animation: pirateWingFlapLeft 1.3s ease-in-out infinite;">
+                            <svg width="84" height="66" viewBox="0 0 84 66">
+                                <defs>
+                                    <linearGradient id="pWingGradL" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#fb923c"/>
+                                        <stop offset="50%" stop-color="#c2410c"/>
+                                        <stop offset="100%" stop-color="#431407"/>
+                                    </linearGradient>
+                                    <filter id="pWingGlowL" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#f97316" flood-opacity="0.85"/>
+                                    </filter>
+                                </defs>
+                                <path d="M 80 50 C 58 44, 32 28, 5 7 C 14 26, 30 38, 48 40 C 35 50, 52 59, 72 54 Z" fill="url(#pWingGradL)" stroke="#fb923c" stroke-width="2" filter="url(#pWingGlowL)"/>
+                                <path d="M 80 50 C 52 35, 25 21, 8 9" fill="none" stroke="#fed7aa" stroke-width="1.8" stroke-linecap="round"/>
+                            </svg>
                         </div>
-                        <div style="position: absolute; right: 6px; font-size: 38px; transform: scaleX(-1); filter: drop-shadow(0 0 6px #f97316);">🦇</div>
+
+                        <!-- 중앙 해적 큐브 박스 (상단 대각선 칼 꽂힘 + 해적 안대 & 맹렬한 눈빛) -->
+                        <div style="width: 78px; height: 74px; background: linear-gradient(135deg, #78350f, #451a03); border: 3px solid #fb923c; border-radius: 14px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 0 24px rgba(249,115,22,0.75), inset 0 2px 4px rgba(254,215,170,0.3); z-index: 2;">
+                            <!-- 꽂힌 해적 칼 -->
+                            <div style="position: absolute; top: -30px; left: 24px; transform: rotate(-24deg); filter: drop-shadow(0 3px 6px rgba(0,0,0,0.85));">
+                                <svg width="30" height="40" viewBox="0 0 30 40">
+                                    <path d="M 15 0 C 20 11, 18 23, 14 27 L 12 27 C 9 21, 10 11, 15 0 Z" fill="#f1f5f9" stroke="#475569" stroke-width="1.2"/>
+                                    <rect x="7" y="26" width="14" height="4" rx="2" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+                                    <rect x="12" y="30" width="4" height="6" fill="#78350f"/>
+                                    <circle cx="14" cy="38" r="2.5" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+                                </svg>
+                            </div>
+                            <!-- 해적 안대 & 빗금 눈빛 (스케치 그대로) -->
+                            <div style="position: relative; width: 54px; height: 30px; display: flex; align-items: center; justify-content: space-around;">
+                                <div style="width: 14px; height: 14px; background: #ffffff; border-radius: 50%; border: 2px solid #000; position: relative; box-shadow: 0 0 6px rgba(255,255,255,0.8);">
+                                    <div style="position: absolute; top: 3px; left: 3px; width: 6px; height: 6px; background: #ef4444; border-radius: 50%;"></div>
+                                </div>
+                                <div style="position: relative; width: 20px; height: 20px;">
+                                    <div style="position: absolute; top: -14px; left: -14px; width: 48px; height: 2px; background: #1c1917; transform: rotate(-28deg); box-shadow: 0 1px 2px #000;"></div>
+                                    <div style="width: 18px; height: 18px; background: #1c1917; border: 1.8px solid #78716c; border-radius: 50% 50% 60% 60%; box-shadow: 0 3px 6px rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; color: #fde047; font-size: 10px; font-weight: 950;">☠️</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 우측 해적 곡선 윙 (대칭 펄럭임) -->
+                        <div style="position: absolute; right: 0; transform-origin: 92% 70%; animation: pirateWingFlapRight 1.3s ease-in-out infinite;">
+                            <svg width="84" height="66" viewBox="0 0 84 66">
+                                <path d="M 80 50 C 58 44, 32 28, 5 7 C 14 26, 30 38, 48 40 C 35 50, 52 59, 72 54 Z" fill="url(#pWingGradL)" stroke="#fb923c" stroke-width="2" filter="url(#pWingGlowL)"/>
+                                <path d="M 80 50 C 52 35, 25 21, 8 9" fill="none" stroke="#fed7aa" stroke-width="1.8" stroke-linecap="round"/>
+                            </svg>
+                        </div>
                     </div>
 
                     <div style="font-size: 14px; font-weight: 900; color: #fed7aa; margin-bottom: 12px;">
@@ -15252,6 +15322,18 @@
 
         let level = 1; let xp = 0; let maxXp = 20;
         let money = 0;
+
+        // 💰 [재화 안전 호환 브릿지] gold <-> money 완벽 동기화
+        if (typeof window.gold === 'undefined') {
+            Object.defineProperty(window, 'gold', {
+                get() { return (typeof money !== 'undefined') ? money : 0; },
+                set(v) { if (typeof money !== 'undefined') { money = v; } }
+            });
+        }
+        window.updateGoldDisplay = function() {
+            if (typeof updateMoney === 'function') updateMoney();
+        };
+
         let candyCorn = 0;
         window.candyCorn = 0;
         function updateCandyCorn(amount = 0) {
@@ -17548,7 +17630,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     background: radial-gradient(circle at top, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
                     border: 2px solid ${s.color};
                     border-radius: 12px;
-                    padding: 12px 14px;
+                    padding: 10px 14px;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
@@ -17557,9 +17639,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
 
                 card.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
-                        <div style="width: 44px; height: 44px; background: rgba(0,0,0,0.4); border: 1.5px solid ${s.color}; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
-                            ${s.icon}
-                        </div>
+                        <canvas id="shop-skin-prev-${s.id}" width="52" height="66" style="background: rgba(0,0,0,0.45); border: 1.5px solid ${s.color}; border-radius: 10px;"></canvas>
                         <div>
                             <div style="font-size: 15px; font-weight: 950; color: #ffffff;">${s.name}</div>
                             <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">${s.desc}</div>
@@ -17573,6 +17653,13 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             });
 
             list.appendChild(container);
+
+            // 렌더링 후 실시간 캔버스 프리뷰 그리기
+            seasonSkins.forEach(s => {
+                if (typeof drawPreviewCanvas === 'function') {
+                    drawPreviewCanvas(`shop-skin-prev-${s.id}`, s.id);
+                }
+            });
         }
         window.updateShopSkinUI = updateShopSkinUI;
 
@@ -17587,12 +17674,12 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 return;
             }
             const PRICE = 1000000;
-            if (gold < PRICE) {
-                alert('❌ 돈이 부족합니다!\n\n현재 보유: ' + gold.toLocaleString() + '원\n필요 금액: ' + PRICE.toLocaleString() + '원');
+            if (money < PRICE) {
+                alert('❌ 돈이 부족합니다!\n\n현재 보유: ' + money.toLocaleString() + '원\n필요 금액: ' + PRICE.toLocaleString() + '원');
                 return;
             }
-            gold -= PRICE;
-            updateGoldDisplay();
+            money -= PRICE;
+            updateMoney();
             ownedSkins.push('pumpkin_winged_demon');
             equippedSkin = 'pumpkin_winged_demon';
             if (typeof saveGame === 'function') saveGame();
@@ -17622,13 +17709,13 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     alert('이미 보유하고 있는 스킨입니다!');
                     return;
                 }
-                if (gold < targetSkin.price) {
-                    alert('❌ 골드가 부족합니다!\n(필요: ' + targetSkin.price.toLocaleString() + '원 / 보유: ' + gold.toLocaleString() + '원)');
+                if (money < targetSkin.price) {
+                    alert('❌ 골드가 부족합니다!\n(필요: ' + targetSkin.price.toLocaleString() + '원 / 보유: ' + money.toLocaleString() + '원)');
                     return;
                 }
 
-                gold -= targetSkin.price;
-                updateGoldDisplay();
+                money -= targetSkin.price;
+                updateMoney();
                 ownedSkins.push(skinId);
                 equippedSkin = skinId;
                 if (typeof saveGame === 'function') saveGame();
@@ -17885,48 +17972,83 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 {
                     type: 'angel_devil',
                     name: '천악 럭키블록',
-                    icon: '👼🎁😈',
                     count: angelCount,
                     color: '#a855f7',
-                    bg: 'radial-gradient(circle at top, rgba(88, 28, 135, 0.4), rgba(15, 23, 42, 0.95))',
+                    bg: 'radial-gradient(circle at top, rgba(88, 28, 135, 0.45), rgba(15, 23, 42, 0.95))',
                     customIcon: `
-                        <div style="position: relative; width: 56px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                            <div style="position: absolute; left: 0; font-size: 20px; filter: drop-shadow(0 0 4px #c084fc);">🪽</div>
-                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #7e22ce, #9333ea); border: 2px solid #facc15; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; color: #facc15; box-shadow: 0 0 10px rgba(168,85,247,0.5); z-index: 2;">?</div>
-                            <div style="position: absolute; right: 0; font-size: 20px; transform: scaleX(-1); filter: drop-shadow(0 0 4px #c084fc);">🪽</div>
+                        <!-- 천사 & 악마 윙 + 균열 큐브 -->
+                        <div style="position: relative; width: 66px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <!-- 좌측 천사 깃털 날개 -->
+                            <div style="position: absolute; left: 0; transform-origin: 90% 60%; animation: angelFlapLeft 1.3s ease-in-out infinite;">
+                                <svg width="24" height="24" viewBox="0 0 24 24">
+                                    <path d="M 23 16 C 18 10, 11 5, 2 1 C 1 6, 7 12, 16 16 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="0.8"/>
+                                    <path d="M 23 18 C 17 14, 8 11, 4 9 C 5 14, 12 18, 19 19 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="0.8"/>
+                                </svg>
+                            </div>
+                            <!-- 중앙 번개 균열 큐브 -->
+                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #7e22ce, #9333ea); border: 2px solid #facc15; border-radius: 7px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 0 10px rgba(168,85,247,0.7); z-index: 2;">
+                                <!-- 번개 균열 -->
+                                <svg width="14" height="24" viewBox="0 0 14 24" style="position: absolute;">
+                                    <polyline points="7,1 5,9 9,12 6,23" fill="none" stroke="#fef08a" stroke-width="1.8" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <!-- 우측 악마 박쥐 날개 -->
+                            <div style="position: absolute; right: 0; transform-origin: 90% 60%; animation: devilFlapRight 1.3s ease-in-out infinite;">
+                                <svg width="24" height="24" viewBox="0 0 24 24">
+                                    <path d="M 23 16 C 16 12, 8 6, 2 2 C 5 8, 10 11, 14 12 C 10 15, 16 18, 22 17 Z" fill="#dc2626" stroke="#991b1b" stroke-width="0.8"/>
+                                </svg>
+                            </div>
                         </div>
                     `
                 },
                 {
                     type: 'infinity',
                     name: '인피니티 럭키블록',
-                    icon: '♾️💵💸',
                     count: infCount,
                     color: '#eab308',
-                    bg: 'radial-gradient(circle at top, rgba(161, 98, 7, 0.4), rgba(15, 23, 42, 0.95))',
+                    bg: 'radial-gradient(circle at top, rgba(161, 98, 7, 0.45), rgba(15, 23, 42, 0.95))',
                     customIcon: `
-                        <div style="position: relative; width: 56px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                            <div style="position: absolute; left: 0; font-size: 20px; filter: drop-shadow(0 0 4px #facc15);">🪽</div>
-                            <div style="width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fef08a, #eab308, #ca8a04); border: 2px solid #b45309; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 950; color: #166534; box-shadow: 0 0 12px rgba(250,204,21,0.6); z-index: 2;">$</div>
-                            <div style="position: absolute; right: 0; font-size: 20px; transform: scaleX(-1); filter: drop-shadow(0 0 4px #facc15);">🪽</div>
+                        <!-- 황금 3단 깃털 날개 + $ 코인 -->
+                        <div style="position: relative; width: 68px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <div style="position: absolute; left: 0; transform-origin: 90% 65%; animation: wingFlapLeft 1.25s ease-in-out infinite;">
+                                <svg width="25" height="22" viewBox="0 0 35 28">
+                                    <path d="M 33 18 C 26 12, 16 6, 2 1 C 1 6, 8 13, 21 17 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="0.9"/>
+                                    <path d="M 33 20 C 24 16, 12 12, 6 10 C 7 15, 17 20, 27 20 Z" fill="#facc15" stroke="#ca8a04" stroke-width="0.9"/>
+                                </svg>
+                            </div>
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fffbeb, #fde047 40%, #ca8a04 100%); border: 2px solid #a16207; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 950; color: #166534; box-shadow: 0 0 12px rgba(250,204,21,0.85); z-index: 2;">$</div>
+                            <div style="position: absolute; right: 0; transform-origin: 90% 65%; animation: wingFlapRight 1.25s ease-in-out infinite;">
+                                <svg width="25" height="22" viewBox="0 0 35 28">
+                                    <path d="M 33 18 C 26 12, 16 6, 2 1 C 1 6, 8 13, 21 17 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="0.9"/>
+                                    <path d="M 33 20 C 24 16, 12 12, 6 10 C 7 15, 17 20, 27 20 Z" fill="#facc15" stroke="#ca8a04" stroke-width="0.9"/>
+                                </svg>
+                            </div>
                         </div>
                     `
                 },
                 {
                     type: 'pirate',
                     name: '해적 럭키블록',
-                    icon: '🏴‍☠️🎁🗡️',
                     count: pirateCount,
                     color: '#f97316',
-                    bg: 'radial-gradient(circle at top, rgba(194, 65, 12, 0.4), rgba(15, 23, 42, 0.95))',
+                    bg: 'radial-gradient(circle at top, rgba(194, 65, 12, 0.45), rgba(15, 23, 42, 0.95))',
                     customIcon: `
-                        <div style="position: relative; width: 56px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                            <div style="position: absolute; left: 0; font-size: 18px; filter: drop-shadow(0 0 4px #fb923c);">🦇</div>
-                            <div style="width: 34px; height: 32px; background: linear-gradient(135deg, #78350f, #451a03); border: 2px solid #fb923c; border-radius: 6px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 0 10px rgba(249,115,22,0.5); z-index: 2;">
-                                <div style="position: absolute; top: -10px; right: 2px; font-size: 14px; transform: rotate(25deg);">🗡️</div>
-                                <span style="font-size: 14px;">👁️‍🗨️</span>
+                        <!-- 해적 안대 칼 큐브 + 치솟은 해적 날개 -->
+                        <div style="position: relative; width: 68px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <div style="position: absolute; left: 0; transform-origin: 90% 70%; animation: pirateWingFlapLeft 1.3s ease-in-out infinite;">
+                                <svg width="24" height="24" viewBox="0 0 30 26">
+                                    <path d="M 28 20 C 20 16, 11 10, 2 2 C 5 9, 11 14, 17 15 C 12 19, 18 23, 25 21 Z" fill="#ea580c" stroke="#fed7aa" stroke-width="0.9"/>
+                                </svg>
                             </div>
-                            <div style="position: absolute; right: 0; font-size: 18px; transform: scaleX(-1); filter: drop-shadow(0 0 4px #fb923c);">🦇</div>
+                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #78350f, #451a03); border: 2px solid #fb923c; border-radius: 7px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 0 10px rgba(249,115,22,0.7); z-index: 2;">
+                                <div style="position: absolute; top: -11px; left: 10px; transform: rotate(-25deg); font-size: 13px;">🗡️</div>
+                                <div style="font-size: 12px;">👁️‍🗨️</div>
+                            </div>
+                            <div style="position: absolute; right: 0; transform-origin: 90% 70%; animation: pirateWingFlapRight 1.3s ease-in-out infinite;">
+                                <svg width="24" height="24" viewBox="0 0 30 26">
+                                    <path d="M 28 20 C 20 16, 11 10, 2 2 C 5 9, 11 14, 17 15 C 12 19, 18 23, 25 21 Z" fill="#ea580c" stroke="#fed7aa" stroke-width="0.9"/>
+                                </svg>
+                            </div>
                         </div>
                     `
                 }
@@ -17945,29 +18067,25 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    gap: 12px;
-                    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+                    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
                 `;
 
                 card.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
                         ${b.customIcon}
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1;">
-                        <div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" id="lucky-input-${b.type}" min="1" max="${Math.max(1, b.count)}" value="1" 
-                                style="width: 55px; height: 30px; text-align: center; font-weight: 900; font-size: 15px; background: #0f172a; border: 1.5px solid ${b.color}; border-radius: 6px; color: #ffffff; outline: none;" />
-                            <span style="font-size: 13.5px; font-weight: 900; color: #f8fafc;">개 까기</span>
-                        </div>
-                        <div style="font-size: 11.5px; font-weight: 900; color: #cbd5e1; background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);">
-                            총 <span style="color: ${b.color}; font-size: 13px;">${b.count.toLocaleString()}</span>개 있음
+                        <div style="text-align: left;">
+                            <div style="font-size: 15px; font-weight: 950; color: #ffffff; letter-spacing: 0.3px;">${b.name}</div>
+                            <div style="font-size: 12px; color: #cbd5e1; margin-top: 3px;">
+                                보유: <span style="font-weight: 900; color: ${b.color}; font-size: 14px;">${b.count.toLocaleString()}</span>개
+                            </div>
                         </div>
                     </div>
-
-                    <div>
-                        <button onclick="useLuckyBlockDirect('${b.type}')" 
-                            style="padding: 10px 16px; background: linear-gradient(135deg, ${b.color}, #d97706); color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.4); white-space: nowrap; transition: 0.15s;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="display: flex; align-items: center; background: rgba(0,0,0,0.4); border: 1.5px solid ${b.color}; border-radius: 8px; padding: 3px 6px;">
+                            <input id="inv-lucky-qty-${b.type}" type="number" min="1" max="999" value="1" style="width: 44px; background: transparent; border: none; color: #ffffff; font-weight: 900; font-size: 13px; text-align: center; outline: none;">
+                            <span style="font-size: 11px; color: #94a3b8; font-weight: bold;">개</span>
+                        </div>
+                        <button onclick="useLuckyBlockDirect('${b.type}')" style="padding: 8px 16px; background: linear-gradient(135deg, ${b.color}, #ca8a04); color: white; border: none; border-radius: 8px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.4); letter-spacing: 0.5px;">
                             사용
                         </button>
                     </div>
@@ -18022,7 +18140,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                         totalGold += Math.floor(Math.random() * 10000 + 5000);
                     }
                 }
-                if (totalGold > 0) { gold += totalGold; updateGoldDisplay(); }
+                if (totalGold > 0) { money += totalGold; updateMoney(); }
                 if (typeof saveGame === 'function') saveGame();
                 updateInvLuckyUI();
                 if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
@@ -27677,337 +27795,958 @@ ctx.restore();
 
                 ctx.restore();
             } else if (useSkin === 'money_king') {
-                // 👑 황금 머니킹 (Golden Money King)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 36);
-                aura.addColorStop(0, 'rgba(250, 204, 21, 0.65)');
-                aura.addColorStop(1, 'rgba(234, 179, 8, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 36, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#7e22ce';
-                ctx.beginPath(); ctx.moveTo(-10, -2); ctx.lineTo(10, -2); ctx.lineTo(13, 22); ctx.lineTo(-13, 22); ctx.closePath(); ctx.fill();
-                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.8; ctx.stroke();
-                ctx.fillStyle = '#fef08a'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#ca8a04'; ctx.fillRect(-2, 0, 4, 10);
-                ctx.save(); ctx.translate(14, 2);
-                ctx.strokeStyle = '#eab308'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(0, 14); ctx.lineTo(0, -14); ctx.stroke();
-                ctx.fillStyle = '#fde047'; ctx.beginPath(); ctx.arc(0, -15, 6, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#15803d'; ctx.font = 'bold 8px Arial'; ctx.textAlign = 'center'; ctx.fillText('$', 0, -12);
-                ctx.restore();
-                ctx.fillStyle = '#eab308';
-                ctx.beginPath(); ctx.moveTo(-10, -14); ctx.lineTo(-10, -22); ctx.lineTo(-5, -17); ctx.lineTo(0, -24); ctx.lineTo(5, -17); ctx.lineTo(10, -22); ctx.lineTo(10, -14); ctx.closePath(); ctx.fill();
-                ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(0, -17, 2, 0, Math.PI * 2); ctx.fill();
-                ctx.restore();
-            } else if (useSkin === 'diamond_banker') {
-                // 💎 다이아몬드 뱅커 (Diamond Banker)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 4, 0, 0, 34);
-                aura.addColorStop(0, 'rgba(56, 189, 248, 0.6)');
-                aura.addColorStop(1, 'rgba(14, 165, 233, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 34, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#1e293b'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#38bdf8'; ctx.fillRect(-1.5, 0, 3, 10);
-                ctx.fillStyle = '#0284c7'; ctx.fillRect(9, 2, 9, 8);
-                ctx.strokeStyle = '#bae6fd'; ctx.lineWidth = 1.2; ctx.strokeRect(9, 2, 9, 8);
-                ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(13.5, 6, 1.5, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#0f172a'; ctx.fillRect(-12, -14, 24, 3);
-                ctx.fillRect(-8, -24, 16, 10);
-                ctx.fillStyle = '#38bdf8'; ctx.fillRect(-8, -17, 16, 3);
-                ctx.restore();
-            } else if (useSkin === 'golden_jackpot') {
-                // 🎰 골든 잭팟 (Golden Jackpot)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 4, 0, 0, 35);
-                aura.addColorStop(0, 'rgba(245, 158, 11, 0.7)');
-                aura.addColorStop(1, 'rgba(217, 119, 6, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 35, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#b91c1c';
-                ctx.beginPath(); ctx.moveTo(-9, -2); ctx.lineTo(9, -2); ctx.lineTo(12, 20); ctx.lineTo(-12, 20); ctx.closePath(); ctx.fill();
-                ctx.fillStyle = '#fde047'; ctx.fillRect(-8, -2, 16, 15);
-                ctx.fillStyle = '#111827'; ctx.beginPath(); ctx.arc(-2, 1, 1.5, 0, Math.PI*2); ctx.arc(2, 1, 1.5, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = '#ca8a04'; ctx.fillRect(-10, -22, 20, 11);
-                ctx.fillStyle = '#111827'; ctx.fillRect(-8, -20, 16, 7);
-                ctx.fillStyle = '#ef4444'; ctx.font = 'bold 7px monospace'; ctx.textAlign = 'center'; ctx.fillText('777', 0, -15);
-                ctx.restore();
-            } else if (useSkin === 'illuminati_eye') {
-                // 👁️ 일루미나티 피라미드 (Illuminati Eye)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, -6, 2, 0, -6, 35);
-                aura.addColorStop(0, 'rgba(34, 197, 94, 0.7)');
-                aura.addColorStop(1, 'rgba(16, 185, 129, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, -6, 35, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#15803d';
-                ctx.beginPath(); ctx.moveTo(0, -24); ctx.lineTo(-15, 14); ctx.lineTo(15, 14); ctx.closePath(); ctx.fill();
-                ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 1.5; ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(-8, -10); ctx.lineTo(8, -10); ctx.stroke();
-                ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.ellipse(0, -15, 6, 3.5, 0, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#16a34a'; ctx.beginPath(); ctx.arc(0, -15, 2.2, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#000000'; ctx.beginPath(); ctx.arc(0, -15, 1, 0, Math.PI * 2); ctx.fill();
-                ctx.restore();
-            } else if (useSkin === 'cyber_money_titan') {
-                // 🤖 사이버 머니타이탄 (Cyber Money Titan)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 4, 0, 0, 38);
-                aura.addColorStop(0, 'rgba(234, 179, 8, 0.6)');
-                aura.addColorStop(0.6, 'rgba(6, 182, 212, 0.4)');
-                aura.addColorStop(1, 'rgba(0,0,0,0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 38, 0, Math.PI * 2); ctx.fill();
-                let wAngle = Math.sin(time * 4) * 0.15;
-                ctx.fillStyle = '#06b6d4';
-                ctx.beginPath(); ctx.moveTo(-8, -2); ctx.lineTo(-24, -14 + wAngle * 10); ctx.lineTo(-18, 4); ctx.closePath(); ctx.fill();
-                ctx.beginPath(); ctx.moveTo(8, -2); ctx.lineTo(24, -14 - wAngle * 10); ctx.lineTo(18, 4); ctx.closePath(); ctx.fill();
-                ctx.fillStyle = '#0f172a'; ctx.fillRect(-9, -4, 18, 18);
-                ctx.fillStyle = '#eab308'; ctx.fillRect(-3, -1, 6, 12);
-                ctx.strokeStyle = '#eab308'; ctx.lineWidth = 3;
-                ctx.beginPath(); ctx.moveTo(12, 10); ctx.lineTo(20, -16); ctx.stroke();
-                ctx.fillStyle = '#22c55e'; ctx.font = 'bold 9px Arial'; ctx.fillText('$', 16, -18);
-                ctx.fillStyle = '#1e293b'; ctx.fillRect(-8, -18, 16, 12);
-                ctx.fillStyle = '#06b6d4'; ctx.fillRect(-6, -14, 12, 4);
-                ctx.restore();
-            } else if (useSkin === 'skull_captain') {
-                // 🏴‍☠️ 스컬 해적선장 (Skull Pirate Captain)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 34);
-                aura.addColorStop(0, 'rgba(220, 38, 38, 0.5)');
-                aura.addColorStop(1, 'rgba(0,0,0,0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 34, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#18181b';
-                ctx.beginPath(); ctx.moveTo(-10, -2); ctx.lineTo(10, -2); ctx.lineTo(13, 22); ctx.lineTo(-13, 22); ctx.closePath(); ctx.fill();
-                ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 1.5; ctx.stroke();
-                ctx.fillStyle = '#7f1d1d'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#facc15'; ctx.fillRect(-1.5, 0, 3, 12);
-                ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 2.5;
-                ctx.beginPath(); ctx.moveTo(12, 12); ctx.lineTo(20, -10); ctx.stroke();
-                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 3;
-                ctx.beginPath(); ctx.arc(11, 10, 4, 0, Math.PI); ctx.stroke();
-                ctx.fillStyle = '#09090b';
-                ctx.beginPath(); ctx.moveTo(-16, -12); ctx.lineTo(16, -12); ctx.lineTo(0, -25); ctx.closePath(); ctx.fill();
-                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1.5; ctx.stroke();
-                ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(0, -17, 3, 0, Math.PI * 2); ctx.fill();
-                ctx.restore();
-            } else if (useSkin === 'ocean_siren') {
-                // 🧜‍♀️ 바다의 사이렌 (Ocean Siren)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 4, 0, 0, 36);
-                aura.addColorStop(0, 'rgba(45, 212, 191, 0.6)');
-                aura.addColorStop(1, 'rgba(13, 148, 136, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 36, 0, Math.PI * 2); ctx.fill();
-                ctx.strokeStyle = '#2dd4bf'; ctx.lineWidth = 2;
-                ctx.beginPath(); ctx.moveTo(12, 14); ctx.lineTo(12, -18); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(8, -14); ctx.lineTo(8, -19); ctx.lineTo(16, -19); ctx.lineTo(16, -14); ctx.stroke();
-                ctx.fillStyle = '#0f766e';
-                ctx.beginPath(); ctx.moveTo(-8, -2); ctx.lineTo(8, -2); ctx.lineTo(12, 22); ctx.lineTo(-12, 22); ctx.closePath(); ctx.fill();
-                ctx.fillStyle = '#5eead4';
-                ctx.beginPath(); ctx.arc(0, 6, 2, 0, Math.PI * 2); ctx.arc(-3, 12, 2, 0, Math.PI * 2); ctx.arc(3, 12, 2, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#f43f5e';
-                ctx.beginPath(); ctx.moveTo(-8, -14); ctx.lineTo(-6, -22); ctx.lineTo(-2, -16); ctx.lineTo(2, -24); ctx.lineTo(6, -16); ctx.lineTo(8, -22); ctx.lineTo(8, -14); ctx.closePath(); ctx.fill();
-                ctx.restore();
-            } else if (useSkin === 'abyss_kraken_pirate') {
-                // 🐙 심연의 크라켄 해적 (Abyss Kraken Pirate)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 38);
-                aura.addColorStop(0, 'rgba(147, 51, 234, 0.65)');
-                aura.addColorStop(1, 'rgba(88, 28, 135, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 38, 0, Math.PI * 2); ctx.fill();
-                for (let ti = 0; ti < 4; ti++) {
-                    let tAng = (ti - 1.5) * 0.6 + Math.sin(time * 3 + ti) * 0.2;
-                    let tx = Math.sin(tAng) * 22; let ty = Math.cos(tAng) * 16;
-                    ctx.strokeStyle = '#9333ea'; ctx.lineWidth = 3.5;
-                    ctx.beginPath(); ctx.moveTo(0, 4); ctx.quadraticCurveTo(tx * 1.3, ty - 6, tx, ty); ctx.stroke();
-                }
-                ctx.strokeStyle = '#64748b'; ctx.lineWidth = 3;
-                ctx.beginPath(); ctx.moveTo(14, 14); ctx.lineTo(14, -14); ctx.stroke();
-                ctx.beginPath(); ctx.arc(14, 10, 6, 0, Math.PI); ctx.stroke();
-                ctx.fillStyle = '#3b0764'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#a855f7'; ctx.fillRect(-8, -18, 16, 12);
-                ctx.restore();
-            } else if (useSkin === 'ghost_wraith') {
-                // 👻 유령선 망령선장 (Ghost Ship Wraith)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 36);
-                aura.addColorStop(0, 'rgba(167, 243, 208, 0.6)');
-                aura.addColorStop(1, 'rgba(52, 211, 153, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 36, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = 'rgba(209, 250, 229, 0.75)';
-                ctx.beginPath(); ctx.moveTo(-9, -16); ctx.lineTo(9, -16); ctx.lineTo(12, 16);
-                let waveY = Math.sin(time * 5) * 3;
-                ctx.lineTo(6, 20 + waveY); ctx.lineTo(0, 16); ctx.lineTo(-6, 20 - waveY); ctx.lineTo(-12, 16); ctx.closePath(); ctx.fill();
-                ctx.fillStyle = '#10b981'; ctx.beginPath(); ctx.arc(-3, -10, 2, 0, Math.PI * 2); ctx.arc(3, -10, 2, 0, Math.PI * 2); ctx.fill();
-                ctx.strokeStyle = '#34d399'; ctx.lineWidth = 2;
-                ctx.beginPath(); ctx.moveTo(12, 10); ctx.lineTo(18, -4); ctx.stroke();
-                ctx.restore();
-            } else if (useSkin === 'gold_treasure_pirate') {
-                // 💰 황금 보물 해적 (Gold Treasure Pirate)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 4, 0, 0, 34);
-                aura.addColorStop(0, 'rgba(250, 204, 21, 0.6)');
+                // 👑 [초호화] 황금 머니킹 (Golden Money King)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 찬란한 황금빛 천상 아우라 & 부유하는 달러/동전 파티클
+                let aura = ctx.createRadialGradient(0, 0, 4, 0, 0, 44);
+                aura.addColorStop(0, 'rgba(254, 240, 138, 0.85)');
+                aura.addColorStop(0.4, 'rgba(250, 204, 21, 0.45)');
                 aura.addColorStop(1, 'rgba(202, 138, 4, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 34, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#b45309'; ctx.beginPath(); ctx.arc(-10, 6, 8, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#fde047'; ctx.beginPath(); ctx.arc(-10, 2, 4, 0, Math.PI * 2); ctx.fill();
-                ctx.strokeStyle = '#eab308'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(12, 12); ctx.lineTo(20, -8); ctx.stroke();
-                ctx.fillStyle = '#1e3a8a'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#fbbf24'; ctx.fillRect(-8, -16, 16, 10);
-                ctx.restore();
-            } else if (useSkin === 'storm_navigator') {
-                // 🧭 폭풍의 항해사 (Storm Navigator)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 35);
-                aura.addColorStop(0, 'rgba(96, 165, 250, 0.65)');
-                aura.addColorStop(1, 'rgba(30, 64, 175, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 35, 0, Math.PI * 2); ctx.fill();
-                ctx.save(); ctx.translate(0, 6); ctx.rotate(time * 2);
-                ctx.strokeStyle = '#d97706'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.stroke();
-                ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(2, 6); ctx.lineTo(-2, 6); ctx.closePath(); ctx.fill();
-                ctx.fillStyle = '#3b82f6'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(2, -6); ctx.lineTo(-2, -6); ctx.closePath(); ctx.fill();
-                ctx.restore();
-                ctx.fillStyle = '#ca8a04'; ctx.fillRect(10, 0, 8, 4);
-                ctx.fillStyle = '#1e3a8a'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#1e40af'; ctx.fillRect(-10, -18, 20, 10);
-                ctx.restore();
-            } else if (useSkin === 'cursed_mariner') {
-                // 💀 저주받은 스켈레톤 (Cursed Mariner)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 4, 0, 0, 36);
-                aura.addColorStop(0, 'rgba(239, 68, 68, 0.6)');
-                aura.addColorStop(1, 'rgba(153, 27, 27, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 36, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#f1f5f9'; ctx.fillRect(-6, -2, 12, 14);
-                ctx.fillStyle = '#0f172a'; ctx.fillRect(-5, 1, 10, 2); ctx.fillRect(-5, 5, 10, 2); ctx.fillRect(-5, 9, 10, 2);
-                ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(12, 12); ctx.lineTo(20, -10); ctx.stroke();
-                ctx.fillStyle = '#f97316'; ctx.beginPath(); ctx.arc(20, -10, 4, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#e2e8f0'; ctx.beginPath(); ctx.arc(0, -12, 7, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(-2, -12, 1.8, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(2, -12, 1.8, 0, Math.PI * 2); ctx.fill();
-                ctx.restore();
-            } else if (useSkin === 'deepsea_poseidon') {
-                // 🔱 심해 포세이돈 (Deepsea Poseidon)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 38);
-                aura.addColorStop(0, 'rgba(14, 165, 233, 0.7)');
-                aura.addColorStop(1, 'rgba(3, 105, 161, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 38, 0, Math.PI * 2); ctx.fill();
-                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(14, 16); ctx.lineTo(14, -20); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(9, -14); ctx.lineTo(9, -22); ctx.lineTo(19, -22); ctx.lineTo(19, -14); ctx.stroke();
-                ctx.fillStyle = '#0284c7'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#38bdf8'; ctx.fillRect(-1.5, 0, 3, 12);
-                ctx.fillStyle = '#eab308';
-                ctx.beginPath(); ctx.moveTo(-9, -14); ctx.lineTo(-9, -23); ctx.lineTo(-4, -18); ctx.lineTo(0, -26); ctx.lineTo(4, -18); ctx.lineTo(9, -23); ctx.lineTo(9, -14); ctx.closePath(); ctx.fill();
-                ctx.restore();
-            } else if (useSkin === 'davy_jones') {
-                // 🦀 데비 존스 (Davy Jones)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 6, 0, 0, 40);
-                aura.addColorStop(0, 'rgba(21, 128, 61, 0.65)');
-                aura.addColorStop(1, 'rgba(5, 46, 22, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 40, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#dc2626';
-                ctx.beginPath(); ctx.arc(14, 6, 6, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(20, -5); ctx.lineTo(17, 3); ctx.closePath(); ctx.fill();
-                ctx.fillStyle = '#15803d';
-                for (let bi = -3; bi <= 3; bi += 2) {
-                    ctx.beginPath(); ctx.ellipse(bi * 2, -6, 2, 5, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 44, 0, Math.PI * 2); ctx.fill();
+
+                // 쏟아지는 황금 반짝이
+                for (let i = 0; i < 4; i++) {
+                    let pAngle = t * 1.5 + i * (Math.PI / 2);
+                    let px = Math.cos(pAngle) * 24;
+                    let py = Math.sin(pAngle * 1.2) * 22;
+                    ctx.fillStyle = '#fde047';
+                    ctx.beginPath(); ctx.arc(px, py, 2, 0, Math.PI * 2); ctx.fill();
                 }
-                ctx.fillStyle = '#27272a'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#18181b'; ctx.fillRect(-12, -18, 24, 8);
+
+                // 2. 로열 벨벳 자주빛 망토 & 에르민(흰 담비) 털 칼라
+                let capeGrad = ctx.createLinearGradient(-16, -4, 16, 24);
+                capeGrad.addColorStop(0, '#581c87');
+                capeGrad.addColorStop(1, '#3b0764');
+                ctx.fillStyle = capeGrad;
+                ctx.beginPath();
+                ctx.moveTo(-14, -2); ctx.lineTo(14, -2); ctx.lineTo(18, 24); ctx.lineTo(-18, 24);
+                ctx.closePath(); ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.8; ctx.stroke();
+
+                // 에르민 털 트리밍
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(-15, -4, 30, 6);
+                ctx.fillStyle = '#1e1b4b';
+                for (let x = -11; x <= 11; x += 5.5) {
+                    ctx.beginPath(); ctx.arc(x, -1, 1, 0, Math.PI * 2); ctx.fill();
+                }
+
+                // 3. 황금 자수 귀족 튜닉
+                let bodyGrad = ctx.createLinearGradient(-9, -2, 9, 18);
+                bodyGrad.addColorStop(0, '#fef08a');
+                bodyGrad.addColorStop(0.5, '#eab308');
+                bodyGrad.addColorStop(1, '#a16207');
+                ctx.fillStyle = bodyGrad;
+                ctx.fillRect(-9, 0, 18, 17);
+                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1.2; ctx.strokeRect(-9, 0, 18, 17);
+
+                // 4. 거대한 다이아몬드 달러($) 셉터
+                ctx.save();
+                ctx.translate(16, 0);
+                let scepterGrad = ctx.createLinearGradient(0, 16, 0, -18);
+                scepterGrad.addColorStop(0, '#ca8a04'); scepterGrad.addColorStop(1, '#fef08a');
+                ctx.strokeStyle = scepterGrad; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(0, 16); ctx.lineTo(0, -14); ctx.stroke();
+                // 셉터 헤드 ($ 다이아몬드)
+                ctx.fillStyle = '#fde047'; ctx.beginPath(); ctx.arc(0, -15, 8, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.fillStyle = '#15803d'; ctx.font = '950 11px Arial'; ctx.textAlign = 'center'; ctx.fillText('$', 0, -11.5);
                 ctx.restore();
+
+                // 5. 귀족 머리와 입체 황금 왕관 (3봉 루비 세공)
+                ctx.fillStyle = '#fde68a';
+                ctx.fillRect(-7, -14, 14, 11);
+                // 콧수염
+                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.moveTo(-5, -6); ctx.quadraticCurveTo(0, -4, 5, -6); ctx.stroke();
+
+                // 순금 왕관
+                let crownGrad = ctx.createLinearGradient(-11, -14, 11, -26);
+                crownGrad.addColorStop(0, '#eab308'); crownGrad.addColorStop(0.5, '#fef08a'); crownGrad.addColorStop(1, '#ca8a04');
+                ctx.fillStyle = crownGrad;
+                ctx.beginPath();
+                ctx.moveTo(-11, -14); ctx.lineTo(-11, -24); ctx.lineTo(-6, -18);
+                ctx.lineTo(0, -27); ctx.lineTo(6, -18); ctx.lineTo(11, -24); ctx.lineTo(11, -14);
+                ctx.closePath(); ctx.fill();
+                ctx.strokeStyle = '#a16207'; ctx.lineWidth = 1.2; ctx.stroke();
+                // 루비 보석
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath(); ctx.arc(0, -21, 2.2, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath(); ctx.arc(-6, -16, 1.6, 0, Math.PI * 2); ctx.arc(6, -16, 1.6, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+
+            } else if (useSkin === 'diamond_banker') {
+                // 💎 [초호화] 다이아몬드 뱅커 (Diamond Banker)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 하이테크 시안 펄스 아우라 & 홀로그램 그리드
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 42);
+                aura.addColorStop(0, 'rgba(56, 189, 248, 0.7)');
+                aura.addColorStop(0.5, 'rgba(14, 165, 233, 0.3)');
+                aura.addColorStop(1, 'rgba(2, 132, 199, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 다이아몬드 핀스트라이프 네이비 턱시도
+                let suitGrad = ctx.createLinearGradient(-9, -2, 9, 18);
+                suitGrad.addColorStop(0, '#0f172a');
+                suitGrad.addColorStop(1, '#1e293b');
+                ctx.fillStyle = suitGrad;
+                ctx.fillRect(-9, -1, 18, 18);
+                // 셔츠 & 시안 실크 타이
+                ctx.fillStyle = '#f8fafc'; ctx.fillRect(-3, -1, 6, 10);
+                ctx.fillStyle = '#06b6d4'; ctx.fillRect(-1.5, 1, 3, 9);
+                // 다이아몬드 커프스
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath(); ctx.arc(-9, 10, 1.8, 0, Math.PI*2); ctx.arc(9, 10, 1.8, 0, Math.PI*2); ctx.fill();
+
+                // 3. 미래형 티타늄 금고 서류가방 (홀로그램 주가 차트 방출)
+                ctx.save();
+                ctx.translate(13, 2);
+                ctx.fillStyle = '#334155'; ctx.fillRect(0, 0, 12, 11);
+                ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.5; ctx.strokeRect(0, 0, 12, 11);
+                ctx.fillStyle = '#f8fafc'; ctx.beginPath(); ctx.arc(6, 5.5, 2.2, 0, Math.PI*2); ctx.fill();
+                // 홀로그램 상승 차트 빔
+                ctx.strokeStyle = 'rgba(52, 211, 153, 0.85)'; ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(2, -2); ctx.lineTo(6, -6); ctx.lineTo(9, -4); ctx.lineTo(13, -11);
+                ctx.stroke();
+                ctx.restore();
+
+                // 4. 모노클(외안경) & 다이아몬드 실크햇
+                ctx.fillStyle = '#ffe4e6'; ctx.fillRect(-7, -13, 14, 11);
+                // 모노클
+                ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.5;
+                ctx.strokeRect(1, -9, 5, 5);
+                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 0.8;
+                ctx.beginPath(); ctx.moveTo(6, -7); ctx.lineTo(9, -2); ctx.stroke();
+
+                // 실크햇 탑햇
+                ctx.fillStyle = '#020617'; ctx.fillRect(-14, -14, 28, 3.5);
+                ctx.fillRect(-9, -26, 18, 13);
+                // 다이아몬드 리본
+                let ribGrad = ctx.createLinearGradient(-9, -17, 9, -14);
+                ribGrad.addColorStop(0, '#06b6d4'); ribGrad.addColorStop(1, '#38bdf8');
+                ctx.fillStyle = ribGrad; ctx.fillRect(-9, -17, 18, 3.5);
+                ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(0, -15, 2, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+            } else if (useSkin === 'golden_jackpot') {
+                // 🎰 [초호화] 골든 잭팟 (Golden Jackpot)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 라스베가스 아케이드 네온 후광
+                let aura = ctx.createRadialGradient(0, 0, 6, 0, 0, 42);
+                aura.addColorStop(0, 'rgba(245, 158, 11, 0.7)');
+                aura.addColorStop(0.6, 'rgba(239, 68, 68, 0.3)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 슬롯머신 바디 섀시 (황금 & 진홍)
+                let bodyGrad = ctx.createLinearGradient(-10, -2, 10, 18);
+                bodyGrad.addColorStop(0, '#b91c1c'); bodyGrad.addColorStop(1, '#7f1d1d');
+                ctx.fillStyle = bodyGrad; ctx.fillRect(-10, -1, 20, 18);
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2; ctx.strokeRect(-10, -1, 20, 18);
+
+                // 중앙 릴 디스플레이 '7 7 7'
+                ctx.fillStyle = '#0f172a'; ctx.fillRect(-8, 3, 16, 9);
+                ctx.fillStyle = '#fde047'; ctx.font = '950 8px Arial'; ctx.textAlign = 'center';
+                ctx.fillText('7 7 7', 0, 10.5);
+
+                // 3. 우측 잭팟 레버
+                ctx.save(); ctx.translate(12, 4);
+                let leverAngle = Math.sin(t * 3) * 0.2;
+                ctx.rotate(leverAngle);
+                ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.moveTo(0, 6); ctx.lineTo(0, -8); ctx.stroke();
+                ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(0, -8, 3.5, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+                // 4. 상단 네온 잭팟 사인보드 & 전구
+                ctx.fillStyle = '#ca8a04'; ctx.fillRect(-12, -24, 24, 11);
+                ctx.strokeStyle = '#fde047'; ctx.lineWidth = 1.5; ctx.strokeRect(-12, -24, 24, 11);
+                ctx.fillStyle = '#1e1b4b'; ctx.fillRect(-10, -22, 20, 7);
+                ctx.fillStyle = '#ef4444'; ctx.font = '950 6.5px Arial'; ctx.textAlign = 'center';
+                ctx.fillText('JACKPOT', 0, -16.5);
+
+                // 반짝이는 컬러 전구들
+                let colors = ['#fde047', '#38bdf8', '#4ade80', '#f43f5e'];
+                for (let i = 0; i < 4; i++) {
+                    ctx.fillStyle = colors[(i + Math.floor(t * 4)) % 4];
+                    ctx.beginPath(); ctx.arc(-9 + i * 6, -24, 1.8, 0, Math.PI*2); ctx.fill();
+                }
+                ctx.restore();
+
+            } else if (useSkin === 'illuminati_eye') {
+                // 👁️ [초호화] 일루미나티 피라미드 (Illuminati Pyramid)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 신비로운 신성 기하학 마법진 & 금빛 회전 광선
+                let aura = ctx.createRadialGradient(0, 0, 4, 0, 0, 46);
+                aura.addColorStop(0, 'rgba(250, 204, 21, 0.7)');
+                aura.addColorStop(0.5, 'rgba(217, 119, 6, 0.35)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 46, 0, Math.PI * 2); ctx.fill();
+
+                // 회전하는 기하학 삼각형
+                ctx.save(); ctx.rotate(t * 0.6);
+                ctx.strokeStyle = 'rgba(253, 224, 71, 0.6)'; ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(0, -32); ctx.lineTo(28, 20); ctx.lineTo(-28, 20); ctx.closePath();
+                ctx.stroke();
+                ctx.restore();
+
+                // 2. 고대 황금 피라미드 몸체 (층계형 질감 & 룬 상형문자)
+                let pyrGrad = ctx.createLinearGradient(-22, -10, 22, 22);
+                pyrGrad.addColorStop(0, '#fef08a');
+                pyrGrad.addColorStop(0.5, '#ca8a04');
+                pyrGrad.addColorStop(1, '#78350f');
+                ctx.fillStyle = pyrGrad;
+                ctx.beginPath();
+                ctx.moveTo(0, -6); ctx.lineTo(20, 22); ctx.lineTo(-20, 22); ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.8; ctx.stroke();
+
+                // 3. 부유하는 피라미디온 (상단 꼭짓점 캡스톤)
+                let floatY = Math.sin(t * 2) * 3;
+                ctx.save(); ctx.translate(0, -18 + floatY);
+                ctx.fillStyle = '#fde047';
+                ctx.beginPath();
+                ctx.moveTo(0, -10); ctx.lineTo(9, 2); ctx.lineTo(-9, 2); ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1.2; ctx.stroke();
+                // 캡스톤 아래 뿜어져 나오는 광선
+                ctx.fillStyle = 'rgba(254, 240, 138, 0.5)';
+                ctx.beginPath();
+                ctx.moveTo(-7, 2); ctx.lineTo(7, 2); ctx.lineTo(14, 12); ctx.lineTo(-14, 12); ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+
+                // 4. 전지전능의 눈 (Eye of Providence - 실시간 시선)
+                ctx.save(); ctx.translate(0, 7);
+                // 눈 외형
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(-9, 0); ctx.quadraticCurveTo(0, -6, 9, 0); ctx.quadraticCurveTo(0, 6, -9, 0);
+                ctx.fill();
+                ctx.strokeStyle = '#a16207'; ctx.lineWidth = 1.4; ctx.stroke();
+                // 황금빛 홍채 & 동공
+                let eyeLook = Math.sin(t * 1.5) * 2;
+                ctx.fillStyle = '#0284c7'; ctx.beginPath(); ctx.arc(eyeLook, 0, 3.5, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(eyeLook, 0, 1.8, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(eyeLook + 1, -1, 0.8, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+                ctx.restore();
+
+            } else if (useSkin === 'cyber_money_titan') {
+                // 🤖 [초호화] 사이버 머니타이탄 (Cyber Money Titan)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 다크 티타늄 장갑 & 에너지 쉴드
+                let aura = ctx.createRadialGradient(0, 0, 6, 0, 0, 42);
+                aura.addColorStop(0, 'rgba(16, 185, 129, 0.7)');
+                aura.addColorStop(0.5, 'rgba(5, 150, 105, 0.3)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 헤비 메카 바디 (티타늄 블랙 & 골드 네온 라인)
+                ctx.fillStyle = '#0f172a'; ctx.fillRect(-12, -2, 24, 20);
+                ctx.strokeStyle = '#10b981'; ctx.lineWidth = 1.8; ctx.strokeRect(-12, -2, 24, 20);
+
+                // 어깨 듀얼 코인 발사 캐논
+                ctx.fillStyle = '#334155';
+                ctx.fillRect(-18, -4, 6, 12); ctx.fillRect(12, -4, 6, 12);
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath(); ctx.arc(-15, -4, 3, 0, Math.PI*2); ctx.arc(15, -4, 3, 0, Math.PI*2); ctx.fill();
+
+                // 3. 가슴 아크 리액터 ($ 에너지 코어)
+                let pulse = (Math.sin(t * 4) + 1) * 0.5;
+                ctx.fillStyle = 'rgba(16, 185, 129, ' + (0.5 + pulse * 0.4) + ')';
+                ctx.beginPath(); ctx.arc(0, 7, 6, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.fillStyle = '#ffffff'; ctx.font = '950 8px Arial'; ctx.textAlign = 'center'; ctx.fillText('$', 0, 9.5);
+
+                // 4. 사이버 헬멧 & 스캐닝 레이저 바이저
+                ctx.fillStyle = '#1e293b'; ctx.fillRect(-9, -17, 18, 14);
+                ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5; ctx.strokeRect(-9, -17, 18, 14);
+                // 바이저
+                ctx.fillStyle = '#020617'; ctx.fillRect(-7, -13, 14, 5);
+                let scanX = Math.sin(t * 5) * 5;
+                ctx.fillStyle = '#10b981'; ctx.fillRect(scanX - 2, -13, 4, 5);
+                ctx.restore();
+
+            } else if (useSkin === 'skull_captain') {
+                // 🏴‍☠️ [초호화] 해골 선장 (Skull Captain)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 에메랄드 저주받은 도깨비불 아우라
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 40);
+                aura.addColorStop(0, 'rgba(52, 211, 153, 0.75)');
+                aura.addColorStop(0.5, 'rgba(16, 185, 129, 0.3)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 40, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 핏빛 선장 코트 & 황금 견장
+                let coatGrad = ctx.createLinearGradient(-12, -2, 12, 22);
+                coatGrad.addColorStop(0, '#881337'); coatGrad.addColorStop(1, '#4c0519');
+                ctx.fillStyle = coatGrad;
+                ctx.beginPath();
+                ctx.moveTo(-12, -2); ctx.lineTo(12, -2); ctx.lineTo(16, 22); ctx.lineTo(-16, 22);
+                ctx.closePath(); ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.8; ctx.stroke();
+                // 황금 견장
+                ctx.fillStyle = '#facc15';
+                ctx.fillRect(-15, -3, 6, 4); ctx.fillRect(9, -3, 6, 4);
+
+                // 3. 해적 커틀라스 칼
+                ctx.save(); ctx.translate(15, 2); ctx.rotate(-0.4);
+                ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(0, 10); ctx.quadraticCurveTo(4, -5, 0, -18); ctx.stroke();
+                ctx.fillStyle = '#ca8a04'; ctx.fillRect(-3, 8, 6, 3);
+                ctx.restore();
+
+                // 4. 황금 해골 두개골 & 불타는 녹색 안와
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath(); ctx.arc(0, -9, 8.5, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1.2; ctx.stroke();
+                // 안와
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath(); ctx.arc(-3.5, -9, 2.2, 0, Math.PI*2); ctx.arc(3.5, -9, 2.2, 0, Math.PI*2); ctx.fill();
+
+                // 5. 해적 삼각 모자 (Tricorn) & 엠블럼
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.moveTo(-18, -13); ctx.lineTo(18, -13); ctx.lineTo(0, -25); ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1.8; ctx.stroke();
+                ctx.fillStyle = '#fde047'; ctx.font = '950 8px Arial'; ctx.textAlign = 'center'; ctx.fillText('☠️', 0, -14.5);
+                ctx.restore();
+
+            } else if (useSkin === 'ocean_siren') {
+                // 🧜‍♀️ [초호화] 심해의 세이렌 (Ocean Siren)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 심해 아쿠아마린 생체 발광 & 기포 파티클
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 42);
+                aura.addColorStop(0, 'rgba(45, 212, 191, 0.75)');
+                aura.addColorStop(0.5, 'rgba(13, 148, 136, 0.35)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI * 2); ctx.fill();
+
+                for (let i = 0; i < 3; i++) {
+                    let by = ((t * 20 + i * 15) % 40) - 20;
+                    let bx = Math.sin(t + i) * 16;
+                    ctx.strokeStyle = 'rgba(204, 251, 241, 0.8)'; ctx.lineWidth = 1.2;
+                    ctx.beginPath(); ctx.arc(bx, -by, 2.5, 0, Math.PI * 2); ctx.stroke();
+                }
+
+                // 2. 비늘 인어 로브 & 유려한 지느러미
+                let scaleGrad = ctx.createLinearGradient(-10, -2, 10, 24);
+                scaleGrad.addColorStop(0, '#0d9488'); scaleGrad.addColorStop(0.5, '#14b8a6'); scaleGrad.addColorStop(1, '#042f2e');
+                ctx.fillStyle = scaleGrad;
+                ctx.beginPath();
+                ctx.moveTo(-10, -2); ctx.lineTo(10, -2); ctx.lineTo(14, 20); ctx.quadraticCurveTo(0, 26, -14, 20);
+                ctx.closePath(); ctx.fill();
+                ctx.strokeStyle = '#5eead4'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                // 3. 심해 진주 마법 보주 & 음파 링
+                ctx.save(); ctx.translate(14, 2);
+                let pulse = (Math.sin(t * 3) + 1) * 0.5;
+                ctx.fillStyle = '#ccfbf1'; ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = 'rgba(45, 212, 191, ' + (1 - pulse) + ')'; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.arc(0, 0, 6 + pulse * 10, 0, Math.PI*2); ctx.stroke();
+                ctx.restore();
+
+                // 4. 세이렌 얼굴 & 산호 티아라
+                ctx.fillStyle = '#ccfbf1'; ctx.fillRect(-7, -13, 14, 11);
+                // 푸른 눈
+                ctx.fillStyle = '#06b6d4';
+                ctx.beginPath(); ctx.arc(-3, -8, 1.8, 0, Math.PI*2); ctx.arc(3, -8, 1.8, 0, Math.PI*2); ctx.fill();
+
+                // 진주 산호 왕관
+                ctx.fillStyle = '#f43f5e';
+                ctx.beginPath();
+                ctx.moveTo(-9, -13); ctx.lineTo(-9, -21); ctx.lineTo(-4, -16); ctx.lineTo(0, -24);
+                ctx.lineTo(4, -16); ctx.lineTo(9, -21); ctx.lineTo(9, -13); ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(0, -18, 2, 0, Math.PI*2); ctx.arc(-6, -15, 1.5, 0, Math.PI*2); ctx.arc(6, -15, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+            } else if (useSkin === 'abyss_kraken_pirate') {
+                // 🐙 [초호화] 심연의 크라켄 해적 (Abyss Kraken Pirate)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 심연의 암흑 보라 아우라
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 44);
+                aura.addColorStop(0, 'rgba(168, 85, 247, 0.7)');
+                aura.addColorStop(0.5, 'rgba(88, 28, 135, 0.35)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 44, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 등 뒤에서 꿈틀거리는 4개의 심연 촉수
+                for (let i = 0; i < 4; i++) {
+                    let side = (i % 2 === 0) ? -1 : 1;
+                    let tentY = (i < 2) ? -6 : 6;
+                    let wave = Math.sin(t * 3 + i) * 8;
+                    ctx.save();
+                    ctx.strokeStyle = '#7e22ce'; ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.moveTo(side * 8, tentY);
+                    ctx.quadraticCurveTo(side * (18 + wave), tentY - 10, side * (26 + wave), tentY + 8);
+                    ctx.stroke();
+                    // 빨판
+                    ctx.fillStyle = '#e879f9';
+                    ctx.beginPath(); ctx.arc(side * (24 + wave), tentY + 5, 2, 0, Math.PI*2); ctx.fill();
+                    ctx.restore();
+                }
+
+                // 3. 따개비 암석 갑주 바디
+                ctx.fillStyle = '#1e1b4b'; ctx.fillRect(-11, -2, 22, 19);
+                ctx.strokeStyle = '#a855f7'; ctx.lineWidth = 2; ctx.strokeRect(-11, -2, 22, 19);
+
+                // 4. 크라켄 촉수 수염 & 닻 대포
+                ctx.save(); ctx.translate(14, 0);
+                ctx.fillStyle = '#475569'; ctx.fillRect(-2, -10, 6, 20);
+                ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5; ctx.strokeRect(-2, -10, 6, 20);
+                ctx.restore();
+
+                // 얼굴과 크라켄 촉수 수염
+                ctx.fillStyle = '#581c87'; ctx.fillRect(-7, -13, 14, 11);
+                // 촉수 수염
+                ctx.fillStyle = '#9333ea';
+                for (let x = -5; x <= 5; x += 3.5) {
+                    ctx.fillRect(x, -3, 2.5, 7 + Math.sin(t * 4 + x) * 2);
+                }
+                // 불타는 호박색 심연 눈빛
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath(); ctx.arc(-3.5, -8, 2, 0, Math.PI*2); ctx.arc(3.5, -8, 2, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+            } else if (useSkin === 'ghost_wraith') {
+                // 👻 [초호화] 유령선 망령 (Ghost Wraith)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 투명도 펄스 & 반투명 에메랄드 영혼 아우라
+                let alpha = 0.75 + Math.sin(t * 3) * 0.2;
+                ctx.globalAlpha = alpha;
+
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 42);
+                aura.addColorStop(0, 'rgba(52, 211, 153, 0.85)');
+                aura.addColorStop(0.5, 'rgba(16, 185, 129, 0.3)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 찢어진 유령선 돛 망토 (펄럭이는 파동)
+                let ghostGrad = ctx.createLinearGradient(-12, -4, 12, 24);
+                ghostGrad.addColorStop(0, '#a7f3d0'); ghostGrad.addColorStop(1, 'rgba(16, 185, 129, 0.2)');
+                ctx.fillStyle = ghostGrad;
+                ctx.beginPath();
+                ctx.moveTo(-12, -2); ctx.lineTo(12, -2);
+                ctx.lineTo(15 + Math.sin(t * 3) * 3, 22);
+                ctx.lineTo(5, 18);
+                ctx.lineTo(0, 24);
+                ctx.lineTo(-7, 17);
+                ctx.lineTo(-15 + Math.sin(t * 3 + 1) * 3, 22);
+                ctx.closePath(); ctx.fill();
+                ctx.strokeStyle = '#6ee7b7'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                // 3. 영혼의 청록색 랜턴
+                ctx.save(); ctx.translate(14, 2);
+                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1.5;
+                ctx.strokeRect(-4, -6, 8, 12);
+                ctx.fillStyle = '#34d399'; ctx.beginPath(); ctx.arc(0, 0, 3.5, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+                // 4. 유령 얼굴과 공허한 암흑 눈/입
+                ctx.fillStyle = '#d1fae5'; ctx.fillRect(-7, -14, 14, 12);
+                ctx.fillStyle = '#064e3b';
+                ctx.beginPath(); ctx.arc(-3, -9, 2, 0, Math.PI*2); ctx.arc(3, -9, 2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(0, -3, 2, 3.5, 0, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+
+            } else if (useSkin === 'gold_treasure_pirate') {
+                // 💰 [초호화] 황금 보물 해적 (Gold Treasure Pirate)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 찬란한 보물섬 황금 아우라
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 42);
+                aura.addColorStop(0, 'rgba(250, 204, 21, 0.85)');
+                aura.addColorStop(0.5, 'rgba(202, 138, 4, 0.35)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 금화 주화로 엮은 황금 갑주
+                let goldGrad = ctx.createLinearGradient(-10, -2, 10, 18);
+                goldGrad.addColorStop(0, '#fef08a'); goldGrad.addColorStop(0.5, '#eab308'); goldGrad.addColorStop(1, '#a16207');
+                ctx.fillStyle = goldGrad; ctx.fillRect(-10, -1, 20, 18);
+                ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1.8; ctx.strokeRect(-10, -1, 20, 18);
+                // 루비 벨트 버클
+                ctx.fillStyle = '#ef4444'; ctx.fillRect(-3, 11, 6, 5);
+
+                // 3. 황금 플린트락 권총
+                ctx.save(); ctx.translate(14, 2);
+                ctx.fillStyle = '#fde047'; ctx.fillRect(0, -2, 10, 4);
+                ctx.fillStyle = '#78350f'; ctx.fillRect(0, 2, 4, 6);
+                ctx.restore();
+
+                // 4. 루비 안대 & 황금 해적 모자
+                ctx.fillStyle = '#fde68a'; ctx.fillRect(-7, -13, 14, 11);
+                // 루비 안대
+                ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(3.5, -8, 3, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#1e1b4b'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-7, -12); ctx.lineTo(7, -4); ctx.stroke();
+
+                // 황금 깃털 삼각 모자
+                ctx.fillStyle = '#78350f';
+                ctx.beginPath(); ctx.moveTo(-16, -13); ctx.lineTo(16, -13); ctx.lineTo(0, -24); ctx.closePath(); ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.8; ctx.stroke();
+                ctx.fillStyle = '#fde047'; ctx.fillRect(-2, -28, 4, 7); // 황금 깃털
+                ctx.restore();
+
+            } else if (useSkin === 'storm_navigator') {
+                // 🧭 [초호화] 폭풍의 항해사 (Storm Navigator)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 폭풍우 뇌운 & 번개 스파크 아우라
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 42);
+                aura.addColorStop(0, 'rgba(56, 189, 248, 0.8)');
+                aura.addColorStop(0.5, 'rgba(37, 99, 235, 0.35)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 딥블루 항해사 코트 & 황금 단추
+                let coatGrad = ctx.createLinearGradient(-10, -2, 10, 20);
+                coatGrad.addColorStop(0, '#1e3a8a'); coatGrad.addColorStop(1, '#172554');
+                ctx.fillStyle = coatGrad; ctx.fillRect(-10, -1, 20, 19);
+                ctx.strokeStyle = '#60a5fa'; ctx.lineWidth = 1.8; ctx.strokeRect(-10, -1, 20, 19);
+
+                // 3. 회전하는 나침반 (Compass)
+                ctx.save(); ctx.translate(14, 2);
+                ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 1.5; ctx.stroke();
+                // 미친듯이 회전하는 나침반 바늘
+                ctx.save(); ctx.rotate(t * 8);
+                ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(2, 0); ctx.lineTo(-2, 0); ctx.fill();
+                ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.moveTo(0, 6); ctx.lineTo(2, 0); ctx.lineTo(-2, 0); ctx.fill();
+                ctx.restore();
+                ctx.restore();
+
+                // 4. 항해사 캡 & 폭풍 안광
+                ctx.fillStyle = '#fde68a'; ctx.fillRect(-7, -13, 14, 11);
+                ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.arc(-3, -8, 2, 0, Math.PI*2); ctx.arc(3, -8, 2, 0, Math.PI*2); ctx.fill();
+                // 마린 캡
+                ctx.fillStyle = '#1e3a8a'; ctx.fillRect(-12, -18, 24, 6);
+                ctx.fillStyle = '#0f172a'; ctx.fillRect(-14, -13, 28, 2.5); // 챙
+                ctx.fillStyle = '#facc15'; ctx.fillRect(-2, -17, 4, 4); // 닻 뱃지
+                ctx.restore();
+
+            } else if (useSkin === 'cursed_mariner') {
+                // 💀 [초호화] 저주받은 스켈레톤 (Cursed Mariner)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 저주받은 지옥불 주홍 아우라
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 40);
+                aura.addColorStop(0, 'rgba(239, 68, 68, 0.8)');
+                aura.addColorStop(0.5, 'rgba(185, 28, 28, 0.35)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 40, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 늑골 뼈대 & 누더기 반다나 의상
+                ctx.fillStyle = '#1c1917'; ctx.fillRect(-9, -1, 18, 18);
+                // 갈비뼈
+                ctx.strokeStyle = '#f8fafc'; ctx.lineWidth = 1.8;
+                for (let y = 3; y <= 15; y += 4) {
+                    ctx.beginPath(); ctx.moveTo(-6, y); ctx.lineTo(6, y); ctx.stroke();
+                }
+
+                // 3. 녹슨 피묻은 닻 (Rusty Anchor)
+                ctx.save(); ctx.translate(14, 2);
+                ctx.strokeStyle = '#78350f'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(0, 14); ctx.stroke();
+                ctx.beginPath(); ctx.arc(0, 10, 7, 0, Math.PI); ctx.stroke();
+                ctx.restore();
+
+                // 4. 해골 두개골 & 붉은 두목 반다나
+                ctx.fillStyle = '#e2e8f0'; ctx.fillRect(-7, -13, 14, 11);
+                // 붉은 화염 눈빛
+                ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(-3, -8, 2.2, 0, Math.PI*2); ctx.arc(3, -8, 2.2, 0, Math.PI*2); ctx.fill();
+                // 붉은 반다나
+                ctx.fillStyle = '#dc2626'; ctx.fillRect(-8, -17, 16, 5);
+                ctx.fillRect(-10, -14, 4, 8); // 매듭
+                ctx.restore();
+
+            } else if (useSkin === 'deepsea_poseidon') {
+                // 🔱 [초호화] 심해 포세이돈 (Deepsea Poseidon)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 대해의 소용돌이 쓰나미 아우라 & 번개
+                let aura = ctx.createRadialGradient(0, 0, 6, 0, 0, 46);
+                aura.addColorStop(0, 'rgba(6, 182, 212, 0.85)');
+                aura.addColorStop(0.5, 'rgba(14, 116, 144, 0.4)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 46, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 신성한 해신 튜닉 & 파도 망토
+                let seaGrad = ctx.createLinearGradient(-12, -2, 12, 22);
+                seaGrad.addColorStop(0, '#0e7490'); seaGrad.addColorStop(1, '#164e63');
+                ctx.fillStyle = seaGrad;
+                ctx.beginPath();
+                ctx.moveTo(-12, -2); ctx.lineTo(12, -2); ctx.lineTo(16, 22); ctx.lineTo(-16, 22);
+                ctx.closePath(); ctx.fill();
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2; ctx.stroke();
+
+                // 3. 거대한 황금 삼지창 (Trident - 번개 스파크)
+                ctx.save(); ctx.translate(16, -2);
+                let triGrad = ctx.createLinearGradient(0, 18, 0, -24);
+                triGrad.addColorStop(0, '#ca8a04'); triGrad.addColorStop(1, '#fef08a');
+                ctx.strokeStyle = triGrad; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(0, 18); ctx.lineTo(0, -20); ctx.stroke();
+                // 3갈래 창날
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(-7, -14); ctx.lineTo(-7, -26);
+                ctx.moveTo(0, -20); ctx.lineTo(0, -29);
+                ctx.moveTo(7, -14); ctx.lineTo(7, -26);
+                ctx.stroke();
+                // 가로 가드
+                ctx.beginPath(); ctx.moveTo(-8, -14); ctx.lineTo(8, -14); ctx.stroke();
+                ctx.restore();
+
+                // 4. 신의 위엄있는 흰 수염 & 올림포스 황금 월계관
+                ctx.fillStyle = '#ffe4e6'; ctx.fillRect(-7, -14, 14, 12);
+                // 긴 흰 수염
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(-8, -4); ctx.lineTo(8, -4); ctx.lineTo(4, 8); ctx.lineTo(0, 12); ctx.lineTo(-4, 8);
+                ctx.closePath(); ctx.fill();
+
+                // 황금 월계관
+                ctx.fillStyle = '#facc15';
+                for (let i = -8; i <= 8; i += 4) {
+                    ctx.beginPath(); ctx.ellipse(i, -16, 2, 4, 0.4, 0, Math.PI*2); ctx.fill();
+                }
+                ctx.restore();
+
+            } else if (useSkin === 'davy_jones') {
+                // 🦀 [초호화] 데비 존스 (Davy Jones)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 심해의 저주 암흑 청록 아우라
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 42);
+                aura.addColorStop(0, 'rgba(13, 148, 136, 0.75)');
+                aura.addColorStop(0.5, 'rgba(19, 78, 74, 0.35)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 침몰선 해적 코트 (따개비 & 해초)
+                let coatGrad = ctx.createLinearGradient(-11, -2, 11, 20);
+                coatGrad.addColorStop(0, '#134e48'); coatGrad.addColorStop(1, '#042f2e');
+                ctx.fillStyle = coatGrad; ctx.fillRect(-11, -1, 22, 20);
+                ctx.strokeStyle = '#5eead4'; ctx.lineWidth = 1.8; ctx.strokeRect(-11, -1, 22, 20);
+
+                // 3. 거대한 집게발 (Crab Claw Arm)
+                ctx.save(); ctx.translate(15, 2);
+                ctx.fillStyle = '#ea580c';
+                ctx.beginPath(); ctx.ellipse(0, 0, 5, 8, 0.3, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#c2410c'; ctx.lineWidth = 1.8; ctx.stroke();
+                // 가위 벌림
+                ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(6, -11); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(2, -4); ctx.lineTo(8, -4); ctx.stroke();
+                ctx.restore();
+
+                // 4. 꿈틀거리는 문어 촉수 수염
+                ctx.fillStyle = '#115e59'; ctx.fillRect(-7, -14, 14, 12);
+                ctx.fillStyle = '#2dd4bf';
+                for (let x = -6; x <= 6; x += 3) {
+                    let wave = Math.sin(t * 4 + x) * 2.5;
+                    ctx.fillRect(x + wave, -3, 2.5, 9);
+                }
+                // 안광
+                ctx.fillStyle = '#fde047';
+                ctx.beginPath(); ctx.arc(-3, -9, 2, 0, Math.PI*2); ctx.arc(3, -9, 2, 0, Math.PI*2); ctx.fill();
+                // 낡은 삼각모
+                ctx.fillStyle = '#042f2e';
+                ctx.beginPath(); ctx.moveTo(-15, -14); ctx.lineTo(15, -14); ctx.lineTo(0, -23); ctx.closePath(); ctx.fill();
+                ctx.restore();
+
             } else if (useSkin === 'maple_ninja') {
-                // 🍁 단풍 시노비 (Maple Ninja)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 4, 0, 0, 35);
-                aura.addColorStop(0, 'rgba(239, 68, 68, 0.6)');
-                aura.addColorStop(1, 'rgba(185, 28, 28, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 35, 0, Math.PI * 2); ctx.fill();
-                ctx.save(); ctx.translate(0, 4); ctx.rotate(time * 4);
-                ctx.fillStyle = '#94a3b8';
-                ctx.fillRect(-8, -2, 16, 4); ctx.fillRect(-2, -8, 4, 16);
+                // 🍁 [초호화] 단풍 시노비 (Maple Ninja)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 회전하는 붉은 단풍잎 오라 (4장의 단풍잎이 주변을 공전)
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 44);
+                aura.addColorStop(0, 'rgba(239, 68, 68, 0.7)');
+                aura.addColorStop(0.5, 'rgba(249, 115, 22, 0.3)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 44, 0, Math.PI * 2); ctx.fill();
+
+                // 공전하는 단풍잎 파티클
+                for (let i = 0; i < 4; i++) {
+                    let angle = t * 2 + i * (Math.PI / 2);
+                    let lx = Math.cos(angle) * 24;
+                    let ly = Math.sin(angle) * 16;
+                    ctx.save(); ctx.translate(lx, ly); ctx.rotate(angle);
+                    ctx.fillStyle = (i % 2 === 0) ? '#ef4444' : '#f97316';
+                    ctx.beginPath();
+                    ctx.moveTo(0, -5); ctx.lineTo(3, 0); ctx.lineTo(5, -2); ctx.lineTo(2, 4);
+                    ctx.lineTo(0, 3); ctx.lineTo(-2, 4); ctx.lineTo(-5, -2); ctx.lineTo(-3, 0);
+                    ctx.closePath(); ctx.fill();
+                    ctx.restore();
+                }
+
+                // 2. 흑단 닌자복 & 휘날리는 붉은 닌자 머플러
+                ctx.fillStyle = '#0f172a'; ctx.fillRect(-9, -1, 18, 18);
+                ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 1.8; ctx.strokeRect(-9, -1, 18, 18);
+                // 붉은 머플러가 바람에 펄럭임
+                let scarfWave = Math.sin(t * 5) * 4;
+                ctx.fillStyle = '#dc2626';
+                ctx.beginPath();
+                ctx.moveTo(6, 1); ctx.lineTo(16 + scarfWave, 6); ctx.lineTo(20 + scarfWave, 18); ctx.lineTo(12 + scarfWave, 16); ctx.lineTo(4, 5);
+                ctx.closePath(); ctx.fill();
+
+                // 3. 등에 찬 쌍검 블레이드 (벚꽃 검광)
+                ctx.save(); ctx.translate(0, 2);
+                ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.moveTo(-14, 14); ctx.lineTo(14, -16); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(14, 14); ctx.lineTo(-14, -16); ctx.stroke();
+                ctx.fillStyle = '#f43f5e'; ctx.beginPath(); ctx.arc(14, -16, 2.5, 0, Math.PI*2); ctx.fill();
                 ctx.restore();
-                ctx.fillStyle = '#18181b'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#dc2626'; ctx.fillRect(-9, -4, 18, 4);
-                let scWave = Math.sin(time * 5) * 3;
-                ctx.beginPath(); ctx.moveTo(9, -4); ctx.lineTo(16, 4 + scWave); ctx.lineTo(12, 10 + scWave); ctx.closePath(); ctx.fill();
-                ctx.fillStyle = '#27272a'; ctx.fillRect(-8, -16, 16, 12);
-                ctx.fillStyle = '#fef08a'; ctx.fillRect(-5, -12, 3, 2); ctx.fillRect(2, -12, 3, 2);
+
+                // 4. 닌자 복면 & 번뜩이는 붉은 눈빛
+                ctx.fillStyle = '#1e293b'; ctx.fillRect(-7, -14, 14, 12);
+                ctx.fillStyle = '#ef4444'; // 안광
+                ctx.beginPath(); ctx.arc(-3, -8, 2, 0, Math.PI*2); ctx.arc(3, -8, 2, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#0f172a'; ctx.fillRect(-7, -6, 14, 5); // 입 가리개
                 ctx.restore();
+
             } else if (useSkin === 'frost_oath_knight') {
-                // ❄️ 서리 서약 기사 (Frost Oath Knight)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 36);
-                aura.addColorStop(0, 'rgba(186, 230, 253, 0.7)');
-                aura.addColorStop(1, 'rgba(56, 189, 248, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 36, 0, Math.PI * 2); ctx.fill();
-                ctx.strokeStyle = '#bae6fd'; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.moveTo(14, 14); ctx.lineTo(20, -18); ctx.stroke();
-                ctx.strokeStyle = '#0284c7'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(14, 14); ctx.lineTo(20, -18); ctx.stroke();
-                ctx.fillStyle = '#334155'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#38bdf8'; ctx.fillRect(-2, 0, 4, 10);
-                ctx.fillStyle = '#1e293b'; ctx.fillRect(-8, -18, 16, 14);
-                ctx.fillStyle = '#00f5ff'; ctx.fillRect(-6, -13, 12, 3);
+                // ❄️ [초호화] 서리 서약 기사 (Frost Oath Knight)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 빙결 서리 마법진 & 눈꽃 결정 파티클
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 44);
+                aura.addColorStop(0, 'rgba(56, 189, 248, 0.8)');
+                aura.addColorStop(0.5, 'rgba(14, 165, 233, 0.35)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 44, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 얼음 크리스탈 풀 플레이트 아머 & 순백 모피 칼라
+                let armorGrad = ctx.createLinearGradient(-10, -2, 10, 20);
+                armorGrad.addColorStop(0, '#e0f2fe'); armorGrad.addColorStop(0.5, '#7dd3fc'); armorGrad.addColorStop(1, '#0369a1');
+                ctx.fillStyle = armorGrad; ctx.fillRect(-10, -1, 20, 19);
+                ctx.strokeStyle = '#bae6fd'; ctx.lineWidth = 2; ctx.strokeRect(-10, -1, 20, 19);
+                // 모피 칼라
+                ctx.fillStyle = '#ffffff'; ctx.fillRect(-12, -3, 24, 5);
+
+                // 3. 서리 룬 대검 (Frost Rune Greatsword)
+                ctx.save(); ctx.translate(16, -2);
+                let swordGrad = ctx.createLinearGradient(0, 18, 0, -22);
+                swordGrad.addColorStop(0, '#0284c7'); swordGrad.addColorStop(1, '#ffffff');
+                ctx.fillStyle = swordGrad;
+                ctx.beginPath();
+                ctx.moveTo(-4, 16); ctx.lineTo(-4, -18); ctx.lineTo(0, -24); ctx.lineTo(4, -18); ctx.lineTo(4, 16);
+                ctx.closePath(); ctx.fill();
+                ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.5; ctx.stroke();
+                // 룬 발광
+                ctx.fillStyle = '#38bdf8';
+                ctx.fillRect(-1.5, -12, 3, 16);
                 ctx.restore();
+
+                // 4. 서리 기사 헬멧 & 푸른 안광
+                ctx.fillStyle = '#0f172a'; ctx.fillRect(-8, -16, 16, 14);
+                ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 1.8; ctx.strokeRect(-8, -16, 16, 14);
+                // 안광 슬릿
+                ctx.fillStyle = '#38bdf8'; ctx.fillRect(-5, -10, 10, 2.5);
+                ctx.restore();
+
             } else if (useSkin === 'harvest_scarecrow') {
-                // 🎃 추수 호박 허수아비 (Harvest Scarecrow)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 4, 0, 0, 34);
-                aura.addColorStop(0, 'rgba(249, 115, 22, 0.6)');
-                aura.addColorStop(1, 'rgba(194, 65, 12, 0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 34, 0, Math.PI * 2); ctx.fill();
-                ctx.strokeStyle = '#78350f'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(12, 14); ctx.lineTo(12, -18); ctx.stroke();
-                ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(6, -18, 8, -Math.PI*0.5, Math.PI*0.3); ctx.stroke();
-                ctx.fillStyle = '#92400e'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#fde047'; ctx.fillRect(-10, 8, 4, 3); ctx.fillRect(6, 8, 4, 3);
-                ctx.fillStyle = '#ea580c'; ctx.beginPath(); ctx.arc(0, -11, 7, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(-2, -12, 1.5, 0, Math.PI * 2); ctx.arc(2, -12, 1.5, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#ca8a04'; ctx.fillRect(-12, -18, 24, 3); ctx.fillRect(-6, -24, 12, 6);
+                // 🎃 [초호화] 추수 호박 허수아비 (Harvest Scarecrow)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 타오르는 호박 지옥불 화염 아우라
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 42);
+                aura.addColorStop(0, 'rgba(249, 115, 22, 0.85)');
+                aura.addColorStop(0.5, 'rgba(234, 88, 12, 0.4)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 볏짚 로브 & 낡은 패치워크
+                let robeGrad = ctx.createLinearGradient(-10, -2, 10, 20);
+                robeGrad.addColorStop(0, '#78350f'); robeGrad.addColorStop(1, '#451a03');
+                ctx.fillStyle = robeGrad; ctx.fillRect(-10, -1, 20, 19);
+                ctx.strokeStyle = '#d97706'; ctx.lineWidth = 1.8; ctx.strokeRect(-10, -1, 20, 19);
+                // 볏짚 매듭
+                ctx.fillStyle = '#fef08a';
+                ctx.fillRect(-12, 12, 24, 2.5);
+
+                // 3. 불타는 거대 대낫 (Harvest Scythe)
+                ctx.save(); ctx.translate(16, -2);
+                ctx.strokeStyle = '#78350f'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(0, 18); ctx.lineTo(0, -18); ctx.stroke();
+                // 낫 날
+                ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 3.5;
+                ctx.beginPath(); ctx.moveTo(0, -18); ctx.quadraticCurveTo(-14, -26, -20, -12); ctx.stroke();
                 ctx.restore();
+
+                // 4. 타오르는 잭오랜턴 호박 머리 (Flickering Flame)
+                let pGrad = ctx.createRadialGradient(0, -10, 2, 0, -10, 10);
+                pGrad.addColorStop(0, '#fed7aa'); pGrad.addColorStop(0.6, '#f97316'); pGrad.addColorStop(1, '#c2410c');
+                ctx.fillStyle = pGrad;
+                ctx.beginPath(); ctx.arc(0, -10, 9.5, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#7c2d12'; ctx.lineWidth = 1.5; ctx.stroke();
+                // 타오르는 삼각 눈 & 톱니 입
+                ctx.fillStyle = '#fef08a';
+                ctx.beginPath();
+                ctx.moveTo(-4, -13); ctx.lineTo(-2, -9); ctx.lineTo(-6, -9); ctx.fill();
+                ctx.moveTo(4, -13); ctx.lineTo(6, -9); ctx.lineTo(2, -9); ctx.fill();
+                // 입
+                ctx.beginPath();
+                ctx.moveTo(-5, -6); ctx.lineTo(-3, -4); ctx.lineTo(0, -6); ctx.lineTo(3, -4); ctx.lineTo(5, -6);
+                ctx.stroke();
+                // 낡은 마법사 모자
+                ctx.fillStyle = '#292524';
+                ctx.beginPath(); ctx.moveTo(-14, -16); ctx.lineTo(14, -16); ctx.lineTo(4, -28); ctx.closePath(); ctx.fill();
+                ctx.restore();
+
             } else if (useSkin === 'galaxy_astrologer') {
-                // 🌌 은하 천문학자 (Galaxy Astrologer)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 38);
-                aura.addColorStop(0, 'rgba(192, 132, 252, 0.65)');
-                aura.addColorStop(0.5, 'rgba(56, 189, 248, 0.4)');
-                aura.addColorStop(1, 'rgba(0,0,0,0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 38, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#311042'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#a855f7';
-                ctx.beginPath(); ctx.moveTo(-10, -14); ctx.lineTo(10, -14); ctx.lineTo(0, -28); ctx.closePath(); ctx.fill();
-                ctx.fillStyle = '#fbbf24'; ctx.beginPath(); ctx.arc(0, -28, 2, 0, Math.PI * 2); ctx.fill();
-                ctx.strokeStyle = '#c084fc'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(12, 14); ctx.lineTo(12, -16); ctx.stroke();
-                ctx.save(); ctx.translate(12, -16); ctx.rotate(time * 3);
-                ctx.strokeStyle = '#38bdf8'; ctx.strokeRect(-4, -4, 8, 8);
+                // 🌌 [초호화] 은하 천문학자 (Galaxy Astrologer)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 심우주 성운(Nebula) 그라데이션 & 별자리 아우라
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 46);
+                aura.addColorStop(0, 'rgba(192, 132, 252, 0.8)');
+                aura.addColorStop(0.5, 'rgba(99, 102, 241, 0.4)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 46, 0, Math.PI * 2); ctx.fill();
+
+                // 공전하는 3개의 행성 보주 (Orb)
+                let orbColors = ['#f472b6', '#38bdf8', '#facc15'];
+                for (let i = 0; i < 3; i++) {
+                    let angle = t * 2.2 + i * ((Math.PI * 2) / 3);
+                    let ox = Math.cos(angle) * 22;
+                    let oy = Math.sin(angle) * 14;
+                    ctx.fillStyle = orbColors[i];
+                    ctx.beginPath(); ctx.arc(ox, oy, 3, 0, Math.PI * 2); ctx.fill();
+                }
+
+                // 2. 성운 로브 & 황금 별자리 자수
+                let robeGrad = ctx.createLinearGradient(-11, -2, 11, 22);
+                robeGrad.addColorStop(0, '#4c1d95'); robeGrad.addColorStop(0.5, '#1e1b4b'); robeGrad.addColorStop(1, '#0f172a');
+                ctx.fillStyle = robeGrad;
+                ctx.beginPath();
+                ctx.moveTo(-11, -2); ctx.lineTo(11, -2); ctx.lineTo(15, 22); ctx.lineTo(-15, 22);
+                ctx.closePath(); ctx.fill();
+                ctx.strokeStyle = '#c084fc'; ctx.lineWidth = 1.8; ctx.stroke();
+
+                // 3. 황금 천구의 셉터 (Celestial Armillary Staff)
+                ctx.save(); ctx.translate(16, -2);
+                ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.moveTo(0, 18); ctx.lineTo(0, -18); ctx.stroke();
+                // 천구의 헤드
+                ctx.strokeStyle = '#e879f9'; ctx.lineWidth = 1.8;
+                ctx.beginPath(); ctx.arc(0, -18, 6, 0, Math.PI * 2); ctx.stroke();
+                ctx.beginPath(); ctx.ellipse(0, -18, 6, 2.5, t * 2, 0, Math.PI * 2); ctx.stroke();
+                ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(0, -18, 2, 0, Math.PI*2); ctx.fill();
                 ctx.restore();
+
+                // 4. 별빛 후드 & 신비로운 우주 안광
+                ctx.fillStyle = '#2e1065'; ctx.fillRect(-8, -16, 16, 14);
+                ctx.strokeStyle = '#a855f7'; ctx.lineWidth = 1.8; ctx.strokeRect(-8, -16, 16, 14);
+                // 보랏빛 안광
+                ctx.fillStyle = '#f0abfc';
+                ctx.beginPath(); ctx.arc(-3, -9, 2, 0, Math.PI*2); ctx.arc(3, -9, 2, 0, Math.PI*2); ctx.fill();
                 ctx.restore();
+
             } else if (useSkin === 'cyber_neon_racer') {
-                // 🏎️ 사이버 네온 레이서 (Cyber Neon Racer)
-                ctx.save(); ctx.translate(0, -bobbing);
-                let time = Date.now() * 0.003;
-                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 38);
-                aura.addColorStop(0, 'rgba(236, 72, 153, 0.6)');
-                aura.addColorStop(0.5, 'rgba(6, 182, 212, 0.5)');
-                aura.addColorStop(1, 'rgba(0,0,0,0)');
-                ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, 38, 0, Math.PI * 2); ctx.fill();
-                let bGlow = Math.sin(time * 8) * 3;
-                ctx.fillStyle = '#06b6d4'; ctx.fillRect(-10, 2, 3, 10); ctx.fillRect(7, 2, 3, 10);
-                ctx.fillStyle = '#ec4899'; ctx.fillRect(-10, 12, 3, 4 + bGlow); ctx.fillRect(7, 12, 3, 4 + bGlow);
-                ctx.fillStyle = '#0f172a'; ctx.fillRect(-8, -2, 16, 16);
-                ctx.fillStyle = '#f43f5e'; ctx.fillRect(-1, 0, 2, 12);
-                ctx.fillStyle = '#1e293b'; ctx.fillRect(-8, -18, 16, 14);
-                ctx.fillStyle = '#22d3ee'; ctx.fillRect(-6, -14, 12, 4);
+                // 🏎️ [초호화] 사이버 네온 레이서 (Cyber Neon Racer)
+                ctx.save();
+                ctx.translate(0, -bobbing);
+                let t = Date.now() * 0.003;
+
+                // 1. 초고속 네온 잔상 아우라 & 디지털 라인
+                let aura = ctx.createRadialGradient(0, 0, 5, 0, 0, 44);
+                aura.addColorStop(0, 'rgba(236, 72, 153, 0.75)');
+                aura.addColorStop(0.5, 'rgba(6, 182, 212, 0.4)');
+                aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = aura;
+                ctx.beginPath(); ctx.arc(0, 0, 44, 0, Math.PI * 2); ctx.fill();
+
+                // 2. 카본 네온 레이싱 슈트 (마젠타 & 시안 듀얼 스트라이프)
+                ctx.fillStyle = '#09090b'; ctx.fillRect(-10, -1, 20, 19);
+                ctx.strokeStyle = '#ec4899'; ctx.lineWidth = 1.8; ctx.strokeRect(-10, -1, 20, 19);
+                // 센터 시안 레이싱 스트라이프
+                ctx.fillStyle = '#06b6d4'; ctx.fillRect(-2, -1, 4, 19);
+
+                // 3. 등 뒤의 듀얼 플라즈마 제트 부스터 (불꽃 분사)
+                ctx.fillStyle = '#3f3f46';
+                ctx.fillRect(-14, 2, 4, 10); ctx.fillRect(10, 2, 4, 10);
+                // 분사 화염
+                let flameLen = 6 + Math.sin(t * 8) * 4;
+                ctx.fillStyle = '#38bdf8';
+                ctx.fillRect(-13, 12, 2, flameLen); ctx.fillRect(11, 12, 2, flameLen);
+
+                // 4. 에어로다이내믹 레이싱 헬멧 & 디지털 HUD 바이저
+                ctx.fillStyle = '#18181b'; ctx.fillRect(-8, -16, 16, 14);
+                ctx.strokeStyle = '#06b6d4'; ctx.lineWidth = 1.8; ctx.strokeRect(-8, -16, 16, 14);
+                // 발광 바이저
+                let visGrad = ctx.createLinearGradient(-6, -11, 6, -11);
+                visGrad.addColorStop(0, '#ec4899'); visGrad.addColorStop(1, '#06b6d4');
+                ctx.fillStyle = visGrad; ctx.fillRect(-6, -12, 12, 4.5);
                 ctx.restore();
             } else if (useSkin === 'western_swordsman') {
                 
@@ -38071,13 +38810,13 @@ window.renderIndexGrid = renderIndexGrid;
         window.updatePirateLuckyShopUI = updatePirateLuckyShopUI;
 
         function buyPirateLuckyPieces(count, cost) {
-            if (gold < cost) {
-                alert('❌ 골드가 부족합니다!\n(필요: ' + cost.toLocaleString() + '원 / 보유: ' + gold.toLocaleString() + '원)');
+            if (money < cost) {
+                alert('❌ 골드가 부족합니다!\n(필요: ' + cost.toLocaleString() + '원 / 보유: ' + money.toLocaleString() + '원)');
                 return;
             }
 
-            gold -= cost;
-            updateGoldDisplay();
+            money -= cost;
+            updateMoney();
 
             let gained = {};
             let newlyUnlocked = [];
@@ -38633,10 +39372,47 @@ window.renderIndexGrid = renderIndexGrid;
             <div style="background: rgba(15, 23, 42, 0.7); border: 2px dashed #eab308; border-radius: 16px; padding: 18px 12px; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center;">
                 <div style="font-size: 16px; font-weight: 900; color: #fde047; margin-bottom: 12px; letter-spacing: 0.5px;">infinity lucky block</div>
 
-                <div style="position: relative; width: 170px; height: 80px; display: flex; align-items: center; justify-content: center;">
-                    <div style="position: absolute; left: 0; font-size: 40px; filter: drop-shadow(0 0 8px #facc15);">🪽</div>
-                    <div style="width: 68px; height: 68px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fef08a, #eab308, #ca8a04); border: 3px solid #b45309; display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 950; color: #166534; box-shadow: 0 0 20px rgba(250, 204, 21, 0.75); z-index: 2;">$</div>
-                    <div style="position: absolute; right: 0; font-size: 40px; transform: scaleX(-1); filter: drop-shadow(0 0 8px #facc15);">🪽</div>
+                <!-- 🪽 [스케치 충실 구현] 3단 황금 깃털 날개짓 infinity lucky block -->
+                <div style="position: relative; width: 250px; height: 96px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                    <!-- 좌측 3단 황금 깃털 날개 -->
+                    <div style="position: absolute; left: 0; transform-origin: 95% 65%; animation: wingFlapLeft 1.25s ease-in-out infinite;">
+                        <svg width="86" height="62" viewBox="0 0 86 62">
+                            <defs>
+                                <linearGradient id="infWingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#ffffff"/>
+                                    <stop offset="30%" stop-color="#fef08a"/>
+                                    <stop offset="70%" stop-color="#facc15"/>
+                                    <stop offset="100%" stop-color="#ca8a04"/>
+                                </linearGradient>
+                                <filter id="infWingGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#facc15" flood-opacity="0.9"/>
+                                </filter>
+                            </defs>
+                            <!-- 1단: 상단 주 깃털 (스케치처럼 유려하게 위로 뻗어나가는 곡선) -->
+                            <path d="M 82 43 C 66 30, 40 14, 6 4 C 2 16, 20 34, 54 44 Z" fill="url(#infWingGrad)" stroke="#b45309" stroke-width="1.8" filter="url(#infWingGlow)"/>
+                            <path d="M 74 38 C 54 26, 28 16, 12 8" fill="none" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" opacity="0.85"/>
+                            <!-- 2단: 중단 깃털 -->
+                            <path d="M 82 46 C 62 39, 32 30, 16 25 C 18 39, 44 49, 70 50 Z" fill="url(#infWingGrad)" stroke="#b45309" stroke-width="1.8" filter="url(#infWingGlow)"/>
+                            <!-- 3단: 하단 보조 깃털 -->
+                            <path d="M 82 49 C 66 50, 46 47, 30 43 C 36 53, 58 56, 78 52 Z" fill="url(#infWingGrad)" stroke="#b45309" stroke-width="1.8" filter="url(#infWingGlow)"/>
+                        </svg>
+                    </div>
+
+                    <!-- 중앙 입체 황금 $ 코인 (스케치 그대로) -->
+                    <div style="width: 78px; height: 78px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fffbeb, #fde047 40%, #eab308 75%, #a16207 100%); border: 3.5px solid #ca8a04; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 950; color: #15803d; box-shadow: 0 0 28px rgba(250, 204, 21, 0.9), inset 0 3px 6px rgba(255,255,255,0.85); z-index: 2; position: relative; text-shadow: 0 1px 2px rgba(255,255,255,0.6);">
+                        $
+                        <div style="position: absolute; inset: 4px; border: 1.5px dashed rgba(202, 138, 4, 0.7); border-radius: 50%; pointer-events: none;"></div>
+                    </div>
+
+                    <!-- 우측 3단 황금 깃털 날개 (대칭 펄럭임) -->
+                    <div style="position: absolute; right: 0; transform-origin: 95% 65%; animation: wingFlapRight 1.25s ease-in-out infinite;">
+                        <svg width="86" height="62" viewBox="0 0 86 62">
+                            <path d="M 82 43 C 66 30, 40 14, 6 4 C 2 16, 20 34, 54 44 Z" fill="url(#infWingGrad)" stroke="#b45309" stroke-width="1.8" filter="url(#infWingGlow)"/>
+                            <path d="M 74 38 C 54 26, 28 16, 12 8" fill="none" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" opacity="0.85"/>
+                            <path d="M 82 46 C 62 39, 32 30, 16 25 C 18 39, 44 49, 70 50 Z" fill="url(#infWingGrad)" stroke="#b45309" stroke-width="1.8" filter="url(#infWingGlow)"/>
+                            <path d="M 82 49 C 66 50, 46 47, 30 43 C 36 53, 58 56, 78 52 Z" fill="url(#infWingGrad)" stroke="#b45309" stroke-width="1.8" filter="url(#infWingGlow)"/>
+                        </svg>
+                    </div>
                 </div>
 
                 <div style="margin-top: 10px; font-size: 11px; color: #94a3b8; line-height: 1.4;">
