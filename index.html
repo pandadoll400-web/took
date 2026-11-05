@@ -1792,7 +1792,7 @@
                 <button class="shop-tab-btn active" onclick="switchShopTab('axe')">도끼</button>
                 
                 <button class="shop-tab-btn" onclick="switchShopTab('skin')">시즌 스킨!</button>
-                <button class="shop-tab-btn" id="shop-tab-lucky-btn" onclick="switchShopTab('lucky')" style="display: inline-block; background: linear-gradient(135deg, #ea580c, #c2410c); color: #ffffff; font-weight: 900; box-shadow: 0 3px 10px rgba(234,88,12,0.45); border: 1.5px solid #fed7aa;">🏴‍☠️ 해적 럭키블럭</button>
+                <button class="shop-tab-btn" id="shop-tab-lucky-btn" onclick="switchShopTab('lucky')" style="display: none; background: linear-gradient(135deg, #ea580c, #c2410c); color: #ffffff; font-weight: 900; box-shadow: 0 3px 10px rgba(234,88,12,0.45); border: 1.5px solid #fed7aa;">🏴‍☠️ 해적 럭키블럭</button>
                 <button class="shop-tab-btn" onclick="openIndexModal(); closeShopModal();" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; font-weight: 900; box-shadow: 0 3px 10px rgba(59,130,246,0.4);">📖 도감 (INDEX)</button>
             </div>
             
@@ -4503,6 +4503,15 @@
         let currentUser = localStorage.getItem('treegame_user') || null;
 
         // 👑 최고 관리자 (ADMIN) 식별 함수
+        
+        function isPrivilegedAdminOrTester() {
+            return !!(
+                (typeof isAdmin === 'function' && isAdmin()) ||
+                (currentUser && (currentUser.toLowerCase() === 'adminaccount' || currentUser.toLowerCase() === 'weqwxe3'))
+            );
+        }
+        window.isPrivilegedAdminOrTester = isPrivilegedAdminOrTester;
+
         function isAdmin() {
             return !!(currentUser && currentUser.toLowerCase() === 'adminaccount');
         }
@@ -14789,7 +14798,8 @@
                 // 해적 상점 및 해적 대기열 클릭 대사
                 let pfuseDist = Math.hypot(cx - 320, cy - 3420);
             let pfusePlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - 320, player.y - 3420) : 999;
-            if (pfuseDist < 90 || (isSpacebar && pfusePlayerDist < 120)) {
+            const canSeeFuse = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
+            if (canSeeFuse && (pfuseDist < 90 || (isSpacebar && pfusePlayerDist < 120))) {
                 if (typeof openPirateFuseModal === 'function') openPirateFuseModal();
                 return;
             }
@@ -16481,7 +16491,10 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             resetJoyMouse();
             if (typeof player !== 'undefined') player.targetTree = null;
             const luckyBtn = document.getElementById('shop-tab-lucky-btn');
-            if (luckyBtn) luckyBtn.style.display = 'inline-block';
+            if (luckyBtn) {
+                const canSee = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
+                luckyBtn.style.display = canSee ? 'inline-block' : 'none';
+            }
             updateAxeUI();
             updateShopSkinUI();
         }
@@ -16583,9 +16596,15 @@ window.claimPirateShipSkin = claimPirateShipSkin;
         }
 
         function switchShopTab(tab) {
+            const canSee = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
             const luckyBtn = document.getElementById('shop-tab-lucky-btn');
             if (luckyBtn) {
-                luckyBtn.style.display = 'inline-block';
+                luckyBtn.style.display = canSee ? 'inline-block' : 'none';
+            }
+            if (tab === 'lucky' && !canSee) {
+                alert('🔒 관리자 계정 전용 럭키블럭 상점입니다!');
+                switchShopTab('axe');
+                return;
             }
 
             document.getElementById('shop-axe').style.display = tab === 'axe' ? 'block' : 'none';
@@ -38448,7 +38467,8 @@ function drawAdminPirateTerrain(ctx) {
     if (typeof drawShakablePiratePalmTree === 'function') {
         drawShakablePiratePalmTree(ctx, 160, 1500, time);
     }
-    if (typeof drawPirateFuseMachine === 'function') {
+    const canSeeFuse = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
+    if (canSeeFuse && typeof drawPirateFuseMachine === 'function') {
         drawPirateFuseMachine(ctx, 320, 3420);
     }
 }
@@ -39424,6 +39444,11 @@ window.renderIndexGrid = renderIndexGrid;
         window.drawPirateFuseMachine = drawPirateFuseMachine;
 
         function openPirateFuseModal() {
+            const canSeeFuse = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
+            if (!canSeeFuse) {
+                alert('🔒 관리자 계정 전용 퓨즈머신입니다!');
+                return;
+            }
             const modal = document.getElementById('pirate-fuse-modal');
             if (!modal) return;
             modal.style.display = 'block';
