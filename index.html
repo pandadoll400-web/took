@@ -39545,35 +39545,6 @@ window.renderIndexGrid = renderIndexGrid;
             if (!modal) return;
             modal.style.display = 'block';
             updatePirateFuseSlotsUI();
-
-            // 🎲 [유저 요청] 확률표 클릭 안해도 스킨 사진과 몇%인지 상시 표시
-            const oddsGrid = document.getElementById('pfuse-odds-live-grid');
-            if (oddsGrid) {
-                oddsGrid.innerHTML = '';
-                pirateFuseSkinsData.forEach(s => {
-                    const card = document.createElement('div');
-                    card.style.cssText = 'background: rgba(30, 41, 59, 0.85); border: 1.5px solid #ca8a04; border-radius: 8px; padding: 5px 2px; display: flex; flex-direction: column; align-items: center; text-align: center;';
-                    card.innerHTML = `
-                        <div style="background: #ea580c; color: white; font-size: 9px; font-weight: 950; padding: 1px 5px; border-radius: 6px; margin-bottom: 3px;">
-                            ${s.weight}%
-                        </div>
-                        <canvas id="pfuse-prev-${s.id}" width="46" height="58" style="background: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 3px;"></canvas>
-                        <div style="font-size: 9.5px; font-weight: 900; color: #ffffff; line-height: 1.1; word-break: keep-all;">
-                            ${s.name}
-                        </div>
-                    `;
-                    oddsGrid.appendChild(card);
-                });
-
-                // 캔버스에 실시간 고품질 스킨 일러스트 렌더링
-                setTimeout(() => {
-                    pirateFuseSkinsData.forEach(s => {
-                        if (typeof drawPreviewCanvas === 'function') {
-                            drawPreviewCanvas(`pfuse-prev-${s.id}`, s.id);
-                        }
-                    });
-                }, 30);
-            }
         }
         window.openPirateFuseModal = openPirateFuseModal;
 
@@ -39605,6 +39576,56 @@ window.renderIndexGrid = renderIndexGrid;
             updatePirateFuseSlotsUI();
         }
         window.insertPirateFuseMaterial = insertPirateFuseMaterial;
+
+        
+        // 🎲 [유저 요청] 아이템을 슬롯에 등록했을 때만 스킨 사진과 확률(%)을 군더더기 글씨 없이 깔끔하게 노출
+        function updatePirateFuseOddsUI() {
+            const oddsGrid = document.getElementById('pfuse-odds-live-grid');
+            if (!oddsGrid) return;
+
+            const filledCount = window.pirateFuseSlots.filter(s => s !== null).length;
+            if (filledCount === 0) {
+                // 아이템을 아직 등록하지 않은 경우
+                oddsGrid.style.display = 'block';
+                oddsGrid.innerHTML = `
+                    <div style="padding: 16px 10px; text-align: center; color: #cbd5e1; font-size: 12px; font-weight: 900; letter-spacing: -0.2px;">
+                        ⚓ 슬롯에 해적 재료를 등록하면 확률표가 표시됩니다.
+                    </div>
+                `;
+                return;
+            }
+
+            // 아이템을 슬롯에 넣었을 때: 군더더기 글씨 없이 스킨 사진과 확률(%)만 깔끔하게 표시
+            oddsGrid.style.display = 'grid';
+            oddsGrid.style.gridTemplateColumns = 'repeat(5, 1fr)';
+            oddsGrid.style.gap = '6px';
+            oddsGrid.innerHTML = '';
+
+            pirateFuseSkinsData.forEach(s => {
+                const card = document.createElement('div');
+                card.style.cssText = 'background: rgba(30, 41, 59, 0.85); border: 1.5px solid #ca8a04; border-radius: 8px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; text-align: center;';
+                card.innerHTML = `
+                    <div style="background: #ea580c; color: white; font-size: 9.5px; font-weight: 950; padding: 1px 6px; border-radius: 6px; margin-bottom: 3px;">
+                        ${s.weight}%
+                    </div>
+                    <canvas id="pfuse-prev-${s.id}" width="46" height="58" style="background: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 3px;"></canvas>
+                    <div style="font-size: 9.5px; font-weight: 900; color: #ffffff; line-height: 1.1; word-break: keep-all;">
+                        ${s.name}
+                    </div>
+                `;
+                oddsGrid.appendChild(card);
+            });
+
+            // 스킨 캔버스 실시간 렌더링
+            setTimeout(() => {
+                pirateFuseSkinsData.forEach(s => {
+                    if (typeof drawPreviewCanvas === 'function') {
+                        drawPreviewCanvas(`pfuse-prev-${s.id}`, s.id);
+                    }
+                });
+            }, 30);
+        }
+        window.updatePirateFuseOddsUI = updatePirateFuseOddsUI;
 
         function updatePirateFuseSlotsUI() {
             for (let i = 0; i < 3; i++) {
@@ -39649,8 +39670,9 @@ window.renderIndexGrid = renderIndexGrid;
                     matListEl.innerHTML = '<div style="font-size: 11px; color: #94a3b8; padding: 6px;">투입 가능한 해적 전리품이 없습니다. (해적 낚시나 상점 럭키블록에서 획득)</div>';
                 }
             }
-        }
-        window.updatePirateFuseSlotsUI = updatePirateFuseSlotsUI;
+        
+            if (typeof updatePirateFuseOddsUI === "function") updatePirateFuseOddsUI();
+        }window.updatePirateFuseSlotsUI = updatePirateFuseSlotsUI;
 
         function showPirateFuseOddsModal() {
             alert('🏴‍☠️ [해적 퓨즈머신 획득 확률표]\n\n💰 황금 보물 해적: 35%\n🧭 폭풍의 항해사: 30%\n💀 저주받은 스켈레톤: 20%\n🔱 심해 포세이돈: 10%\n🐙 데비 존스: 5% (초희귀!)\n\n3개 슬롯을 모두 채우고 [융합하기]를 누르면 위 5개 스킨 중 1종을 무작위로 획득합니다!');
@@ -40133,13 +40155,7 @@ window.renderIndexGrid = renderIndexGrid;
 
             <!-- 🎲 [유저 요청 완벽 반영] 확률표를 클릭하지 않아도 스킨 사진과 몇%인지 상시 노출되는 그리드 -->
             <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #ea580c; border-radius: 12px; padding: 10px; margin-bottom: 14px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(249, 115, 22, 0.3); padding-bottom: 4px;">
-                    <span style="font-size: 12.5px; font-weight: 950; color: #fde047;">🎲 융합 획득 가능 스킨 (5종 실시간 확률표)</span>
-                    <span style="font-size: 10.5px; color: #cbd5e1;">조합 성공 시 1종 획득</span>
-                </div>
-                <div id="pfuse-odds-live-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;">
-                    <!-- JS에서 캔버스 프리뷰와 함께 실시간 렌더링 -->
-                </div>
+                <div id="pfuse-odds-live-grid"></div>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
