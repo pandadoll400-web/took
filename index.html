@@ -614,24 +614,24 @@
             50% { transform: rotate(-14deg) translateY(-6px) scale(1.05); }
         }
         @keyframes wingFlapRight {
-            0%, 100% { transform: scaleX(-1) rotate(0deg) translateY(0px) scale(1); }
-            50% { transform: scaleX(-1) rotate(-14deg) translateY(-6px) scale(1.05); }
+            0%, 100% { transform: rotate(0deg) translateY(0px) scale(1); }
+            50% { transform: rotate(14deg) translateY(-6px) scale(1.05); }
         }
         @keyframes pirateWingFlapLeft {
             0%, 100% { transform: rotate(0deg) translateY(0px) scale(1); }
             50% { transform: rotate(-16deg) translateY(-8px) scale(1.06); }
         }
         @keyframes pirateWingFlapRight {
-            0%, 100% { transform: scaleX(-1) rotate(0deg) translateY(0px) scale(1); }
-            50% { transform: scaleX(-1) rotate(-16deg) translateY(-8px) scale(1.06); }
+            0%, 100% { transform: rotate(0deg) translateY(0px) scale(1); }
+            50% { transform: rotate(16deg) translateY(-8px) scale(1.06); }
         }
         @keyframes angelFlapLeft {
             0%, 100% { transform: rotate(0deg) translateY(0px); }
             50% { transform: rotate(-12deg) translateY(-5px); }
         }
         @keyframes devilFlapRight {
-            0%, 100% { transform: scaleX(-1) rotate(0deg) translateY(0px); }
-            50% { transform: scaleX(-1) rotate(-15deg) translateY(-6px); }
+            0%, 100% { transform: rotate(0deg) translateY(0px); }
+            50% { transform: rotate(15deg) translateY(-6px); }
         }
 
     </style>
@@ -1851,57 +1851,120 @@
             <!-- 👑 [ADMIN 전용] 천악 럭키블록 상점 섹션 -->
             <div id="shop-lucky" style="display: none; padding-top: 6px;">
                 <div style="background: radial-gradient(circle at top, #2c1810, #0f172a); border: 2.5px solid #f97316; border-radius: 16px; padding: 18px 14px; text-align: center; margin: 10px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.7), 0 0 20px rgba(249, 115, 22, 0.35);">
-                    <!-- 🏴‍☠️ [스케치 충실 구현] 치솟은 곡선 날개 + 꽂힌 칼 + 해적 안대 해적 럭키블록 -->
-                    <div style="position: relative; width: 245px; height: 110px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center;">
-                        <!-- 좌측 해적 곡선 윙 -->
-                        <div style="position: absolute; left: 0; transform-origin: 92% 70%; animation: pirateWingFlapLeft 1.3s ease-in-out infinite;">
-                            <svg width="84" height="66" viewBox="0 0 84 66">
+                    <!-- 🏴‍☠️ [스케치 충실 구현] 치솟은 곡선 날개 + 꽂힌 칼 + 해적 안대 해적 럭키블록 (날개 간격 0px 완벽 밀착 + 고급 원목 & 놋쇠 큐브) -->
+                    <div style="position: relative; width: 250px; height: 116px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center;">
+                        <!-- 좌측 해적 곡선 윙 (큐브 좌측면에 0px 완벽 밀착) -->
+                        <div style="position: absolute; left: 0; width: 84px; height: 68px; transform-origin: 96% 72%; animation: pirateWingFlapLeft 1.3s ease-in-out infinite;">
+                            <svg width="84" height="68" viewBox="0 0 84 68" style="overflow: visible;">
                                 <defs>
-                                    <linearGradient id="pWingGradL" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <linearGradient id="pWingGradL_s" x1="0%" y1="0%" x2="100%" y2="100%">
                                         <stop offset="0%" stop-color="#fb923c"/>
-                                        <stop offset="50%" stop-color="#c2410c"/>
+                                        <stop offset="40%" stop-color="#ea580c"/>
+                                        <stop offset="80%" stop-color="#9a3412"/>
                                         <stop offset="100%" stop-color="#431407"/>
                                     </linearGradient>
-                                    <filter id="pWingGlowL" x="-20%" y="-20%" width="140%" height="140%">
+                                    <filter id="pWingGlow_s" x="-30%" y="-30%" width="160%" height="160%">
                                         <feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#f97316" flood-opacity="0.85"/>
                                     </filter>
                                 </defs>
-                                <path d="M 80 50 C 58 44, 32 28, 5 7 C 14 26, 30 38, 48 40 C 35 50, 52 59, 72 54 Z" fill="url(#pWingGradL)" stroke="#fb923c" stroke-width="2" filter="url(#pWingGlowL)"/>
-                                <path d="M 80 50 C 52 35, 25 21, 8 9" fill="none" stroke="#fed7aa" stroke-width="1.8" stroke-linecap="round"/>
+                                <path d="M 82 52 C 58 45, 28 28, 4 6 C 12 26, 28 40, 48 42 C 34 52, 52 62, 74 56 Z" fill="url(#pWingGradL_s)" stroke="#fed7aa" stroke-width="1.8" filter="url(#pWingGlow_s)"/>
+                                <path d="M 82 52 C 54 36, 26 21, 8 8" fill="none" stroke="#fef08a" stroke-width="1.6" stroke-linecap="round" opacity="0.9"/>
+                                <path d="M 64 50 C 44 40, 28 32, 16 22" fill="none" stroke="#fed7aa" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
                             </svg>
                         </div>
 
-                        <!-- 중앙 해적 큐브 박스 (상단 대각선 칼 꽂힘 + 해적 안대 & 맹렬한 눈빛) -->
-                        <div style="width: 78px; height: 74px; background: linear-gradient(135deg, #78350f, #451a03); border: 3px solid #fb923c; border-radius: 14px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 0 24px rgba(249,115,22,0.75), inset 0 2px 4px rgba(254,215,170,0.3); z-index: 2;">
-                            <!-- 꽂힌 해적 칼 -->
-                            <div style="position: absolute; top: -30px; left: 24px; transform: rotate(-24deg); filter: drop-shadow(0 3px 6px rgba(0,0,0,0.85));">
-                                <svg width="30" height="40" viewBox="0 0 30 40">
-                                    <path d="M 15 0 C 20 11, 18 23, 14 27 L 12 27 C 9 21, 10 11, 15 0 Z" fill="#f1f5f9" stroke="#475569" stroke-width="1.2"/>
-                                    <rect x="7" y="26" width="14" height="4" rx="2" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
-                                    <rect x="12" y="30" width="4" height="6" fill="#78350f"/>
-                                    <circle cx="14" cy="38" r="2.5" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+                        <!-- 📦 [스케치 100% 충실] 중앙 해적 큐브 박스 (고급 원목 + 모서리 놋쇠 브라켓 + 대각선 꽂힌 장검 + 해적 안대 & 맹렬한 눈빛) -->
+                        <div style="position: relative; width: 82px; height: 78px; background: linear-gradient(145deg, #451a03 0%, #2e1003 50%, #1a0802 100%); border: 2.5px solid #ea580c; border-radius: 8px; box-shadow: 0 0 24px rgba(249,115,22,0.7), inset 0 0 14px rgba(0,0,0,0.8), inset 0 2px 4px rgba(254,215,170,0.3); z-index: 2;">
+                            <!-- 🗡️ 상단 대각선으로 깊숙이 꽂힌 해적 장검 (스케치 그대로) -->
+                            <div style="position: absolute; top: -33px; left: 24px; transform: rotate(-20deg); filter: drop-shadow(0 3px 6px rgba(0,0,0,0.9)); z-index: 3;">
+                                <svg width="34" height="42" viewBox="0 0 34 42">
+                                    <path d="M 16 0 C 22 10, 20 22, 15 28 L 13 28 C 9 22, 11 10, 16 0 Z" fill="url(#bladeGradPirate)" stroke="#cbd5e1" stroke-width="1"/>
+                                    <path d="M 15 2 C 17 12, 16 22, 14 27" stroke="#ffffff" stroke-width="1" opacity="0.8"/>
+                                    <path d="M 6 26 C 6 22, 22 22, 24 26 C 24 31, 20 33, 15 33 C 12 33, 6 30, 6 26 Z" fill="#eab308" stroke="#78350f" stroke-width="1"/>
+                                    <rect x="13" y="27" width="4" height="8" rx="1" fill="#1c1917"/>
+                                    <line x1="13" y1="29" x2="17" y2="29" stroke="#facc15" stroke-width="0.8"/>
+                                    <line x1="13" y1="31" x2="17" y2="31" stroke="#facc15" stroke-width="0.8"/>
+                                    <line x1="13" y1="33" x2="17" y2="33" stroke="#facc15" stroke-width="0.8"/>
+                                    <circle cx="15" cy="37" r="3" fill="#facc15" stroke="#78350f" stroke-width="1"/>
+                                    <circle cx="14" cy="36" r="1" fill="#ffffff" opacity="0.8"/>
+                                    <defs>
+                                        <linearGradient id="bladeGradPirate" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="#ffffff"/>
+                                            <stop offset="40%" stop-color="#cbd5e1"/>
+                                            <stop offset="80%" stop-color="#64748b"/>
+                                            <stop offset="100%" stop-color="#334155"/>
+                                        </linearGradient>
+                                    </defs>
                                 </svg>
                             </div>
-                            <!-- 해적 안대 & 빗금 눈빛 (스케치 그대로) -->
-                            <div style="position: relative; width: 54px; height: 30px; display: flex; align-items: center; justify-content: space-around;">
-                                <div style="width: 14px; height: 14px; background: #ffffff; border-radius: 50%; border: 2px solid #000; position: relative; box-shadow: 0 0 6px rgba(255,255,255,0.8);">
-                                    <div style="position: absolute; top: 3px; left: 3px; width: 6px; height: 6px; background: #ef4444; border-radius: 50%;"></div>
+
+                            <!-- 💥 칼이 꽂힌 원목 충격 균열 파편 -->
+                            <div style="position: absolute; top: -2px; left: 32px; width: 14px; height: 5px; background: rgba(0,0,0,0.6); border-radius: 50%; box-shadow: 0 0 6px #ea580c;"></div>
+
+                            <!-- 🔩 모서리 4방향 고전 해적 놋쇠 브라켓 (황금 리벳 장식) -->
+                            <div style="position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-top: 2.5px solid #facc15; border-left: 2.5px solid #facc15; border-top-left-radius: 4px;">
+                                <div style="position: absolute; top: 1px; left: 1px; width: 3px; height: 3px; background: #fef08a; border-radius: 50%;"></div>
+                            </div>
+                            <div style="position: absolute; top: 2px; right: 2px; width: 10px; height: 10px; border-top: 2.5px solid #facc15; border-right: 2.5px solid #facc15; border-top-right-radius: 4px;">
+                                <div style="position: absolute; top: 1px; right: 1px; width: 3px; height: 3px; background: #fef08a; border-radius: 50%;"></div>
+                            </div>
+                            <div style="position: absolute; bottom: 2px; left: 2px; width: 10px; height: 10px; border-bottom: 2.5px solid #facc15; border-left: 2.5px solid #facc15; border-bottom-left-radius: 4px;">
+                                <div style="position: absolute; bottom: 1px; left: 1px; width: 3px; height: 3px; background: #fef08a; border-radius: 50%;"></div>
+                            </div>
+                            <div style="position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; border-bottom: 2.5px solid #facc15; border-right: 2.5px solid #facc15; border-bottom-right-radius: 4px;">
+                                <div style="position: absolute; bottom: 1px; right: 1px; width: 3px; height: 3px; background: #fef08a; border-radius: 50%;"></div>
+                            </div>
+
+                            <!-- 🏴‍☠️ [스케치 충실 구현] 대각선 가죽 끈 + 우측 해적 안대 + 좌측 맹렬한 해적 눈빛 -->
+                            <div style="position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 6px;">
+                                <div style="position: absolute; top: -10px; left: 6px; width: 95px; height: 4px; background: linear-gradient(90deg, #1c1917, #292524, #1c1917); border-top: 0.8px solid #78716c; border-bottom: 0.8px solid #000; transform: rotate(26deg); box-shadow: 0 2px 4px rgba(0,0,0,0.85); z-index: 2;"></div>
+
+                                <!-- 좌측: 맹렬한 황금빛 해적 눈빛 (스케치의 날카로운 눈빛) -->
+                                <div style="position: absolute; top: 32px; left: 16px; width: 18px; height: 14px; z-index: 3;">
+                                    <svg width="18" height="14" viewBox="0 0 18 14">
+                                        <path d="M 1 4 C 5 1, 13 1, 17 6 C 13 10, 5 9, 1 4 Z" fill="#1e1b4b" stroke="#000000" stroke-width="1.2"/>
+                                        <ellipse cx="9" cy="5" rx="4" ry="4" fill="#facc15"/>
+                                        <ellipse cx="9" cy="5" rx="2" ry="3" fill="#dc2626"/>
+                                        <circle cx="8" cy="4" r="1" fill="#ffffff"/>
+                                    </svg>
                                 </div>
-                                <div style="position: relative; width: 20px; height: 20px;">
-                                    <div style="position: absolute; top: -14px; left: -14px; width: 48px; height: 2px; background: #1c1917; transform: rotate(-28deg); box-shadow: 0 1px 2px #000;"></div>
-                                    <div style="width: 18px; height: 18px; background: #1c1917; border: 1.8px solid #78716c; border-radius: 50% 50% 60% 60%; box-shadow: 0 3px 6px rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; color: #fde047; font-size: 10px; font-weight: 950;">☠️</div>
+
+                                <!-- 우측: [스케치 100% 동일] 날렵하고 큼직한 해적 안대 + 황금 해골 문양 -->
+                                <div style="position: absolute; top: 22px; right: 11px; width: 28px; height: 28px; z-index: 3;">
+                                    <svg width="28" height="28" viewBox="0 0 28 28">
+                                        <defs>
+                                            <linearGradient id="patchGradPirate" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" stop-color="#27272a"/>
+                                                <stop offset="60%" stop-color="#18181b"/>
+                                                <stop offset="100%" stop-color="#09090b"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <path d="M 2 4 C 10 2, 22 4, 26 10 C 27 18, 20 25, 12 26 C 5 26, 1 18, 2 4 Z" fill="url(#patchGradPirate)" stroke="#ca8a04" stroke-width="1.3" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.85))"/>
+                                        <path d="M 4 6 C 10 4, 20 6, 24 11 C 24 17, 18 23, 12 24 C 7 24, 3 17, 4 6 Z" fill="none" stroke="#71717a" stroke-width="0.8" stroke-dasharray="2,2"/>
+                                        <circle cx="14" cy="13" r="3.5" fill="#fef08a"/>
+                                        <rect x="12" y="16.5" width="4" height="2.2" rx="0.5" fill="#fef08a"/>
+                                        <circle cx="12.5" cy="13" r="0.8" fill="#18181b"/>
+                                        <circle cx="15.5" cy="13" r="0.8" fill="#18181b"/>
+                                        <path d="M 10 18 L 18 21 M 18 18 L 10 21" stroke="#fef08a" stroke-width="0.9" stroke-linecap="round"/>
+                                    </svg>
                                 </div>
+
+                                <div style="position: absolute; bottom: 8px; left: 24px; width: 34px; height: 2px; background: rgba(0,0,0,0.5); border-radius: 1px;"></div>
                             </div>
                         </div>
 
-                        <!-- 우측 해적 곡선 윙 (대칭 펄럭임) -->
-                        <div style="position: absolute; right: 0; transform-origin: 92% 70%; animation: pirateWingFlapRight 1.3s ease-in-out infinite;">
-                            <svg width="84" height="66" viewBox="0 0 84 66">
-                                <path d="M 80 50 C 58 44, 32 28, 5 7 C 14 26, 30 38, 48 40 C 35 50, 52 59, 72 54 Z" fill="url(#pWingGradL)" stroke="#fb923c" stroke-width="2" filter="url(#pWingGlowL)"/>
-                                <path d="M 80 50 C 52 35, 25 21, 8 9" fill="none" stroke="#fed7aa" stroke-width="1.8" stroke-linecap="round"/>
+                        <!-- 🪽 우측 해적 곡선 윙 (좌측과 완벽 대칭 & 큐브 우측면에 0px 완벽 밀착) -->
+                        <div style="position: absolute; right: 0; width: 84px; height: 68px; transform-origin: 4% 72%; animation: pirateWingFlapRight 1.3s ease-in-out infinite;">
+                            <svg width="84" height="68" viewBox="0 0 84 68" style="overflow: visible;">
+                                <g transform="translate(84, 0) scale(-1, 1)">
+                                    <path d="M 82 52 C 58 45, 28 28, 4 6 C 12 26, 28 40, 48 42 C 34 52, 52 62, 74 56 Z" fill="url(#pWingGradL_s)" stroke="#fed7aa" stroke-width="1.8" filter="url(#pWingGlow_s)"/>
+                                    <path d="M 82 52 C 54 36, 26 21, 8 8" fill="none" stroke="#fef08a" stroke-width="1.6" stroke-linecap="round" opacity="0.9"/>
+                                    <path d="M 64 50 C 44 40, 28 32, 16 22" fill="none" stroke="#fed7aa" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+                                </g>
                             </svg>
                         </div>
                     </div>
+</div>
 
                     <div style="font-size: 14px; font-weight: 900; color: #fed7aa; margin-bottom: 12px;">
                         조각을 30개 모으면 해당 전설 스킨이 자동으로 잠금 해제됩니다!
@@ -17431,57 +17494,120 @@ window.claimPirateShipSkin = claimPirateShipSkin;
 
             luckySec.innerHTML = `
                 <div style="background: radial-gradient(circle at top, #2c1810, #0f172a); border: 2.5px solid #f97316; border-radius: 16px; padding: 18px 14px; text-align: center; margin: 10px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.7), 0 0 20px rgba(249, 115, 22, 0.35);">
-                    <!-- 🏴‍☠️ [스케치 충실 구현] 치솟은 곡선 날개 + 꽂힌 칼 + 해적 안대 해적 럭키블록 -->
-                    <div style="position: relative; width: 245px; height: 110px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center;">
-                        <!-- 좌측 해적 곡선 윙 -->
-                        <div style="position: absolute; left: 0; transform-origin: 92% 70%; animation: pirateWingFlapLeft 1.3s ease-in-out infinite;">
-                            <svg width="84" height="66" viewBox="0 0 84 66">
+                    <!-- 🏴‍☠️ [스케치 충실 구현] 치솟은 곡선 날개 + 꽂힌 칼 + 해적 안대 해적 럭키블록 (날개 간격 0px 완벽 밀착 + 고급 원목 & 놋쇠 큐브) -->
+                    <div style="position: relative; width: 250px; height: 116px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center;">
+                        <!-- 좌측 해적 곡선 윙 (큐브 좌측면에 0px 완벽 밀착) -->
+                        <div style="position: absolute; left: 0; width: 84px; height: 68px; transform-origin: 96% 72%; animation: pirateWingFlapLeft 1.3s ease-in-out infinite;">
+                            <svg width="84" height="68" viewBox="0 0 84 68" style="overflow: visible;">
                                 <defs>
                                     <linearGradient id="pWingGradL_s" x1="0%" y1="0%" x2="100%" y2="100%">
                                         <stop offset="0%" stop-color="#fb923c"/>
-                                        <stop offset="50%" stop-color="#c2410c"/>
+                                        <stop offset="40%" stop-color="#ea580c"/>
+                                        <stop offset="80%" stop-color="#9a3412"/>
                                         <stop offset="100%" stop-color="#431407"/>
                                     </linearGradient>
-                                    <filter id="pWingGlowL_s" x="-20%" y="-20%" width="140%" height="140%">
+                                    <filter id="pWingGlow_s" x="-30%" y="-30%" width="160%" height="160%">
                                         <feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#f97316" flood-opacity="0.85"/>
                                     </filter>
                                 </defs>
-                                <path d="M 80 50 C 58 44, 32 28, 5 7 C 14 26, 30 38, 48 40 C 35 50, 52 59, 72 54 Z" fill="url(#pWingGradL_s)" stroke="#fb923c" stroke-width="2" filter="url(#pWingGlowL_s)"/>
-                                <path d="M 80 50 C 52 35, 25 21, 8 9" fill="none" stroke="#fed7aa" stroke-width="1.8" stroke-linecap="round"/>
+                                <path d="M 82 52 C 58 45, 28 28, 4 6 C 12 26, 28 40, 48 42 C 34 52, 52 62, 74 56 Z" fill="url(#pWingGradL_s)" stroke="#fed7aa" stroke-width="1.8" filter="url(#pWingGlow_s)"/>
+                                <path d="M 82 52 C 54 36, 26 21, 8 8" fill="none" stroke="#fef08a" stroke-width="1.6" stroke-linecap="round" opacity="0.9"/>
+                                <path d="M 64 50 C 44 40, 28 32, 16 22" fill="none" stroke="#fed7aa" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
                             </svg>
                         </div>
 
-                        <!-- 중앙 해적 큐브 박스 (꽂힌 칼 + 해적 안대) -->
-                        <div style="width: 78px; height: 74px; background: linear-gradient(135deg, #78350f, #451a03); border: 3px solid #fb923c; border-radius: 14px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 0 24px rgba(249,115,22,0.75), inset 0 2px 4px rgba(254,215,170,0.3); z-index: 2;">
-                            <!-- 꽂힌 해적 칼 -->
-                            <div style="position: absolute; top: -30px; left: 24px; transform: rotate(-24deg); filter: drop-shadow(0 3px 6px rgba(0,0,0,0.85));">
-                                <svg width="30" height="40" viewBox="0 0 30 40">
-                                    <path d="M 15 0 C 20 11, 18 23, 14 27 L 12 27 C 9 21, 10 11, 15 0 Z" fill="#f1f5f9" stroke="#475569" stroke-width="1.2"/>
-                                    <rect x="7" y="26" width="14" height="4" rx="2" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
-                                    <rect x="12" y="30" width="4" height="6" fill="#78350f"/>
-                                    <circle cx="14" cy="38" r="2.5" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+                        <!-- 📦 [스케치 100% 충실] 중앙 해적 큐브 박스 (고급 원목 + 모서리 놋쇠 브라켓 + 대각선 꽂힌 장검 + 해적 안대 & 맹렬한 눈빛) -->
+                        <div style="position: relative; width: 82px; height: 78px; background: linear-gradient(145deg, #451a03 0%, #2e1003 50%, #1a0802 100%); border: 2.5px solid #ea580c; border-radius: 8px; box-shadow: 0 0 24px rgba(249,115,22,0.7), inset 0 0 14px rgba(0,0,0,0.8), inset 0 2px 4px rgba(254,215,170,0.3); z-index: 2;">
+                            <!-- 🗡️ 상단 대각선으로 깊숙이 꽂힌 해적 장검 (스케치 그대로) -->
+                            <div style="position: absolute; top: -33px; left: 24px; transform: rotate(-20deg); filter: drop-shadow(0 3px 6px rgba(0,0,0,0.9)); z-index: 3;">
+                                <svg width="34" height="42" viewBox="0 0 34 42">
+                                    <path d="M 16 0 C 22 10, 20 22, 15 28 L 13 28 C 9 22, 11 10, 16 0 Z" fill="url(#bladeGradPirate)" stroke="#cbd5e1" stroke-width="1"/>
+                                    <path d="M 15 2 C 17 12, 16 22, 14 27" stroke="#ffffff" stroke-width="1" opacity="0.8"/>
+                                    <path d="M 6 26 C 6 22, 22 22, 24 26 C 24 31, 20 33, 15 33 C 12 33, 6 30, 6 26 Z" fill="#eab308" stroke="#78350f" stroke-width="1"/>
+                                    <rect x="13" y="27" width="4" height="8" rx="1" fill="#1c1917"/>
+                                    <line x1="13" y1="29" x2="17" y2="29" stroke="#facc15" stroke-width="0.8"/>
+                                    <line x1="13" y1="31" x2="17" y2="31" stroke="#facc15" stroke-width="0.8"/>
+                                    <line x1="13" y1="33" x2="17" y2="33" stroke="#facc15" stroke-width="0.8"/>
+                                    <circle cx="15" cy="37" r="3" fill="#facc15" stroke="#78350f" stroke-width="1"/>
+                                    <circle cx="14" cy="36" r="1" fill="#ffffff" opacity="0.8"/>
+                                    <defs>
+                                        <linearGradient id="bladeGradPirate" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="#ffffff"/>
+                                            <stop offset="40%" stop-color="#cbd5e1"/>
+                                            <stop offset="80%" stop-color="#64748b"/>
+                                            <stop offset="100%" stop-color="#334155"/>
+                                        </linearGradient>
+                                    </defs>
                                 </svg>
                             </div>
-                            <!-- 해적 안대 & 맹렬한 눈빛 -->
-                            <div style="position: relative; width: 54px; height: 30px; display: flex; align-items: center; justify-content: space-around;">
-                                <div style="width: 14px; height: 14px; background: #ffffff; border-radius: 50%; border: 2px solid #000; position: relative; box-shadow: 0 0 6px rgba(255,255,255,0.8);">
-                                    <div style="position: absolute; top: 3px; left: 3px; width: 6px; height: 6px; background: #ef4444; border-radius: 50%;"></div>
+
+                            <!-- 💥 칼이 꽂힌 원목 충격 균열 파편 -->
+                            <div style="position: absolute; top: -2px; left: 32px; width: 14px; height: 5px; background: rgba(0,0,0,0.6); border-radius: 50%; box-shadow: 0 0 6px #ea580c;"></div>
+
+                            <!-- 🔩 모서리 4방향 고전 해적 놋쇠 브라켓 (황금 리벳 장식) -->
+                            <div style="position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-top: 2.5px solid #facc15; border-left: 2.5px solid #facc15; border-top-left-radius: 4px;">
+                                <div style="position: absolute; top: 1px; left: 1px; width: 3px; height: 3px; background: #fef08a; border-radius: 50%;"></div>
+                            </div>
+                            <div style="position: absolute; top: 2px; right: 2px; width: 10px; height: 10px; border-top: 2.5px solid #facc15; border-right: 2.5px solid #facc15; border-top-right-radius: 4px;">
+                                <div style="position: absolute; top: 1px; right: 1px; width: 3px; height: 3px; background: #fef08a; border-radius: 50%;"></div>
+                            </div>
+                            <div style="position: absolute; bottom: 2px; left: 2px; width: 10px; height: 10px; border-bottom: 2.5px solid #facc15; border-left: 2.5px solid #facc15; border-bottom-left-radius: 4px;">
+                                <div style="position: absolute; bottom: 1px; left: 1px; width: 3px; height: 3px; background: #fef08a; border-radius: 50%;"></div>
+                            </div>
+                            <div style="position: absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; border-bottom: 2.5px solid #facc15; border-right: 2.5px solid #facc15; border-bottom-right-radius: 4px;">
+                                <div style="position: absolute; bottom: 1px; right: 1px; width: 3px; height: 3px; background: #fef08a; border-radius: 50%;"></div>
+                            </div>
+
+                            <!-- 🏴‍☠️ [스케치 충실 구현] 대각선 가죽 끈 + 우측 해적 안대 + 좌측 맹렬한 해적 눈빛 -->
+                            <div style="position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 6px;">
+                                <div style="position: absolute; top: -10px; left: 6px; width: 95px; height: 4px; background: linear-gradient(90deg, #1c1917, #292524, #1c1917); border-top: 0.8px solid #78716c; border-bottom: 0.8px solid #000; transform: rotate(26deg); box-shadow: 0 2px 4px rgba(0,0,0,0.85); z-index: 2;"></div>
+
+                                <!-- 좌측: 맹렬한 황금빛 해적 눈빛 (스케치의 날카로운 눈빛) -->
+                                <div style="position: absolute; top: 32px; left: 16px; width: 18px; height: 14px; z-index: 3;">
+                                    <svg width="18" height="14" viewBox="0 0 18 14">
+                                        <path d="M 1 4 C 5 1, 13 1, 17 6 C 13 10, 5 9, 1 4 Z" fill="#1e1b4b" stroke="#000000" stroke-width="1.2"/>
+                                        <ellipse cx="9" cy="5" rx="4" ry="4" fill="#facc15"/>
+                                        <ellipse cx="9" cy="5" rx="2" ry="3" fill="#dc2626"/>
+                                        <circle cx="8" cy="4" r="1" fill="#ffffff"/>
+                                    </svg>
                                 </div>
-                                <div style="position: relative; width: 20px; height: 20px;">
-                                    <div style="position: absolute; top: -14px; left: -14px; width: 48px; height: 2px; background: #1c1917; transform: rotate(-28deg); box-shadow: 0 1px 2px #000;"></div>
-                                    <div style="width: 18px; height: 18px; background: #1c1917; border: 1.8px solid #78716c; border-radius: 50% 50% 60% 60%; box-shadow: 0 3px 6px rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; color: #fde047; font-size: 10px; font-weight: 950;">☠️</div>
+
+                                <!-- 우측: [스케치 100% 동일] 날렵하고 큼직한 해적 안대 + 황금 해골 문양 -->
+                                <div style="position: absolute; top: 22px; right: 11px; width: 28px; height: 28px; z-index: 3;">
+                                    <svg width="28" height="28" viewBox="0 0 28 28">
+                                        <defs>
+                                            <linearGradient id="patchGradPirate" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" stop-color="#27272a"/>
+                                                <stop offset="60%" stop-color="#18181b"/>
+                                                <stop offset="100%" stop-color="#09090b"/>
+                                            </linearGradient>
+                                        </defs>
+                                        <path d="M 2 4 C 10 2, 22 4, 26 10 C 27 18, 20 25, 12 26 C 5 26, 1 18, 2 4 Z" fill="url(#patchGradPirate)" stroke="#ca8a04" stroke-width="1.3" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.85))"/>
+                                        <path d="M 4 6 C 10 4, 20 6, 24 11 C 24 17, 18 23, 12 24 C 7 24, 3 17, 4 6 Z" fill="none" stroke="#71717a" stroke-width="0.8" stroke-dasharray="2,2"/>
+                                        <circle cx="14" cy="13" r="3.5" fill="#fef08a"/>
+                                        <rect x="12" y="16.5" width="4" height="2.2" rx="0.5" fill="#fef08a"/>
+                                        <circle cx="12.5" cy="13" r="0.8" fill="#18181b"/>
+                                        <circle cx="15.5" cy="13" r="0.8" fill="#18181b"/>
+                                        <path d="M 10 18 L 18 21 M 18 18 L 10 21" stroke="#fef08a" stroke-width="0.9" stroke-linecap="round"/>
+                                    </svg>
                                 </div>
+
+                                <div style="position: absolute; bottom: 8px; left: 24px; width: 34px; height: 2px; background: rgba(0,0,0,0.5); border-radius: 1px;"></div>
                             </div>
                         </div>
 
-                        <!-- 우측 해적 곡선 윙 -->
-                        <div style="position: absolute; right: 0; transform-origin: 92% 70%; animation: pirateWingFlapRight 1.3s ease-in-out infinite;">
-                            <svg width="84" height="66" viewBox="0 0 84 66">
-                                <path d="M 80 50 C 58 44, 32 28, 5 7 C 14 26, 30 38, 48 40 C 35 50, 52 59, 72 54 Z" fill="url(#pWingGradL_s)" stroke="#fb923c" stroke-width="2" filter="url(#pWingGlowL_s)"/>
-                                <path d="M 80 50 C 52 35, 25 21, 8 9" fill="none" stroke="#fed7aa" stroke-width="1.8" stroke-linecap="round"/>
+                        <!-- 🪽 우측 해적 곡선 윙 (좌측과 완벽 대칭 & 큐브 우측면에 0px 완벽 밀착) -->
+                        <div style="position: absolute; right: 0; width: 84px; height: 68px; transform-origin: 4% 72%; animation: pirateWingFlapRight 1.3s ease-in-out infinite;">
+                            <svg width="84" height="68" viewBox="0 0 84 68" style="overflow: visible;">
+                                <g transform="translate(84, 0) scale(-1, 1)">
+                                    <path d="M 82 52 C 58 45, 28 28, 4 6 C 12 26, 28 40, 48 42 C 34 52, 52 62, 74 56 Z" fill="url(#pWingGradL_s)" stroke="#fed7aa" stroke-width="1.8" filter="url(#pWingGlow_s)"/>
+                                    <path d="M 82 52 C 54 36, 26 21, 8 8" fill="none" stroke="#fef08a" stroke-width="1.6" stroke-linecap="round" opacity="0.9"/>
+                                    <path d="M 64 50 C 44 40, 28 32, 16 22" fill="none" stroke="#fed7aa" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+                                </g>
                             </svg>
                         </div>
                     </div>
+</div>
 
                     <div style="font-size: 14.5px; font-weight: 950; color: #fed7aa; margin-bottom: 4px; letter-spacing: 0.5px;">
                         🏴‍☠️ 전설의 해적 럭키블록
@@ -17997,10 +18123,10 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     color: '#a855f7',
                     bg: 'radial-gradient(circle at top, rgba(88, 28, 135, 0.45), rgba(15, 23, 42, 0.95))',
                     customIcon: `
-                        <!-- 천사 & 악마 윙 + 균열 큐브 -->
-                        <div style="position: relative; width: 66px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                        <!-- 천사 & 악마 윙 + 균열 큐브 (날개 간격 0px 완벽 밀착) -->
+                        <div style="position: relative; width: 68px; height: 48px; display: flex; align-items: center; justify-content: center;">
                             <!-- 좌측 천사 깃털 날개 -->
-                            <div style="position: absolute; left: 0; transform-origin: 90% 60%; animation: angelFlapLeft 1.3s ease-in-out infinite;">
+                            <div style="position: absolute; left: 0; transform-origin: 92% 60%; animation: angelFlapLeft 1.3s ease-in-out infinite;">
                                 <svg width="24" height="24" viewBox="0 0 24 24">
                                     <path d="M 23 16 C 18 10, 11 5, 2 1 C 1 6, 7 12, 16 16 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="0.8"/>
                                     <path d="M 23 18 C 17 14, 8 11, 4 9 C 5 14, 12 18, 19 19 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="0.8"/>
@@ -18013,10 +18139,12 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                                     <polyline points="7,1 5,9 9,12 6,23" fill="none" stroke="#fef08a" stroke-width="1.8" stroke-linecap="round"/>
                                 </svg>
                             </div>
-                            <!-- 우측 악마 박쥐 날개 -->
-                            <div style="position: absolute; right: 0; transform-origin: 90% 60%; animation: devilFlapRight 1.3s ease-in-out infinite;">
+                            <!-- 우측 악마 박쥐 날개 (미러링 + 0px 밀착) -->
+                            <div style="position: absolute; right: 0; transform-origin: 8% 60%; animation: devilFlapRight 1.3s ease-in-out infinite;">
                                 <svg width="24" height="24" viewBox="0 0 24 24">
-                                    <path d="M 23 16 C 16 12, 8 6, 2 2 C 5 8, 10 11, 14 12 C 10 15, 16 18, 22 17 Z" fill="#dc2626" stroke="#991b1b" stroke-width="0.8"/>
+                                    <g transform="translate(24, 0) scale(-1, 1)">
+                                        <path d="M 23 16 C 16 12, 8 6, 2 2 C 5 8, 10 11, 14 12 C 10 15, 16 18, 22 17 Z" fill="#dc2626" stroke="#991b1b" stroke-width="0.8"/>
+                                    </g>
                                 </svg>
                             </div>
                         </div>
@@ -18029,7 +18157,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     color: '#eab308',
                     bg: 'radial-gradient(circle at top, rgba(161, 98, 7, 0.45), rgba(15, 23, 42, 0.95))',
                     customIcon: `
-                        <!-- 황금 3단 깃털 날개 + $ 코인 -->
+                        <!-- 황금 3단 깃털 날개 + $ 코인 (날개 간격 0px 완벽 밀착) -->
                         <div style="position: relative; width: 68px; height: 48px; display: flex; align-items: center; justify-content: center;">
                             <div style="position: absolute; left: 0; transform-origin: 90% 65%; animation: wingFlapLeft 1.25s ease-in-out infinite;">
                                 <svg width="25" height="22" viewBox="0 0 35 28">
@@ -18038,10 +18166,12 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                                 </svg>
                             </div>
                             <div style="width: 32px; height: 32px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fffbeb, #fde047 40%, #ca8a04 100%); border: 2px solid #a16207; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 950; color: #166534; box-shadow: 0 0 12px rgba(250,204,21,0.85); z-index: 2;">$</div>
-                            <div style="position: absolute; right: 0; transform-origin: 90% 65%; animation: wingFlapRight 1.25s ease-in-out infinite;">
+                            <div style="position: absolute; right: 0; transform-origin: 10% 65%; animation: wingFlapRight 1.25s ease-in-out infinite;">
                                 <svg width="25" height="22" viewBox="0 0 35 28">
-                                    <path d="M 33 18 C 26 12, 16 6, 2 1 C 1 6, 8 13, 21 17 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="0.9"/>
-                                    <path d="M 33 20 C 24 16, 12 12, 6 10 C 7 15, 17 20, 27 20 Z" fill="#facc15" stroke="#ca8a04" stroke-width="0.9"/>
+                                    <g transform="translate(35, 0) scale(-1, 1)">
+                                        <path d="M 33 18 C 26 12, 16 6, 2 1 C 1 6, 8 13, 21 17 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="0.9"/>
+                                        <path d="M 33 20 C 24 16, 12 12, 6 10 C 7 15, 17 20, 27 20 Z" fill="#facc15" stroke="#ca8a04" stroke-width="0.9"/>
+                                    </g>
                                 </svg>
                             </div>
                         </div>
@@ -18054,20 +18184,35 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     color: '#f97316',
                     bg: 'radial-gradient(circle at top, rgba(194, 65, 12, 0.45), rgba(15, 23, 42, 0.95))',
                     customIcon: `
-                        <!-- 해적 안대 칼 큐브 + 치솟은 해적 날개 -->
+                        <!-- 해적 안대 칼 큐브 + 치솟은 해적 날개 (날개 간격 0px 완벽 밀착 + 스케치 충실 미니 큐브) -->
                         <div style="position: relative; width: 68px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                            <div style="position: absolute; left: 0; transform-origin: 90% 70%; animation: pirateWingFlapLeft 1.3s ease-in-out infinite;">
+                            <div style="position: absolute; left: 0; transform-origin: 92% 70%; animation: pirateWingFlapLeft 1.3s ease-in-out infinite;">
                                 <svg width="24" height="24" viewBox="0 0 30 26">
                                     <path d="M 28 20 C 20 16, 11 10, 2 2 C 5 9, 11 14, 17 15 C 12 19, 18 23, 25 21 Z" fill="#ea580c" stroke="#fed7aa" stroke-width="0.9"/>
                                 </svg>
                             </div>
-                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #78350f, #451a03); border: 2px solid #fb923c; border-radius: 7px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 0 10px rgba(249,115,22,0.7); z-index: 2;">
-                                <div style="position: absolute; top: -11px; left: 10px; transform: rotate(-25deg); font-size: 13px;">🗡️</div>
-                                <div style="font-size: 12px;">👁️‍🗨️</div>
+                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #451a03, #2e1003); border: 1.8px solid #fb923c; border-radius: 5px; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 0 10px rgba(249,115,22,0.7); z-index: 2; overflow: visible;">
+                                <!-- 미니 꽂힌 칼 -->
+                                <div style="position: absolute; top: -11px; left: 10px; transform: rotate(-20deg); filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));">
+                                    <svg width="12" height="15" viewBox="0 0 16 20">
+                                        <path d="M 8 0 C 11 5, 10 11, 7 14 L 6 14 C 4 11, 5 5, 8 0 Z" fill="#ffffff" stroke="#94a3b8" stroke-width="0.8"/>
+                                        <rect x="3" y="13" width="8" height="2" rx="0.5" fill="#facc15"/>
+                                        <rect x="6.5" y="15" width="2" height="4" fill="#1c1917"/>
+                                    </svg>
+                                </div>
+                                <!-- 미니 안대 & 눈빛 -->
+                                <div style="position: relative; width: 24px; height: 16px; display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="width: 6px; height: 6px; background: #facc15; border-radius: 50%; box-shadow: 0 0 3px #f59e0b;"></div>
+                                    <div style="width: 12px; height: 12px; background: #18181b; border: 1px solid #ca8a04; border-radius: 2px 2px 6px 6px; display: flex; align-items: center; justify-content: center;">
+                                        <div style="width: 4px; height: 4px; background: #fef08a; border-radius: 50%;"></div>
+                                    </div>
+                                </div>
                             </div>
-                            <div style="position: absolute; right: 0; transform-origin: 90% 70%; animation: pirateWingFlapRight 1.3s ease-in-out infinite;">
+                            <div style="position: absolute; right: 0; transform-origin: 8% 70%; animation: pirateWingFlapRight 1.3s ease-in-out infinite;">
                                 <svg width="24" height="24" viewBox="0 0 30 26">
-                                    <path d="M 28 20 C 20 16, 11 10, 2 2 C 5 9, 11 14, 17 15 C 12 19, 18 23, 25 21 Z" fill="#ea580c" stroke="#fed7aa" stroke-width="0.9"/>
+                                    <g transform="translate(30, 0) scale(-1, 1)">
+                                        <path d="M 28 20 C 20 16, 11 10, 2 2 C 5 9, 11 14, 17 15 C 12 19, 18 23, 25 21 Z" fill="#ea580c" stroke="#fed7aa" stroke-width="0.9"/>
+                                    </g>
                                 </svg>
                             </div>
                         </div>
@@ -40060,13 +40205,15 @@ window.renderIndexGrid = renderIndexGrid;
                         <div style="position: absolute; inset: 4px; border: 1.5px dashed rgba(202, 138, 4, 0.7); border-radius: 50%; pointer-events: none;"></div>
                     </div>
 
-                    <!-- 우측 3단 황금 깃털 날개 (대칭 펄럭임) -->
-                    <div style="position: absolute; right: 0; transform-origin: 95% 65%; animation: wingFlapRight 1.25s ease-in-out infinite;">
-                        <svg width="86" height="62" viewBox="0 0 86 62">
-                            <path d="M 82 43 C 66 30, 40 14, 6 4 C 2 16, 20 34, 54 44 Z" fill="url(#infWingGrad)" stroke="#b45309" stroke-width="1.8" filter="url(#infWingGlow)"/>
-                            <path d="M 74 38 C 54 26, 28 16, 12 8" fill="none" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" opacity="0.85"/>
-                            <path d="M 82 46 C 62 39, 32 30, 16 25 C 18 39, 44 49, 70 50 Z" fill="url(#infWingGrad)" stroke="#b45309" stroke-width="1.8" filter="url(#infWingGlow)"/>
-                            <path d="M 82 49 C 66 50, 46 47, 30 43 C 36 53, 58 56, 78 52 Z" fill="url(#infWingGrad)" stroke="#b45309" stroke-width="1.8" filter="url(#infWingGlow)"/>
+                    <!-- 우측 3단 황금 깃털 날개 (코인에 0px 완벽 밀착 대칭 펄럭임) -->
+                    <div style="position: absolute; right: 0; width: 86px; height: 62px; transform-origin: 5% 68%; animation: wingFlapRight 1.25s ease-in-out infinite;">
+                        <svg width="86" height="62" viewBox="0 0 86 62" style="overflow: visible;">
+                            <g transform="translate(86, 0) scale(-1, 1)">
+                                <path d="M 82 43 C 66 30, 40 14, 6 4 C 2 16, 20 34, 54 44 Z" fill="url(#infWingGrad)" stroke="#b45309" stroke-width="1.8" filter="url(#infWingGlow)"/>
+                                <path d="M 74 38 C 54 26, 28 16, 12 8" fill="none" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" opacity="0.85"/>
+                                <path d="M 82 46 C 62 39, 32 30, 16 25 C 18 39, 44 49, 70 50 Z" fill="url(#infWingGrad)" stroke="#b45309" stroke-width="1.8" filter="url(#infWingGlow)"/>
+                                <path d="M 82 49 C 66 50, 46 47, 30 43 C 36 53, 58 56, 78 52 Z" fill="url(#infWingGrad)" stroke="#b45309" stroke-width="1.8" filter="url(#infWingGlow)"/>
+                            </g>
                         </svg>
                     </div>
                 </div>
