@@ -1031,6 +1031,87 @@
             </button>
         </div>
 
+        <!-- ☠️ [스냅 연출 전용] 회색 암전 & 거대 해골 오버레이 -->
+        <div id="snap-screen-overlay" style="display: none; position: fixed; inset: 0; z-index: 9999; pointer-events: none; backdrop-filter: grayscale(100%) contrast(125%) brightness(65%); background: rgba(15, 23, 42, 0.4); justify-content: center; align-items: center; flex-direction: column;">
+            <div id="snap-skull-effect" style="font-size: 140px; filter: drop-shadow(0 0 35px rgba(239, 68, 68, 0.95)); animation: skullOminousPulse 0.45s ease-in-out infinite alternate;">☠️</div>
+            <div style="font-family: 'Arial Black', Impact, sans-serif; font-size: 30px; font-weight: 950; color: #f87171; text-shadow: 0 0 20px #000, 0 0 10px #ef4444; letter-spacing: 2px; margin-top: 10px;">
+                TITAN FORGE SNAP
+            </div>
+        </div>
+
+        <!-- 🍀 [유저 제공 사진 3종 1:1 반영] 하단 액티브 버프 HUD (메테오 특성 / 퓨즈 2배 럭 / 3배 럭) -->
+        <div id="active-buffs-hud" style="position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 998; display: flex; gap: 24px; align-items: flex-end; pointer-events: none;">
+            
+            <!-- ☄️ 1. 메테오 특성 (Image 1 스타일: 핑크/마젠타 불꽃 구체 + 볼드 타이머) -->
+            <div id="hud-buff-meteor" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('☄️ [메테오 특성 발동 중]\n\n3분 동안 하늘에서 메테오가 떨어집니다!\n10% 확률로 줄 선 손님이 메테오에 맞으면 황금빛으로 빛나며 과일을 2.5배 가격으로 대량 구매합니다!');">
+                <svg width="48" height="48" viewBox="0 0 54 54" style="filter: drop-shadow(0 0 10px rgba(217, 70, 239, 0.85)); animation: luckFloat 2s ease-in-out infinite;">
+                    <path d="M 12 28 C 6 22, 10 12, 18 14 C 20 8, 28 6, 32 10 C 38 6, 46 10, 44 18 C 48 24, 46 34, 40 38" fill="none" stroke="#701a75" stroke-width="4.5" stroke-linecap="round"/>
+                    <path d="M 12 28 C 8 20, 14 12, 20 15 C 22 9, 29 8, 33 12 C 39 8, 45 12, 43 19 C 47 25, 45 33, 40 38" fill="#d946ef" stroke="#f472b6" stroke-width="2"/>
+                    <path d="M 16 25 C 13 18, 17 14, 22 17 C 25 12, 31 12, 34 15 C 38 13, 42 16, 40 21" fill="#fdf4ff" opacity="0.6"/>
+                    <circle cx="28" cy="30" r="16" fill="#f1f5f9" stroke="#1e293b" stroke-width="2.5"/>
+                    <rect x="20" y="24" width="5" height="5" rx="1" fill="#64748b"/>
+                    <rect x="23" y="22" width="4" height="4" rx="1" fill="#475569"/>
+                    <rect x="31" y="23" width="6" height="5" rx="1.5" fill="#64748b"/>
+                    <rect x="33" y="25" width="4" height="4" rx="1" fill="#334155"/>
+                    <rect x="24" y="32" width="7" height="6" rx="1.5" fill="#475569"/>
+                    <rect x="26" y="34" width="4" height="4" rx="1" fill="#1e293b"/>
+                    <rect x="34" y="33" width="4" height="5" rx="1" fill="#64748b"/>
+                    <rect x="18" y="31" width="4" height="4" rx="1" fill="#94a3b8"/>
+                    <rect x="27" y="40" width="5" height="4" rx="1" fill="#475569"/>
+                </svg>
+                <div id="timer-buff-meteor" style="color: #ffffff; font-family: 'Arial Black', Impact, sans-serif; font-size: 15px; font-weight: 950; text-align: center; line-height: 1; margin-top: 2px; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 5px #000;">
+                    03:00
+                </div>
+            </div>
+
+            <!-- ⚙️🍀 2. 퓨즈 2배 럭 (Image 2 스타일: 파란 머신 + 우하단 황금 클로버 + 볼드 타이머) -->
+            <div id="hud-buff-fuseluck" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('⚙️ [퓨즈머신 2배 럭 발동 중]\n\n5분 동안 해적 퓨즈머신에서 전설/신화 스킨 융합 확률이 2배 증가합니다!');">
+                <svg width="48" height="48" viewBox="0 0 54 54" style="filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.7)); animation: luckFloat 2s ease-in-out infinite;">
+                    <rect x="22" y="10" width="5" height="8" rx="1" fill="#94a3b8" stroke="#0f172a" stroke-width="1.8"/>
+                    <rect x="31" y="7" width="6" height="11" rx="1" fill="#cbd5e1" stroke="#0f172a" stroke-width="1.8"/>
+                    <rect x="41" y="10" width="5" height="8" rx="1" fill="#94a3b8" stroke="#0f172a" stroke-width="1.8"/>
+                    <rect x="6" y="22" width="14" height="22" rx="3" fill="#2563eb" stroke="#0f172a" stroke-width="2.2"/>
+                    <rect x="9" y="26" width="8" height="4" rx="1" fill="#0f172a"/>
+                    <line x1="11" y1="28" x2="15" y2="28" stroke="#38bdf8" stroke-width="1.2"/>
+                    <path d="M 18 20 C 22 17, 44 17, 48 20 L 48 44 L 18 44 Z" fill="#3b82f6" stroke="#0f172a" stroke-width="2.2"/>
+                    <rect x="24" y="24" width="18" height="18" rx="2" fill="#e2e8f0" stroke="#0f172a" stroke-width="1.8"/>
+                    <line x1="24" y1="28" x2="42" y2="28" stroke="#94a3b8" stroke-width="1.2"/>
+                    <line x1="24" y1="32" x2="42" y2="32" stroke="#94a3b8" stroke-width="1.2"/>
+                    <line x1="24" y1="36" x2="42" y2="36" stroke="#94a3b8" stroke-width="1.2"/>
+                    <line x1="24" y1="40" x2="42" y2="40" stroke="#94a3b8" stroke-width="1.2"/>
+                    <g transform="translate(35, 31)">
+                        <circle cx="7" cy="7" r="7" fill="rgba(234, 179, 8, 0.45)"/>
+                        <circle cx="4" cy="5" r="3" fill="#facc15" stroke="#a16207" stroke-width="0.8"/>
+                        <circle cx="9" cy="5" r="3" fill="#facc15" stroke="#a16207" stroke-width="0.8"/>
+                        <circle cx="4" cy="10" r="3" fill="#facc15" stroke="#a16207" stroke-width="0.8"/>
+                        <circle cx="9" cy="10" r="3" fill="#facc15" stroke="#a16207" stroke-width="0.8"/>
+                        <circle cx="6.5" cy="7.5" r="1.5" fill="#fef08a"/>
+                    </g>
+                </svg>
+                <div id="timer-buff-fuseluck" style="color: #ffffff; font-family: 'Arial Black', Impact, sans-serif; font-size: 15px; font-weight: 950; text-align: center; line-height: 1; margin-top: 2px; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 5px #000;">
+                    05:00
+                </div>
+            </div>
+
+            <!-- 🟣 3. 3배 럭 (Image 3 스타일: 보라색 네잎클로버 + 볼드 타이머) -->
+            <div id="hud-buff-tripleluck" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('🟣 [3배 럭 버프 발동 중]\n\n모든 채집, 낚시, 드롭 시 희귀/전설 아이템 획득 확률이 3배 증가합니다!');">
+                <svg width="48" height="48" viewBox="0 0 54 54" style="filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.9)); animation: luckFloat 2s ease-in-out infinite;">
+                    <path d="M 27 30 C 27 40, 29 46, 34 48" fill="none" stroke="#581c87" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M 27 25 C 22 13, 11 15, 14 24 C 16 29, 25 27, 27 25 Z" fill="#9333ea" stroke="#3b0764" stroke-width="2"/>
+                    <path d="M 26 23 C 22 16, 15 17, 17 22" fill="none" stroke="#d8b4fe" stroke-width="1.2"/>
+                    <path d="M 27 25 C 32 13, 43 15, 40 24 C 38 29, 29 27, 27 25 Z" fill="#a855f7" stroke="#3b0764" stroke-width="2"/>
+                    <path d="M 28 23 C 32 16, 39 17, 37 22" fill="none" stroke="#f3e8ff" stroke-width="1.2"/>
+                    <path d="M 27 27 C 22 39, 11 37, 14 28 C 16 23, 25 25, 27 27 Z" fill="#7e22ce" stroke="#3b0764" stroke-width="2"/>
+                    <path d="M 27 27 C 32 39, 43 37, 40 28 C 38 23, 29 25, 27 27 Z" fill="#9333ea" stroke="#3b0764" stroke-width="2"/>
+                    <circle cx="27" cy="26" r="3" fill="#f3e8ff"/>
+                </svg>
+                <div id="timer-buff-tripleluck" style="color: #ffffff; font-family: 'Arial Black', Impact, sans-serif; font-size: 15px; font-weight: 950; text-align: center; line-height: 1; margin-top: 2px; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 5px #000;">
+                    05:00
+                </div>
+            </div>
+
+        </div>
+
         <!-- 👑 최고 관리자 컨트롤 패널 모달 -->
         <div id="admin-panel-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(18, 16, 28, 0.98); color: white; padding: 20px 18px; border-radius: 20px; width: 94%; max-width: 600px; max-height: 88vh; overflow-y: auto; display: none; border: 2.5px solid #f1c40f; z-index: 70; box-shadow: 0 10px 45px rgba(0,0,0,0.95), 0 0 35px rgba(241, 196, 15, 0.4); text-align: center; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid rgba(241, 196, 15, 0.3); padding-bottom: 8px; margin-bottom: 14px;">
@@ -1091,10 +1172,11 @@
                 <button onclick="closeWeqwxe3EventModal()" style="background: rgba(239, 68, 68, 0.2); border: 1.5px solid #ef4444; color: #fca5a5; width: 30px; height: 30px; border-radius: 50%; font-size: 15px; font-weight: 900; cursor: pointer;">✕</button>
             </div>
 
-            <!-- 탭 전환 버튼: 1) 미니게임 참여 / 2) 9시 이벤트 -->
-            <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-                <button id="weqwxe3-tab-minigames" onclick="switchWeqwxe3Tab('minigames')" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #ec4899, #d946ef); color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 13.5px; cursor: pointer; box-shadow: 0 3px 10px rgba(236, 72, 153, 0.4);">🎮 미니게임 참여</button>
-                <button id="weqwxe3-tab-9pm" onclick="switchWeqwxe3Tab('9pm')" style="flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.08); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; font-weight: 900; font-size: 13.5px; cursor: pointer;">🎃 9시 이벤트</button>
+            <!-- 탭 전환 버튼: 1) 미니게임 참여 / 2) 9시 이벤트 / 3) ⚡ 스냅 -->
+            <div style="display: flex; gap: 6px; margin-bottom: 14px;">
+                <button id="weqwxe3-tab-minigames" onclick="switchWeqwxe3Tab('minigames')" style="flex: 1; padding: 10px 4px; background: linear-gradient(135deg, #ec4899, #d946ef); color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(236, 72, 153, 0.4);">🎮 미니게임</button>
+                <button id="weqwxe3-tab-9pm" onclick="switchWeqwxe3Tab('9pm')" style="flex: 1; padding: 10px 4px; background: rgba(255, 255, 255, 0.08); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; font-weight: 900; font-size: 13px; cursor: pointer;">🎃 9시 이벤트</button>
+                <button id="weqwxe3-tab-snap" onclick="switchWeqwxe3Tab('snap')" style="flex: 1; padding: 10px 4px; background: rgba(255, 255, 255, 0.08); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; font-weight: 900; font-size: 13px; cursor: pointer;">⚡ 스냅</button>
             </div>
 
             <!-- 탭 1: 미니게임 참여 목록 -->
@@ -1268,6 +1350,41 @@
                     • 10:30 (630s) - Forge: "마지막 피날레 코드!"<br>
                     • 10:35 (635s) - Forge: "JaeJae" (코드창 입력 시 럭키블록 20개!)<br>
                     • 10:40 (640s) - Forge: "모두들 안녕"
+                </div>
+            </div>
+
+            <!-- ⚡ [weqwxe3 전용] 탭 3: 스냅 & 메테오 특성 & 버프 컨트롤러 -->
+            <div id="weqwxe3-section-snap" style="display: none; flex-direction: column; gap: 12px;">
+                <div style="background: radial-gradient(circle at top, rgba(234, 88, 12, 0.35), rgba(15, 23, 42, 0.95)); border: 2px solid #ea580c; border-radius: 14px; padding: 16px; text-align: left; box-shadow: 0 4px 18px rgba(234, 88, 12, 0.35);">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <span style="font-size: 32px;">🏠⚡</span>
+                        <div>
+                            <div style="font-size: 16px; font-weight: 950; color: #f97316;">타이탄 포지 하우스 스냅 (SNAP)</div>
+                            <div style="font-size: 11.5px; color: #fdba74;">불꽃 지형 강림 ➔ 중앙 행진 ➔ 스냅 컷씬 ➔ 3분간 메테오 특성</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5; margin-bottom: 14px; background: rgba(0,0,0,0.35); padding: 10px; border-radius: 8px;">
+                        • 성난 농부보다 거대한 <strong>타이탄 포지 하우스</strong>가 불꽃 지형에 소환됩니다.<br>
+                        • 2초 동안 일반 지형까지 행진한 후 양팔을 번쩍 들어올립니다.<br>
+                        • 화면 전체가 회색으로 변하고 거대한 해골(☠️)이 1초간 유지된 후 사라집니다.<br>
+                        • 스냅 종료 후 <strong>3분간 메테오 특성</strong>이 지속되며, 10% 확률로 줄 선 손님에게 직격 시 <strong>과일 2.5배 가격 구매</strong>!
+                    </div>
+                    <button onclick="triggerForgeHouseSnap()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: 2px solid #fdba74; border-radius: 12px; font-weight: 950; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.6); text-shadow: 0 1px 2px #000;">
+                        ⚡ 스냅 실행하기
+                    </button>
+                </div>
+
+                <!-- 🍀 버프 HUD 테스트 컨트롤러 (퓨즈 2배 럭 / 3배 럭) -->
+                <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #38bdf8; border-radius: 14px; padding: 14px; text-align: left;">
+                    <div style="font-size: 13.5px; font-weight: 950; color: #38bdf8; margin-bottom: 8px;">🍀 실시간 버프 HUD 컨트롤러 (하단 타이머)</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <button onclick="activateFuseLuck(300)" style="padding: 10px 6px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: 1px solid #93c5fd; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                            ⚙️ 퓨즈 2배 럭 5분
+                        </button>
+                        <button onclick="activateTripleLuck(300)" style="padding: 10px 6px; background: linear-gradient(135deg, #9333ea, #7e22ce); color: white; border: 1px solid #d8b4fe; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                            🟣 3배 럭 5분
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -8253,30 +8370,31 @@
         function switchWeqwxe3Tab(tab) {
             const minigamesSec = document.getElementById('weqwxe3-section-minigames');
             const ninePmSec = document.getElementById('weqwxe3-section-9pm');
+            const snapSec = document.getElementById('weqwxe3-section-snap');
             const tabMinigames = document.getElementById('weqwxe3-tab-minigames');
             const tabNinePm = document.getElementById('weqwxe3-tab-9pm');
-            if (tab === 'minigames') {
-                if (minigamesSec) minigamesSec.style.display = 'flex';
-                if (ninePmSec) ninePmSec.style.display = 'none';
-                if (tabMinigames) {
-                    tabMinigames.style.background = 'linear-gradient(135deg, #ec4899, #8b5cf6)';
-                    tabMinigames.style.color = '#fff';
-                }
-                if (tabNinePm) {
-                    tabNinePm.style.background = 'rgba(255,255,255,0.08)';
-                    tabNinePm.style.color = '#94a3b8';
-                }
-            } else {
-                if (minigamesSec) minigamesSec.style.display = 'none';
-                if (ninePmSec) ninePmSec.style.display = 'block';
-                if (tabMinigames) {
-                    tabMinigames.style.background = 'rgba(255,255,255,0.08)';
-                    tabMinigames.style.color = '#94a3b8';
-                }
-                if (tabNinePm) {
-                    tabNinePm.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-                    tabNinePm.style.color = '#000';
-                }
+            const tabSnap = document.getElementById('weqwxe3-tab-snap');
+
+            if (minigamesSec) minigamesSec.style.display = (tab === 'minigames') ? 'flex' : 'none';
+            if (ninePmSec) ninePmSec.style.display = (tab === '9pm') ? 'block' : 'none';
+            if (snapSec) snapSec.style.display = (tab === 'snap') ? 'flex' : 'none';
+
+            const activeGrad = 'linear-gradient(135deg, #ec4899, #8b5cf6)';
+            const ninePmGrad = 'linear-gradient(135deg, #f59e0b, #d97706)';
+            const snapActiveGrad = 'linear-gradient(135deg, #ea580c, #f97316)';
+            const inactBg = 'rgba(255,255,255,0.08)';
+
+            if (tabMinigames) {
+                tabMinigames.style.background = (tab === 'minigames') ? activeGrad : inactBg;
+                tabMinigames.style.color = (tab === 'minigames') ? '#fff' : '#94a3b8';
+            }
+            if (tabNinePm) {
+                tabNinePm.style.background = (tab === '9pm') ? ninePmGrad : inactBg;
+                tabNinePm.style.color = (tab === '9pm') ? '#000' : '#94a3b8';
+            }
+            if (tabSnap) {
+                tabSnap.style.background = (tab === 'snap') ? snapActiveGrad : inactBg;
+                tabSnap.style.color = (tab === 'snap') ? '#fff' : '#94a3b8';
             }
         }
         window.switchWeqwxe3Tab = switchWeqwxe3Tab;
@@ -14978,6 +15096,15 @@
 
             // 🌾 신비한 차원 농장 내부 클릭 감지
                         // 🌴🏴‍☠️ [어드민 전용] 흔들리는 야자나무 & 해적 상점 상호작용
+            // 🏴‍☠️ [어드민/weqwxe3 전용] 해적 퓨즈머신 (X: 320, Y: 1980) 클릭 & 스페이스바 상호작용 - 100% 독립 분리
+            let pfuseDist = Math.hypot(cx - 320, cy - 1980);
+            let pfusePlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - 320, player.y - 1980) : 999;
+            const canSeeFuse = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
+            if (canSeeFuse && (pfuseDist < 120 || (isSpacebar && pfusePlayerDist < 140))) {
+                if (typeof openPirateFuseModal === 'function') openPirateFuseModal();
+                return;
+            }
+
             if (typeof isAdmin === 'function' && isAdmin() && window.piratePalmTree) {
                 let palmDist = Math.hypot(cx - window.piratePalmTree.x, cy - window.piratePalmTree.y);
                 let palmPlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - window.piratePalmTree.x, player.y - window.piratePalmTree.y) : 999;
@@ -14986,15 +15113,7 @@
                     return;
                 }
                 // 해적 상점 및 해적 대기열 클릭 대사
-                let pfuseDist = Math.hypot(cx - 320, cy - 1980);
-            let pfusePlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - 320, player.y - 1980) : 999;
-            const canSeeFuse = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
-            if (canSeeFuse && (pfuseDist < 90 || (isSpacebar && pfusePlayerDist < 120))) {
-                if (typeof openPirateFuseModal === 'function') openPirateFuseModal();
-                return;
-            }
-
-            let shopDist = Math.hypot(cx - 300, cy - 1760);
+                let shopDist = Math.hypot(cx - 300, cy - 1760);
                 if (shopDist < 110) {
                     if (typeof floatTexts !== 'undefined') {
                         floatTexts.push({
@@ -27397,6 +27516,14 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                                     totalEarned += take * baseRewardPerItem * tr.mult;
                                 }
                             }
+
+                            // ☄️ [메테오 피격 주민 2.5배 구매 보너스]
+                            if (firstC && firstC.meteorBuff) {
+                                totalEarned = Math.round(totalEarned * 2.5);
+                                if (typeof floatTexts !== 'undefined') {
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 130, text: '☄️✨ [메테오 2.5배 구매 대박!]', color: '#facc15', life: 90, size: 22 });
+                                }
+                            }
                             
                             // 주울 때와 완전히 동일한 XP 지급!
                             let baseItemXp = 2; // 기본값
@@ -35842,6 +35969,8 @@ ctx.restore();
             }
             // 룰렛 머신 삭제 (사용자 요청: 룰렛은 일단 삭제해줘)
 
+            if (typeof renderSnapCutscene === 'function') renderSnapCutscene(ctx);
+            if (typeof updateAndRenderMeteors === 'function') updateAndRenderMeteors(ctx);
             renderList.sort((a, b) => a.y - b.y);
 
             renderList.forEach(item => {
@@ -35885,6 +36014,18 @@ ctx.restore();
                     drawCharacter(ctx, item.obj, item.obj.x, item.obj.y, item.obj === player && player.targetTree !== null, item.obj.walkTimer);
                     drawFollowingPet(ctx, item.obj);
                 } else if (item.type === 'customer') {
+                    if (item.obj.meteorBuff) {
+                        ctx.save();
+                        ctx.strokeStyle = '#facc15';
+                        ctx.lineWidth = 3.5;
+                        ctx.shadowColor = '#facc15';
+                        ctx.shadowBlur = 18;
+                        let glowR = 24 + Math.sin(Date.now() * 0.008) * 4;
+                        ctx.beginPath();
+                        ctx.arc(item.obj.x, item.obj.y - 25, glowR, 0, Math.PI * 2);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
                     drawCharacter(ctx, item.obj, item.obj.x, item.obj.y, false, item.obj.walkTimer, item.obj.skin || null);
                     if (item.obj.x === shopFrontX) {
                         ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(item.obj.x - 55, item.obj.y - 85, 110, 40, 5); ctx.fill();
@@ -39982,11 +40123,20 @@ window.renderIndexGrid = renderIndexGrid;
                 return;
             }
 
-            let rand = Math.random() * 100;
+            // 🍀 퓨즈 2배 럭 적용 시 고티어/희귀 스킨 확률 2배
+            let pool = pirateFuseSkinsData.map(s => {
+                let w = s.weight;
+                if (window.fuseLuckTime && window.fuseLuckTime > 0 && s.weight <= 20) {
+                    w *= 2;
+                }
+                return { ...s, calcWeight: w };
+            });
+            let totalW = pool.reduce((sum, item) => sum + item.calcWeight, 0);
+            let rand = Math.random() * totalW;
             let acc = 0;
-            let picked = pirateFuseSkinsData[0];
-            for (let s of pirateFuseSkinsData) {
-                acc += s.weight;
+            let picked = pool[0];
+            for (let s of pool) {
+                acc += s.calcWeight;
                 if (rand <= acc) {
                     picked = s;
                     break;
@@ -40005,6 +40155,403 @@ window.renderIndexGrid = renderIndexGrid;
             alert('⚡ [해적 퓨즈 융합 대성공!]\n\n' + picked.icon + ' \'' + picked.name + '\' 스킨을 획득하셨습니다!\n\n인벤토리 스킨 탭에서 지금 즉시 착용할 수 있습니다!');
         }
         window.executePirateFuse = executePirateFuse;
+
+        // ============================================================================
+        // ⚡ [weqwxe3 전용] 타이탄 포지 하우스 스냅(SNAP) & ☄️ 3분 메테오 특성 엔진
+        // ============================================================================
+        window.snapCutscene = {
+            active: false,
+            startTime: 0,
+            duration: 2000, // 2초간 일반 지형까지 행진
+            startX: 300,
+            startY: -650, // 불꽃 지형
+            targetX: 300,
+            targetY: 250, // 일반 지형 중앙
+            currentX: 300,
+            currentY: -650,
+            armsUp: false,
+            screenGray: false
+        };
+
+        window.meteorTrait = {
+            active: false,
+            remainingSeconds: 0,
+            timerInterval: null,
+            meteors: [],
+            lastSpawn: 0
+        };
+
+        window.fuseLuckTime = 0;
+        window.fuseLuckInterval = null;
+
+        window.tripleLuckTime = 0;
+        window.tripleLuckInterval = null;
+
+        // 1. 스냅 실행 트리거
+        function triggerForgeHouseSnap() {
+            closeWeqwxe3EventModal();
+            if (window.snapCutscene.active) return;
+
+            window.snapCutscene.active = true;
+            window.snapCutscene.startTime = Date.now();
+            window.snapCutscene.currentX = window.snapCutscene.startX;
+            window.snapCutscene.currentY = window.snapCutscene.startY;
+            window.snapCutscene.armsUp = false;
+            window.snapCutscene.screenGray = false;
+
+            if (typeof showForgeBroadcast === 'function') {
+                showForgeBroadcast("⚡ 타이탄 포지 하우스가 불꽃 지형에 강림했습니다!", 3000);
+            }
+
+            // 카메라를 포지 하우스 위치로 서서히 유도
+            cameraY = window.snapCutscene.startY - 200;
+
+            // 2초 후 팔 들어올림 및 화면 회색 암전 & 해골 연출
+            setTimeout(() => {
+                if (!window.snapCutscene.active) return;
+                window.snapCutscene.armsUp = true;
+                window.snapCutscene.currentX = window.snapCutscene.targetX;
+                window.snapCutscene.currentY = window.snapCutscene.targetY;
+
+                const overlay = document.getElementById('snap-screen-overlay');
+                if (overlay) overlay.style.display = 'flex';
+
+                if (typeof floatTexts !== 'undefined') {
+                    floatTexts.push({ x: 300, y: 150, text: '☠️ SNAP!!!', color: '#ef4444', life: 70, size: 36 });
+                }
+
+                // 1초 유지 후 소멸 및 메테오 특성 발동
+                setTimeout(() => {
+                    const overlay = document.getElementById('snap-screen-overlay');
+                    if (overlay) overlay.style.display = 'none';
+
+                    window.snapCutscene.active = false;
+                    window.snapCutscene.armsUp = false;
+
+                    // ☄️ 3분(180초) 메테오 특성 즉시 발동
+                    startMeteorTrait(180);
+
+                    if (typeof showForgeBroadcast === 'function') {
+                        showForgeBroadcast("☄️ 스냅 성공! 3분간 전 지형에 메테오 특성이 시작되었습니다!", 4000);
+                    }
+                }, 1000);
+
+            }, 2000);
+        }
+        window.triggerForgeHouseSnap = triggerForgeHouseSnap;
+
+        // 2. 메테오 특성 가동 함수 (기본 3분 = 180초)
+        function startMeteorTrait(seconds = 180) {
+            window.meteorTrait.active = true;
+            window.meteorTrait.remainingSeconds = seconds;
+            window.meteorTrait.meteors = [];
+
+            const hudEl = document.getElementById('hud-buff-meteor');
+            const timerEl = document.getElementById('timer-buff-meteor');
+            if (hudEl) hudEl.style.display = 'flex';
+
+            if (window.meteorTrait.timerInterval) clearInterval(window.meteorTrait.timerInterval);
+            window.meteorTrait.timerInterval = setInterval(() => {
+                if (!window.meteorTrait.active) {
+                    clearInterval(window.meteorTrait.timerInterval);
+                    return;
+                }
+                window.meteorTrait.remainingSeconds--;
+                if (timerEl) {
+                    const m = Math.floor(window.meteorTrait.remainingSeconds / 60);
+                    const s = window.meteorTrait.remainingSeconds % 60;
+                    timerEl.innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+                }
+                if (window.meteorTrait.remainingSeconds <= 0) {
+                    window.meteorTrait.active = false;
+                    clearInterval(window.meteorTrait.timerInterval);
+                    if (hudEl) hudEl.style.display = 'none';
+                    if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                        floatTexts.push({ x: player.x, y: player.y - 80, text: '☄️ 메테오 특성이 종료되었습니다.', color: '#94a3b8', life: 80, size: 18 });
+                    }
+                }
+            }, 1000);
+        }
+        window.startMeteorTrait = startMeteorTrait;
+
+        // 3. 퓨즈 2배 럭 활성화 (기본 5분 = 300초)
+        function activateFuseLuck(seconds = 300) {
+            window.fuseLuckTime = seconds;
+            const hudEl = document.getElementById('hud-buff-fuseluck');
+            const timerEl = document.getElementById('timer-buff-fuseluck');
+            if (hudEl) hudEl.style.display = 'flex';
+
+            if (window.fuseLuckInterval) clearInterval(window.fuseLuckInterval);
+            window.fuseLuckInterval = setInterval(() => {
+                window.fuseLuckTime--;
+                if (timerEl) {
+                    const m = Math.floor(window.fuseLuckTime / 60);
+                    const s = window.fuseLuckTime % 60;
+                    timerEl.innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+                }
+                if (window.fuseLuckTime <= 0) {
+                    clearInterval(window.fuseLuckInterval);
+                    if (hudEl) hudEl.style.display = 'none';
+                }
+            }, 1000);
+
+            if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '⚙️🍀 퓨즈 2배 럭 5분 시작!', color: '#38bdf8', life: 90, size: 20 });
+            }
+        }
+        window.activateFuseLuck = activateFuseLuck;
+
+        // 4. 3배 럭 활성화 (기본 5분 = 300초, 보라색 클로버)
+        function activateTripleLuck(seconds = 300) {
+            window.tripleLuckTime = seconds;
+            const hudEl = document.getElementById('hud-buff-tripleluck');
+            const timerEl = document.getElementById('timer-buff-tripleluck');
+            if (hudEl) hudEl.style.display = 'flex';
+
+            if (window.tripleLuckInterval) clearInterval(window.tripleLuckInterval);
+            window.tripleLuckInterval = setInterval(() => {
+                window.tripleLuckTime--;
+                if (timerEl) {
+                    const m = Math.floor(window.tripleLuckTime / 60);
+                    const s = window.tripleLuckTime % 60;
+                    timerEl.innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+                }
+                if (window.tripleLuckTime <= 0) {
+                    clearInterval(window.tripleLuckInterval);
+                    if (hudEl) hudEl.style.display = 'none';
+                }
+            }, 1000);
+
+            if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '🟣 3배 럭 5분 시작!', color: '#c084fc', life: 90, size: 20 });
+            }
+        }
+        window.activateTripleLuck = activateTripleLuck;
+
+        // 5. 메테오 스폰 및 업데이트 틱
+        function updateAndRenderMeteors(ctx) {
+            if (!window.meteorTrait || !window.meteorTrait.active) return;
+
+            const now = Date.now();
+            // 0.35초마다 새로운 메테오 낙하
+            if (now - window.meteorTrait.lastSpawn > 350) {
+                window.meteorTrait.lastSpawn = now;
+
+                // 10% 확률로 줄 서 있는 주민(손님) 조준 직격
+                let targetCustomer = null;
+                if (Math.random() < 0.10 && typeof shops !== 'undefined') {
+                    const allQueueCustomers = [];
+                    shops.forEach(s => {
+                        if (s.queue && s.queue.length > 0) {
+                            s.queue.forEach(c => allQueueCustomers.push({ c: c, queueY: s.queueY }));
+                        }
+                    });
+                    if (allQueueCustomers.length > 0) {
+                        const picked = allQueueCustomers[Math.floor(Math.random() * allQueueCustomers.length)];
+                        targetCustomer = picked;
+                    }
+                }
+
+                let targetX = targetCustomer ? targetCustomer.c.x : (Math.random() * (GAME_WIDTH - 80) + 40);
+                let targetY = targetCustomer ? targetCustomer.queueY : (cameraY + Math.random() * (GAME_HEIGHT - 100) + 50);
+
+                let startX = targetX - (Math.random() * 140 + 100);
+                let startY = targetY - (Math.random() * 320 + 260);
+
+                window.meteorTrait.meteors.push({
+                    x: startX,
+                    y: startY,
+                    targetX: targetX,
+                    targetY: targetY,
+                    speed: Math.random() * 5 + 13,
+                    targetCustomer: targetCustomer ? targetCustomer.c : null,
+                    progress: 0,
+                    size: Math.random() * 4 + 18,
+                    tailParticles: []
+                });
+            }
+
+            // 메테오 이동 및 렌더링 (Image 1 스타일)
+            for (let i = window.meteorTrait.meteors.length - 1; i >= 0; i--) {
+                const m = window.meteorTrait.meteors[i];
+                let dx = m.targetX - m.x;
+                let dy = m.targetY - m.y;
+                let dist = Math.hypot(dx, dy);
+
+                if (dist < m.speed) {
+                    // 지면 충돌 폭발 이펙트
+                    m.x = m.targetX;
+                    m.y = m.targetY;
+
+                    // 줄 선 주민 적중 처리
+                    if (m.targetCustomer) {
+                        m.targetCustomer.meteorBuff = true;
+                        m.targetCustomer.goldMultiplier = 2.5;
+                        if (typeof floatTexts !== 'undefined') {
+                            floatTexts.push({
+                                x: m.targetX,
+                                y: m.targetY - 60,
+                                text: '☄️✨ [메테오 적중] 2.5배 구매 발동!',
+                                color: '#facc15',
+                                life: 85,
+                                size: 20
+                            });
+                        }
+                    }
+
+                    // 착탄 불꽃 스파크 생성
+                    for (let p = 0; p < 10; p++) {
+                        if (typeof particles !== 'undefined') {
+                            particles.push({
+                                x: m.targetX,
+                                y: m.targetY,
+                                vx: (Math.random() - 0.5) * 8,
+                                vy: (Math.random() - 0.5) * 8,
+                                color: Math.random() < 0.5 ? '#d946ef' : '#facc15',
+                                life: 30,
+                                size: Math.random() * 4 + 2
+                            });
+                        }
+                    }
+
+                    window.meteorTrait.meteors.splice(i, 1);
+                    continue;
+                }
+
+                m.x += (dx / dist) * m.speed;
+                m.y += (dy / dist) * m.speed;
+
+                // 메테오 꼬리 화염 잔상 (Image 1 스타일 마젠타 궤적)
+                ctx.save();
+                ctx.translate(m.x, m.y);
+                let angle = Math.atan2(dy, dx);
+                ctx.rotate(angle);
+
+                // 1. 후방 마젠타/보라 화염 꼬리
+                let trailGrad = ctx.createLinearGradient(-35, 0, 0, 0);
+                trailGrad.addColorStop(0, 'rgba(168, 85, 247, 0)');
+                trailGrad.addColorStop(0.5, 'rgba(217, 70, 239, 0.6)');
+                trailGrad.addColorStop(1, 'rgba(244, 114, 182, 0.95)');
+                ctx.fillStyle = trailGrad;
+                ctx.beginPath();
+                ctx.moveTo(-m.size * 2, -m.size * 0.6);
+                ctx.lineTo(0, -m.size * 0.7);
+                ctx.lineTo(m.size * 0.5, 0);
+                ctx.lineTo(0, m.size * 0.7);
+                ctx.lineTo(-m.size * 2, m.size * 0.6);
+                ctx.closePath();
+                ctx.fill();
+
+                // 2. 메테오 본체 (크레이터 구체)
+                ctx.fillStyle = '#f8fafc';
+                ctx.strokeStyle = '#1e293b';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, 0, m.size * 0.75, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // 크레이터 픽셀
+                ctx.fillStyle = '#475569';
+                ctx.fillRect(-m.size * 0.35, -m.size * 0.2, m.size * 0.3, m.size * 0.3);
+                ctx.fillRect(0, m.size * 0.1, m.size * 0.35, m.size * 0.3);
+                ctx.fillStyle = '#64748b';
+                ctx.fillRect(-m.size * 0.1, -m.size * 0.4, m.size * 0.25, m.size * 0.25);
+
+                ctx.restore();
+            }
+        }
+        window.updateAndRenderMeteors = updateAndRenderMeteors;
+
+        // 6. 거대 포지 하우스 스냅 컷씬 렌더링
+        function renderSnapCutscene(ctx) {
+            if (!window.snapCutscene || !window.snapCutscene.active) return;
+
+            const sc = window.snapCutscene;
+            const elapsed = Date.now() - sc.startTime;
+
+            if (elapsed < sc.duration) {
+                // 2초 동안 불꽃 지형에서 일반 지형까지 행진
+                let progress = elapsed / sc.duration;
+                sc.currentX = sc.startX + (sc.targetX - sc.startX) * progress;
+                sc.currentY = sc.startY + (sc.targetY - sc.startY) * progress;
+            } else {
+                sc.currentX = sc.targetX;
+                sc.currentY = sc.targetY;
+            }
+
+            ctx.save();
+            ctx.translate(sc.currentX, sc.currentY);
+            // 성난 농부보다 거대한 2.8배 스케일
+            ctx.scale(2.8, 2.8);
+
+            // 바닥 그림자
+            ctx.fillStyle = 'rgba(0,0,0,0.45)';
+            ctx.beginPath();
+            ctx.ellipse(0, 26, 32, 11, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 다리
+            ctx.fillStyle = '#1e272e';
+            ctx.fillRect(-10, 14, 8, 12);
+            ctx.fillRect(3, 14, 8, 12);
+
+            // 본체 대장간 박스
+            ctx.fillStyle = '#34495e';
+            ctx.strokeStyle = '#1e272e';
+            ctx.lineWidth = 2.5;
+            ctx.fillRect(-22, -10, 44, 25);
+            ctx.strokeRect(-22, -10, 44, 25);
+
+            // 삼각형 박공 지붕
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.moveTo(0, -32);
+            ctx.lineTo(-26, -10);
+            ctx.lineTo(26, -10);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // 지붕 위 굴뚝 & 화염 연기
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(-18, -36, 7, 14);
+            ctx.strokeRect(-18, -36, 7, 14);
+
+            // 얼굴 눈 & 미소
+            ctx.fillStyle = '#f1c40f';
+            ctx.beginPath();
+            ctx.arc(-8, 0, 3.5, 0, Math.PI * 2);
+            ctx.arc(8, 0, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 양팔: 스냅 시전 시 번쩍 들어올림!
+            let armAngle = sc.armsUp ? -2.2 : (Math.sin(Date.now() * 0.01) * 0.5);
+
+            // 좌측 팔 (거대 해머)
+            ctx.save();
+            ctx.translate(-24, -4);
+            ctx.rotate(armAngle);
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(-4, 0, 8, 18);
+            ctx.fillStyle = '#f39c12';
+            ctx.fillRect(-12, 14, 24, 14);
+            ctx.restore();
+
+            // 우측 팔 (거대 대검)
+            ctx.save();
+            ctx.translate(24, -4);
+            ctx.rotate(-armAngle);
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(-4, 0, 8, 18);
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fillRect(-6, 14, 12, 28);
+            ctx.restore();
+
+            ctx.restore();
+        }
+        window.renderSnapCutscene = renderSnapCutscene;
+
 
 
 
