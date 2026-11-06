@@ -14796,8 +14796,8 @@
                     return;
                 }
                 // 해적 상점 및 해적 대기열 클릭 대사
-                let pfuseDist = Math.hypot(cx - 320, cy - 3420);
-            let pfusePlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - 320, player.y - 3420) : 999;
+                let pfuseDist = Math.hypot(cx - 320, cy - 1980);
+            let pfusePlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - 320, player.y - 1980) : 999;
             const canSeeFuse = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
             if (canSeeFuse && (pfuseDist < 90 || (isSpacebar && pfusePlayerDist < 120))) {
                 if (typeof openPirateFuseModal === 'function') openPirateFuseModal();
@@ -38469,7 +38469,7 @@ function drawAdminPirateTerrain(ctx) {
     }
     const canSeeFuse = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
     if (canSeeFuse && typeof drawPirateFuseMachine === 'function') {
-        drawPirateFuseMachine(ctx, 320, 3420);
+        drawPirateFuseMachine(ctx, 320, 1980);
     }
 }
 
@@ -39370,73 +39370,165 @@ window.renderIndexGrid = renderIndexGrid;
             ctx.save();
             ctx.translate(x, y);
 
-            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            // 0. 바닥 그림자 (Shadow)
+            ctx.fillStyle = 'rgba(0,0,0,0.45)';
             ctx.beginPath();
-            ctx.ellipse(0, 52, 75, 20, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 48, 125, 22, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            let bodyGrad = ctx.createLinearGradient(-55, -40, 55, 45);
-            bodyGrad.addColorStop(0, '#5c3818');
-            bodyGrad.addColorStop(0.5, '#3e2723');
-            bodyGrad.addColorStop(1, '#2c1810');
-            ctx.fillStyle = bodyGrad;
-            ctx.fillRect(-55, -40, 110, 85);
-            ctx.strokeStyle = '#8d5b2c'; ctx.lineWidth = 3; ctx.strokeRect(-55, -40, 110, 85);
+            // 1. [스케치 충실 구현] 바닥 지면 플랫폼 (Ground Platform - 작은 네모와 큰 건물 모두 받침)
+            let groundGrad = ctx.createLinearGradient(-115, 38, 115, 52);
+            groundGrad.addColorStop(0, '#78350f');
+            groundGrad.addColorStop(0.5, '#451a03');
+            groundGrad.addColorStop(1, '#2c1810');
+            ctx.fillStyle = groundGrad;
+            ctx.fillRect(-115, 38, 230, 14);
+            ctx.strokeStyle = '#d97706'; ctx.lineWidth = 2.5; ctx.strokeRect(-115, 38, 230, 14);
+            // 목재 바닥 디테일 선
+            ctx.strokeStyle = 'rgba(0,0,0,0.4)'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(-60, 38); ctx.lineTo(-60, 52); ctx.moveTo(20, 38); ctx.lineTo(20, 52); ctx.stroke();
 
-            ctx.fillStyle = '#1e1b18';
-            ctx.fillRect(-35, -15, 70, 55);
-            ctx.strokeStyle = '#d97706'; ctx.lineWidth = 1.8;
-            for (let sy = -8; sy < 38; sy += 9) {
-                ctx.beginPath(); ctx.moveTo(-32, sy); ctx.lineTo(32, sy); ctx.stroke();
+            // ================================================================
+            // 2. [스케치 좌측] 그 큰거 옆에 있는 작은 네모 큐브 (바닥 안착 + 안대 + 꽂힌 칼)
+            // ================================================================
+            ctx.save();
+            ctx.translate(-82, 0);
+
+            // 작은 네모 본체 (바닥 y:38에 딱 붙어 안착)
+            let sGrad = ctx.createLinearGradient(-22, -6, 22, 38);
+            sGrad.addColorStop(0, '#5c3818');
+            sGrad.addColorStop(0.5, '#3e2723');
+            sGrad.addColorStop(1, '#2c1810');
+            ctx.fillStyle = sGrad;
+            ctx.fillRect(-22, -6, 44, 44);
+            ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 2.5; ctx.strokeRect(-22, -6, 44, 44);
+
+            // 해적 안대 & 빗금 눈빛 (스케치 그대로)
+            // 왼쪽 빗금/눈
+            ctx.strokeStyle = '#fde047'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(-14, 12); ctx.lineTo(-6, 20); ctx.stroke();
+            // 오른쪽 해적 안대 (대각선 끈 + 검은 패치)
+            ctx.strokeStyle = '#1c1917'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(-22, 6); ctx.lineTo(22, 26); ctx.stroke();
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath(); ctx.arc(8, 17, 7, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#d97706'; ctx.lineWidth = 1.5; ctx.stroke();
+            ctx.fillStyle = '#ffffff'; ctx.font = '950 7.5px Arial'; ctx.textAlign = 'center'; ctx.fillText('☠️', 8, 19.5);
+
+            // 머리에 꽂힌 해적 칼 (Sword stuck in the head - 스케치 위치)
+            ctx.save();
+            ctx.translate(0, -6);
+            ctx.rotate(0.35); // 살짝 오른쪽으로 비스듬히 꽂힘
+            // 칼날 (머리 안으로 박혀 들어감)
+            ctx.fillStyle = '#f1f5f9';
+            ctx.beginPath(); ctx.moveTo(-3, 8); ctx.lineTo(3, 8); ctx.lineTo(2, -22); ctx.lineTo(0, -28); ctx.lineTo(-2, -22); ctx.closePath(); ctx.fill();
+            ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.2; ctx.stroke();
+            // 황금 코등이 가드
+            ctx.fillStyle = '#facc15'; ctx.fillRect(-8, -12, 16, 4);
+            ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 1; ctx.strokeRect(-8, -12, 16, 4);
+            // 가죽 손잡이 & 폼멜 구체
+            ctx.fillStyle = '#78350f'; ctx.fillRect(-2.5, -24, 5, 12);
+            ctx.fillStyle = '#facc15'; ctx.beginPath(); ctx.arc(0, -25, 3.5, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+
+            ctx.restore(); // 작은 네모 완료
+
+            // ================================================================
+            // 3. [스케치 중앙/우측] 큰 메인 퓨즈 건물 (기둥 + 가로 셔터 + 처마 + 모자 + 칼)
+            // ================================================================
+            ctx.save();
+            ctx.translate(22, 0);
+
+            // 메인 건물 외벽 바디
+            let bGrad = ctx.createLinearGradient(-55, -35, 55, 38);
+            bGrad.addColorStop(0, '#451a03');
+            bGrad.addColorStop(0.5, '#2c1810');
+            bGrad.addColorStop(1, '#1c1917');
+            ctx.fillStyle = bGrad;
+            ctx.fillRect(-55, -35, 110, 73);
+            ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 3; ctx.strokeRect(-55, -35, 110, 73);
+
+            // 좌우 기둥 (Pillars)
+            ctx.fillStyle = '#78350f';
+            ctx.fillRect(-55, -35, 16, 73); ctx.strokeRect(-55, -35, 16, 73);
+            ctx.fillRect(39, -35, 16, 73); ctx.strokeRect(39, -35, 16, 73);
+
+            // [스케치 핵심] 중앙 가로 셔터 / 그릴 문 (Horizontal Shutter Slats)
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(-35, -22, 70, 58);
+            ctx.strokeStyle = '#d97706'; ctx.lineWidth = 2.2;
+            for (let sy = -16; sy <= 30; sy += 7.5) {
+                ctx.beginPath(); ctx.moveTo(-33, sy); ctx.lineTo(33, sy); ctx.stroke();
             }
 
-            ctx.fillStyle = '#78350f';
-            ctx.fillRect(-65, -48, 130, 12);
-            ctx.strokeStyle = '#b45309'; ctx.lineWidth = 2; ctx.strokeRect(-65, -48, 130, 12);
+            // 처마 지붕 (Flat Overhang Roof Slab)
+            let roofGrad = ctx.createLinearGradient(-65, -45, 65, -35);
+            roofGrad.addColorStop(0, '#b45309');
+            roofGrad.addColorStop(0.5, '#78350f');
+            roofGrad.addColorStop(1, '#451a03');
+            ctx.fillStyle = roofGrad;
+            ctx.fillRect(-65, -45, 130, 12);
+            ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2.5; ctx.strokeRect(-65, -45, 130, 12);
 
+            // ================================================================
+            // 4. [스케치 지붕 위] 대형 해적 모자 & 관통된 해적 칼
+            // ================================================================
+            // 지붕 위 해적 칼 (스케치: 모자 뒤를 비스듬히 관통하여 우측 위로 뻗음)
             ctx.save();
-            ctx.translate(0, -62);
+            ctx.translate(18, -55);
+            ctx.rotate(0.55); // 대각선 45도 각도
+            // 긴 칼날 (우측 위로 날카롭게 뻗음)
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath(); ctx.moveTo(-3, 20); ctx.lineTo(3, 20); ctx.lineTo(2, -32); ctx.lineTo(0, -42); ctx.lineTo(-2, -32); ctx.closePath(); ctx.fill();
+            ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5; ctx.stroke();
+            // 코등이 가드 & 손잡이
+            ctx.fillStyle = '#facc15'; ctx.fillRect(-9, 10, 18, 4);
+            ctx.fillStyle = '#78350f'; ctx.fillRect(-3, 14, 6, 14);
+            ctx.fillStyle = '#facc15'; ctx.beginPath(); ctx.arc(0, 30, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+
+            // 지붕 위 대형 해적 선장 모자 (Tricorn Hat)
+            ctx.save();
+            ctx.translate(-5, -57);
             ctx.fillStyle = '#0f172a';
             ctx.beginPath();
-            ctx.moveTo(-42, 10);
-            ctx.quadraticCurveTo(-15, -18, 0, -22);
-            ctx.quadraticCurveTo(15, -18, 42, 10);
-            ctx.lineTo(-42, 10);
+            ctx.moveTo(-46, 12);
+            ctx.quadraticCurveTo(-18, -18, 0, -22);
+            ctx.quadraticCurveTo(18, -18, 46, 12);
+            ctx.lineTo(-46, 12);
             ctx.closePath();
             ctx.fill();
-            ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2; ctx.stroke();
-            ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(0, -2, 4.5, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#000000'; ctx.beginPath(); ctx.arc(-1.5, -2, 1.5, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5; ctx.stroke();
+
+            // 모자 중앙 안대 / 해골 마크 (스케치 그대로)
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath(); ctx.arc(0, -2, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#000000'; ctx.lineWidth = 1.5; ctx.stroke();
+            // 안대 패치
+            ctx.fillStyle = '#000000';
+            ctx.beginPath(); ctx.arc(-1.5, -2, 2, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#000000'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(-6, -6); ctx.lineTo(6, 2); ctx.stroke();
             ctx.restore();
 
-            ctx.save();
-            ctx.translate(38, -62);
-            ctx.rotate(0.5);
-            ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 3;
-            ctx.beginPath(); ctx.moveTo(0, 16); ctx.lineTo(0, -26); ctx.stroke();
-            ctx.strokeStyle = '#facc15'; ctx.lineWidth = 4;
-            ctx.beginPath(); ctx.moveTo(-6, 8); ctx.lineTo(6, 8); ctx.stroke();
-            ctx.restore();
+            ctx.restore(); // 큰 건물 완료
 
-            ctx.fillStyle = '#2c1810'; ctx.fillRect(-78, -5, 24, 25);
-            ctx.strokeStyle = '#b45309'; ctx.lineWidth = 1.5; ctx.strokeRect(-78, -5, 24, 25);
-            ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(-66, 6, 2.5, 0, Math.PI * 2); ctx.fill();
-            ctx.save(); ctx.translate(-66, -12); ctx.rotate(-0.1);
-            ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, 6); ctx.lineTo(0, -14); ctx.stroke();
-            ctx.restore();
+            // 5. 텍스트 라벨 (스케치: pirate fusemachine)
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+            ctx.fillRect(-85, 56, 170, 18);
+            ctx.strokeStyle = '#ea580c'; ctx.lineWidth = 1.2; ctx.strokeRect(-85, 56, 170, 18);
+            ctx.fillStyle = '#fde047'; ctx.font = '950 11.5px Arial'; ctx.textAlign = 'center';
+            ctx.fillText('pirate fusemachine', 0, 69.5);
 
-            ctx.fillStyle = 'rgba(0,0,0,0.7)';
-            ctx.fillRect(-55, 48, 110, 16);
-            ctx.fillStyle = '#fde047'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
-            ctx.fillText('pirate fusemachine', 0, 60);
-
+            // 플레이어 근접 시 상호작용 힌트
             let pDist = (typeof player !== 'undefined') ? Math.hypot(player.x - x, player.y - y) : 999;
-            if (pDist < 120) {
+            if (pDist < 130) {
                 let glow = Math.sin(Date.now() * 0.005) * 3;
-                ctx.fillStyle = 'rgba(234, 88, 12, 0.9)';
-                ctx.fillRect(-70, -88 + glow, 140, 22);
-                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
-                ctx.fillText('🏴‍☠️ 해적 퓨즈머신 (클릭 / E)', 0, -73 + glow);
+                ctx.fillStyle = 'rgba(234, 88, 12, 0.95)';
+                ctx.fillRect(-75, -92 + glow, 150, 24);
+                ctx.strokeStyle = '#fed7aa'; ctx.lineWidth = 1.5; ctx.strokeRect(-75, -92 + glow, 150, 24);
+                ctx.fillStyle = '#ffffff'; ctx.font = '950 11.5px Arial'; ctx.textAlign = 'center';
+                ctx.fillText('⚡ 해적 퓨즈머신 (클릭 / Space)', 0, -76 + glow);
             }
 
             ctx.restore();
@@ -39453,6 +39545,35 @@ window.renderIndexGrid = renderIndexGrid;
             if (!modal) return;
             modal.style.display = 'block';
             updatePirateFuseSlotsUI();
+
+            // 🎲 [유저 요청] 확률표 클릭 안해도 스킨 사진과 몇%인지 상시 표시
+            const oddsGrid = document.getElementById('pfuse-odds-live-grid');
+            if (oddsGrid) {
+                oddsGrid.innerHTML = '';
+                pirateFuseSkinsData.forEach(s => {
+                    const card = document.createElement('div');
+                    card.style.cssText = 'background: rgba(30, 41, 59, 0.85); border: 1.5px solid #ca8a04; border-radius: 8px; padding: 5px 2px; display: flex; flex-direction: column; align-items: center; text-align: center;';
+                    card.innerHTML = `
+                        <div style="background: #ea580c; color: white; font-size: 9px; font-weight: 950; padding: 1px 5px; border-radius: 6px; margin-bottom: 3px;">
+                            ${s.weight}%
+                        </div>
+                        <canvas id="pfuse-prev-${s.id}" width="46" height="58" style="background: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 3px;"></canvas>
+                        <div style="font-size: 9.5px; font-weight: 900; color: #ffffff; line-height: 1.1; word-break: keep-all;">
+                            ${s.name}
+                        </div>
+                    `;
+                    oddsGrid.appendChild(card);
+                });
+
+                // 캔버스에 실시간 고품질 스킨 일러스트 렌더링
+                setTimeout(() => {
+                    pirateFuseSkinsData.forEach(s => {
+                        if (typeof drawPreviewCanvas === 'function') {
+                            drawPreviewCanvas(`pfuse-prev-${s.id}`, s.id);
+                        }
+                    });
+                }, 30);
+            }
         }
         window.openPirateFuseModal = openPirateFuseModal;
 
@@ -39974,11 +40095,11 @@ window.renderIndexGrid = renderIndexGrid;
 
 
     <!-- 🏴‍☠️ [손그림 스케치 좌측 하단] 해적 퓨즈머신 모달 (PIRATE FUSEMACHINE) -->
-    <div id="pirate-fuse-modal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #2c1810, #0c0704); color: white; border-radius: 18px; width: 92%; max-width: 440px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #f97316; box-shadow: 0 0 35px rgba(249, 115, 22, 0.45); z-index: 65; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <div id="pirate-fuse-modal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at top, #2c1810, #0c0704); color: white; border-radius: 18px; width: 94%; max-width: 480px; max-height: 88%; overflow-y: auto; display: none; border: 2.5px solid #f97316; box-shadow: 0 0 35px rgba(249, 115, 22, 0.45); z-index: 65; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
         <div style="background: linear-gradient(90deg, #78350f, #9a3412, #78350f); padding: 12px 16px; border-top-left-radius: 15px; border-top-right-radius: 15px; border-bottom: 2px solid #ea580c; display: flex; justify-content: space-between; align-items: center;">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 20px;">🏴‍☠️</span>
-                <span style="font-weight: 950; font-size: 17px; color: #fed7aa; letter-spacing: 0.5px;">해적 퓨즈</span>
+                <span style="font-weight: 950; font-size: 17px; color: #fed7aa; letter-spacing: 0.5px;">해적 퓨즈 (PIRATE FUSE)</span>
             </div>
             <button onclick="closePirateFuseModal()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 15px; font-weight: bold; display: flex; align-items: center; justify-content: center;">✕</button>
         </div>
@@ -39988,6 +40109,7 @@ window.renderIndexGrid = renderIndexGrid;
                 해적 전리품 3개를 투입하여 전설의 해적 퓨즈 스킨 5종을 융합하세요!
             </div>
 
+            <!-- 3구 퓨즈 슬롯 -->
             <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 16px;">
                 <div id="pfuse-slot-0" onclick="clearPirateFuseSlot(0)" style="flex: 1; height: 95px; background: rgba(15, 23, 42, 0.9); border: 2.5px dashed #ea580c; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.15s; position: relative;">
                     <span style="font-size: 32px; color: #ea580c; font-weight: 300;">+</span>
@@ -40003,17 +40125,26 @@ window.renderIndexGrid = renderIndexGrid;
                 </div>
             </div>
 
+            <!-- 보유 재료 목록 -->
             <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid #451a03; border-radius: 10px; padding: 10px; margin-bottom: 14px;">
                 <div style="font-size: 12px; font-weight: 900; color: #fed7aa; margin-bottom: 8px;">📦 보유 중인 해적 재료 (클릭하여 슬롯에 등록):</div>
-                <div id="pfuse-materials-list" style="display: flex; flex-wrap: wrap; gap: 6px; max-height: 120px; overflow-y: auto;"></div>
+                <div id="pfuse-materials-list" style="display: flex; flex-wrap: wrap; gap: 6px; max-height: 105px; overflow-y: auto;"></div>
+            </div>
+
+            <!-- 🎲 [유저 요청 완벽 반영] 확률표를 클릭하지 않아도 스킨 사진과 몇%인지 상시 노출되는 그리드 -->
+            <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #ea580c; border-radius: 12px; padding: 10px; margin-bottom: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(249, 115, 22, 0.3); padding-bottom: 4px;">
+                    <span style="font-size: 12.5px; font-weight: 950; color: #fde047;">🎲 융합 획득 가능 스킨 (5종 실시간 확률표)</span>
+                    <span style="font-size: 10.5px; color: #cbd5e1;">조합 성공 시 1종 획득</span>
+                </div>
+                <div id="pfuse-odds-live-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;">
+                    <!-- JS에서 캔버스 프리뷰와 함께 실시간 렌더링 -->
+                </div>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button onclick="showPirateFuseOddsModal()" style="width: 100%; padding: 11px; background: rgba(255,255,255,0.08); border: 1.5px solid #fed7aa; border-radius: 10px; color: #fed7aa; font-weight: 950; font-size: 14px; cursor: pointer; transition: 0.15s;">
-                    확률표
-                </button>
                 <button id="btn-pfuse-execute" onclick="executePirateFuse()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: 2px solid #fed7aa; border-radius: 12px; font-weight: 950; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(234,88,12,0.4); text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
-                    ⚡ 융합하기
+                    ⚡ 해적 퓨즈 융합하기
                 </button>
             </div>
         </div>
