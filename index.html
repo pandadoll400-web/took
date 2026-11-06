@@ -1973,14 +1973,14 @@
                     <div id="pirate-lucky-pieces-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px;"></div>
 
                     <div style="display: flex; gap: 8px;">
-                        <button onclick="buyPirateLuckyPieces(1, 1000)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: 1.5px solid #fed7aa; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(234,88,12,0.4);">
-                            조각 1개<br><span style="font-size: 11px; color: #fef08a;">1,000 골드</span>
+                        <button onclick="buyPirateLuckyBlock(1, 1000)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: 1.5px solid #fed7aa; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(234,88,12,0.4);">
+                            🏴‍☠️ 해적 럭블 1개<br><span style="font-size: 11px; color: #fef08a;">1,000 골드</span>
                         </button>
-                        <button onclick="buyPirateLuckyPieces(10, 9500)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #d97706, #b45309); color: white; border: 1.5px solid #fed7aa; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(217,119,6,0.4);">
-                            조각 10개<br><span style="font-size: 11px; color: #fef08a;">9,500 골드</span>
+                        <button onclick="buyPirateLuckyBlock(10, 9500)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #d97706, #b45309); color: white; border: 1.5px solid #fed7aa; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(217,119,6,0.4);">
+                            🏴‍☠️ 해적 럭블 10개<br><span style="font-size: 11px; color: #fef08a;">9,500 골드</span>
                         </button>
-                        <button onclick="buyPirateLuckyPieces(30, 27000)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #7c2d12, #431407); color: white; border: 2px solid #facc15; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(124,45,18,0.5);">
-                            조각 30개<br><span style="font-size: 11px; color: #fde047;">27,000 골드</span>
+                        <button onclick="buyPirateLuckyBlock(30, 27000)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #7c2d12, #431407); color: white; border: 2px solid #facc15; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(124,45,18,0.5);">
+                            🏴‍☠️ 해적 럭블 30개<br><span style="font-size: 11px; color: #fde047;">27,000 골드</span>
                         </button>
                     </div>
                 </div>
@@ -2534,6 +2534,66 @@
             <!-- 🧩 [신규] 럭키 스킨 조각 합성 뷰 (해파리 75, 천사 50, 악마 40, 에테론 6) -->
             <div id="craft-shards-view" style="display: none;">
                 <div style="display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px;">
+                    <!-- 🏴‍☠️ [신규] 해적 럭키블록 4대 전설 스킨 조각 30개 합성 레시피 -->
+                    <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #ef4444; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
+                            <span style="font-size: 28px;">🏴‍☠️⚔️</span>
+                            <div>
+                                <div style="font-size: 13.5px; font-weight: 900; color: #ffffff;">스컬 선장 스킨</div>
+                                <div style="font-size: 11.5px; color: #fca5a5; margin-top: 2px;">
+                                    <span id="craft-skullcaptain-have" style="font-weight: 900; color: #facc15;">0/30</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="craft-btn-skullcaptain" onclick="craftPirateSkin('skull_captain')" style="padding: 8px 16px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12.5px; cursor: pointer;">
+                            조합하기!
+                        </button>
+                    </div>
+
+                    <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #2dd4bf; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
+                            <span style="font-size: 28px;">🧜‍♀️🌊</span>
+                            <div>
+                                <div style="font-size: 13.5px; font-weight: 900; color: #ffffff;">사이렌 스킨</div>
+                                <div style="font-size: 11.5px; color: #99f6e4; margin-top: 2px;">
+                                    <span id="craft-oceansiren-have" style="font-weight: 900; color: #facc15;">0/30</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="craft-btn-oceansiren" onclick="craftPirateSkin('ocean_siren')" style="padding: 8px 16px; background: linear-gradient(135deg, #0d9488, #14b8a6); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12.5px; cursor: pointer;">
+                            조합하기!
+                        </button>
+                    </div>
+
+                    <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #a855f7; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
+                            <span style="font-size: 28px;">🐙⚓</span>
+                            <div>
+                                <div style="font-size: 13.5px; font-weight: 900; color: #ffffff;">크라켄 해적 스킨</div>
+                                <div style="font-size: 11.5px; color: #d8b4fe; margin-top: 2px;">
+                                    <span id="craft-abysskrakenpirate-have" style="font-weight: 900; color: #facc15;">0/30</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="craft-btn-abysskrakenpirate" onclick="craftPirateSkin('abyss_kraken_pirate')" style="padding: 8px 16px; background: linear-gradient(135deg, #9333ea, #7e22ce); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12.5px; cursor: pointer;">
+                            조합하기!
+                        </button>
+                    </div>
+
+                    <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #34d399; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
+                            <span style="font-size: 28px;">👻🗡️</span>
+                            <div>
+                                <div style="font-size: 13.5px; font-weight: 900; color: #ffffff;">망령 선장 스킨</div>
+                                <div style="font-size: 11.5px; color: #a7f3d0; margin-top: 2px;">
+                                    <span id="craft-ghostwraith-have" style="font-weight: 900; color: #facc15;">0/30</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="craft-btn-ghostwraith" onclick="craftPirateSkin('ghost_wraith')" style="padding: 8px 16px; background: linear-gradient(135deg, #059669, #10b981); color: white; border: none; border-radius: 8px; font-weight: 900; font-size: 12.5px; cursor: pointer;">
+                            조합하기!
+                        </button>
+                    </div>
                     <!-- 💵 머니맨 스킨 (100개) -->
                     <div style="background: rgba(30, 41, 59, 0.85); border: 1.5px solid #facc15; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
@@ -7048,10 +7108,77 @@
                 else if (pi314Count >= 10 || (typeof isAdmin === 'function' && isAdmin())) { btnPi.innerText = '조합하기!'; btnPi.style.background = 'linear-gradient(135deg, #e11d48, #f43f5e)'; }
                 else { btnPi.innerText = '넣기!'; btnPi.style.background = '#475569'; }
             }
+
+            // 🏴‍☠️ [해적 4종 스킨 조각 합성 카운트 및 버튼 갱신]
+            if (typeof pirateLuckySkinsList !== 'undefined') {
+                window.piratePieces = window.piratePieces || {};
+                pirateLuckySkinsList.forEach(s => {
+                    const count = Math.max(window.piratePieces[s.id] || 0, inventory[s.name + ' 조각'] || 0);
+                    const domKey = s.id.replace(/_/g, '');
+                    const elHave = document.getElementById('craft-' + domKey + '-have');
+                    const btnCraft = document.getElementById('craft-btn-' + domKey);
+                    if (elHave) elHave.innerText = count + '/30';
+                    if (btnCraft) {
+                        if (ownedSkins.includes(s.id)) {
+                            btnCraft.innerText = '✓ 보유 중 (장착)';
+                            btnCraft.style.background = '#10b981';
+                        } else if (count >= 30 || (typeof isAdmin === 'function' && isAdmin())) {
+                            btnCraft.innerText = '합성하기!';
+                            btnCraft.style.background = 'linear-gradient(135deg, ' + s.color + ', #facc15)';
+                        } else {
+                            btnCraft.innerText = '조각 부족 (' + count + '/30)';
+                            btnCraft.style.background = '#475569';
+                        }
+                    }
+                });
+            }
         }
         window.updateCraftShardsUI = updateCraftShardsUI;
 
         // 💵 머니맨 스킨 조합 (조각 100개)
+        function craftPirateSkin(skinId) {
+            const skinInfo = (typeof pirateLuckySkinsList !== 'undefined' ? pirateLuckySkinsList.find(s => s.id === skinId) : null) || { name: '해적 스킨', icon: '🏴‍☠️' };
+            if (ownedSkins.includes(skinId)) {
+                equippedSkin = skinId;
+                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                if (typeof saveGame === 'function') saveGame(true);
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: player.x, y: player.y - 80, text: '🏴‍☠️ [' + skinInfo.name + '] 스킨 장착 완료!', color: '#facc15', life: 80, size: 20 });
+                }
+                alert('✨ 이미 보유한 스킨입니다! 바로 착용되었습니다.');
+                closeTradeMachineModal();
+                return;
+            }
+
+            window.piratePieces = window.piratePieces || {};
+            const count = Math.max(window.piratePieces[skinId] || 0, inventory[skinInfo.name + ' 조각'] || 0);
+
+            if (count < 30 && !(typeof isAdmin === 'function' && isAdmin())) {
+                alert('❌ [' + skinInfo.name + ' 조각]이 부족합니다!\n(현재: ' + count + '개 / 필요: 30개)\n\n인벤토리에서 해적 럭키블록을 개봉하여 조각을 모아보세요!');
+                return;
+            }
+
+            if (!(typeof isAdmin === 'function' && isAdmin())) {
+                window.piratePieces[skinId] = Math.max(0, count - 30);
+                inventory[skinInfo.name + ' 조각'] = window.piratePieces[skinId];
+            }
+
+            if (!ownedSkins.includes(skinId)) {
+                ownedSkins.push(skinId);
+            }
+            equippedSkin = skinId;
+
+            if (typeof saveGame === 'function') saveGame(true);
+            if (typeof updatePirateLuckyShopUI === 'function') updatePirateLuckyShopUI();
+            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+            if (typeof updateInvShardUI === 'function') updateInvShardUI();
+            if (typeof updateCraftingSlotsUI === 'function') updateCraftingSlotsUI();
+
+            alert('🎉 [전설 스킨 합성 대성공!]\n\n' + skinInfo.icon + ' \'' + skinInfo.name + '\' 스킨이 성공적으로 합성되었습니다!\n지금 바로 착용되었습니다!');
+            closeTradeMachineModal();
+        }
+        window.craftPirateSkin = craftPirateSkin;
+
         function craftMoneyManSkin() {
             if (ownedSkins.includes('money_man')) {
                 equippedSkin = 'money_man';
@@ -17613,7 +17740,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                         🏴‍☠️ 전설의 해적 럭키블록
                     </div>
                     <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 12px;">
-                        조각을 30개 모으면 해당 전설 스킨이 자동으로 영구 잠금 해제됩니다!
+                        상점에서 구매 시 [인벤토리]로 쏙 들어갑니다! 인벤토리에서 개봉 시 4종 스킨 조각을 획득하며, [크래프팅 머신]에서 전설 스킨으로 합성할 수 있습니다!
                     </div>
 
                     <!-- 4개 해적 스킨 조각 게이지 컨테이너 (스케치 중앙 4칸 게이지) -->
@@ -17621,14 +17748,14 @@ window.claimPirateShipSkin = claimPirateShipSkin;
 
                     <!-- 1개 / 10개 / 30개 구매 버튼 (스케치 하단 3개 버튼) -->
                     <div style="display: flex; gap: 8px;">
-                        <button onclick="buyPirateLuckyPieces(1, 1000)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: 1.5px solid #fed7aa; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(234,88,12,0.4);">
-                            조각 1개<br><span style="font-size: 11px; color: #fef08a;">1,000 골드</span>
+                        <button onclick="buyPirateLuckyBlock(1, 1000)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: 1.5px solid #fed7aa; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(234,88,12,0.4);">
+                            🏴‍☠️ 해적 럭블 1개<br><span style="font-size: 11px; color: #fef08a;">1,000 골드</span>
                         </button>
-                        <button onclick="buyPirateLuckyPieces(10, 9500)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #d97706, #b45309); color: white; border: 1.5px solid #fed7aa; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(217,119,6,0.4);">
-                            조각 10개<br><span style="font-size: 11px; color: #fef08a;">9,500 골드</span>
+                        <button onclick="buyPirateLuckyBlock(10, 9500)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #d97706, #b45309); color: white; border: 1.5px solid #fed7aa; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(217,119,6,0.4);">
+                            🏴‍☠️ 해적 럭블 10개<br><span style="font-size: 11px; color: #fef08a;">9,500 골드</span>
                         </button>
-                        <button onclick="buyPirateLuckyPieces(30, 27000)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #7c2d12, #431407); color: white; border: 2px solid #facc15; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(124,45,18,0.5);">
-                            조각 30개<br><span style="font-size: 11px; color: #fde047;">27,000 골드</span>
+                        <button onclick="buyPirateLuckyBlock(30, 27000)" style="flex: 1; padding: 11px 4px; background: linear-gradient(135deg, #7c2d12, #431407); color: white; border: 2px solid #facc15; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 3px 10px rgba(124,45,18,0.5);">
+                            🏴‍☠️ 해적 럭블 30개<br><span style="font-size: 11px; color: #fde047;">27,000 골드</span>
                         </button>
                     </div>
                 </div>
@@ -18377,7 +18504,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             } else if (type === 'pirate') {
                 const heldCount = inventory['해적 럭키블록'] || 0;
                 if (heldCount <= 0) {
-                    alert('❌ 해적 럭키블록이 없습니다! (상점 해적 럭키블록 또는 해적 낚시에서 획득 가능)');
+                    alert('❌ 해적 럭키블록이 없습니다! (상점 해적 럭키블록 탭에서 구매 가능)');
                     return;
                 }
                 if (count > heldCount) count = heldCount;
@@ -18386,22 +18513,27 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 let gainedGold = 0;
                 let lootItems = ['배의 잔해', '진주', '나침반', '보물지도'];
                 let lootGained = {};
+                let piecesGained = {};
+                let craftReadySkins = [];
+
+                window.piratePieces = window.piratePieces || {};
 
                 for (let i = 0; i < count; i++) {
                     gainedGold += Math.floor(Math.random() * 25000 + 10000);
+
+                    // 해적 전리품 획득
                     let loot = lootItems[Math.floor(Math.random() * lootItems.length)];
                     inventory[loot] = (inventory[loot] || 0) + 1;
                     lootGained[loot] = (lootGained[loot] || 0) + 1;
 
-                    if (Math.random() < 0.35) {
-                        const pSkins = ['skull_captain', 'ocean_siren', 'abyss_kraken_pirate', 'ghost_wraith'];
-                        const pickedSkin = pSkins[Math.floor(Math.random() * pSkins.length)];
-                        window.piratePieces = window.piratePieces || {};
-                        window.piratePieces[pickedSkin] = (window.piratePieces[pickedSkin] || 0) + 1;
-                        if (window.piratePieces[pickedSkin] >= 30 && !ownedSkins.includes(pickedSkin)) {
-                            ownedSkins.push(pickedSkin);
-                            alert('🏴‍☠️ [스킨 조각 30개 완성!]\n' + pickedSkin + ' 스킨이 잠금 해제되었습니다!');
-                        }
+                    // 4종 스킨 조각 1개 무작위 획득
+                    const p = pirateLuckySkinsList[Math.floor(Math.random() * pirateLuckySkinsList.length)];
+                    window.piratePieces[p.id] = (window.piratePieces[p.id] || 0) + 1;
+                    inventory[p.name + ' 조각'] = window.piratePieces[p.id];
+                    piecesGained[p.name] = (piecesGained[p.name] || 0) + 1;
+
+                    if (window.piratePieces[p.id] >= 30 && !ownedSkins.includes(p.id) && !craftReadySkins.includes(p.name)) {
+                        craftReadySkins.push(p.name);
                     }
                 }
 
@@ -18409,10 +18541,21 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 updateGoldDisplay();
                 if (typeof saveGame === 'function') saveGame();
                 updateInvLuckyUI();
-                if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+                if (typeof updateInvShardUI === 'function') updateInvShardUI();
+                if (typeof updatePirateLuckyShopUI === 'function') updatePirateLuckyShopUI();
+                if (typeof updateCraftingSlotsUI === 'function') updateCraftingSlotsUI();
 
+                let msg = '🏴‍☠️ [해적 럭키블록 ' + count + '개 개봉 완료!]\n';
+                let pieceStr = Object.entries(piecesGained).map(([k, v]) => k + ' 조각 +' + v + '개').join(', ');
+                msg += '\n🧩 획득 스킨 조각:\n' + pieceStr;
                 let lootStr = Object.entries(lootGained).map(([k, v]) => k + ' +' + v + '개').join(', ');
-                alert('🏴‍☠️ [해적 럭키블록 ' + count + '개 개봉 완료!]\n\n💰 획득 골드: +' + gainedGold.toLocaleString() + '원\n📦 획득 해적 전리품: ' + lootStr);
+                msg += '\n\n📦 획득 전리품: ' + lootStr;
+                msg += '\n💰 획득 골드: +' + gainedGold.toLocaleString() + '원';
+
+                if (craftReadySkins.length > 0) {
+                    msg += '\n\n✨ [합성 가능!]\n' + craftReadySkins.join(', ') + ' 조각이 30개 모였습니다!\n[크래프팅 머신]에서 전설 스킨으로 합성해보세요!';
+                }
+                alert(msg);
             }
         }
         window.useLuckyBlockDirect = useLuckyBlockDirect;
@@ -18579,6 +18722,50 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             shardList.innerHTML = '';
 
             const shardDefs = [
+                {
+                    name: '스컬 선장 조각',
+                    altKeys: ['스컬 선장 조각', '스컬선장조각', '스컬 선장 스킨 조각'],
+                    icon: '🏴‍☠️',
+                    color: '#ef4444',
+                    grade: '전설',
+                    targetName: '스컬 선장 스킨',
+                    reqCount: 30,
+                    recipeKey: 'shards',
+                    desc: '해적 럭키블록에서 획득'
+                },
+                {
+                    name: '사이렌 조각',
+                    altKeys: ['사이렌 조각', '사이렌조각', '사이렌 스킨 조각'],
+                    icon: '🧜‍♀️',
+                    color: '#2dd4bf',
+                    grade: '전설',
+                    targetName: '사이렌 스킨',
+                    reqCount: 30,
+                    recipeKey: 'shards',
+                    desc: '해적 럭키블록에서 획득'
+                },
+                {
+                    name: '크라켄 해적 조각',
+                    altKeys: ['크라켄 해적 조각', '크라켄해적조각', '심연의 크라켄 조각'],
+                    icon: '🐙',
+                    color: '#a855f7',
+                    grade: '전설',
+                    targetName: '크라켄 해적 스킨',
+                    reqCount: 30,
+                    recipeKey: 'shards',
+                    desc: '해적 럭키블록에서 획득'
+                },
+                {
+                    name: '망령 선장 조각',
+                    altKeys: ['망령 선장 조각', '망령선장조각', '유령 선원 조각'],
+                    icon: '👻',
+                    color: '#34d399',
+                    grade: '전설',
+                    targetName: '망령 선장 스킨',
+                    reqCount: 30,
+                    recipeKey: 'shards',
+                    desc: '해적 럭키블록에서 획득'
+                },
                 {
                     name: '에테론 조각',
                     altKeys: ['에테론 조각', '에테론조각'],
@@ -39387,32 +39574,12 @@ window.renderIndexGrid = renderIndexGrid;
             updateInfinityShopGauge();
             if (typeof updateInfinityCoinDisplay === 'function') updateInfinityCoinDisplay();
 
-            const skins = [
-                { id: 'money_king', name: '황금 머니킹', weight: 40, icon: '👑💵' },
-                { id: 'diamond_banker', name: '다이아몬드 뱅커', weight: 30, icon: '💎🎩' },
-                { id: 'golden_jackpot', name: '골든 잭팟', weight: 18, icon: '🎰💰' },
-                { id: 'illuminati_eye', name: '일루미나티 피라미드', weight: 9, icon: '👁️📐' },
-                { id: 'cyber_money_titan', name: '사이버 머니타이탄', weight: 3, icon: '🤖💵' }
-            ];
+            inventory['인피니티 럭키블록'] = (inventory['인피니티 럭키블록'] || 0) + 1;
 
-            let rand = Math.random() * 100;
-            let acc = 0;
-            let picked = skins[0];
-            for (let s of skins) {
-                acc += s.weight;
-                if (rand <= acc) {
-                    picked = s;
-                    break;
-                }
-            }
+            if (typeof saveGame === 'function') saveGame(true);
+            if (typeof updateInvLuckyUI === 'function') updateInvLuckyUI();
 
-            if (!ownedSkins.includes(picked.id)) {
-                ownedSkins.push(picked.id);
-            }
-            if (typeof saveGame === 'function') saveGame();
-            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
-
-            alert('🎉 [인피니티 럭키블록 스폰 대성공!]\n\n' + picked.icon + ' \'' + picked.name + '\' 스킨을 획득하셨습니다!\n\n인벤토리 스킨 탭에서 지금 즉시 착용할 수 있습니다!');
+            alert('🎉 [인피니티 럭키블록 1개 스폰 완료!]\n\n📦 [인벤토리] > [럭키블록] 탭으로 지급되었습니다!\n인벤토리에서 개봉하면 5종의 머니 스킨 중 1종 또는 대량의 코인을 획득할 수 있습니다!');
         }
         window.spawnInfinityLuckyBlockSkin = spawnInfinityLuckyBlockSkin;
 
@@ -39462,7 +39629,7 @@ window.renderIndexGrid = renderIndexGrid;
         }
         window.updatePirateLuckyShopUI = updatePirateLuckyShopUI;
 
-        function buyPirateLuckyPieces(count, cost) {
+        function buyPirateLuckyBlock(count, cost) {
             if (money < cost) {
                 alert('❌ 골드가 부족합니다!\n(필요: ' + cost.toLocaleString() + '원 / 보유: ' + money.toLocaleString() + '원)');
                 return;
@@ -39471,31 +39638,15 @@ window.renderIndexGrid = renderIndexGrid;
             money -= cost;
             updateMoney();
 
-            let gained = {};
-            let newlyUnlocked = [];
-
-            for (let i = 0; i < count; i++) {
-                const p = pirateLuckySkinsList[Math.floor(Math.random() * pirateLuckySkinsList.length)];
-                window.piratePieces[p.id] = (window.piratePieces[p.id] || 0) + 1;
-                gained[p.name] = (gained[p.name] || 0) + 1;
-
-                if (window.piratePieces[p.id] >= 30 && !ownedSkins.includes(p.id)) {
-                    ownedSkins.push(p.id);
-                    newlyUnlocked.push(p.name);
-                }
-            }
-
+            inventory['해적 럭키블록'] = (inventory['해적 럭키블록'] || 0) + count;
             if (typeof saveGame === 'function') saveGame();
-            updatePirateLuckyShopUI();
-            if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+            if (typeof updatePirateLuckyShopUI === 'function') updatePirateLuckyShopUI();
+            if (typeof updateInvLuckyUI === 'function') updateInvLuckyUI();
 
-            let gainStr = Object.entries(gained).map(([k, v]) => k + ' +' + v + '개').join(', ');
-            let msg = '🎉 [해적 럭키블록 조각 ' + count + '개 구매 완료!]\n\n📦 획득 조각: ' + gainStr;
-            if (newlyUnlocked.length > 0) {
-                msg += '\n\n👑 [스킨 30조각 완성 잠금 해제!]\n' + newlyUnlocked.join(', ') + ' 스킨을 획득하셨습니다!\n인벤토리 스킨 탭에서 착용해보세요!';
-            }
-            alert(msg);
+            alert('🎉 [해적 럭키블록 ' + count + '개 구매 완료!]\n\n📦 [인벤토리] > [럭키블록] 탭으로 지급되었습니다!\n인벤토리에서 개수를 지정하여 바로 개봉할 수 있습니다.');
         }
+        window.buyPirateLuckyBlock = buyPirateLuckyBlock;
+        window.buyPirateLuckyPieces = buyPirateLuckyBlock; // 하위 호환
         window.buyPirateLuckyPieces = buyPirateLuckyPieces;
 
         // ==========================================
