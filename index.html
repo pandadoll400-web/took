@@ -655,7 +655,7 @@
 
         <!-- ⏳🌑 [화면 상시 표시] 11월 7일 토요일 21:00 시즌1 마지막 어뷰즈 실시간 카운트다운 배너 -->
         <div id="season1-abuse-screen-banner" onclick="openSeason1NoticeModal(true)" style="position: absolute; top: 44px; left: 50%; transform: translateX(-50%); z-index: 15; background: rgba(10, 8, 18, 0.94); border: 1.8px solid #ef4444; border-radius: 20px; padding: 4px 14px; color: white; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 16px rgba(239, 68, 68, 0.55); cursor: pointer; white-space: nowrap; user-select: none;">
-            <span style="font-size: 12.5px; font-weight: 950; color: #facc15; text-shadow: 0 0 8px rgba(250, 204, 21, 0.6);">⚡ 시즌1 마지막 어뷰즈:</span>
+            <span style="font-size: 12.5px; font-weight: 950; color: #facc15; text-shadow: 0 0 8px rgba(250, 204, 21, 0.6);">⚡ 10:30 미니 이벤트:</span>
             <span id="season1-screen-countdown" style="font-size: 13px; font-weight: 950; color: #ff6b6b; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);">계산 중...</span>
         </div>
 
@@ -1332,65 +1332,35 @@
             <!-- 탭 2: 9시 이벤트 제어 및 실시간 테스트 대시보드 -->
             <div id="weqwxe3-section-9pm" style="display: none; flex-direction: column; gap: 10px;">
                 <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #ca8a04; border-radius: 12px; padding: 12px; text-align: left;">
-                    <div style="font-size: 13.5px; font-weight: 950; color: #facc15; margin-bottom: 4px;">🎃 11/7 저녁 9:00 피날레 라이브 (15단계 재구성 컨트롤러)</div>
+                    <div style="font-size: 13.5px; font-weight: 950; color: #facc15; margin-bottom: 4px;">🎃 11/7 밤 10:30 피날레 미니 이벤트 컨트롤러</div>
                     <div style="font-size: 11px; color: #94a3b8; line-height: 1.4;">새로고침/재접속 시에도 현재 진행 시점부터 끊김 없이 자동 동기화되어 재생됩니다.</div>
                 </div>
 
                 <div style="display: flex; gap: 8px; margin-bottom: 8px;">
                     <button onclick="start9PmEventTest(0); closeWeqwxe3EventModal();" style="flex: 1.2; padding: 11px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);">
-                        🎬 [T=0s] 9시 라이브 시작
+                        🎬 [T=0s] 10:30 미니 라이브 시작
                     </button>
                     <button onclick="stop9PmEventTest();" style="flex: 0.8; padding: 11px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer;">
                         🛑 정지 및 리셋
                     </button>
                 </div>
 
-                <!-- 15단계 즉시 점프 테스트 버튼 그리드 -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 190px; overflow-y: auto; padding: 4px;">
-                    <button onclick="start9PmEventTest(0); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(255,255,255,0.06); border: 1px solid #cbd5e1; color: #f1f5f9; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
-                        [0s] 안녕 모두들
+                <!-- 미니 이벤트 점프 버튼 그리드 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px;">
+                    <button onclick="start9PmEventTest(0); closeWeqwxe3EventModal();" style="padding: 10px; background: rgba(255,255,255,0.06); border: 1px solid #cbd5e1; color: #f1f5f9; border-radius: 8px; font-size: 12px; font-weight: 900; cursor: pointer;">
+                        [0s] 미니 이벤트!
                     </button>
-                    <button onclick="start9PmEventTest(5); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(255,255,255,0.06); border: 1px solid #cbd5e1; color: #f1f5f9; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
-                        [5s] 시즌1 마지막
+                    <button onclick="start9PmEventTest(5); closeWeqwxe3EventModal();" style="padding: 10px; background: rgba(255,255,255,0.06); border: 1px solid #cbd5e1; color: #f1f5f9; border-radius: 8px; font-size: 12px; font-weight: 900; cursor: pointer;">
+                        [5s] 스냅?
                     </button>
-                    <button onclick="start9PmEventTest(10); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(255,255,255,0.06); border: 1px solid #cbd5e1; color: #f1f5f9; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
-                        [10s] 해적퓨즈&한정
+                    <button onclick="start9PmEventTest(15); closeWeqwxe3EventModal();" style="padding: 10px; background: linear-gradient(135deg, #d946ef, #a855f7); color: white; border: none; border-radius: 8px; font-size: 12px; font-weight: 950; cursor: pointer; box-shadow: 0 4px 12px rgba(217, 70, 239, 0.45);">
+                        ⚡ [15s] 스냅 발동 (컷씬)
                     </button>
-                    <button onclick="start9PmEventTest(15); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(234, 88, 12, 0.2); border: 1px solid #ea580c; color: #fb923c; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
-                        🚤 [15s] 배 피하기 (1분)
+                    <button onclick="start9PmEventTest(23); closeWeqwxe3EventModal();" style="padding: 10px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: none; border-radius: 8px; font-size: 11.5px; font-weight: 950; cursor: pointer; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.45);">
+                        👼 [23s] 미니이벤트 종료 & 천악피하기(서양검사) & 버프5분
                     </button>
-                    <button onclick="start9PmEventTest(75); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
-                        🎣 [75s] 낚시게임 (15분)
-                    </button>
-                    <button onclick="start9PmEventTest(135); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
-                        🚦 [135s] 빨간불 초록불 (3분)
-                    </button>
-                    <button onclick="start9PmEventTest(315); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(217, 70, 239, 0.2); border: 1px solid #d946ef; color: #f472b6; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
-                        ⚡ [315s] 1차 스냅 예고
-                    </button>
-                    <button onclick="start9PmEventTest(325); closeWeqwxe3EventModal();" style="padding: 7px; background: linear-gradient(135deg, #d946ef, #a855f7); color: white; border: none; border-radius: 8px; font-size: 11px; font-weight: 950; cursor: pointer;">
-                        ☄️ [325s] 1차스냅 (메테오)
-                    </button>
-                    <button onclick="start9PmEventTest(385); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; color: #c084fc; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
-                        🔨 [385s] 포지 망치 (2분)
-                    </button>
-                    <button onclick="start9PmEventTest(505); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e; color: #fb7185; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
-                        👼 [505s] 천사악마 피하기
-                    </button>
-                    <button onclick="start9PmEventTest(685); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
-                        ⚡ [685s] 2차 스냅 예고
-                    </button>
-                    <button onclick="start9PmEventTest(695); closeWeqwxe3EventModal();" style="padding: 7px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 8px; font-size: 11px; font-weight: 950; cursor: pointer;">
-                        🦀 [695s] 2차스냅 (꽃게3배)
-                    </button>
-                    <button onclick="start9PmEventTest(755); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(255,255,255,0.06); border: 1px solid #cbd5e1; color: #f1f5f9; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
-                        [755s] 오우 좋은데?
-                    </button>
-                    <button onclick="start9PmEventTest(1055); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(234, 88, 12, 0.2); border: 1px solid #ea580c; color: #fb923c; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
-                        ⚡ [1055s] 3차 스냅 예고
-                    </button>
-                    <button onclick="start9PmEventTest(1065); closeWeqwxe3EventModal();" style="padding: 7px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: none; border-radius: 8px; font-size: 11px; font-weight: 950; cursor: pointer;">
-                        🔥 [1065s] 3차스냅 (불꽃3배)
+                    <button onclick="start9PmEventTest(203); closeWeqwxe3EventModal();" style="padding: 10px; background: rgba(255,255,255,0.06); border: 1px solid #94a3b8; color: #94a3b8; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer; grid-column: span 2;">
+                        🏁 [203s] 천악 피하기 종료 (버프는 323s까지 지속)
                     </button>
                 </div>
 
@@ -1419,7 +1389,10 @@
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <button onclick="triggerForgeHouseSnap(1); closeWeqwxe3EventModal();" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #d946ef, #a855f7); color: white; border: 2px solid #f472b6; border-radius: 10px; font-weight: 950; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 15px rgba(217, 70, 239, 0.5);">
+                        <button onclick="triggerForgeHouseSnap('mini'); closeWeqwxe3EventModal();" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; border: 2px solid #c084fc; border-radius: 10px; font-weight: 950; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.5);">
+                            ⚡ [미니이벤트 스냅] 특성 3종 + 퓨즈 2배 + 나무 3배 (모두 5분)
+                        </button>
+                        <button onclick="triggerForgeHouseSnap(1); closeWeqwxe3EventModal();" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #d946ef, #a855f7); color: white; border: 2px solid #f472b6; border-radius: 10px; font-weight: 950; font-size: 13.5px; cursor: pointer;">
                             ☄️ [1차 스냅] 메테오 2.5배 + 퓨즈/나무 럭
                         </button>
                         <button onclick="triggerForgeHouseSnap(2); closeWeqwxe3EventModal();" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: 2px solid #f87171; border-radius: 10px; font-weight: 950; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5);">
@@ -5646,8 +5619,8 @@
         // 📅 토요일 저녁 9시 (21:00) 라이브 이벤트 & 시즌1 마지막 어뷰즈 실시간 카운트다운
         // 📅 11월 7일 토요일 저녁 9시 (21:00) 시즌1 마지막 어뷰즈 실시간 카운트다운 (화면 상시 표시 & 모달 연동)
         function getNextSaturday9Pm(now = new Date()) {
-            // 2026년 11월 7일 토요일 21:00:00 고정 타겟
-            const fixedTarget = new Date('2026-11-07T21:00:00+09:00');
+            // 2026년 11월 7일 토요일 22:30:00 (10시 30분 미니 이벤트) 고정 타겟
+            const fixedTarget = new Date('2026-11-07T22:30:00+09:00');
             if (fixedTarget.getTime() > now.getTime()) {
                 return fixedTarget;
             }
@@ -15336,7 +15309,7 @@
                 if (wDist < 65 || (isSpacebar && wPlayerDist < 85)) {
                     dodgeFarmersState.carryingSkin = true;
                     if (dodgeFarmersState.mode === 'angel_devil') {
-                        floatTexts.push({ x: player.x, y: player.y - 80, text: '😈 [악마 스킨 습득!] 천사와 악마들을 피해 일반 지형으로 가세요!', color: '#ef4444', life: 90, size: 20 });
+                        floatTexts.push({ x: player.x, y: player.y - 80, text: '🤺 [서양 검사 스킨 습득!] 천사와 악마들을 피해 일반 지형으로 가세요!', color: '#38bdf8', life: 90, size: 20 });
                     } else {
                         floatTexts.push({ x: player.x, y: player.y - 80, text: '🤺 [서양 검사 스킨 습득!] 농부들을 피해 일반 지형으로 가세요!', color: '#38bdf8', life: 90, size: 20 });
                     }
@@ -19796,7 +19769,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             if (mode === 'angel_devil') {
                 floatTexts.push({ x: player.x, y: player.y - 80, text: `👼😈 [미니게임] 천사와 악마 피하기 가동! 우주 지역으로 가세요! (${Math.round(customTimeLeft)}초)`, color: '#ef4444', life: 120, size: 22 });
                 if (showAlert) {
-                    alert("👼😈 [미니게임: 천사와 악마 피하기 시작!]\n\n1. 천사와 악마가 섞여서 돌진해옵니다!\n2. 우주 지역(맨 위)에 '악마' 스킨이 스폰되어 있습니다.\n3. 우주로 올라가 악마 스킨을 챙겨서 일반 지형(아래)으로 무사히 탈출하세요!\n4. 돌진하는 천사와 악마에게 부딪히면 스킨을 떨어뜨리고 후퇴됩니다.\n\n⏱️ 제한 시간: 3분 (180초)");
+                    alert("👼😈 [미니게임: 천사와 악마 피하기 시작!]\n\n1. 천사와 악마가 섞여서 돌진해옵니다!\n2. 우주 지역(맨 위)에 '서양 검사' 스킨이 스폰되어 있습니다.\n3. 우주로 올라가 서양 검사 스킨을 챙겨서 일반 지형(아래)으로 무사히 탈출하세요!\n4. 돌진하는 천사와 악마에게 부딪히면 스킨을 떨어뜨리고 후퇴됩니다.\n\n⏱️ 제한 시간: 3분 (180초)");
                 }
             } else {
                 floatTexts.push({ x: player.x, y: player.y - 80, text: `👨‍🌾 [미니게임 2] 성난 거대 농부 피하기 가동! 우주 지역으로 가세요! (${Math.round(customTimeLeft)}초)`, color: '#f59e0b', life: 100, size: 20 });
@@ -20084,19 +20057,19 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 state.farmers = [];
                 
                 if (state.mode === 'angel_devil') {
-                    if (!ownedSkins.includes('devil')) {
-                        ownedSkins.push('devil');
+                    if (!ownedSkins.includes('western_swordsman')) {
+                        ownedSkins.push('western_swordsman');
                     }
-                    equippedSkin = 'devil';
+                    equippedSkin = 'western_swordsman';
                     if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
                     saveGame(true);
 
                     for (let i = 0; i < 40; i++) {
                         let a = Math.random() * Math.PI * 2;
                         let sp = Math.random() * 7 + 2;
-                        labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i%2===0?'#ef4444':'#f59e0b'), life: 45 });
+                        labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i%2===0?'#38bdf8':'#facc15'), life: 45 });
                     }
-                    alert("🎉 [천사 & 악마 피하기 클리어! 탈출 성공!]\n\n돌진하는 천사와 악마들을 모두 따돌리고 우주에서부터 악마 스킨을 무사히 일반 지형으로 탈출시켰습니다!\n\n😈 '악마' 스킨이 계정에 영구 지급 및 자동 장착되었습니다!");
+                    alert("🎉 [천사 & 악마 피하기 클리어! 탈출 성공!]\n\n돌진하는 천사와 악마들을 모두 따돌리고 우주에서부터 서양 검사 스킨을 무사히 일반 지형으로 탈출시켰습니다!\n\n🤺 '서양 검사' 스킨이 계정에 영구 지급 및 자동 장착되었습니다!");
                 } else {
                     if (!ownedSkins.includes('western_swordsman')) {
                         ownedSkins.push('western_swordsman');
@@ -20131,7 +20104,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
 
             // 2. 농부 / 천사&악마 피하기: 바닥에 놓인 스킨 오브젝트
             if (dodgeFarmersState.active && !dodgeFarmersState.carryingSkin) {
-                let skinKey = (dodgeFarmersState.mode === 'angel_devil') ? 'devil' : 'western_swordsman';
+                let skinKey = 'western_swordsman';
                 drawGroundSkinObject(ctx, skinKey, dodgeFarmersState.skinPos.x, dodgeFarmersState.skinPos.y);
             }
 
@@ -20147,7 +20120,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 let carrySkin = (redLightGreenLightState.targetSkin === 'infected_gorilla' || (typeof isLive830PmEventActive === 'function' && isLive830PmEventActive())) ? 'infected_gorilla' : 'hacker';
                 drawCarryingSkinBadge(ctx, carrySkin);
             } else if (dodgeFarmersState.active && dodgeFarmersState.carryingSkin) {
-                let carrySkin = (dodgeFarmersState.mode === 'angel_devil') ? 'devil' : 'western_swordsman';
+                let carrySkin = 'western_swordsman';
                 drawCarryingSkinBadge(ctx, carrySkin);
             }
         }
@@ -37455,9 +37428,10 @@ function isAngelDevilEventStarted() {
 }
 window.isAngelDevilEventStarted = isAngelDevilEventStarted;
 
-// 공식 시작 시간: 2026년 11월 1일 저녁 9시 정각 (21:00:00 KST)
-const LIVE_9PM_TARGET_TIMESTAMP = 1794052800000; // 2026년 11월 7일 토요일 21:00:00 KST
-const LIVE_9PM_TOTAL_DURATION = 1200; // 전체 일정: 20분
+// 공식 시작 시간: 2026년 11월 7일 밤 10시 30분 정각 (22:30:00 KST 미니 이벤트)
+const LIVE_9PM_TARGET_TIMESTAMP = 1794058200000; // 2026년 11월 7일 토요일 22:30:00 KST
+const LIVE_1030PM_TARGET_TIMESTAMP = LIVE_9PM_TARGET_TIMESTAMP;
+const LIVE_9PM_TOTAL_DURATION = 360; // 전체 일정: 6분 (스냅 컷씬 + 천악 피하기 3분 + 5분 버프)
 const LIVE_830PM_TARGET_TIMESTAMP = LIVE_9PM_TARGET_TIMESTAMP; // 레거시 호환
 const LIVE_830PM_TOTAL_DURATION = LIVE_9PM_TOTAL_DURATION;
 
@@ -37592,24 +37566,15 @@ window.playConcertRockMusic = playConcertRockMusic;
 window.stopConcertRockMusic = stopConcertRockMusic;
 
 // 📋 글로벌 타임라인 시퀀스 정의 (오늘 9시 정각 시작)
-// 📋 [11월 7일 토요일 저녁 9:00 피날레 라이브 이벤트 15단계 타임라인]
+// 📋 [11월 7일 토요일 밤 10:30 피날레 미니 라이브 이벤트 타임라인]
 const LIVE_9PM_TIMELINE = [
-    { t: 0,    text: 'Forge: 안녕 모두들', dur: 5000, action: null },
-    { t: 5,    text: 'Forge: 시즌1 마지막 업데이트', dur: 5000, action: null },
-    { t: 10,   text: 'Forge: 해적퓨즈&한정조합 미니게임?', dur: 5000, action: null },
-    { t: 15,   text: 'Forge: 신규 미니게임?', dur: 5000, action: 'start_boat_race' },        // 배 피하기 (1분)
-    { t: 75,   text: 'Forge: 낚시게임?', dur: 5000, action: 'start_fishing_15m' },         // 낚시 15분
-    { t: 135,  text: 'Forge: 3번째 미니게임?', dur: 5000, action: 'start_rlgl' },            // 빨간불 초록불 (3분)
-    { t: 315,  text: 'Forge: 스냅타임?', dur: 10000, action: null },                         // 1차 스냅 예고 (10초)
-    { t: 325,  text: null, dur: 0, action: 'snap_stage_1' },                                // 1차 스냅: 메테오 2.5배(3분) + 퓨즈 2배(5분) + 나무 3배(5분)
-    { t: 385,  text: 'Forge: 한정타임?', dur: 5000, action: 'start_hammer' },               // 포지 망치 소환 (2분)
-    { t: 505,  text: 'Forge: 4타임', dur: 5000, action: 'start_dodge' },                     // 천사악마 피하기 (3분)
-    { t: 685,  text: 'Forge: 스냅', dur: 10000, action: null },                              // 2차 스냅 예고 (10초)
-    { t: 695,  text: null, dur: 0, action: 'snap_stage_2' },                                // 2차 스냅: 꽃게 3배(5분) + 퓨즈 2배(5분) + 나무 3배(5분)
-    { t: 755,  text: 'Forge: 오우 좋은데?', dur: 5000, action: null },
-    { t: 1055, text: 'Forge: 스냅 마지막', dur: 10000, action: null },                       // 3차 스냅 예고 (10초)
-    { t: 1065, text: 'Forge: 모두 안녕', dur: 8000, action: 'snap_stage_3' }                // 3차 스냅: 불꽃 3배(5분) + 퓨즈 2배(5분) + 나무 3배(5분) & 피날레
+    { t: 0,   text: 'Forge: 미니 이벤트!', dur: 5000, action: null },
+    { t: 5,   text: 'Forge: 스냅?', dur: 10000, action: null },
+    { t: 15,  text: null, dur: 0, action: 'mini_event_snap' }, // ⚡ 스냅 컷씬 발동 (8초: 5초 걸어옴 + 3초 들기)
+    { t: 23,  text: 'Forge: 미니이벤트 종료', dur: 7000, action: 'start_dodge_mini' }, // 👼😈 마지막 인사 + 천악 피하기 (서양검사) & 버프 5분 시작!
+    { t: 203, text: 'Forge: 미니이벤트 종료! 모두 수고했어!', dur: 7000, action: 'end_dodge_mini' } // 180초 미니게임 종료
 ];
+const LIVE_1030PM_TIMELINE = LIVE_9PM_TIMELINE;
 const LIVE_830PM_TIMELINE = LIVE_9PM_TIMELINE; // 레거시 호환
 
 window._live9PmTriggeredSteps = new Set();
@@ -37641,7 +37606,7 @@ window.isLive9PmEventActive = isLive9PmEventActive;
 // 🔄 상태 동기화 함수 (새로고침 또는 중간 접속 시 15단계 T에 맞게 정확 복원)
 function syncLive9PmEventState(currentT) {
     if (currentT < 0 || currentT > LIVE_9PM_TOTAL_DURATION) return;
-    console.log('[9:00 PM Live] 실시간 15단계 상태 동기화 T = ' + Math.floor(currentT) + '초');
+    console.log('[10:30 PM Mini Live] 실시간 미니 이벤트 동기화 T = ' + Math.floor(currentT) + '초');
 
     // 🔒 1. 과거의 모든 타임라인 단계를 '이미 실행됨'으로 등록 (새로고침 시 중복/처음부터 재실행 완전 방지!)
     LIVE_9PM_TIMELINE.forEach(step => {
@@ -37654,40 +37619,20 @@ function syncLive9PmEventState(currentT) {
     const abuseScreenBanner = document.getElementById('season1-abuse-screen-banner');
     if (abuseScreenBanner) abuseScreenBanner.style.display = 'none';
 
-    // 3. T=15~75 (1분간): 배 미니게임 - 남은 시간(75 - currentT)으로 정확 복원
-    if (currentT >= 15 && currentT < 75) {
-        const remainingSec = Math.max(1, 75 - currentT);
-        if (!window.inBoatRaceDimension && typeof startBoatRaceGame === 'function') {
-            startBoatRaceGame(remainingSec);
-        } else if (window.boatRaceState) {
-            window.boatRaceState.timeLeft = remainingSec;
+    // 3. 현재 T 대사 실시간 복원
+    for (const step of LIVE_9PM_TIMELINE) {
+        const stepEnd = step.t + (step.dur / 1000);
+        if (currentT >= step.t && currentT < stepEnd && step.text) {
+            const remainMs = Math.max(1000, (stepEnd - currentT) * 1000);
+            showForgeBroadcast(step.text, remainMs);
+            break;
         }
-    } else if (currentT >= 75 && window.inBoatRaceDimension && typeof exitBoatRace === 'function') {
-        exitBoatRace();
     }
 
-    // 4. T=75~975 (15분간): 해적 낚시 미니게임 복원
-    if (currentT >= 75 && currentT < 975) {
-        window._globalFishing30mActive = true;
-        window._globalFishing30mEndTime = Date.now() + Math.max(1000, (975 - currentT) * 1000);
-    }
-
-    // 5. T=135~315 (3분간): 빨간불 초록불 - 남은 시간(315 - currentT)으로 정확 복원!
-    if (currentT >= 135 && currentT < 315) {
-        const remainingSec = Math.max(1, Math.floor(315 - currentT));
-        if (typeof startRedLightGreenLightGame === 'function') {
-            startRedLightGreenLightGame(true, remainingSec, false);
-        }
-    } else if (currentT >= 315 && typeof redLightGreenLightState !== 'undefined' && redLightGreenLightState && redLightGreenLightState.active && redLightGreenLightState.isLiveEvent) {
-        redLightGreenLightState.active = false;
-        const rlglHud = document.getElementById('rlgl-minigame-hud');
-        if (rlglHud) rlglHud.style.display = 'none';
-    }
-
-    // 6. T=325: 1차 스냅 (스냅 도중 새로고침 시 지나간 만큼 이어 재생, 8초 지난 경우 컷씬 스킵)
-    if (currentT >= 325 && currentT < 333) {
-        resumeSnapCutscene(1, currentT - 325);
-    } else if (currentT >= 333) {
+    // 4. T = 15 ~ 23 (8초간): 스냅 컷씬 도중 새로고침 시 지나간 시점부터 자연스럽게 이어짐
+    if (currentT >= 15 && currentT < 23) {
+        resumeSnapCutscene('mini', currentT - 15);
+    } else if (currentT >= 23) {
         if (window.snapCutscene) {
             window.snapCutscene.active = false;
             window.snapCutscene.armsUp = false;
@@ -37695,78 +37640,30 @@ function syncLive9PmEventState(currentT) {
         const overlay = document.getElementById('snap-screen-overlay');
         if (overlay) overlay.style.display = 'none';
     }
-    // 1차 스냅 버프 복원
-    if (currentT >= 325 && currentT < 505) {
-        const remainingSec = Math.max(1, Math.floor(505 - currentT));
-        if (typeof startMeteorTrait === 'function' && (!window.meteorTrait || !window.meteorTrait.active)) {
-            startMeteorTrait(remainingSec);
-        }
-    }
-    if (currentT >= 325 && currentT < 625) {
-        const remainingSec = Math.max(1, Math.floor(625 - currentT));
-        if (typeof activateFuseLuck === 'function') activateFuseLuck(remainingSec);
-        if (typeof activateTripleLuck === 'function') activateTripleLuck(remainingSec);
-    }
 
-    // 7. T=385~505 (2분간): 포지 망치 소환 유지
-    if (currentT >= 385 && currentT < 505) {
-        window.hammerDeliveryActive = true;
-        window.hammerDeliveryEndTime = Date.now() + Math.max(1000, (505 - currentT) * 1000);
-    } else if (currentT >= 505) {
-        window.hammerDeliveryActive = false;
-    }
-
-    // 8. T=505~685 (3분간): 4타임 천사악마 피하기 - 남은 시간(685 - currentT)으로 정확 복원!
-    if (currentT >= 505 && currentT < 685) {
-        const remainingSec = Math.max(1, Math.floor(685 - currentT));
+    // 5. T = 23 ~ 203 (180초간): 천사악마 피하기 미니게임 남은 시간으로 정확 복원
+    if (currentT >= 23 && currentT < 203) {
+        const remainingDodgeSec = Math.max(1, Math.floor(203 - currentT));
         if (typeof startDodgeFarmersGame === 'function') {
-            startDodgeFarmersGame(true, 'angel_devil', remainingSec, false);
+            startDodgeFarmersGame(true, 'angel_devil', remainingDodgeSec, false);
         }
-    } else if (currentT >= 685 && typeof dodgeFarmersState !== 'undefined' && dodgeFarmersState && dodgeFarmersState.active && dodgeFarmersState.isLiveEvent) {
-        dodgeFarmersState.active = false;
-        dodgeFarmersState.farmers = [];
-        const dodgeHud = document.getElementById('dodge-minigame-hud');
-        if (dodgeHud) dodgeHud.style.display = 'none';
+    } else if (currentT >= 203) {
+        if (typeof dodgeFarmersState !== 'undefined' && dodgeFarmersState && dodgeFarmersState.active && dodgeFarmersState.isLiveEvent) {
+            dodgeFarmersState.active = false;
+            dodgeFarmersState.farmers = [];
+            const dodgeHud = document.getElementById('dodge-minigame-hud');
+            if (dodgeHud) dodgeHud.style.display = 'none';
+        }
     }
 
-    // 9. T=695: 2차 스냅 (꽃게)
-    if (currentT >= 695 && currentT < 703) {
-        resumeSnapCutscene(2, currentT - 695);
-    } else if (currentT >= 703) {
-        if (window.snapCutscene) {
-            window.snapCutscene.active = false;
-            window.snapCutscene.armsUp = false;
-        }
-        const overlay = document.getElementById('snap-screen-overlay');
-        if (overlay) overlay.style.display = 'none';
-    }
-    if (currentT >= 695 && currentT < 995) {
-        const remainingSec = Math.max(1, Math.floor(995 - currentT));
-        if (typeof startCrabTrait === 'function' && (!window.crabTrait || !window.crabTrait.active)) {
-            startCrabTrait(remainingSec);
-        }
-        if (typeof activateFuseLuck === 'function') activateFuseLuck(remainingSec);
-        if (typeof activateTripleLuck === 'function') activateTripleLuck(remainingSec);
-    }
-
-    // 10. T=1065: 3차 스냅 (불꽃)
-    if (currentT >= 1065 && currentT < 1073) {
-        resumeSnapCutscene(3, currentT - 1065);
-    } else if (currentT >= 1073) {
-        if (window.snapCutscene) {
-            window.snapCutscene.active = false;
-            window.snapCutscene.armsUp = false;
-        }
-        const overlay = document.getElementById('snap-screen-overlay');
-        if (overlay) overlay.style.display = 'none';
-    }
-    if (currentT >= 1065 && currentT < 1365) {
-        const remainingSec = Math.max(1, Math.floor(1365 - currentT));
-        if (typeof startFireTrait === 'function' && (!window.fireTrait || !window.fireTrait.active)) {
-            startFireTrait(remainingSec);
-        }
-        if (typeof activateFuseLuck === 'function') activateFuseLuck(remainingSec);
-        if (typeof activateTripleLuck === 'function') activateTripleLuck(remainingSec);
+    // 6. T = 23 ~ 323 (5분간 버프 지속): 메테오 5분 + 꽃게 5분 + 불꽃 5분 + 퓨즈 2배 5분 + 나무 3배 5분
+    if (currentT >= 23 && currentT < 323) {
+        const remainingBuffSec = Math.max(1, Math.floor(323 - currentT));
+        if (typeof startMeteorTrait === 'function') startMeteorTrait(remainingBuffSec);
+        if (typeof startCrabTrait === 'function') startCrabTrait(remainingBuffSec);
+        if (typeof startFireTrait === 'function') startFireTrait(remainingBuffSec);
+        if (typeof activateFuseLuck === 'function') activateFuseLuck(remainingBuffSec);
+        if (typeof activateTripleLuck === 'function') activateTripleLuck(remainingBuffSec);
     }
 }
 
@@ -37807,54 +37704,20 @@ function checkAndTick9PmLiveEvent() {
                 showForgeBroadcast(step.text, step.dur);
             }
 
-            // 1. 배 미니게임 발동 (1분)
-            if (step.action === 'start_boat_race') {
-                if (typeof startBoatRaceGame === 'function') {
-                    startBoatRaceGame();
-                }
-            }
-            // 2. 낚시 미니게임 15분 활성화
-            else if (step.action === 'start_fishing_15m') {
-                window._globalFishing30mActive = true;
-                window._globalFishing30mEndTime = Date.now() + 15 * 60 * 1000;
-                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
-                    floatTexts.push({ x: player.x, y: player.y - 70, text: '🎣 [해적 낚시 15분 활성화!] 지형 진입 시 낚시대 지급!', color: '#38bdf8', life: 150, size: 22 });
-                }
-            }
-            // 3. 빨간불 초록불 발동 (3분)
-            else if (step.action === 'start_rlgl') {
-                if (window.inBoatRaceDimension && typeof exitBoatRace === 'function') {
-                    exitBoatRace();
-                }
-                if (typeof startRedLightGreenLightGame === 'function') {
-                    startRedLightGreenLightGame(true, 180, false);
-                }
-            }
-            // 4. 1차 스냅 활성화 (메테오 2.5배 3분 + 퓨즈 2배 럭 5분 + 나무 3배 럭 5분)
-            else if (step.action === 'snap_stage_1') {
-                triggerForgeHouseSnap(1);
-            }
-            // 5. 한정타임 (포지 망치 2분 소환)
-            else if (step.action === 'start_hammer') {
-                window.hammerDeliveryActive = true;
-                window.hammerDeliveryEndTime = Date.now() + 2 * 60 * 1000;
-                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
-                    floatTexts.push({ x: 370, y: 550, text: '🔨 [한정타임] 일반지형 나무 밑에 포지 망치 2분간 소환!', color: '#c084fc', life: 160, size: 22 });
-                }
-            }
-            // 6. 4타임: 천사악마 피하기 (3분)
-            else if (step.action === 'start_dodge') {
+            // ⚡ 미니 이벤트 액션 디스패치
+            if (step.action === 'mini_event_snap') {
+                triggerForgeHouseSnap('mini');
+            } else if (step.action === 'start_dodge_mini') {
                 if (typeof startDodgeFarmersGame === 'function') {
                     startDodgeFarmersGame(true, 'angel_devil', 180, false);
                 }
-            }
-            // 7. 2차 스냅 활성화 (꽃게 5분 + 퓨즈 2배 럭 5분 + 나무 3배 럭 5분)
-            else if (step.action === 'snap_stage_2') {
-                triggerForgeHouseSnap(2);
-            }
-            // 8. 3차 스냅 활성화 (불꽃 5분 + 퓨즈 2배 럭 5분 + 나무 3배 럭 5분)
-            else if (step.action === 'snap_stage_3') {
-                triggerForgeHouseSnap(3);
+            } else if (step.action === 'end_dodge_mini') {
+                if (typeof dodgeFarmersState !== 'undefined' && dodgeFarmersState && dodgeFarmersState.active && dodgeFarmersState.isLiveEvent) {
+                    dodgeFarmersState.active = false;
+                    dodgeFarmersState.farmers = [];
+                    const dodgeHud = document.getElementById('dodge-minigame-hud');
+                    if (dodgeHud) dodgeHud.style.display = 'none';
+                }
             }
         }
     });
@@ -37906,14 +37769,14 @@ function update9PmUIStatus(isActive, currentT) {
     const phaseEl = document.getElementById('live830pm-phase-text');
     if (!realTimeEl && !statusTag) return;
 
-    // 실제 9시 정각까지 카운트다운 계산
+    // 실제 10시 30분 정각까지 카운트다운 계산
     const realDiff = LIVE_9PM_TARGET_TIMESTAMP - Date.now();
     if (realTimeEl) {
         if (realDiff <= 0 && realDiff >= -(LIVE_9PM_TOTAL_DURATION * 1000)) {
-            realTimeEl.innerText = '🔥 실제 공식 9:00 라이브 이벤트 진행 중!';
+            realTimeEl.innerText = '🔥 실제 공식 10:30 미니 라이브 이벤트 진행 중!';
             realTimeEl.style.color = '#ef4444';
         } else if (realDiff < -(LIVE_9PM_TOTAL_DURATION * 1000)) {
-            realTimeEl.innerText = '✨ 공식 9:00 라이브 이벤트 완료됨';
+            realTimeEl.innerText = '✨ 공식 10:30 미니 라이브 이벤트 완료됨';
             realTimeEl.style.color = '#4ade80';
         } else {
             const totalSec = Math.floor(realDiff / 1000);
@@ -37934,7 +37797,7 @@ function update9PmUIStatus(isActive, currentT) {
             statusTag.style.color = '#94a3b8';
         }
         if (elapsedEl) elapsedEl.innerText = '0초';
-        if (phaseEl) phaseEl.innerText = '대기 중 (21:00 정각 자동 시작)';
+        if (phaseEl) phaseEl.innerText = '대기 중 (22:30 정각 자동 시작)';
         return;
     }
 
@@ -37958,7 +37821,7 @@ function update9PmUIStatus(isActive, currentT) {
     const weqStep = document.getElementById('weqwxe3-live-step');
     if (weqTimer) {
         if (!isActive || currentT < 0) {
-            weqTimer.innerText = '대기 중 (21:00 시작)';
+            weqTimer.innerText = '대기 중 (22:30 시작)';
         } else {
             const m = Math.floor(sec / 60);
             const s = sec % 60;
@@ -40544,15 +40407,19 @@ window.renderIndexGrid = renderIndexGrid;
                     // 2차: 🦀 꽃게 특성(5분, 3배) + ⚙️ 퓨즈 2배 럭(5분) + 🟣 나무 3배 럭(5분)
                     // 3차: 🔥 불꽃 특성(5분, 3배) + ⚙️ 퓨즈 2배 럭(5분) + 🟣 나무 3배 럭(5분)
                     const s = window._currentSnapStage || 1;
-                    if (s === 1) {
+                    if (s === 'all_5m' || s === 'mini') {
+                        startMeteorTrait(300); // 5분
+                        startCrabTrait(300);   // 5분
+                        startFireTrait(300);   // 5분
+                    } else if (s === 1) {
                         startMeteorTrait(180);
                     } else if (s === 2) {
                         startCrabTrait(300);
                     } else if (s === 3) {
                         startFireTrait(300);
                     }
-                    activateFuseLuck(300);
-                    activateTripleLuck(300);
+                    activateFuseLuck(300); // 5분
+                    activateTripleLuck(300); // 5분
 
                     // 🚫 [요청 반영] 스냅 완료 포지 대사 삭제!
                 }, 3000); // 3초 동안 손 든 채 유지
@@ -40595,6 +40462,20 @@ window.renderIndexGrid = renderIndexGrid;
                         if (overlay) overlay.style.display = 'none';
                         window.snapCutscene.active = false;
                         window.snapCutscene.armsUp = false;
+
+                        if (stage === 'all_5m' || stage === 'mini') {
+                            startMeteorTrait(300);
+                            startCrabTrait(300);
+                            startFireTrait(300);
+                        } else if (stage === 1) {
+                            startMeteorTrait(180);
+                        } else if (stage === 2) {
+                            startCrabTrait(300);
+                        } else if (stage === 3) {
+                            startFireTrait(300);
+                        }
+                        activateFuseLuck(300);
+                        activateTripleLuck(300);
                     }, 3000);
                 }, remainWalkMs);
             } else {
@@ -40609,6 +40490,20 @@ window.renderIndexGrid = renderIndexGrid;
                     if (overlay) overlay.style.display = 'none';
                     window.snapCutscene.active = false;
                     window.snapCutscene.armsUp = false;
+
+                    if (stage === 'all_5m' || stage === 'mini') {
+                        startMeteorTrait(300);
+                        startCrabTrait(300);
+                        startFireTrait(300);
+                    } else if (stage === 1) {
+                        startMeteorTrait(180);
+                    } else if (stage === 2) {
+                        startCrabTrait(300);
+                    } else if (stage === 3) {
+                        startFireTrait(300);
+                    }
+                    activateFuseLuck(300);
+                    activateTripleLuck(300);
                 }, remainHoldMs);
             }
         }
