@@ -702,6 +702,25 @@
             </div>
         </div>
 
+        <!-- 🚦 빨간불 초록불 상단 타이머 HUD -->
+        <div id="rlgl-minigame-hud" style="display: none; position: absolute; top: 18px; left: 50%; transform: translateX(-50%); z-index: 25; background: rgba(15, 23, 42, 0.95); border: 2px solid #22c55e; border-radius: 14px; padding: 8px 20px; color: white; font-weight: 900; box-shadow: 0 4px 20px rgba(0,0,0,0.6); text-align: center; pointer-events: none;">
+            <div style="font-size: 14.5px; font-weight: 950; color: #22c55e; margin-bottom: 2px;">🚦 빨간불 초록불 미니게임</div>
+            <div style="display: flex; gap: 12px; align-items: center; justify-content: center; font-size: 16px;">
+                <span style="color: #facc15; font-family: monospace;">⏱️ 남은 시간: <span id="rlgl-hud-timer">03:00</span></span>
+                <span id="rlgl-hud-status" style="padding: 2px 8px; border-radius: 6px; background: #22c55e; color: #000; font-size: 13px; font-weight: 950;">🟢 초록불</span>
+            </div>
+            <div id="rlgl-hud-skin-status" style="font-size: 12px; color: #94a3b8; margin-top: 3px;">우주 맨 위(Y:-7650)로 올라가 해커 스킨을 획득하세요!</div>
+        </div>
+
+        <!-- 👼😈 천사와 악마 피하기 상단 타이머 HUD -->
+        <div id="dodge-minigame-hud" style="display: none; position: absolute; top: 18px; left: 50%; transform: translateX(-50%); z-index: 25; background: rgba(15, 23, 42, 0.95); border: 2px solid #ef4444; border-radius: 14px; padding: 8px 20px; color: white; font-weight: 900; box-shadow: 0 4px 20px rgba(0,0,0,0.6); text-align: center; pointer-events: none;">
+            <div id="dodge-hud-title" style="font-size: 14.5px; font-weight: 950; color: #f87171; margin-bottom: 2px;">👼😈 천사와 악마 피하기</div>
+            <div style="display: flex; gap: 12px; align-items: center; justify-content: center; font-size: 16px;">
+                <span style="color: #facc15; font-family: monospace;">⏱️ 남은 시간: <span id="dodge-hud-timer">03:00</span></span>
+            </div>
+            <div id="dodge-hud-skin-status" style="font-size: 12px; color: #94a3b8; margin-top: 3px;">우주 맨 위(Y:-7650)에서 스킨을 획득하여 탈출하세요!</div>
+        </div>
+
         <!-- 🚤 보트 피하기 레이스 전용 HUD -->
         <div id="boat-race-hud">
             <div style="font-size: 15px; font-weight: 950; color: #38bdf8; margin-bottom: 4px;">🚤 보트 피하기 1분 레이스</div>
@@ -19711,6 +19730,12 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             dodgeFarmersState.active = false;
             dodgeFarmersState.carryingSkin = false;
             dodgeFarmersState.farmers = [];
+
+            const rlglHud = document.getElementById('rlgl-minigame-hud');
+            if (rlglHud) rlglHud.style.display = 'none';
+            const dodgeHud = document.getElementById('dodge-minigame-hud');
+            if (dodgeHud) dodgeHud.style.display = 'none';
+
             closeAdminPanelModal();
             if (wasActive) {
                 floatTexts.push({ x: player.x, y: player.y - 80, text: '🛑 미니게임이 강제 종료되었습니다.', color: '#ef4444', life: 80, size: 18 });
@@ -19788,11 +19813,43 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             if (!redLightGreenLightState.active) return;
             const state = redLightGreenLightState;
 
-            // 1. 타이머 감소
+            // 1. 타이머 감소 및 상단 HUD 업데이트
             state.timeLeft -= 1 / 60;
+            const rlglHud = document.getElementById('rlgl-minigame-hud');
+            const rlglTimerEl = document.getElementById('rlgl-hud-timer');
+            const rlglStatusEl = document.getElementById('rlgl-hud-status');
+            const rlglSkinEl = document.getElementById('rlgl-hud-skin-status');
+            if (rlglHud) rlglHud.style.display = 'block';
+            if (rlglTimerEl) {
+                const m = Math.floor(Math.max(0, state.timeLeft) / 60);
+                const s = Math.floor(Math.max(0, state.timeLeft) % 60);
+                rlglTimerEl.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }
+            if (rlglStatusEl) {
+                if (state.light === 'red') {
+                    rlglStatusEl.innerText = state.graceTimer > 0 ? '⚠️ 정지 준비!' : '🔴 빨간불 (멈춤!)';
+                    rlglStatusEl.style.background = '#ef4444';
+                    rlglStatusEl.style.color = '#fff';
+                } else {
+                    rlglStatusEl.innerText = '🟢 초록불 (이동!)';
+                    rlglStatusEl.style.background = '#22c55e';
+                    rlglStatusEl.style.color = '#000';
+                }
+            }
+            if (rlglSkinEl) {
+                if (state.carryingSkin) {
+                    rlglSkinEl.innerText = '🎉 해커 스킨 획득 완료! 일반 지형(아래)으로 탈출하세요!';
+                    rlglSkinEl.style.color = '#facc15';
+                } else {
+                    rlglSkinEl.innerText = '우주 맨 위(Y:-7650)로 올라가 해커 스킨을 획득하세요!';
+                    rlglSkinEl.style.color = '#94a3b8';
+                }
+            }
+
             if (state.timeLeft <= 0) {
                 state.active = false;
                 state.carryingSkin = false;
+                if (rlglHud) rlglHud.style.display = 'none';
                 if (state.isLiveEvent) {
                     floatTexts.push({ x: player.x, y: player.y - 80, text: '⏱️ [미니게임 1 종료] 3분이 경과했습니다!', color: '#ef4444', life: 100, size: 20 });
                 } else {
@@ -19895,12 +19952,37 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             if (!dodgeFarmersState.active) return;
             const state = dodgeFarmersState;
 
-            // 1. 타이머 감소
+            // 1. 타이머 감소 및 상단 HUD 실시간 표시
             state.timeLeft -= 1 / 60;
+            const dodgeHud = document.getElementById('dodge-minigame-hud');
+            const dodgeTimerEl = document.getElementById('dodge-hud-timer');
+            const dodgeTitleEl = document.getElementById('dodge-hud-title');
+            const dodgeSkinEl = document.getElementById('dodge-hud-skin-status');
+            if (dodgeHud) dodgeHud.style.display = 'block';
+            if (dodgeTitleEl) {
+                dodgeTitleEl.innerText = (state.mode === 'angel_devil') ? '👼😈 천사와 악마 피하기' : '👨‍🌾 성난 거대 농부 피하기';
+                dodgeTitleEl.style.color = (state.mode === 'angel_devil') ? '#f87171' : '#f59e0b';
+            }
+            if (dodgeTimerEl) {
+                const m = Math.floor(Math.max(0, state.timeLeft) / 60);
+                const s = Math.floor(Math.max(0, state.timeLeft) % 60);
+                dodgeTimerEl.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }
+            if (dodgeSkinEl) {
+                if (state.carryingSkin) {
+                    dodgeSkinEl.innerText = (state.mode === 'angel_devil' ? '🎉 악마 스킨 획득 완료! 일반 지형(아래)으로 탈출하세요!' : '🎉 서양 검사 스킨 획득 완료! 일반 지형(아래)으로 탈출하세요!');
+                    dodgeSkinEl.style.color = '#facc15';
+                } else {
+                    dodgeSkinEl.innerText = (state.mode === 'angel_devil' ? '우주 맨 위(Y:-7650)에서 악마 스킨을 획득하세요!' : '우주 맨 위(Y:-7650)에서 서양 검사 스킨을 획득하세요!');
+                    dodgeSkinEl.style.color = '#94a3b8';
+                }
+            }
+
             if (state.timeLeft <= 0) {
                 state.active = false;
                 state.carryingSkin = false;
                 state.farmers = [];
+                if (dodgeHud) dodgeHud.style.display = 'none';
                 if (state.isLiveEvent) {
                     floatTexts.push({ x: player.x, y: player.y - 80, text: '⏱️ [미니게임 2 종료] 3분이 경과했습니다!', color: '#ef4444', life: 100, size: 20 });
                 } else {
@@ -19912,25 +19994,23 @@ window.claimPirateShipSkin = claimPirateShipSkin;
 
             state.waveTimer += 16.6;
 
-            // 웨이브 스폰: 세로 간격을 충분히 벌려서 (2.8초 간격) 플레이어 머리 위 700px 위에서 스폰
-            if (state.waveTimer >= state.waveInterval) {
+            // ✨ [유저 피드백 완벽 반영] 2.4초(2400ms)마다 1웨이브만 스폰! 겹침 완전 차단 & 쾌적한 회피 공간 확보
+            if (state.waveTimer >= 2400) {
                 state.waveTimer = 0;
-                // 4개 열 (각 열 150px 폭, 정중앙 좌표: 75, 225, 375, 525)
+                // 4개 열 (각 열 150px 폭, 중앙 좌표: 75, 225, 375, 525)
                 const colXs = [75, 225, 375, 525];
-                // 2명 위주 (70%) 또는 3명 (30%) 스폰하여 넉넉한 회피 공간 제공
-                state.waveInterval = 110; // 일정한 간격 유지 (약 350px 거리)
-                // 한 줄에 최대 3개 (2개 65%, 3개 35%), 4개는 절대 불가하여 항상 탈출로 확보!
-                const numFarmers = (Math.random() < 0.35) ? 3 : 2;
+                // 1개(60%) 또는 2개(40%)만 스폰하여 절대 겹치지 않고 2~3개의 안전 탈출로 상시 확보!
+                const numFarmers = (Math.random() < 0.40) ? 2 : 1;
                 let cols = [0, 1, 2, 3];
                 cols.sort(() => Math.random() - 0.5);
                 let chosenCols = cols.slice(0, numFarmers);
 
-                let spawnY = player.y - 720;
-                // 이전 웨이브와 최소 300px 거리 유지 검증
+                let spawnY = player.y - 750;
+                // 이전 웨이브와의 수직 거리 350px 이상 보장 (겹침 방지)
                 let canSpawn = true;
                 if (state.farmers && state.farmers.length > 0) {
                     let minY = Math.min(...state.farmers.map(f => f.y));
-                    if (spawnY - minY < 280 && minY - spawnY < 280) {
+                    if (Math.abs(spawnY - minY) < 350) {
                         canSpawn = false;
                     }
                 }
@@ -19942,7 +20022,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                             y: spawnY,
                             width: 145,
                             height: 145,
-                            speed: 3.0, // 공정하고 일정한 속도
+                            speed: 2.8, // 쾌적하고 균일한 속도
                             animTimer: Math.random() * 10,
                             subType: (state.mode === 'angel_devil') ? (Math.random() < 0.5 ? 'angel' : 'devil') : 'farmer'
                         });
@@ -37564,26 +37644,36 @@ function syncLive9PmEventState(currentT) {
     if (currentT < 0 || currentT > LIVE_9PM_TOTAL_DURATION) return;
     console.log('[9:00 PM Live] 실시간 15단계 상태 동기화 T = ' + Math.floor(currentT) + '초');
 
-    // 상단 어뷰즈 배너 숨김
+    // 🔒 1. 과거의 모든 타임라인 단계를 '이미 실행됨'으로 등록 (새로고침 시 중복/처음부터 재실행 완전 방지!)
+    LIVE_9PM_TIMELINE.forEach(step => {
+        if (currentT >= step.t) {
+            window._live9PmTriggeredSteps.add(step.t);
+        }
+    });
+
+    // 2. 상단 어뷰즈 배너 숨김
     const abuseScreenBanner = document.getElementById('season1-abuse-screen-banner');
     if (abuseScreenBanner) abuseScreenBanner.style.display = 'none';
 
-    // 1. T=15~75 (1분간): 배 미니게임 복원
+    // 3. T=15~75 (1분간): 배 미니게임 - 남은 시간(75 - currentT)으로 정확 복원
     if (currentT >= 15 && currentT < 75) {
+        const remainingSec = Math.max(1, 75 - currentT);
         if (!window.inBoatRaceDimension && typeof startBoatRaceGame === 'function') {
-            startBoatRaceGame();
+            startBoatRaceGame(remainingSec);
+        } else if (window.boatRaceState) {
+            window.boatRaceState.timeLeft = remainingSec;
         }
     } else if (currentT >= 75 && window.inBoatRaceDimension && typeof exitBoatRace === 'function') {
         exitBoatRace();
     }
 
-    // 2. T=75~975 (15분간): 해적 낚시 미니게임 복원
+    // 4. T=75~975 (15분간): 해적 낚시 미니게임 복원
     if (currentT >= 75 && currentT < 975) {
         window._globalFishing30mActive = true;
         window._globalFishing30mEndTime = Date.now() + Math.max(1000, (975 - currentT) * 1000);
     }
 
-    // 3. T=135~315 (3분간): 빨간불 초록불 복원
+    // 5. T=135~315 (3분간): 빨간불 초록불 - 남은 시간(315 - currentT)으로 정확 복원!
     if (currentT >= 135 && currentT < 315) {
         const remainingSec = Math.max(1, Math.floor(315 - currentT));
         if (typeof startRedLightGreenLightGame === 'function') {
@@ -37591,9 +37681,22 @@ function syncLive9PmEventState(currentT) {
         }
     } else if (currentT >= 315 && typeof redLightGreenLightState !== 'undefined' && redLightGreenLightState && redLightGreenLightState.active && redLightGreenLightState.isLiveEvent) {
         redLightGreenLightState.active = false;
+        const rlglHud = document.getElementById('rlgl-minigame-hud');
+        if (rlglHud) rlglHud.style.display = 'none';
     }
 
-    // 4. T=325 이후: 1차 스냅 (메테오 3분 325~505s, 퓨즈/나무 5분 325~625s)
+    // 6. T=325: 1차 스냅 (스냅 도중 새로고침 시 지나간 만큼 이어 재생, 8초 지난 경우 컷씬 스킵)
+    if (currentT >= 325 && currentT < 333) {
+        resumeSnapCutscene(1, currentT - 325);
+    } else if (currentT >= 333) {
+        if (window.snapCutscene) {
+            window.snapCutscene.active = false;
+            window.snapCutscene.armsUp = false;
+        }
+        const overlay = document.getElementById('snap-screen-overlay');
+        if (overlay) overlay.style.display = 'none';
+    }
+    // 1차 스냅 버프 복원
     if (currentT >= 325 && currentT < 505) {
         const remainingSec = Math.max(1, Math.floor(505 - currentT));
         if (typeof startMeteorTrait === 'function' && (!window.meteorTrait || !window.meteorTrait.active)) {
@@ -37606,7 +37709,7 @@ function syncLive9PmEventState(currentT) {
         if (typeof activateTripleLuck === 'function') activateTripleLuck(remainingSec);
     }
 
-    // 5. T=385~505 (2분간): 포지 망치 소환 유지
+    // 7. T=385~505 (2분간): 포지 망치 소환 유지
     if (currentT >= 385 && currentT < 505) {
         window.hammerDeliveryActive = true;
         window.hammerDeliveryEndTime = Date.now() + Math.max(1000, (505 - currentT) * 1000);
@@ -37614,7 +37717,7 @@ function syncLive9PmEventState(currentT) {
         window.hammerDeliveryActive = false;
     }
 
-    // 6. T=505~685 (3분간): 4타임 천사악마 피하기 복원
+    // 8. T=505~685 (3분간): 4타임 천사악마 피하기 - 남은 시간(685 - currentT)으로 정확 복원!
     if (currentT >= 505 && currentT < 685) {
         const remainingSec = Math.max(1, Math.floor(685 - currentT));
         if (typeof startDodgeFarmersGame === 'function') {
@@ -37622,9 +37725,22 @@ function syncLive9PmEventState(currentT) {
         }
     } else if (currentT >= 685 && typeof dodgeFarmersState !== 'undefined' && dodgeFarmersState && dodgeFarmersState.active && dodgeFarmersState.isLiveEvent) {
         dodgeFarmersState.active = false;
+        dodgeFarmersState.farmers = [];
+        const dodgeHud = document.getElementById('dodge-minigame-hud');
+        if (dodgeHud) dodgeHud.style.display = 'none';
     }
 
-    // 7. T=695 이후: 2차 스냅 (꽃게 5분 695~995s, 퓨즈/나무 5분 695~995s)
+    // 9. T=695: 2차 스냅 (꽃게)
+    if (currentT >= 695 && currentT < 703) {
+        resumeSnapCutscene(2, currentT - 695);
+    } else if (currentT >= 703) {
+        if (window.snapCutscene) {
+            window.snapCutscene.active = false;
+            window.snapCutscene.armsUp = false;
+        }
+        const overlay = document.getElementById('snap-screen-overlay');
+        if (overlay) overlay.style.display = 'none';
+    }
     if (currentT >= 695 && currentT < 995) {
         const remainingSec = Math.max(1, Math.floor(995 - currentT));
         if (typeof startCrabTrait === 'function' && (!window.crabTrait || !window.crabTrait.active)) {
@@ -37634,7 +37750,17 @@ function syncLive9PmEventState(currentT) {
         if (typeof activateTripleLuck === 'function') activateTripleLuck(remainingSec);
     }
 
-    // 8. T=1065 이후: 3차 스냅 (불꽃 5분 1065~1365s, 퓨즈/나무 5분 1065~1365s)
+    // 10. T=1065: 3차 스냅 (불꽃)
+    if (currentT >= 1065 && currentT < 1073) {
+        resumeSnapCutscene(3, currentT - 1065);
+    } else if (currentT >= 1073) {
+        if (window.snapCutscene) {
+            window.snapCutscene.active = false;
+            window.snapCutscene.armsUp = false;
+        }
+        const overlay = document.getElementById('snap-screen-overlay');
+        if (overlay) overlay.style.display = 'none';
+    }
     if (currentT >= 1065 && currentT < 1365) {
         const remainingSec = Math.max(1, Math.floor(1365 - currentT));
         if (typeof startFireTrait === 'function' && (!window.fireTrait || !window.fireTrait.active)) {
@@ -37645,8 +37771,13 @@ function syncLive9PmEventState(currentT) {
     }
 }
 
-// ⏱️ 실시간 틱 루프 (250ms마다 호출): 9:00 도달 시 새로고침 없이 즉시 자동 재생 및 단계별 진행
 function checkAndTick9PmLiveEvent() {
+    // 🛑 테스트 정지 상태이면 일절 진행하지 않음!
+    if (window._live9PmTestStopped && (window._live9PmTestStartTime === null || window._live9PmTestStartTime === undefined)) {
+        update9PmUIStatus(false, -1);
+        return;
+    }
+
     const currentT = get9PmEventElapsedSeconds();
     const isTestMode = (typeof window !== 'undefined' && window._live9PmTestStartTime !== undefined && window._live9PmTestStartTime !== null);
 
@@ -37823,6 +37954,33 @@ function update9PmUIStatus(isActive, currentT) {
     const sec = Math.floor(currentT);
     if (elapsedEl) elapsedEl.innerText = `${sec}초`;
 
+    // 📱 weqwxe3 모달 내 실시간 타이머 및 진행 단계 반영
+    const weqTimer = document.getElementById('weqwxe3-live-timer');
+    const weqStep = document.getElementById('weqwxe3-live-step');
+    if (weqTimer) {
+        if (!isActive || currentT < 0) {
+            weqTimer.innerText = '대기 중 (21:00 시작)';
+        } else {
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            weqTimer.innerText = `${m}분 ${s}초 (T=${sec}s)`;
+        }
+    }
+    if (weqStep) {
+        if (!isActive || currentT < 0) {
+            weqStep.innerText = '-';
+        } else {
+            let currentStepName = '진행 중';
+            for (let i = LIVE_9PM_TIMELINE.length - 1; i >= 0; i--) {
+                if (currentT >= LIVE_9PM_TIMELINE[i].t) {
+                    currentStepName = LIVE_9PM_TIMELINE[i].text || ('액션: ' + LIVE_9PM_TIMELINE[i].action);
+                    break;
+                }
+            }
+            weqStep.innerText = currentStepName;
+        }
+    }
+
     if (phaseEl) {
         if (currentT < 5) phaseEl.innerText = '👋 Forge: "안녕모두들"';
         else if (currentT < 10) phaseEl.innerText = '❓ Forge: "1.5X 럭????"';
@@ -37843,6 +38001,7 @@ window.update830PmUIStatus = update9PmUIStatus; // 레거시 호환
 
 // 🧪 [weqwxe3 관리자 전용 9:00 이벤트 테스트 함수들]
 function start9PmEventTest(jumpSec = 0) {
+    window._live9PmTestStopped = false; // 정지 해제
     if (typeof stopAllMinigames === 'function') stopAllMinigames();
     const banner = document.getElementById('forge-broadcast-banner');
     if (banner) banner.style.display = 'none';
@@ -37876,19 +38035,44 @@ window.start9PmEventTest = start9PmEventTest; // 레거시 호환
 function stop9PmEventTest() {
     window._live9PmTestStartTime = null;
     window._live830PmTestStartTime = null;
+    window._live9PmTestStopped = true; // 🛑 정지 플래그 설정
     try {
         localStorage.removeItem('live_9pm_test_start_time');
         localStorage.removeItem('live_830pm_test_start_time');
     } catch(e) {}
 
-    setConcertCinematicMode(false);
-    window._isConcertLocked = false;
-    window._concertDancing = false;
-    stopConcertRockMusic();
     window._live9PmTriggeredSteps = new Set();
     window._live9PmSyncedThisSession = false;
 
+    // 1. 모든 미니게임 및 레이스, 낚시 즉시 강제 종료
     if (typeof stopAllMinigames === 'function') stopAllMinigames();
+    if (typeof exitBoatRace === 'function' && window.inBoatRaceDimension) exitBoatRace();
+    window._globalFishing30mActive = false;
+    window._globalFishing30mEndTime = 0;
+
+    // 2. 상단 미니게임 HUD 모두 숨김
+    const rlglHud = document.getElementById('rlgl-minigame-hud');
+    if (rlglHud) rlglHud.style.display = 'none';
+    const dodgeHud = document.getElementById('dodge-minigame-hud');
+    if (dodgeHud) dodgeHud.style.display = 'none';
+    const boatHud = document.getElementById('boat-race-hud');
+    if (boatHud) boatHud.style.display = 'none';
+
+    // 3. 스냅 컷씬 & 화면 암전 오버레이 즉시 종료
+    if (window.snapCutscene) {
+        window.snapCutscene.active = false;
+        window.snapCutscene.armsUp = false;
+    }
+    const snapOverlay = document.getElementById('snap-screen-overlay');
+    if (snapOverlay) snapOverlay.style.display = 'none';
+
+    // 4. 특성 및 망치 배달 즉시 종료
+    if (typeof stopMeteorTrait === 'function') stopMeteorTrait();
+    if (typeof stopCrabTrait === 'function') stopCrabTrait();
+    if (typeof stopFireTrait === 'function') stopFireTrait();
+    window.hammerDeliveryActive = false;
+
+    // 5. 방송 배너 숨김
     const banner = document.getElementById('forge-broadcast-banner');
     if (banner) banner.style.display = 'none';
 
@@ -37898,21 +38082,19 @@ function stop9PmEventTest() {
         if (typeof cameraY !== 'undefined') cameraY = 100;
     }
 
-    // 행운 버프 초기화
-    if (isLuck15Active) {
-        isLuck15Active = false;
-        luck15EndTime = 0;
-        try { localStorage.removeItem('luck_15_end_time'); } catch(e) {}
-        if (typeof updateLuck15Timer === 'function') updateLuck15Timer();
-    }
+    // 6. weqwxe3 모달 실시간 상태 카드 즉시 리셋
+    const timerEl = document.getElementById('weqwxe3-live-timer');
+    if (timerEl) timerEl.innerText = '정지됨 (대기 중)';
+    const stepEl = document.getElementById('weqwxe3-live-step');
+    if (stepEl) stepEl.innerText = '대기 중';
 
     if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
         floatTexts.push({
             x: player.x,
             y: player.y - 80,
-            text: '⏹️ 9:00 이벤트 테스트가 완전히 중지되었습니다.',
+            text: '⏹️ 9:00 이벤트 테스트가 완벽히 정지 및 초기화되었습니다.',
             color: '#ef4444',
-            life: 100,
+            life: 120,
             size: 20
         });
     }
@@ -38330,7 +38512,7 @@ window.addEventListener('keyup', e => {
 });
 
 // 🚤 보트 레이스 미니게임 시작 함수
-function startBoatRaceGame() {
+function startBoatRaceGame(customTimeLeft = 60.0) {
     if (typeof player === 'undefined') return;
     window.inBoatRaceDimension = true;
     window._boatRaceReturnPos = { x: player.x, y: player.y };
@@ -38338,8 +38520,8 @@ function startBoatRaceGame() {
     const bs = window.boatRaceState;
     bs.active = true;
     bs.startTime = Date.now();
-    bs.totalTime = 60.0;
-    bs.timeLeft = 60.0;
+    bs.totalTime = customTimeLeft;
+    bs.timeLeft = customTimeLeft;
     bs.boatX = GAME_WIDTH / 2;
     bs.boatSpeed = 170;
     bs.distance = 0;
@@ -40383,6 +40565,59 @@ window.renderIndexGrid = renderIndexGrid;
             }, 5000); // 5초 동안 느리게 걸어옴
         }
         window.triggerForgeHouseSnap = triggerForgeHouseSnap;
+
+        // ⚡ 스냅 컷씬 복원 함수 (새로고침 시 처음부터 다시 시작하지 않고 경과 시점부터 끊김 없이 이어짐)
+        function resumeSnapCutscene(stage, elapsedSec) {
+            if (elapsedSec >= 8) {
+                if (window.snapCutscene) {
+                    window.snapCutscene.active = false;
+                    window.snapCutscene.armsUp = false;
+                }
+                const overlay = document.getElementById('snap-screen-overlay');
+                if (overlay) overlay.style.display = 'none';
+                return;
+            }
+            window._currentSnapStage = stage;
+            window.snapCutscene.active = true;
+            window.snapCutscene.startTime = Date.now() - (elapsedSec * 1000);
+
+            if (elapsedSec < 5) {
+                window.snapCutscene.armsUp = false;
+                const progress = elapsedSec / 5;
+                window.snapCutscene.currentX = window.snapCutscene.startX + (window.snapCutscene.targetX - window.snapCutscene.startX) * progress;
+                cameraY = window.snapCutscene.startY - 200;
+
+                const remainWalkMs = (5 - elapsedSec) * 1000;
+                setTimeout(() => {
+                    if (!window.snapCutscene.active) return;
+                    window.snapCutscene.armsUp = true;
+                    window.snapCutscene.currentX = window.snapCutscene.targetX;
+                    const overlay = document.getElementById('snap-screen-overlay');
+                    if (overlay) overlay.style.display = 'flex';
+
+                    setTimeout(() => {
+                        const overlay = document.getElementById('snap-screen-overlay');
+                        if (overlay) overlay.style.display = 'none';
+                        window.snapCutscene.active = false;
+                        window.snapCutscene.armsUp = false;
+                    }, 3000);
+                }, remainWalkMs);
+            } else {
+                window.snapCutscene.armsUp = true;
+                window.snapCutscene.currentX = window.snapCutscene.targetX;
+                const overlay = document.getElementById('snap-screen-overlay');
+                if (overlay) overlay.style.display = 'flex';
+
+                const remainHoldMs = (8 - elapsedSec) * 1000;
+                setTimeout(() => {
+                    const overlay = document.getElementById('snap-screen-overlay');
+                    if (overlay) overlay.style.display = 'none';
+                    window.snapCutscene.active = false;
+                    window.snapCutscene.armsUp = false;
+                }, remainHoldMs);
+            }
+        }
+        window.resumeSnapCutscene = resumeSnapCutscene;
         
         // 🦀 [꽃게 특성 엔진] 5분간 각 지형 5마리 꽃게 스폰 ➔ 10% 손님 부착 ➔ 3배 가격 구매!
         window.crabTrait = {
