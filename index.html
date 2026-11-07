@@ -15165,11 +15165,10 @@
 
             // 🌾 신비한 차원 농장 내부 클릭 감지
                         // 🌴🏴‍☠️ [어드민 전용] 흔들리는 야자나무 & 해적 상점 상호작용
-            // 🏴‍☠️ [어드민/weqwxe3 전용] 해적 퓨즈머신 (X: 320, Y: 1980) 클릭 & 스페이스바 상호작용 - 100% 독립 분리
+            // 🏴‍☠️ [공개 서버 정식 출시] 해적 퓨즈머신 (X: 320, Y: 1980) 클릭 & 스페이스바 상호작용 - 전 유저 개방
             let pfuseDist = Math.hypot(cx - 320, cy - 1980);
             let pfusePlayerDist = (typeof player !== 'undefined') ? Math.hypot(player.x - 320, player.y - 1980) : 999;
-            const canSeeFuse = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
-            if (canSeeFuse && (pfuseDist < 120 || (isSpacebar && pfusePlayerDist < 140))) {
+            if (pfuseDist < 120 || (isSpacebar && pfusePlayerDist < 140)) {
                 if (typeof openPirateFuseModal === 'function') openPirateFuseModal();
                 return;
             }
@@ -39238,8 +39237,8 @@ function drawAdminPirateTerrain(ctx) {
     if (typeof drawShakablePiratePalmTree === 'function') {
         drawShakablePiratePalmTree(ctx, 160, 1500, time);
     }
-    const canSeeFuse = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
-    if (canSeeFuse && typeof drawPirateFuseMachine === 'function') {
+    // ⚡ [공개 서버 정식 출시] 해적 퓨즈머신 상시 렌더링
+    if (typeof drawPirateFuseMachine === 'function') {
         drawPirateFuseMachine(ctx, 320, 1980);
     }
 }
@@ -40271,11 +40270,7 @@ window.renderIndexGrid = renderIndexGrid;
         window.drawPirateFuseMachine = drawPirateFuseMachine;
 
         function openPirateFuseModal() {
-            const canSeeFuse = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
-            if (!canSeeFuse) {
-                alert('🔒 관리자 계정 전용 퓨즈머신입니다!');
-                return;
-            }
+            // ⚡ [공개 서버 정식 출시] 모든 유저 퓨즈 모달 오픈 및 융합 가능!
             const modal = document.getElementById('pirate-fuse-modal');
             if (!modal) return;
             modal.style.display = 'block';
