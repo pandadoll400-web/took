@@ -36,12 +36,12 @@
         }
         #infinity-coin-display {
             position: absolute; top: 48px; left: 10px;
-            background: rgba(15, 23, 42, 0.88); color: #facc15;
-            font-size: 13.5px; font-weight: 900;
-            padding: 4px 10px; border-radius: 14px;
-            border: 2px solid #38bdf8; pointer-events: none; z-index: 15;
-            white-space: nowrap; box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
-            display: none;
+            background: rgba(15, 23, 42, 0.92); color: #facc15;
+            font-size: 14px; font-weight: 900;
+            padding: 4px 12px; border-radius: 16px;
+            border: 2.2px solid #38bdf8; pointer-events: none; z-index: 15;
+            white-space: nowrap; box-shadow: 0 0 14px rgba(56, 189, 248, 0.55);
+            display: flex; align-items: center; gap: 7px;
         }
         
         #level-container {
@@ -640,8 +640,11 @@
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
         <div id="money-display">💰 0</div>
-        <!-- ♾️ [weqwxe3 전용] 인피니티 코인 표시 (돈 밑에 배치) -->
-        <div id="infinity-coin-display">♾️ <span id="infinity-coin-amount">0</span></div>
+        <!-- ♾️ 인피니티 코인 표시 (돈 밑에 상시 배치) -->
+        <div id="infinity-coin-display">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 19px; height: 19px; background: #8b5cf6; border-radius: 4px; color: white; font-size: 13px; font-weight: 900; box-shadow: 0 0 6px rgba(139, 92, 246, 0.7);">∞</span>
+            <span id="infinity-coin-amount">0</span>
+        </div>
         <!-- ⏱️ [weqwxe3 전용] 머니 미니게임 3분 타이머 HUD -->
         <div id="infinity-minigame-hud" style="display: none; position: absolute; top: 82px; left: 10px; z-index: 15; background: rgba(15, 23, 42, 0.94); border: 2px solid #38bdf8; border-radius: 14px; padding: 4px 10px; color: white; font-size: 12.5px; font-weight: 900; box-shadow: 0 0 12px rgba(56, 189, 248, 0.45); align-items: center; gap: 8px;">
             <span style="color: #facc15;">⏱️ <span id="infinity-minigame-timer">03:00</span></span>
@@ -1138,6 +1141,41 @@
             </div>
 
             <!-- 🟣 3. 3배 럭 (Image 3 스타일: 보라색 네잎클로버 + 볼드 타이머) -->
+            <!-- 💀 멸종 특성 (1번째 사진: 뿔 달린 해골) -->
+            <div id="hud-buff-extinction" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('💀 [멸종 특성 발동 중]\n\n5분 동안 각 지형마다 뿔 달린 해골 5마리가 배회합니다.\n10% 확률로 줄선 손님에게 해골이 달라붙으며 과일을 3배 가격으로 구매합니다!');">
+                <img src="extinction_skull.webp" style="width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.85)); animation: luckFloat 2s ease-in-out infinite;">
+                <div id="hud-timer-extinction" style="font-size: 21px; font-weight: 950; color: #ffffff; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 6px rgba(0,0,0,0.9); font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 0.5px; margin-top: -4px;">05:00</div>
+            </div>
+
+            <!-- 🛸 UFO 특성 (3번째 사진: 녹색 광선 UFO) -->
+            <div id="hud-buff-ufo" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('🛸 [UFO 특성 발동 중]\n\n5분 동안 UFO가 하늘을 비행하며 초록빛 광선을 쏩니다.\n10% 확률로 줄선 손님에게 광선이 부착되며 과일을 3배 가격으로 구매합니다!');">
+                <img src="ufo_beam.webp" style="width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.9)); animation: luckFloat 2s ease-in-out infinite;">
+                <div id="hud-timer-ufo" style="font-size: 21px; font-weight: 950; color: #ffffff; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 6px rgba(0,0,0,0.9); font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 0.5px; margin-top: -4px;">05:00</div>
+            </div>
+
+            <!-- 💰 돈 머니머니 (2번째 사진: 10B 아이콘 + 남은 시간 타이머) -->
+            <div id="hud-buff-money10b" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('💰 [머니머니 이벤트 발동 중]\n\n8개 지형에 인피니티 코인이 대량 스폰되었습니다! 코인을 수집하세요!');">
+                <img src="money_10b.webp" style="width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.9)); animation: luckFloat 2s ease-in-out infinite;">
+                <div id="hud-timer-money10b" style="font-size: 21px; font-weight: 950; color: #ffffff; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 6px rgba(0,0,0,0.9); font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 0.5px; margin-top: -4px;">05:00</div>
+            </div>
+
+            <!-- 🟡 4. 5배 럭 (3배럭의 황금 노란색 버전 + 볼드 타이머) -->
+            <div id="hud-buff-quintupleluck" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('🟡 [5배 럭 버프 발동 중]\n\n모든 채집, 낚시, 드롭 시 희귀/전설 아이템 획득 확률이 5배 증가합니다!');">
+                <svg width="48" height="48" viewBox="0 0 54 54" style="filter: drop-shadow(0 0 12px rgba(250, 204, 21, 0.95)); animation: luckFloat 2s ease-in-out infinite;">
+                    <path d="M 27 30 C 27 40, 29 46, 34 48" fill="none" stroke="#854d0e" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M 27 25 C 22 13, 11 15, 14 24 C 16 29, 25 27, 27 25 Z" fill="#eab308" stroke="#713f12" stroke-width="2"/>
+                    <path d="M 26 23 C 22 16, 15 17, 17 22" fill="none" stroke="#fef08a" stroke-width="1.2"/>
+                    <path d="M 27 25 C 32 13, 43 15, 40 24 C 38 29, 29 27, 27 25 Z" fill="#facc15" stroke="#713f12" stroke-width="2"/>
+                    <path d="M 28 23 C 32 16, 39 17, 37 22" fill="none" stroke="#ffffff" stroke-width="1.2"/>
+                    <path d="M 27 27 C 22 39, 11 37, 14 28 C 16 23, 25 25, 27 27 Z" fill="#ca8a04" stroke="#713f12" stroke-width="2"/>
+                    <path d="M 27 27 C 32 39, 43 37, 40 28 C 38 23, 29 25, 27 27 Z" fill="#eab308" stroke="#713f12" stroke-width="2"/>
+                    <circle cx="27" cy="26" r="3" fill="#ffffff"/>
+                </svg>
+                <div id="timer-buff-quintupleluck" style="color: #ffffff; font-family: 'Arial Black', Impact, sans-serif; font-size: 15px; font-weight: 950; text-align: center; line-height: 1; margin-top: 2px; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 5px #000;">
+                    05:00
+                </div>
+            </div>
+
             <div id="hud-buff-tripleluck" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('🟣 [3배 럭 버프 발동 중]\n\n모든 채집, 낚시, 드롭 시 희귀/전설 아이템 획득 확률이 3배 증가합니다!');">
                 <svg width="48" height="48" viewBox="0 0 54 54" style="filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.9)); animation: luckFloat 2s ease-in-out infinite;">
                     <path d="M 27 30 C 27 40, 29 46, 34 48" fill="none" stroke="#581c87" stroke-width="3" stroke-linecap="round"/>
@@ -1376,43 +1414,54 @@
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
                         <span style="font-size: 32px;">🏠⚡</span>
                         <div>
-                            <div style="font-size: 16px; font-weight: 950; color: #f97316;">타이탄 포지 하우스 스냅 (SNAP)</div>
-                            <div style="font-size: 11.5px; color: #fdba74;">불꽃 지형 강림 ➔ 중앙 행진 ➔ 스냅 컷씬 (포지 대사 없음)</div>
+                            <div style="font-size: 16px; font-weight: 950; color: #f97316;">타이탄 포지 하우스 스냅 4단계 컨트롤러</div>
+                            <div style="font-size: 11.5px; color: #fdba74;">불꽃 지형 강림 ➔ 중앙 행진 ➔ 스냅 컷씬 후 단계별 특성/버프 5분 발동</div>
                         </div>
                     </div>
-                    <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5; margin-bottom: 14px; background: rgba(0,0,0,0.35); padding: 10px; border-radius: 8px;">
-                        • 성난 농부보다 거대한 <strong>타이탄 포지 하우스</strong>가 불꽃 지형에 소환되어 중앙으로 행진합니다.<br>
-                        • 화면 전체가 회색으로 변하고 거대한 해골(☠️)과 함께 양팔을 번쩍 들며 스냅이 발동됩니다.<br>
-                        • <strong>1차 스냅</strong>: 메테오 2.5배(3분) + 퓨즈 2배 럭(5분) + 나무 3배 럭(5분)<br>
-                        • <strong>2차 스냅</strong>: 꽃게 5마리 스폰 & 10% 부착 3배(5분) + 퓨즈 2배 럭(5분) + 나무 3배 럭(5분)<br>
-                        • <strong>3차 스냅</strong>: 불꽃 낙하 & 10% 부착 3배(5분) + 퓨즈 2배 럭(5분) + 나무 3배 럭(5분)
+                    <div style="font-size: 12px; color: #cbd5e1; line-height: 1.6; margin-bottom: 14px; background: rgba(0,0,0,0.35); padding: 10px; border-radius: 8px;">
+                        • <strong>1차</strong>: ☄️ 메테오 + 🔥 불 + ⚙️ 퓨즈럭(2배) + 🟣 나무 3배럭<br>
+                        • <strong>2차</strong>: 🦀 꽃게 + 💀 멸종(해골 5마리 & 10% 부착 3배) + ⚙️ 퓨즈럭 + 🟣 나무 3배럭<br>
+                        • <strong>3차</strong>: 🛸 UFO(비행 & 주민 10% 광선 3배) + 💰 돈 머니머니 + ⚙️ 퓨즈럭 + 🟣 나무 3배럭<br>
+                        • <strong>4차</strong>: ☄️ 메테오 + 🦀 꽃게 + 🔥 불 + 💰 머니머니 + ⚙️ 퓨즈럭 + 🟡 <strong>나무 5배럭</strong>
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <button onclick="triggerForgeHouseSnap('mini'); closeWeqwxe3EventModal();" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; border: 2px solid #c084fc; border-radius: 10px; font-weight: 950; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.5);">
-                            ⚡ [미니이벤트 스냅] 특성 3종 + 퓨즈 2배 + 나무 3배 (모두 5분)
+                        <button onclick="triggerForgeHouseSnap(1); closeWeqwxe3EventModal();" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #d946ef, #a855f7); color: white; border: 2px solid #f472b6; border-radius: 10px; font-weight: 950; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(217, 70, 239, 0.5);">
+                            ☄️ [1차 스냅] 메테오 + 불 + 퓨즈 2배 + 나무 3배 (5분)
                         </button>
-                        <button onclick="triggerForgeHouseSnap(1); closeWeqwxe3EventModal();" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #d946ef, #a855f7); color: white; border: 2px solid #f472b6; border-radius: 10px; font-weight: 950; font-size: 13.5px; cursor: pointer;">
-                            ☄️ [1차 스냅] 메테오 2.5배 + 퓨즈/나무 럭
+                        <button onclick="triggerForgeHouseSnap(2); closeWeqwxe3EventModal();" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: 2px solid #f87171; border-radius: 10px; font-weight: 950; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5);">
+                            🦀 [2차 스냅] 꽃게 + 💀 멸종 + 퓨즈 2배 + 나무 3배 (5분)
                         </button>
-                        <button onclick="triggerForgeHouseSnap(2); closeWeqwxe3EventModal();" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: 2px solid #f87171; border-radius: 10px; font-weight: 950; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5);">
-                            🦀 [2차 스냅] 꽃게 5마리 3배 + 퓨즈/나무 럭
+                        <button onclick="triggerForgeHouseSnap(3); closeWeqwxe3EventModal();" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 2px solid #34d399; border-radius: 10px; font-weight: 950; font-size: 14px; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.5);">
+                            🛸 [3차 스냅] UFO + 💰 머니머니 + 퓨즈 2배 + 나무 3배 (5분)
                         </button>
-                        <button onclick="triggerForgeHouseSnap(3); closeWeqwxe3EventModal();" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: 2px solid #fdba74; border-radius: 10px; font-weight: 950; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.5);">
-                            🔥 [3차 스냅] 불꽃 낙하 3배 + 퓨즈/나무 럭
+                        <button onclick="triggerForgeHouseSnap(4); closeWeqwxe3EventModal();" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: 2px solid #fde047; border-radius: 10px; font-weight: 950; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.6);">
+                            👑 [4차 스냅] 메테오 + 꽃게 + 불 + 💰 머니머니 + ⚙️ 퓨즈 2배 + 🟡 나무 5배 (5분)
                         </button>
                     </div>
                 </div>
 
-                <!-- 🍀 버프 HUD 개별 테스트 컨트롤러 -->
+                <!-- 🍀 실시간 버프 & 특성 개별 컨트롤러 -->
                 <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #38bdf8; border-radius: 14px; padding: 14px; text-align: left;">
-                    <div style="font-size: 13.5px; font-weight: 950; color: #38bdf8; margin-bottom: 8px;">🍀 실시간 버프 HUD 개별 컨트롤러</div>
+                    <div style="font-size: 13.5px; font-weight: 950; color: #38bdf8; margin-bottom: 8px;">🍀 실시간 버프 & 특성 개별 컨트롤러</div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <button onclick="startMeteorTrait(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #d946ef, #a855f7); color: white; border: 1px solid #f472b6; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                            ☄️ 메테오 2.5배 5분
+                        </button>
                         <button onclick="startCrabTrait(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: 1px solid #fca5a5; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
                             🦀 꽃게 3배 5분
                         </button>
                         <button onclick="startFireTrait(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #f97316, #c2410c); color: white; border: 1px solid #fed7aa; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
                             🔥 불꽃 3배 5분
+                        </button>
+                        <button onclick="startExtinctionTrait(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #475569, #1e293b); color: white; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                            💀 멸종 3배 5분
+                        </button>
+                        <button onclick="startUfoTrait(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: 1px solid #6ee7b7; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                            🛸 UFO 3배 5분
+                        </button>
+                        <button onclick="startInfinityMinigame(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #e11d48, #be123c); color: white; border: 1px solid #fda4af; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                            💰 10B 머니머니 5분
                         </button>
                         <button onclick="activateFuseLuck(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: 1px solid #93c5fd; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
                             ⚙️ 퓨즈 2배 럭 5분
@@ -1420,11 +1469,14 @@
                         <button onclick="activateTripleLuck(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #9333ea, #7e22ce); color: white; border: 1px solid #d8b4fe; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
                             🟣 3배 럭 5분
                         </button>
+                        <button onclick="activateQuintupleLuck(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #eab308, #ca8a04); color: white; border: 1px solid #fef08a; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer; grid-column: span 2;">
+                            🟡 5배 럭 5분 (나무 5배 드롭)
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <button onclick="closeWeqwxe3EventModal()" style="width: 100%; margin-top: 14px; padding: 10px; background: rgba(255, 255, 255, 0.12); color: #cbd5e1; font-weight: bold; font-size: 13px; border: none; border-radius: 8px; cursor: pointer;">
+                        <button onclick="closeWeqwxe3EventModal()" style="width: 100%; margin-top: 14px; padding: 10px; background: rgba(255, 255, 255, 0.12); color: #cbd5e1; font-weight: bold; font-size: 13px; border: none; border-radius: 8px; cursor: pointer;">
                 닫기
             </button>
         </div>
@@ -4873,7 +4925,7 @@
         // ♾️ [weqwxe3 전용] 인피니티 코인 & 머니 미니게임 & 타이머 엔진
         // ♾️ ============================================================
         try {
-            let savedIC = parseInt(localStorage.getItem('infinity_coins_weqwxe3') || '0', 10);
+            let savedIC = parseInt(localStorage.getItem('infinity_coins') || localStorage.getItem('infinity_coins_weqwxe3') || '0', 10);
             window.infinityCoins = isNaN(savedIC) ? 0 : savedIC;
         } catch(e) {
             window.infinityCoins = 0;
@@ -5098,33 +5150,27 @@
 
         // ♾️ 인피니티 코인 UI 갱신 및 영구 자동 저장
         function updateInfinityCoinDisplay(delta = 0) {
-            if (typeof isUserWeqwxe3 !== 'function' || !isUserWeqwxe3(currentUser)) {
-                const infDisp = document.getElementById('infinity-coin-display');
-                if (infDisp) infDisp.style.display = 'none';
-                return;
-            }
             window.infinityCoins = Math.max(0, (window.infinityCoins || 0) + delta);
             try {
-                localStorage.setItem('infinity_coins_weqwxe3', window.infinityCoins.toString());
+                localStorage.setItem('infinity_coins', window.infinityCoins.toString());
+                if (currentUser) {
+                    localStorage.setItem('infinity_coins_' + currentUser.toLowerCase(), window.infinityCoins.toString());
+                }
             } catch(e) {}
 
             const infDisp = document.getElementById('infinity-coin-display');
             const amtEl = document.getElementById('infinity-coin-amount');
             if (amtEl) amtEl.innerText = window.infinityCoins.toLocaleString();
-            if (infDisp) infDisp.style.display = 'block';
+            if (infDisp) infDisp.style.display = 'flex';
 
             const shopICEl = document.getElementById('money-shop-infinity-coins');
             if (shopICEl) shopICEl.innerText = window.infinityCoins.toLocaleString();
+            if (typeof updateInfinityShopGauge === 'function') updateInfinityShopGauge();
         }
         window.updateInfinityCoinDisplay = updateInfinityCoinDisplay;
 
         // ⏱️ [weqwxe3 전용] 머니 미니게임 시작 (8개 지형에 15개씩 총 120개 스폰, 3분 제한시간, 재스폰 없음)
-        function startInfinityMinigame() {
-            if (typeof isUserWeqwxe3 !== 'function' || !isUserWeqwxe3(currentUser)) {
-                alert('❌ weqwxe3 계정만 머니 미니게임을 시작할 수 있습니다!');
-                return;
-            }
-
+        function startInfinityMinigame(durationSec = 300) {
             const terrains = [
                 { name: '천사&악마', minY: -10500, maxY: -9200 },
                 { name: '얼음의 협곡', minY: -8800, maxY: -7800 },
@@ -5151,16 +5197,44 @@
             });
 
             window.infinityMinigameState.active = true;
-            window.infinityMinigameState.timeLeft = 180;
-            window.infinityMinigameState.endTime = Date.now() + 180 * 1000;
+            window.infinityMinigameState.timeLeft = durationSec;
+            window.infinityMinigameState.endTime = Date.now() + durationSec * 1000;
             window.infinityMinigameState.roundCollected = 0;
 
             const hud = document.getElementById('infinity-minigame-hud');
             if (hud) hud.style.display = 'flex';
             const timerEl = document.getElementById('infinity-minigame-timer');
-            if (timerEl) timerEl.innerText = '03:00';
+            if (timerEl) {
+                const m = Math.floor(durationSec / 60);
+                const s = durationSec % 60;
+                timerEl.innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+            }
             const collEl = document.getElementById('infinity-minigame-collected');
             if (collEl) collEl.innerText = '0';
+
+            // 💰 2번째 사진: 10B 머니머니 버프 HUD 표시 및 타이머 가동
+            const buff10bHud = document.getElementById('hud-buff-money10b');
+            const buff10bTimer = document.getElementById('hud-timer-money10b');
+            if (buff10bHud) buff10bHud.style.display = 'flex';
+
+            if (window._money10bTimerInterval) clearInterval(window._money10bTimerInterval);
+            window._money10bTimerInterval = setInterval(() => {
+                if (!window.infinityMinigameState || !window.infinityMinigameState.active) {
+                    clearInterval(window._money10bTimerInterval);
+                    if (buff10bHud) buff10bHud.style.display = 'none';
+                    return;
+                }
+                const rem = Math.max(0, Math.floor((window.infinityMinigameState.endTime - Date.now()) / 1000));
+                if (buff10bTimer) {
+                    const m = Math.floor(rem / 60);
+                    const s = rem % 60;
+                    buff10bTimer.innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+                }
+                if (rem <= 0) {
+                    clearInterval(window._money10bTimerInterval);
+                    if (buff10bHud) buff10bHud.style.display = 'none';
+                }
+            }, 1000);
 
             closeMoneyShopModal();
             if (typeof closeWeqwxe3EventModal === 'function') closeWeqwxe3EventModal();
@@ -5169,14 +5243,12 @@
                 floatTexts.push({
                     x: player.x,
                     y: player.y - 70,
-                    text: '⏱️ 머니 미니게임 시작! (8개 지형에 15개씩 스폰, 3분 제한)',
+                    text: '⏱️ 머니 미니게임 시작! (8개 지형에 15개씩 스폰)',
                     color: '#38bdf8',
                     life: 130,
                     size: 20
                 });
             }
-
-            alert('♾️ [머니 미니게임 시작!]\n\n8개 각 지형에 인피니티 코인이 15개씩(총 120개) 스폰되었습니다!\n\n⏱️ 제한시간: 3분 (180초)\n🚫 재스폰 없음: 주우면 끝!\n🪙 획득량: 코인당 10 ~ 15개 인피니티 코인 획득!\n\n각 지형을 빠르게 탐험하며 코인을 주워보세요!');
         }
         window.startInfinityMinigame = startInfinityMinigame;
 
@@ -5189,6 +5261,9 @@
 
             const hud = document.getElementById('infinity-minigame-hud');
             if (hud) hud.style.display = 'none';
+            const buff10bHud = document.getElementById('hud-buff-money10b');
+            if (buff10bHud) buff10bHud.style.display = 'none';
+            if (window._money10bTimerInterval) clearInterval(window._money10bTimerInterval);
 
             if (typeof saveGame === 'function') saveGame(true);
 
@@ -5375,10 +5450,6 @@
 
         // 머니 상점 열기 (스케치 UI)
         function openMoneyShopModal() {
-            if (typeof isUserWeqwxe3 !== 'function' || !isUserWeqwxe3(currentUser)) {
-                alert('❌ weqwxe3 계정 전용 상점입니다!');
-                return;
-            }
             const modal = document.getElementById('money-shop-modal');
             if (!modal) return;
             modal.style.display = 'flex';
@@ -15216,8 +15287,8 @@
                 }
             }
 
-            // 🪙 1. [weqwxe3 전용] 일반 지형 예전 원숭이 보스전 자리 (x: 515, y: 360) -> 큰 동전 머니상점 오픈
-            if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) {
+            // 🪙 1. 일반 지형 나무 옆 (x: 515, y: 360) -> 큰 동전 머니상점 오픈 (공개 서버 전체 오픈)
+            {
                 let tpDist = Math.hypot(cx - 515, cy - 360);
                 let tpPlayerDist = Math.hypot(player.x - 515, player.y - 360);
                 if (tpDist < 75 || (isSpacebar && tpPlayerDist < 90)) {
@@ -23345,20 +23416,19 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             }
             if (typeof updateCandyCorn === 'function') updateCandyCorn(0);
 
-            // ♾️ [weqwxe3 전용] 인피니티 코인 완벽 복원 (새로고침/재접속 시 100% 영구 보존)
-            if (isUserWeqwxe3(currentUser)) {
-                let ic = 0;
-                if (data && typeof data.infinityCoins === 'number') {
-                    ic = data.infinityCoins;
-                } else {
-                    try {
-                        let localIC = parseInt(localStorage.getItem('infinity_coins_weqwxe3') || '0', 10);
-                        if (!isNaN(localIC)) ic = localIC;
-                    } catch(e) {}
-                }
-                window.infinityCoins = ic;
-                if (typeof updateInfinityCoinDisplay === 'function') updateInfinityCoinDisplay(0);
+            // ♾️ 인피니티 코인 완벽 복원 (새로고침/재접속 시 100% 영구 보존 - 0으로 시작 및 저장)
+            let ic = 0;
+            if (data && typeof data.infinityCoins === 'number') {
+                ic = data.infinityCoins;
+            } else {
+                try {
+                    let localKey = currentUser ? ('infinity_coins_' + currentUser.toLowerCase()) : 'infinity_coins';
+                    let localIC = parseInt(localStorage.getItem(localKey) || localStorage.getItem('infinity_coins') || '0', 10);
+                    if (!isNaN(localIC)) ic = localIC;
+                } catch(e) {}
             }
+            window.infinityCoins = ic;
+            if (typeof updateInfinityCoinDisplay === 'function') updateInfinityCoinDisplay(0);
 
             axeLevel = data.axeLevel || 0;
             if (Array.isArray(data.ownedAxes)) {
@@ -23684,8 +23754,9 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     localStorage.setItem('treeGameSave_' + currentUser.toLowerCase(), JSON.stringify(data));
                     localStorage.setItem('player_candy_corn_' + currentUser.toLowerCase(), (candyCorn || 0).toString());
                 }
-                if (isUserWeqwxe3(currentUser)) {
-                    localStorage.setItem('infinity_coins_weqwxe3', (window.infinityCoins || 0).toString());
+                localStorage.setItem('infinity_coins', (window.infinityCoins || 0).toString());
+                if (currentUser) {
+                    localStorage.setItem('infinity_coins_' + currentUser.toLowerCase(), (window.infinityCoins || 0).toString());
                 }
             } catch(e) {}
 
@@ -27025,9 +27096,11 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             let tables = getTables(type);
             if (!tables || tables.length === 0) return tables;
 
-            // 🟣 3배 럭 우선 적용 (나무에서 좋은 거 뜰 확률 3배!) 또는 🍀 1.5배 럭 적용
+            // 🟡 5배 럭 우선 적용 또는 🟣 3배 럭 또는 🍀 1.5배 럭 적용
             let luckMult = 1.0;
-            if (window.tripleLuckTime && window.tripleLuckTime > 0) {
+            if (window.quintupleLuckTime && window.quintupleLuckTime > 0) {
+                luckMult = 5.0;
+            } else if (window.tripleLuckTime && window.tripleLuckTime > 0) {
                 luckMult = 3.0;
             } else if (typeof isLuck15Active !== 'undefined' && isLuck15Active) {
                 luckMult = 1.5;
@@ -27587,6 +27660,14 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                     if (window.fireTrait && window.fireTrait.active && Math.random() < 0.10) {
                         newCustomer.fireAttached = true;
                     }
+                    // 💀 멸종 특성 활성화 시 10% 확률로 해골 부착
+                    if (window.extinctionTrait && window.extinctionTrait.active && Math.random() < 0.10) {
+                        newCustomer.extinctionAttached = true;
+                    }
+                    // 🛸 UFO 특성 활성화 시 10% 확률로 UFO 광선 부착
+                    if (window.ufoTrait && window.ufoTrait.active && Math.random() < 0.10) {
+                        newCustomer.ufoAttached = true;
+                    }
                     shop.queue.push(newCustomer);
                 }
                 
@@ -27650,6 +27731,20 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                                 totalEarned = Math.round(totalEarned * 3.0);
                                 if (typeof floatTexts !== 'undefined') {
                                     floatTexts.push({ x: firstC.x, y: shop.queueY - 130, text: '🔥✨ [불꽃 3배 구매 대박!]', color: '#f97316', life: 90, size: 22 });
+                                }
+                            }
+                            // 💀 [멸종 특성 3배 구매 보너스]
+                            if (firstC && firstC.extinctionAttached) {
+                                totalEarned = Math.round(totalEarned * 3.0);
+                                if (typeof floatTexts !== 'undefined') {
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 130, text: '💀✨ [멸종 3배 구매 대박!]', color: '#f8fafc', life: 90, size: 22 });
+                                }
+                            }
+                            // 🛸 [UFO 특성 3배 구매 보너스]
+                            if (firstC && firstC.ufoAttached) {
+                                totalEarned = Math.round(totalEarned * 3.0);
+                                if (typeof floatTexts !== 'undefined') {
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 130, text: '🛸✨ [UFO 3배 구매 대박!]', color: '#4ade80', life: 90, size: 22 });
                                 }
                             }
                             
@@ -36073,9 +36168,7 @@ ctx.restore();
             }
 
             // 🪙 [weqwxe3 전용] 원숭이 보스전 자리의 큰 황금 동전 (머니상점)
-            if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) {
-                renderList.push({ type: 'bigMoneyCoin', obj: { x: 515, y: 360 }, y: 360 });
-            }
+            renderList.push({ type: 'bigMoneyCoin', obj: { x: 515, y: 360 }, y: 360 });
             // 🔨 [weqwxe3 전용] 망치 배달: 일반지형 나무 밑(x: 370, y: 550)의 한정 조합 망치
             if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser) && window.hammerDeliveryActive) {
                 renderList.push({ type: 'deliveryHammer', obj: { x: 370, y: 550 }, y: 550 });
@@ -36180,6 +36273,36 @@ ctx.restore();
                         ctx.stroke();
                         ctx.font = '16px sans-serif';
                         ctx.fillText('🔥', item.obj.x - 8, item.obj.y - 45);
+                        ctx.restore();
+                    }
+                    // 💀 멸종 부착 손님 (신비로운 실버 글로우 + 머리 위 미니 해골)
+                    if (item.obj.extinctionAttached) {
+                        ctx.save();
+                        ctx.strokeStyle = '#f8fafc';
+                        ctx.lineWidth = 3.5;
+                        ctx.shadowColor = '#cbd5e1';
+                        ctx.shadowBlur = 18;
+                        let glowR = 24 + Math.sin(Date.now() * 0.008) * 4;
+                        ctx.beginPath();
+                        ctx.arc(item.obj.x, item.obj.y - 25, glowR, 0, Math.PI * 2);
+                        ctx.stroke();
+                        ctx.font = '16px sans-serif';
+                        ctx.fillText('💀', item.obj.x - 8, item.obj.y - 45);
+                        ctx.restore();
+                    }
+                    // 🛸 UFO 부착 손님 (에일리언 그린 글로우 + 머리 위 미니 UFO)
+                    if (item.obj.ufoAttached) {
+                        ctx.save();
+                        ctx.strokeStyle = '#4ade80';
+                        ctx.lineWidth = 3.5;
+                        ctx.shadowColor = '#22c55e';
+                        ctx.shadowBlur = 18;
+                        let glowR = 24 + Math.sin(Date.now() * 0.008) * 4;
+                        ctx.beginPath();
+                        ctx.arc(item.obj.x, item.obj.y - 25, glowR, 0, Math.PI * 2);
+                        ctx.stroke();
+                        ctx.font = '16px sans-serif';
+                        ctx.fillText('🛸', item.obj.x - 8, item.obj.y - 45);
                         ctx.restore();
                     }
                     drawCharacter(ctx, item.obj, item.obj.x, item.obj.y, false, item.obj.walkTimer, item.obj.skin || null);
@@ -36713,6 +36836,8 @@ ctx.restore();
             if (typeof updateAndRenderMeteors === 'function') updateAndRenderMeteors(ctx);
             if (typeof updateAndRenderCrabs === 'function') updateAndRenderCrabs(ctx);
             if (typeof updateAndRenderFlames === 'function') updateAndRenderFlames(ctx);
+            if (typeof updateAndRenderExtinctionSkulls === 'function') updateAndRenderExtinctionSkulls(ctx);
+            if (typeof updateAndRenderUfos === 'function') updateAndRenderUfos(ctx);
             // 융합 호박 머신 삭제됨 (크래프팅 머신만 렌더링 유지)
 
             // 👑 어드민 스토리 퀘스트: 할로윈 지형 원숭이 10마리 & 미친 박사 렌더링
@@ -40407,19 +40532,40 @@ window.renderIndexGrid = renderIndexGrid;
                     // 2차: 🦀 꽃게 특성(5분, 3배) + ⚙️ 퓨즈 2배 럭(5분) + 🟣 나무 3배 럭(5분)
                     // 3차: 🔥 불꽃 특성(5분, 3배) + ⚙️ 퓨즈 2배 럭(5분) + 🟣 나무 3배 럭(5분)
                     const s = window._currentSnapStage || 1;
-                    if (s === 'all_5m' || s === 'mini') {
-                        startMeteorTrait(300); // 5분
-                        startCrabTrait(300);   // 5분
-                        startFireTrait(300);   // 5분
-                    } else if (s === 1) {
-                        startMeteorTrait(180);
-                    } else if (s === 2) {
-                        startCrabTrait(300);
-                    } else if (s === 3) {
+                    if (s === 1) {
+                        // 1차: 메테오, 불, 퓨즈럭, 3배럭 (모두 5분)
+                        startMeteorTrait(300);
                         startFireTrait(300);
+                        activateFuseLuck(300);
+                        activateTripleLuck(300);
+                    } else if (s === 2) {
+                        // 2차: 꽃게, 멸종, 퓨즈럭, 3배럭 (모두 5분)
+                        startCrabTrait(300);
+                        startExtinctionTrait(300);
+                        activateFuseLuck(300);
+                        activateTripleLuck(300);
+                    } else if (s === 3) {
+                        // 3차: ufo, 돈 머니머니 이벤트, 퓨즈럭, 3배럭 (모두 5분)
+                        startUfoTrait(300);
+                        startInfinityMinigame(300);
+                        activateFuseLuck(300);
+                        activateTripleLuck(300);
+                    } else if (s === 4) {
+                        // 4차: 메테오, 꽃게, 불, 돈 머니머니, 퓨즈럭, 5배럭 (모두 5분)
+                        startMeteorTrait(300);
+                        startCrabTrait(300);
+                        startFireTrait(300);
+                        startInfinityMinigame(300);
+                        activateFuseLuck(300);
+                        activateQuintupleLuck(300);
+                    } else {
+                        // 기본 / 레거시 호환
+                        startMeteorTrait(300);
+                        startCrabTrait(300);
+                        startFireTrait(300);
+                        activateFuseLuck(300);
+                        activateTripleLuck(300);
                     }
-                    activateFuseLuck(300); // 5분
-                    activateTripleLuck(300); // 5분
 
                     // 🚫 [요청 반영] 스냅 완료 포지 대사 삭제!
                 }, 3000); // 3초 동안 손 든 채 유지
@@ -40463,19 +40609,35 @@ window.renderIndexGrid = renderIndexGrid;
                         window.snapCutscene.active = false;
                         window.snapCutscene.armsUp = false;
 
-                        if (stage === 'all_5m' || stage === 'mini') {
+                        if (stage === 1) {
+                            startMeteorTrait(300);
+                            startFireTrait(300);
+                            activateFuseLuck(300);
+                            activateTripleLuck(300);
+                        } else if (stage === 2) {
+                            startCrabTrait(300);
+                            startExtinctionTrait(300);
+                            activateFuseLuck(300);
+                            activateTripleLuck(300);
+                        } else if (stage === 3) {
+                            startUfoTrait(300);
+                            startInfinityMinigame(300);
+                            activateFuseLuck(300);
+                            activateTripleLuck(300);
+                        } else if (stage === 4) {
                             startMeteorTrait(300);
                             startCrabTrait(300);
                             startFireTrait(300);
-                        } else if (stage === 1) {
-                            startMeteorTrait(180);
-                        } else if (stage === 2) {
+                            startInfinityMinigame(300);
+                            activateFuseLuck(300);
+                            activateQuintupleLuck(300);
+                        } else {
+                            startMeteorTrait(300);
                             startCrabTrait(300);
-                        } else if (stage === 3) {
                             startFireTrait(300);
+                            activateFuseLuck(300);
+                            activateTripleLuck(300);
                         }
-                        activateFuseLuck(300);
-                        activateTripleLuck(300);
                     }, 3000);
                 }, remainWalkMs);
             } else {
@@ -40491,19 +40653,35 @@ window.renderIndexGrid = renderIndexGrid;
                     window.snapCutscene.active = false;
                     window.snapCutscene.armsUp = false;
 
-                    if (stage === 'all_5m' || stage === 'mini') {
+                    if (stage === 1) {
+                        startMeteorTrait(300);
+                        startFireTrait(300);
+                        activateFuseLuck(300);
+                        activateTripleLuck(300);
+                    } else if (stage === 2) {
+                        startCrabTrait(300);
+                        startExtinctionTrait(300);
+                        activateFuseLuck(300);
+                        activateTripleLuck(300);
+                    } else if (stage === 3) {
+                        startUfoTrait(300);
+                        startInfinityMinigame(300);
+                        activateFuseLuck(300);
+                        activateTripleLuck(300);
+                    } else if (stage === 4) {
                         startMeteorTrait(300);
                         startCrabTrait(300);
                         startFireTrait(300);
-                    } else if (stage === 1) {
-                        startMeteorTrait(180);
-                    } else if (stage === 2) {
+                        startInfinityMinigame(300);
+                        activateFuseLuck(300);
+                        activateQuintupleLuck(300);
+                    } else {
+                        startMeteorTrait(300);
                         startCrabTrait(300);
-                    } else if (stage === 3) {
                         startFireTrait(300);
+                        activateFuseLuck(300);
+                        activateTripleLuck(300);
                     }
-                    activateFuseLuck(300);
-                    activateTripleLuck(300);
                 }, remainHoldMs);
             }
         }
@@ -40650,6 +40828,254 @@ window.renderIndexGrid = renderIndexGrid;
             });
         }
         window.updateAndRenderCrabs = updateAndRenderCrabs;
+
+        // 💀 [멸종 특성 엔진] 1번째 사진: 뿔 달린 해골 각 지형 5마리 스폰 ➔ 손님 10% 부착 3배 구매 (5분 지속)
+        window.extinctionTrait = {
+            active: false,
+            remainingSeconds: 0,
+            skulls: [],
+            timerInterval: null
+        };
+        const extinctionSkullImg = new Image();
+        extinctionSkullImg.src = 'extinction_skull.webp';
+
+        function startExtinctionTrait(durationSec = 300) {
+            window.extinctionTrait.active = true;
+            window.extinctionTrait.remainingSeconds = durationSec;
+            window.extinctionTrait.skulls = [];
+
+            // 각 지형마다 해골 5마리씩 스폰
+            const terrainBases = [350, 1050, 1750, 2450, 3150];
+            terrainBases.forEach(baseX => {
+                for (let i = 0; i < 5; i++) {
+                    window.extinctionTrait.skulls.push({
+                        x: baseX + (Math.random() - 0.5) * 450,
+                        y: 500 + Math.random() * 120,
+                        vx: (Math.random() - 0.5) * 1.5,
+                        vy: (Math.random() - 0.5) * 0.8,
+                        floatOffset: Math.random() * Math.PI * 2,
+                        baseX: baseX
+                    });
+                }
+            });
+
+            // 기존 대기열 손님 중 10%에게 멸종 해골 즉시 부착
+            try {
+                if (Array.isArray(shops)) {
+                    shops.forEach(s => {
+                        if (Array.isArray(s.queue)) {
+                            s.queue.forEach(c => {
+                                if (Math.random() < 0.10) c.extinctionAttached = true;
+                            });
+                        }
+                    });
+                }
+            } catch(e) {}
+
+            const hudEl = document.getElementById('hud-buff-extinction');
+            const timerEl = document.getElementById('hud-timer-extinction');
+            if (hudEl) hudEl.style.display = 'flex';
+
+            if (window.extinctionTrait.timerInterval) clearInterval(window.extinctionTrait.timerInterval);
+            window.extinctionTrait.timerInterval = setInterval(() => {
+                window.extinctionTrait.remainingSeconds--;
+                if (window.extinctionTrait.remainingSeconds <= 0) {
+                    stopExtinctionTrait();
+                } else if (timerEl) {
+                    const m = Math.floor(window.extinctionTrait.remainingSeconds / 60);
+                    const s = window.extinctionTrait.remainingSeconds % 60;
+                    timerEl.innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+                }
+            }, 1000);
+
+            if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '💀 [멸종 특성 5분 발동!] 해골 5마리 스폰 & 손님 10% 부착 3배!', color: '#f8fafc', life: 100, size: 20 });
+            }
+        }
+        window.startExtinctionTrait = startExtinctionTrait;
+
+        function stopExtinctionTrait() {
+            window.extinctionTrait.active = false;
+            window.extinctionTrait.remainingSeconds = 0;
+            window.extinctionTrait.skulls = [];
+            if (window.extinctionTrait.timerInterval) clearInterval(window.extinctionTrait.timerInterval);
+            const hudEl = document.getElementById('hud-buff-extinction');
+            if (hudEl) hudEl.style.display = 'none';
+        }
+        window.stopExtinctionTrait = stopExtinctionTrait;
+
+        function updateAndRenderExtinctionSkulls(ctx) {
+            if (!window.extinctionTrait || !window.extinctionTrait.active) return;
+            const time = Date.now() * 0.003;
+            window.extinctionTrait.skulls.forEach(sk => {
+                sk.x += sk.vx;
+                sk.y += sk.vy;
+                if (sk.x < sk.baseX - 250) sk.vx = Math.abs(sk.vx);
+                if (sk.x > sk.baseX + 250) sk.vx = -Math.abs(sk.vx);
+                if (sk.y < 480) sk.vy = Math.abs(sk.vy);
+                if (sk.y > 640) sk.vy = -Math.abs(sk.vy);
+
+                ctx.save();
+                ctx.translate(sk.x, sk.y);
+
+                let bob = Math.sin(time * 2 + sk.floatOffset) * 4;
+
+                // 바닥 그림자
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(0, 10, 16, 7, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 해골 이미지 또는 캔버스 드로잉
+                ctx.translate(0, bob);
+                if (extinctionSkullImg.complete && extinctionSkullImg.naturalWidth > 0) {
+                    ctx.drawImage(extinctionSkullImg, -18, -18, 36, 36);
+                } else {
+                    // 폴백 드로잉
+                    ctx.font = '24px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('💀', 0, 0);
+                }
+                ctx.restore();
+            });
+        }
+        window.updateAndRenderExtinctionSkulls = updateAndRenderExtinctionSkulls;
+
+        // 🛸 [UFO 특성 엔진] 3번째 사진: 녹색 광선 UFO 하늘 비행 ➔ 주민 10% 광선 부착 3배 구매 (5분 지속)
+        window.ufoTrait = {
+            active: false,
+            remainingSeconds: 0,
+            ufos: [],
+            timerInterval: null
+        };
+        const ufoBeamImg = new Image();
+        ufoBeamImg.src = 'ufo_beam.webp';
+
+        function startUfoTrait(durationSec = 300) {
+            window.ufoTrait.active = true;
+            window.ufoTrait.remainingSeconds = durationSec;
+            window.ufoTrait.ufos = [
+                { x: 400, y: 160, vx: 1.2, width: 64, height: 64, beamPulse: 0 },
+                { x: 1800, y: 150, vx: -1.0, width: 64, height: 64, beamPulse: 1.5 },
+                { x: 3000, y: 170, vx: 1.3, width: 64, height: 64, beamPulse: 3.0 }
+            ];
+
+            // 기존 대기열 손님 중 10%에게 UFO 광선 즉시 부착
+            try {
+                if (Array.isArray(shops)) {
+                    shops.forEach(s => {
+                        if (Array.isArray(s.queue)) {
+                            s.queue.forEach(c => {
+                                if (Math.random() < 0.10) c.ufoAttached = true;
+                            });
+                        }
+                    });
+                }
+            } catch(e) {}
+
+            const hudEl = document.getElementById('hud-buff-ufo');
+            const timerEl = document.getElementById('hud-timer-ufo');
+            if (hudEl) hudEl.style.display = 'flex';
+
+            if (window.ufoTrait.timerInterval) clearInterval(window.ufoTrait.timerInterval);
+            window.ufoTrait.timerInterval = setInterval(() => {
+                window.ufoTrait.remainingSeconds--;
+                if (window.ufoTrait.remainingSeconds <= 0) {
+                    stopUfoTrait();
+                } else if (timerEl) {
+                    const m = Math.floor(window.ufoTrait.remainingSeconds / 60);
+                    const s = window.ufoTrait.remainingSeconds % 60;
+                    timerEl.innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+                }
+            }, 1000);
+
+            if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '🛸 [UFO 특성 5분 발동!] 하늘 비행 & 주민 10% 광선 부착 3배!', color: '#4ade80', life: 100, size: 20 });
+            }
+        }
+        window.startUfoTrait = startUfoTrait;
+
+        function stopUfoTrait() {
+            window.ufoTrait.active = false;
+            window.ufoTrait.remainingSeconds = 0;
+            window.ufoTrait.ufos = [];
+            if (window.ufoTrait.timerInterval) clearInterval(window.ufoTrait.timerInterval);
+            const hudEl = document.getElementById('hud-buff-ufo');
+            if (hudEl) hudEl.style.display = 'none';
+        }
+        window.stopUfoTrait = stopUfoTrait;
+
+        function updateAndRenderUfos(ctx) {
+            if (!window.ufoTrait || !window.ufoTrait.active) return;
+            const time = Date.now() * 0.003;
+            window.ufoTrait.ufos.forEach(ufo => {
+                ufo.x += ufo.vx;
+                if (ufo.x < 150) ufo.vx = Math.abs(ufo.vx);
+                if (ufo.x > 3450) ufo.vx = -Math.abs(ufo.vx);
+
+                ctx.save();
+                ctx.translate(ufo.x, ufo.y);
+
+                let bob = Math.sin(time * 2 + ufo.beamPulse) * 5;
+                ctx.translate(0, bob);
+
+                // 지면으로 내리쬐는 초록빛 트랙터 빔
+                let beamGrad = ctx.createLinearGradient(0, 20, 0, 360);
+                beamGrad.addColorStop(0, 'rgba(74, 222, 128, 0.45)');
+                beamGrad.addColorStop(0.8, 'rgba(34, 197, 94, 0.25)');
+                beamGrad.addColorStop(1, 'rgba(34, 197, 94, 0.0)');
+                ctx.fillStyle = beamGrad;
+                ctx.beginPath();
+                ctx.moveTo(-16, 20);
+                ctx.lineTo(16, 20);
+                ctx.lineTo(48, 360);
+                ctx.lineTo(-48, 360);
+                ctx.closePath();
+                ctx.fill();
+
+                if (ufoBeamImg.complete && ufoBeamImg.naturalWidth > 0) {
+                    ctx.drawImage(ufoBeamImg, -28, -28, 56, 56);
+                } else {
+                    ctx.font = '32px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('🛸', 0, 0);
+                }
+                ctx.restore();
+            });
+        }
+        window.updateAndRenderUfos = updateAndRenderUfos;
+
+        // 🟡 [5배 럭 엔진] 3배럭의 황금 노란색 버전 (나무 드롭 희귀/전설 5배 증가, 5분 지속)
+        window.quintupleLuckTime = 0;
+        window.quintupleLuckInterval = null;
+
+        function activateQuintupleLuck(seconds = 300) {
+            window.quintupleLuckTime = seconds;
+            const hudEl = document.getElementById('hud-buff-quintupleluck');
+            const timerEl = document.getElementById('timer-buff-quintupleluck');
+            if (hudEl) hudEl.style.display = 'flex';
+
+            if (window.quintupleLuckInterval) clearInterval(window.quintupleLuckInterval);
+            window.quintupleLuckInterval = setInterval(() => {
+                window.quintupleLuckTime--;
+                if (timerEl) {
+                    const m = Math.floor(window.quintupleLuckTime / 60);
+                    const s = window.quintupleLuckTime % 60;
+                    timerEl.innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+                }
+                if (window.quintupleLuckTime <= 0) {
+                    clearInterval(window.quintupleLuckInterval);
+                    if (hudEl) hudEl.style.display = 'none';
+                }
+            }, 1000);
+
+            if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                floatTexts.push({ x: player.x, y: player.y - 80, text: '🟡 5배 럭 5분 시작! (모든 드롭 확률 5배)', color: '#facc15', life: 90, size: 20 });
+            }
+        }
+        window.activateQuintupleLuck = activateQuintupleLuck;
 
         // 🔥 [불 특성 엔진] 5분간 전 지형 화염 낙하 ➔ 10% 손님 달라붙음 ➔ 3배 가격 구매!
         window.fireTrait = {
