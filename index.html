@@ -1040,9 +1040,34 @@
         </div>
 
         <!-- 🍀 [유저 제공 사진 3종 1:1 반영] 하단 액티브 버프 HUD (메테오 특성 / 퓨즈 2배 럭 / 3배 럭) -->
-        <div id="active-buffs-hud" style="position: fixed; bottom: 18px; right: 18px; z-index: 998; display: flex; gap: 16px; align-items: flex-end; pointer-events: none;">
+        <div id="active-buffs-hud" style="position: fixed; bottom: 18px; right: 18px; z-index: 998; display: flex; gap: 14px; align-items: flex-end; pointer-events: none;">
             
-            <!-- ☄️ 1. 메테오 특성 (Image 1 스타일: 핑크/마젠타 불꽃 구체 + 볼드 타이머) -->
+            <!-- 🦀 1. 꽃게 특성 (Image 1 스타일: 각진 빨간 집게발 + 볼드 타이머) -->
+            <div id="hud-buff-crab" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('🦀 [꽃게 특성 발동 중]\n\n5분 동안 각 지형마다 꽃게가 5마리씩 스폰됩니다.\n10% 확률로 줄선 손님에게 달라붙으며 손님이 황금빛으로 빛나고 과일을 3배 가격으로 통크게 구매합니다!');">
+                <svg width="48" height="48" viewBox="0 0 54 54" style="filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.85)); animation: luckFloat 2s ease-in-out infinite;">
+                    <path d="M 38 18 C 36 14, 30 14, 26 16 L 22 17 L 18 20 C 14 24, 12 28, 12 34 L 14 42 L 24 48 L 30 42 L 36 38 C 40 34, 42 28, 40 22 Z" fill="#9ca3af"/>
+                    <polygon points="20,18 32,14 36,22 24,26" fill="#ef4444" stroke="#374151" stroke-width="1.5"/>
+                    <polygon points="32,16 42,20 40,28 30,24" fill="#dc2626" stroke="#374151" stroke-width="1.5"/>
+                    <polygon points="14,24 24,20 22,34 12,38" fill="#f87171" stroke="#374151" stroke-width="1.5"/>
+                    <polygon points="14,34 26,28 22,46 12,42" fill="#ef4444" stroke="#374151" stroke-width="1.5"/>
+                    <polygon points="24,30 36,36 32,44 20,40" fill="#dc2626" stroke="#374151" stroke-width="1.5"/>
+                    <circle cx="27" cy="29" r="6" fill="#b91c1c"/>
+                </svg>
+                <div id="hud-timer-crab" style="font-size: 21px; font-weight: 950; color: #ffffff; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 6px rgba(0,0,0,0.9); font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 0.5px; margin-top: -4px;">05:00</div>
+            </div>
+
+            <!-- 🔥 2. 불 특성 (Image 2 스타일: 픽셀 화염 + 볼드 타이머) -->
+            <div id="hud-buff-fire" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('🔥 [불 특성 발동 중]\n\n5분 동안 각 지형마다 화염이 메테오처럼 쏟아져 내립니다.\n10% 확률로 줄선 손님에게 화염이 달라붙으며 손님이 불꽃 아우라로 빛나고 과일을 3배 가격으로 구매합니다!');">
+                <svg width="48" height="48" viewBox="0 0 54 54" style="filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.85)); animation: luckFloat 2s ease-in-out infinite;">
+                    <path d="M 27 6 C 29 14, 38 18, 42 26 C 45 32, 43 40, 38 46 C 33 50, 21 50, 16 46 C 11 40, 9 32, 12 26 C 15 20, 22 18, 20 12 Z" fill="#000000"/>
+                    <path d="M 27 9 C 29 16, 36 20, 39 27 C 42 32, 40 39, 36 44 C 32 47, 22 47, 18 44 C 14 39, 12 32, 15 27 C 17 22, 23 20, 21 15 Z" fill="#f97316"/>
+                    <path d="M 27 18 C 29 23, 33 26, 35 31 C 37 35, 35 40, 32 43 C 29 45, 23 45, 20 43 C 17 40, 16 35, 18 31 C 19 27, 24 26, 23 22 Z" fill="#facc15"/>
+                    <path d="M 27 27 C 28 30, 30 32, 31 35 C 32 38, 30 41, 28 42 C 26 43, 23 43, 21 42 C 20 41, 19 38, 20 35 C 21 32, 24 31, 24 29 Z" fill="#ffffff"/>
+                </svg>
+                <div id="hud-timer-fire" style="font-size: 21px; font-weight: 950; color: #ffffff; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 6px rgba(0,0,0,0.9); font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 0.5px; margin-top: -4px;">05:00</div>
+            </div>
+
+            <!-- ☄️ 3. 메테오 특성 (Image 1 스타일: 핑크/마젠타 불꽃 구체 + 볼드 타이머) -->
             <div id="hud-buff-meteor" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('☄️ [메테오 특성 발동 중]\n\n3분 동안 하늘에서 메테오가 떨어집니다!\n10% 확률로 줄 선 손님이 메테오에 맞으면 황금빛으로 빛나며 과일을 2.5배 가격으로 대량 구매합니다!');">
                 <svg width="48" height="48" viewBox="0 0 54 54" style="filter: drop-shadow(0 0 10px rgba(217, 70, 239, 0.85)); animation: luckFloat 2s ease-in-out infinite;">
                     <path d="M 12 28 C 6 22, 10 12, 18 14 C 20 8, 28 6, 32 10 C 38 6, 46 10, 44 18 C 48 24, 46 34, 40 38" fill="none" stroke="#701a75" stroke-width="4.5" stroke-linecap="round"/>
@@ -1286,70 +1311,73 @@
             </div>
 
             <!-- 탭 2: 9시 이벤트 제어 및 실시간 테스트 대시보드 -->
-            <div id="weqwxe3-section-9pm" style="display: none; padding: 14px 12px; background: rgba(15, 23, 42, 0.85); border: 1.5px solid #facc15; border-radius: 14px; margin-top: 5px; text-align: center;">
-                <div style="font-size: 16px; font-weight: 950; color: #facc15; margin-bottom: 4px;">
-                    🔥 11월 7일 토요일 21:00 피날레 라이브 이벤트 테스터
-                </div>
-                <div style="font-size: 11.5px; color: #cbd5e1; margin-bottom: 12px; line-height: 1.4;">
-                    Forge 17단계 대사 ➔ 1.5배럭(20분) ➔ 해적낚시(30분) ➔ 보트레이스 ➔ 빨간초록불 ➔ 천사악마피하기 ➔ 망치배달(2분조합/3분소멸) ➔ 피날레코드 JaeJae
+            <div id="weqwxe3-section-9pm" style="display: none; flex-direction: column; gap: 10px;">
+                <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #ca8a04; border-radius: 12px; padding: 12px; text-align: left;">
+                    <div style="font-size: 13.5px; font-weight: 950; color: #facc15; margin-bottom: 4px;">🎃 11/7 저녁 9:00 피날레 라이브 (15단계 재구성 컨트롤러)</div>
+                    <div style="font-size: 11px; color: #94a3b8; line-height: 1.4;">새로고침/재접속 시에도 현재 진행 시점부터 끊김 없이 자동 동기화되어 재생됩니다.</div>
                 </div>
 
-                <!-- 테스트 시작/정지 제어 버튼 -->
-                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
                     <button onclick="start9PmEventTest(0); closeWeqwxe3EventModal();" style="flex: 1.2; padding: 11px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);">
-                        🎬 [실시간] 피날레 시작 (T=0s)
+                        🎬 [T=0s] 9시 라이브 시작
                     </button>
                     <button onclick="stop9PmEventTest();" style="flex: 0.8; padding: 11px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 10px; font-weight: 950; font-size: 13px; cursor: pointer;">
-                        🛑 테스트 정지
+                        🛑 정지 및 리셋
                     </button>
                 </div>
 
-                <!-- 단계별 즉시 점프 테스트 버튼들 -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
-                    <button onclick="start9PmEventTest(10); closeWeqwxe3EventModal();" style="padding: 8px; background: rgba(250, 204, 21, 0.18); border: 1px solid #facc15; color: #facc15; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;">
-                        🍀 [10s] 1.5배 럭 (20분)
+                <!-- 15단계 즉시 점프 테스트 버튼 그리드 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; max-height: 190px; overflow-y: auto; padding: 4px;">
+                    <button onclick="start9PmEventTest(0); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(255,255,255,0.06); border: 1px solid #cbd5e1; color: #f1f5f9; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
+                        [0s] 안녕 모두들
                     </button>
-                    <button onclick="start9PmEventTest(24); closeWeqwxe3EventModal();" style="padding: 8px; background: rgba(56, 189, 248, 0.18); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;">
-                        🎣 [24s] 해적낚시 30분
+                    <button onclick="start9PmEventTest(5); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(255,255,255,0.06); border: 1px solid #cbd5e1; color: #f1f5f9; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
+                        [5s] 시즌1 마지막
                     </button>
-                    <button onclick="start9PmEventTest(84); closeWeqwxe3EventModal();" style="padding: 8px; background: rgba(234, 88, 12, 0.18); border: 1px solid #ea580c; color: #fb923c; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;">
-                        🚤 [84s] 배 미니게임
+                    <button onclick="start9PmEventTest(10); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(255,255,255,0.06); border: 1px solid #cbd5e1; color: #f1f5f9; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
+                        [10s] 해적퓨즈&한정
                     </button>
-                    <button onclick="start9PmEventTest(135); closeWeqwxe3EventModal();" style="padding: 8px; background: rgba(239, 68, 68, 0.18); border: 1px solid #ef4444; color: #f87171; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;">
-                        🚦 [135s] 빨강불 초록불
+                    <button onclick="start9PmEventTest(15); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(234, 88, 12, 0.2); border: 1px solid #ea580c; color: #fb923c; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
+                        🚤 [15s] 배 피하기 (1분)
                     </button>
-                    <button onclick="start9PmEventTest(315); closeWeqwxe3EventModal();" style="padding: 8px; background: rgba(168, 85, 247, 0.18); border: 1px solid #a855f7; color: #c084fc; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;">
-                        👼😈 [315s] 천사악마 피하기
+                    <button onclick="start9PmEventTest(75); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
+                        🎣 [75s] 낚시게임 (15분)
                     </button>
-                    <button onclick="start9PmEventTest(495); closeWeqwxe3EventModal();" style="padding: 8px; background: rgba(236, 72, 153, 0.18); border: 1px solid #ec4899; color: #f472b6; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;">
-                        🔨 [495s] 망치배달 (한정조합)
+                    <button onclick="start9PmEventTest(135); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
+                        🚦 [135s] 빨간불 초록불 (3분)
+                    </button>
+                    <button onclick="start9PmEventTest(315); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(217, 70, 239, 0.2); border: 1px solid #d946ef; color: #f472b6; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
+                        ⚡ [315s] 1차 스냅 예고
+                    </button>
+                    <button onclick="start9PmEventTest(325); closeWeqwxe3EventModal();" style="padding: 7px; background: linear-gradient(135deg, #d946ef, #a855f7); color: white; border: none; border-radius: 8px; font-size: 11px; font-weight: 950; cursor: pointer;">
+                        ☄️ [325s] 1차스냅 (메테오)
+                    </button>
+                    <button onclick="start9PmEventTest(385); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; color: #c084fc; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
+                        🔨 [385s] 포지 망치 (2분)
+                    </button>
+                    <button onclick="start9PmEventTest(505); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(244, 63, 94, 0.2); border: 1px solid #f43f5e; color: #fb7185; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
+                        👼 [505s] 천사악마 피하기
+                    </button>
+                    <button onclick="start9PmEventTest(685); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
+                        ⚡ [685s] 2차 스냅 예고
+                    </button>
+                    <button onclick="start9PmEventTest(695); closeWeqwxe3EventModal();" style="padding: 7px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none; border-radius: 8px; font-size: 11px; font-weight: 950; cursor: pointer;">
+                        🦀 [695s] 2차스냅 (꽃게3배)
+                    </button>
+                    <button onclick="start9PmEventTest(755); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(255,255,255,0.06); border: 1px solid #cbd5e1; color: #f1f5f9; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
+                        [755s] 오우 좋은데?
+                    </button>
+                    <button onclick="start9PmEventTest(1055); closeWeqwxe3EventModal();" style="padding: 7px; background: rgba(234, 88, 12, 0.2); border: 1px solid #ea580c; color: #fb923c; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer;">
+                        ⚡ [1055s] 3차 스냅 예고
+                    </button>
+                    <button onclick="start9PmEventTest(1065); closeWeqwxe3EventModal();" style="padding: 7px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: none; border-radius: 8px; font-size: 11px; font-weight: 950; cursor: pointer;">
+                        🔥 [1065s] 3차스냅 (불꽃3배)
                     </button>
                 </div>
 
-                <button onclick="start9PmEventTest(635); closeWeqwxe3EventModal();" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; border: none; border-radius: 10px; font-weight: 950; font-size: 12.5px; cursor: pointer; box-shadow: 0 3px 10px rgba(168, 85, 247, 0.4); margin-bottom: 10px;">
-                    🔑 [635s] 피날레 코드 JaeJae 공개 (럭블 20개)
-                </button>
-
-                <!-- 17단계 일정표 안내 -->
-                <div style="background: rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 10px; text-align: left; font-size: 10.5px; color: #94a3b8; line-height: 1.6; max-height: 140px; overflow-y: auto;">
-                    <b style="color: #facc15;">📜 11/7 저녁 9시 17단계 시퀀스:</b><br>
-                    • 00:00 (0s) - Forge: "안녕 모두들"<br>
-                    • 00:05 (5s) - Forge: "해적&한정조합"<br>
-                    • 00:10 (10s) - Forge: "먼저 1.5배 럭" (20분간 지속)<br>
-                    • 00:14 (14s) - Forge: "해적지형이 출시 됨"<br>
-                    • 00:19 (19s) - Forge: "해적지형을 위한 미니게임"<br>
-                    • 00:24 (24s) - Forge: "먼저 낚시 30분 활성화"<br>
-                    • 01:24 (84s) - Forge: "배 미니게임?"<br>
-                    • 02:10 (130s) - Forge: "내가 없는동안 이벤트는 Jae가 담당"<br>
-                    • 02:15 (135s) - Forge: "빨강불 초록불?" (3분간 진행)<br>
-                    • 05:15 (315s) - Forge: "성난광부 아뇨 천사악마 피하기!" (3분간 진행, 최대 3개)<br>
-                    • 08:15 (495s) - Forge: "한정조합 타임?" (나무밑 망치 배달, 2분조합, 3분소멸)<br>
-                    • 10:15 (615s) - Forge: "다 만들었겠죠?"<br>
-                    • 10:20 (620s) - Forge: "공백기 동안은 머니 업데이트.."<br>
-                    • 10:25 (625s) - Forge: "당장 내일...Jae 화이팅"<br>
-                    • 10:30 (630s) - Forge: "마지막 피날레 코드!"<br>
-                    • 10:35 (635s) - Forge: "JaeJae" (코드창 입력 시 럭키블록 20개!)<br>
-                    • 10:40 (640s) - Forge: "모두들 안녕"
+                <div id="weqwxe3-live-status-card" style="background: rgba(0,0,0,0.4); border-radius: 10px; padding: 10px; font-size: 11.5px; color: #e2e8f0; line-height: 1.6; text-align: left;">
+                    <div>⏱️ 현재 재생 경과 시간: <span id="weqwxe3-live-timer" style="color: #38bdf8; font-weight: 900;">대기 중</span></div>
+                    <div>📡 현재 진행 단계: <span id="weqwxe3-live-step" style="color: #facc15; font-weight: 900;">-</span></div>
                 </div>
             </div>
 
@@ -1360,28 +1388,44 @@
                         <span style="font-size: 32px;">🏠⚡</span>
                         <div>
                             <div style="font-size: 16px; font-weight: 950; color: #f97316;">타이탄 포지 하우스 스냅 (SNAP)</div>
-                            <div style="font-size: 11.5px; color: #fdba74;">불꽃 지형 강림 ➔ 중앙 행진 ➔ 스냅 컷씬 ➔ 3분간 메테오 특성</div>
+                            <div style="font-size: 11.5px; color: #fdba74;">불꽃 지형 강림 ➔ 중앙 행진 ➔ 스냅 컷씬 (포지 대사 없음)</div>
                         </div>
                     </div>
                     <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5; margin-bottom: 14px; background: rgba(0,0,0,0.35); padding: 10px; border-radius: 8px;">
-                        • 성난 농부보다 거대한 <strong>타이탄 포지 하우스</strong>가 불꽃 지형에 소환됩니다.<br>
-                        • 5초 동안 일반 지형까지 웅장하고 느리게 걸어온 후 양팔을 번쩍 들어올립니다.<br>
-                        • 화면 전체가 회색으로 변하고 거대한 해골(☠️)과 함께 양팔을 3초 동안 번쩍 든 채 유지됩니다.<br>
-                        • 스냅 종료 후 <strong>3분간 메테오 특성</strong>(주민 2.5배 구매) + <strong>5분간 퓨즈 2배 럭</strong>(희귀 스킨 2배) + <strong>5분간 나무 3배 럭</strong>(나무 희귀드롭 3배)이 동시 발동됩니다!
+                        • 성난 농부보다 거대한 <strong>타이탄 포지 하우스</strong>가 불꽃 지형에 소환되어 중앙으로 행진합니다.<br>
+                        • 화면 전체가 회색으로 변하고 거대한 해골(☠️)과 함께 양팔을 번쩍 들며 스냅이 발동됩니다.<br>
+                        • <strong>1차 스냅</strong>: 메테오 2.5배(3분) + 퓨즈 2배 럭(5분) + 나무 3배 럭(5분)<br>
+                        • <strong>2차 스냅</strong>: 꽃게 5마리 스폰 & 10% 부착 3배(5분) + 퓨즈 2배 럭(5분) + 나무 3배 럭(5분)<br>
+                        • <strong>3차 스냅</strong>: 불꽃 낙하 & 10% 부착 3배(5분) + 퓨즈 2배 럭(5분) + 나무 3배 럭(5분)
                     </div>
-                    <button onclick="triggerForgeHouseSnap()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: 2px solid #fdba74; border-radius: 12px; font-weight: 950; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.6); text-shadow: 0 1px 2px #000;">
-                        ⚡ 스냅 실행하기
-                    </button>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button onclick="triggerForgeHouseSnap(1); closeWeqwxe3EventModal();" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #d946ef, #a855f7); color: white; border: 2px solid #f472b6; border-radius: 10px; font-weight: 950; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 15px rgba(217, 70, 239, 0.5);">
+                            ☄️ [1차 스냅] 메테오 2.5배 + 퓨즈/나무 럭
+                        </button>
+                        <button onclick="triggerForgeHouseSnap(2); closeWeqwxe3EventModal();" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: 2px solid #f87171; border-radius: 10px; font-weight: 950; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5);">
+                            🦀 [2차 스냅] 꽃게 5마리 3배 + 퓨즈/나무 럭
+                        </button>
+                        <button onclick="triggerForgeHouseSnap(3); closeWeqwxe3EventModal();" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: 2px solid #fdba74; border-radius: 10px; font-weight: 950; font-size: 14.5px; cursor: pointer; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.5);">
+                            🔥 [3차 스냅] 불꽃 낙하 3배 + 퓨즈/나무 럭
+                        </button>
+                    </div>
                 </div>
 
-                <!-- 🍀 버프 HUD 테스트 컨트롤러 (퓨즈 2배 럭 / 3배 럭) -->
+                <!-- 🍀 버프 HUD 개별 테스트 컨트롤러 -->
                 <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #38bdf8; border-radius: 14px; padding: 14px; text-align: left;">
-                    <div style="font-size: 13.5px; font-weight: 950; color: #38bdf8; margin-bottom: 8px;">🍀 실시간 버프 HUD 컨트롤러 (하단 타이머)</div>
+                    <div style="font-size: 13.5px; font-weight: 950; color: #38bdf8; margin-bottom: 8px;">🍀 실시간 버프 HUD 개별 컨트롤러</div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <button onclick="activateFuseLuck(300)" style="padding: 10px 6px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: 1px solid #93c5fd; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                        <button onclick="startCrabTrait(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: 1px solid #fca5a5; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                            🦀 꽃게 3배 5분
+                        </button>
+                        <button onclick="startFireTrait(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #f97316, #c2410c); color: white; border: 1px solid #fed7aa; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                            🔥 불꽃 3배 5분
+                        </button>
+                        <button onclick="activateFuseLuck(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: 1px solid #93c5fd; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
                             ⚙️ 퓨즈 2배 럭 5분
                         </button>
-                        <button onclick="activateTripleLuck(300)" style="padding: 10px 6px; background: linear-gradient(135deg, #9333ea, #7e22ce); color: white; border: 1px solid #d8b4fe; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
+                        <button onclick="activateTripleLuck(300); closeWeqwxe3EventModal();" style="padding: 10px 6px; background: linear-gradient(135deg, #9333ea, #7e22ce); color: white; border: 1px solid #d8b4fe; border-radius: 8px; font-weight: 900; font-size: 12px; cursor: pointer;">
                             🟣 3배 럭 5분
                         </button>
                     </div>
@@ -1909,7 +1953,7 @@
                 <button class="shop-tab-btn active" onclick="switchShopTab('axe')">도끼</button>
                 
                 <button class="shop-tab-btn" onclick="switchShopTab('skin')">시즌 스킨!</button>
-                <button class="shop-tab-btn" id="shop-tab-lucky-btn" onclick="switchShopTab('lucky')" style="display: none; background: linear-gradient(135deg, #ea580c, #c2410c); color: #ffffff; font-weight: 900; box-shadow: 0 3px 10px rgba(234,88,12,0.45); border: 1.5px solid #fed7aa;">🏴‍☠️ 해적 럭키블럭</button>
+                <button class="shop-tab-btn" id="shop-tab-lucky-btn" onclick="switchShopTab('lucky')" style="display: inline-block; background: linear-gradient(135deg, #ea580c, #c2410c); color: #ffffff; font-weight: 900; box-shadow: 0 3px 10px rgba(234,88,12,0.45); border: 1.5px solid #fed7aa;">🏴‍☠️ 해적 럭키블럭</button>
                 <button class="shop-tab-btn" onclick="openIndexModal(); closeShopModal();" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; font-weight: 900; box-shadow: 0 3px 10px rgba(59,130,246,0.4);">📖 도감 (INDEX)</button>
             </div>
             
@@ -5620,6 +5664,12 @@
             // 2. 다크 팝업창 모달
             const cdEl = document.getElementById('season1-abuse-countdown');
             if (cdEl) cdEl.innerText = timeStr;
+
+            // ⏳ 9:00 PM 정각 도달 시 화면 상단 어뷰즈 카운트다운 배너 자동 영구 숨김
+            const abuseScreenBanner = document.getElementById('season1-abuse-screen-banner');
+            if (abuseScreenBanner && (diffMs <= 0 || now.getTime() >= 1794052800000)) {
+                abuseScreenBanner.style.display = 'none';
+            }
 
             const bannerCdEl = document.getElementById('season1-banner-countdown');
             if (bannerCdEl) bannerCdEl.innerText = timeStr;
@@ -16905,15 +16955,10 @@ window.claimPirateShipSkin = claimPirateShipSkin;
         }
 
         function switchShopTab(tab) {
-            const canSee = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
+            // 🎁 [공개 서버 정식 출시] 해적 럭키블록 상점 전체 유저에게 전면 공개
             const luckyBtn = document.getElementById('shop-tab-lucky-btn');
             if (luckyBtn) {
-                luckyBtn.style.display = canSee ? 'inline-block' : 'none';
-            }
-            if (tab === 'lucky' && !canSee) {
-                alert('🔒 관리자 계정 전용 럭키블럭 상점입니다!');
-                switchShopTab('axe');
-                return;
+                luckyBtn.style.display = 'inline-block';
             }
 
             document.getElementById('shop-axe').style.display = tab === 'axe' ? 'block' : 'none';
@@ -27482,6 +27527,14 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 if (shop.queue.length < 5 && Math.random() < 0.01) {
                     let newCustomer = generateCustomer(shop.type);
                     newCustomer.y = shop.queueY;
+                    // 🦀 꽃게 특성 활성화 시 10% 확률로 꽃게 부착
+                    if (window.crabTrait && window.crabTrait.active && Math.random() < 0.10) {
+                        newCustomer.crabAttached = true;
+                    }
+                    // 🔥 불꽃 특성 활성화 시 10% 확률로 화염 부착
+                    if (window.fireTrait && window.fireTrait.active && Math.random() < 0.10) {
+                        newCustomer.fireAttached = true;
+                    }
                     shop.queue.push(newCustomer);
                 }
                 
@@ -27531,6 +27584,20 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                                 totalEarned = Math.round(totalEarned * 2.5);
                                 if (typeof floatTexts !== 'undefined') {
                                     floatTexts.push({ x: firstC.x, y: shop.queueY - 130, text: '☄️✨ [메테오 2.5배 구매 대박!]', color: '#facc15', life: 90, size: 22 });
+                                }
+                            }
+                            // 🦀 [꽃게 특성 3배 구매 보너스]
+                            if (firstC && firstC.crabAttached) {
+                                totalEarned = Math.round(totalEarned * 3.0);
+                                if (typeof floatTexts !== 'undefined') {
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 130, text: '🦀✨ [꽃게 3배 구매 대박!]', color: '#facc15', life: 90, size: 22 });
+                                }
+                            }
+                            // 🔥 [불 특성 3배 구매 보너스]
+                            if (firstC && firstC.fireAttached) {
+                                totalEarned = Math.round(totalEarned * 3.0);
+                                if (typeof floatTexts !== 'undefined') {
+                                    floatTexts.push({ x: firstC.x, y: shop.queueY - 130, text: '🔥✨ [불꽃 3배 구매 대박!]', color: '#f97316', life: 90, size: 22 });
                                 }
                             }
                             
@@ -36033,6 +36100,36 @@ ctx.restore();
                         ctx.stroke();
                         ctx.restore();
                     }
+                    // 🦀 꽃게 부착 손님 (황금빛 글로우 + 어깨에 미니 꽃게)
+                    if (item.obj.crabAttached) {
+                        ctx.save();
+                        ctx.strokeStyle = '#facc15';
+                        ctx.lineWidth = 3.5;
+                        ctx.shadowColor = '#eab308';
+                        ctx.shadowBlur = 18;
+                        let glowR = 24 + Math.sin(Date.now() * 0.008) * 4;
+                        ctx.beginPath();
+                        ctx.arc(item.obj.x, item.obj.y - 25, glowR, 0, Math.PI * 2);
+                        ctx.stroke();
+                        ctx.font = '16px sans-serif';
+                        ctx.fillText('🦀', item.obj.x + 10, item.obj.y - 35);
+                        ctx.restore();
+                    }
+                    // 🔥 불꽃 부착 손님 (화염빛 글로우 + 머리 위 미니 불꽃)
+                    if (item.obj.fireAttached) {
+                        ctx.save();
+                        ctx.strokeStyle = '#f97316';
+                        ctx.lineWidth = 3.5;
+                        ctx.shadowColor = '#ea580c';
+                        ctx.shadowBlur = 18;
+                        let glowR = 24 + Math.sin(Date.now() * 0.008) * 4;
+                        ctx.beginPath();
+                        ctx.arc(item.obj.x, item.obj.y - 25, glowR, 0, Math.PI * 2);
+                        ctx.stroke();
+                        ctx.font = '16px sans-serif';
+                        ctx.fillText('🔥', item.obj.x - 8, item.obj.y - 45);
+                        ctx.restore();
+                    }
                     drawCharacter(ctx, item.obj, item.obj.x, item.obj.y, false, item.obj.walkTimer, item.obj.skin || null);
                     if (item.obj.x === shopFrontX) {
                         ctx.fillStyle = 'white'; ctx.beginPath(); ctx.roundRect(item.obj.x - 55, item.obj.y - 85, 110, 40, 5); ctx.fill();
@@ -36562,6 +36659,8 @@ ctx.restore();
             // ⚡ [스냅 컷씬 & 메테오] 나무/상점 등 모든 월드 오브젝트 전면 렌더링 (나무에 가려짐 100% 방지)
             if (typeof renderSnapCutscene === 'function') renderSnapCutscene(ctx);
             if (typeof updateAndRenderMeteors === 'function') updateAndRenderMeteors(ctx);
+            if (typeof updateAndRenderCrabs === 'function') updateAndRenderCrabs(ctx);
+            if (typeof updateAndRenderFlames === 'function') updateAndRenderFlames(ctx);
             // 융합 호박 머신 삭제됨 (크래프팅 머신만 렌더링 유지)
 
             // 👑 어드민 스토리 퀘스트: 할로윈 지형 원숭이 10마리 & 미친 박사 렌더링
@@ -37279,7 +37378,7 @@ window.isAngelDevilEventStarted = isAngelDevilEventStarted;
 
 // 공식 시작 시간: 2026년 11월 1일 저녁 9시 정각 (21:00:00 KST)
 const LIVE_9PM_TARGET_TIMESTAMP = 1794052800000; // 2026년 11월 7일 토요일 21:00:00 KST
-const LIVE_9PM_TOTAL_DURATION = 636; // 전체 일정: 10분 36초
+const LIVE_9PM_TOTAL_DURATION = 1200; // 전체 일정: 20분
 const LIVE_830PM_TARGET_TIMESTAMP = LIVE_9PM_TARGET_TIMESTAMP; // 레거시 호환
 const LIVE_830PM_TOTAL_DURATION = LIVE_9PM_TOTAL_DURATION;
 
@@ -37414,36 +37513,36 @@ window.playConcertRockMusic = playConcertRockMusic;
 window.stopConcertRockMusic = stopConcertRockMusic;
 
 // 📋 글로벌 타임라인 시퀀스 정의 (오늘 9시 정각 시작)
-// 📋 [11월 7일 토요일 저녁 9:00 피날레 라이브 이벤트 타임라인]
+// 📋 [11월 7일 토요일 저녁 9:00 피날레 라이브 이벤트 15단계 타임라인]
 const LIVE_9PM_TIMELINE = [
-    { t: 0,   text: 'Forge: 안녕 모두들', dur: 5000, action: null },
-    { t: 5,   text: 'Forge: 해적&한정조합', dur: 5000, action: null },
-    { t: 10,  text: 'Forge: 먼저 1.5배 럭', dur: 4000, action: 'activate_luck_20m' },
-    { t: 14,  text: 'Forge: 해적지형이 출시 됨', dur: 5000, action: 'unlock_pirate' },
-    { t: 19,  text: 'Forge: 해적지형을 위한 미니게임', dur: 5000, action: null },
-    { t: 24,  text: 'Forge: 먼저 낚시 30분 활성화', dur: 5000, action: 'activate_fishing_30m' },
-    { t: 84,  text: 'Forge: 배 미니게임?', dur: 5000, action: 'start_boat_race' },
-    { t: 130, text: 'Forge: 내가 없는동안 이벤트는 Jae가 담당', dur: 5000, action: null },
-    { t: 135, text: 'Forge: 빨강불 초록불?', dur: 5000, action: 'start_rlgl' },
-    { t: 315, text: 'Forge: 성난광부 아뇨 천사악마 피하기!', dur: 5000, action: 'start_dodge' },
-    { t: 495, text: 'Forge: 한정조합 타임?', dur: 5000, action: 'start_hammer' },
-    { t: 615, text: 'Forge: 다 만들었겠죠?', dur: 5000, action: 'craft_close' },
-    { t: 620, text: 'Forge: 공백기 동안은 머니 업데이트..', dur: 5000, action: null },
-    { t: 625, text: 'Forge: 당장 내일...Jae 화이팅', dur: 5000, action: null },
-    { t: 630, text: 'Forge: 마지막 피날레 코드!', dur: 5000, action: null },
-    { t: 635, text: 'Forge: JaeJae', dur: 5000, action: 'reveal_jaejae' },
-    { t: 640, text: 'Forge: 모두들 안녕', dur: 6000, action: null }
+    { t: 0,    text: 'Forge: 안녕 모두들', dur: 5000, action: null },
+    { t: 5,    text: 'Forge: 시즌1 마지막 업데이트', dur: 5000, action: null },
+    { t: 10,   text: 'Forge: 해적퓨즈&한정조합 미니게임?', dur: 5000, action: null },
+    { t: 15,   text: 'Forge: 신규 미니게임?', dur: 5000, action: 'start_boat_race' },        // 배 피하기 (1분)
+    { t: 75,   text: 'Forge: 낚시게임?', dur: 5000, action: 'start_fishing_15m' },         // 낚시 15분
+    { t: 135,  text: 'Forge: 3번째 미니게임?', dur: 5000, action: 'start_rlgl' },            // 빨간불 초록불 (3분)
+    { t: 315,  text: 'Forge: 스냅타임?', dur: 10000, action: null },                         // 1차 스냅 예고 (10초)
+    { t: 325,  text: null, dur: 0, action: 'snap_stage_1' },                                // 1차 스냅: 메테오 2.5배(3분) + 퓨즈 2배(5분) + 나무 3배(5분)
+    { t: 385,  text: 'Forge: 한정타임?', dur: 5000, action: 'start_hammer' },               // 포지 망치 소환 (2분)
+    { t: 505,  text: 'Forge: 4타임', dur: 5000, action: 'start_dodge' },                     // 천사악마 피하기 (3분)
+    { t: 685,  text: 'Forge: 스냅', dur: 10000, action: null },                              // 2차 스냅 예고 (10초)
+    { t: 695,  text: null, dur: 0, action: 'snap_stage_2' },                                // 2차 스냅: 꽃게 3배(5분) + 퓨즈 2배(5분) + 나무 3배(5분)
+    { t: 755,  text: 'Forge: 오우 좋은데?', dur: 5000, action: null },
+    { t: 1055, text: 'Forge: 스냅 마지막', dur: 10000, action: null },                       // 3차 스냅 예고 (10초)
+    { t: 1065, text: 'Forge: 모두 안녕', dur: 8000, action: 'snap_stage_3' }                // 3차 스냅: 불꽃 3배(5분) + 퓨즈 2배(5분) + 나무 3배(5분) & 피날레
 ];
 const LIVE_830PM_TIMELINE = LIVE_9PM_TIMELINE; // 레거시 호환
 
 window._live9PmTriggeredSteps = new Set();
 window._live9PmSyncedThisSession = false;
-window._live9PmTestStartTime = null;
 
-// 💾 새로고침 시 테스트 키 초기화
+// 💾 새로고침 시에도 기존 테스트 시작 시간을 보존하여 이어서 끊김 없이 재생
+let savedTestStart = null;
 try {
-    localStorage.removeItem('live_9pm_test_start_time');
+    const rawSaved = localStorage.getItem('live_9pm_test_start_time');
+    if (rawSaved) savedTestStart = parseInt(rawSaved, 10);
 } catch(e) {}
+window._live9PmTestStartTime = (savedTestStart && !isNaN(savedTestStart)) ? savedTestStart : null;
 
 function get9PmEventElapsedSeconds() {
     if (window._live9PmTestStartTime !== undefined && window._live9PmTestStartTime !== null) {
@@ -37460,65 +37559,89 @@ function isLive9PmEventActive() {
 window.isLive9PmEventActive = isLive9PmEventActive;
 
 // 🔄 상태 동기화 함수 (새로고침 또는 중간 접속 시 T에 맞게 정확 복원)
+// 🔄 상태 동기화 함수 (새로고침 또는 중간 접속 시 15단계 T에 맞게 정확 복원)
 function syncLive9PmEventState(currentT) {
     if (currentT < 0 || currentT > LIVE_9PM_TOTAL_DURATION) return;
+    console.log('[9:00 PM Live] 실시간 15단계 상태 동기화 T = ' + Math.floor(currentT) + '초');
 
-    LIVE_9PM_TIMELINE.forEach(step => {
-        if (step.t <= currentT) {
-            window._live9PmTriggeredSteps.add(step.t);
-        }
-    });
+    // 상단 어뷰즈 배너 숨김
+    const abuseScreenBanner = document.getElementById('season1-abuse-screen-banner');
+    if (abuseScreenBanner) abuseScreenBanner.style.display = 'none';
 
-    for (const step of LIVE_9PM_TIMELINE) {
-        const stepEnd = step.t + (step.dur / 1000);
-        if (currentT >= step.t && currentT < stepEnd) {
-            const remainMs = Math.max(1000, (stepEnd - currentT) * 1000);
-            showForgeBroadcast(step.text, remainMs);
-            break;
-        }
-    }
-
-    // 1.5배 럭 (T: 10초 ~ 1210초, 20분간)
-    if (currentT >= 10 && currentT < 1210) {
-        const remainSec = Math.max(1, Math.floor(1210 - currentT));
-        if (typeof activateLuck15Buff === 'function') activateLuck15Buff(remainSec * 1000);
-    }
-
-    // 해적 낚시 30분 (T: 24초 ~ 1824초)
-    if (currentT >= 24 && currentT < 1824) {
-        window._globalFishing30mActive = true;
-        window._globalFishing30mEndTime = Date.now() + Math.max(1, 1824 - currentT) * 1000;
-    }
-
-    // 보트 레이스 (T: 84초 ~ 130초)
-    if (currentT >= 84 && currentT < 130) {
+    // 1. T=15~75 (1분간): 배 미니게임 복원
+    if (currentT >= 15 && currentT < 75) {
         if (!window.inBoatRaceDimension && typeof startBoatRaceGame === 'function') {
             startBoatRaceGame();
         }
-    } else if (currentT >= 130 && window.inBoatRaceDimension && typeof exitBoatRace === 'function') {
+    } else if (currentT >= 75 && window.inBoatRaceDimension && typeof exitBoatRace === 'function') {
         exitBoatRace();
     }
 
-    // 빨강불 초록불 (T: 135초 ~ 315초, 3분간)
+    // 2. T=75~975 (15분간): 해적 낚시 미니게임 복원
+    if (currentT >= 75 && currentT < 975) {
+        window._globalFishing30mActive = true;
+        window._globalFishing30mEndTime = Date.now() + Math.max(1000, (975 - currentT) * 1000);
+    }
+
+    // 3. T=135~315 (3분간): 빨간불 초록불 복원
     if (currentT >= 135 && currentT < 315) {
-        const remainSec = Math.max(1, Math.floor(315 - currentT));
+        const remainingSec = Math.max(1, Math.floor(315 - currentT));
         if (typeof startRedLightGreenLightGame === 'function') {
-            startRedLightGreenLightGame(true, remainSec, false);
+            startRedLightGreenLightGame(true, remainingSec, false);
         }
+    } else if (currentT >= 315 && typeof redLightGreenLightState !== 'undefined' && redLightGreenLightState && redLightGreenLightState.active && redLightGreenLightState.isLiveEvent) {
+        redLightGreenLightState.active = false;
     }
 
-    // 천사악마 피하기 (T: 315초 ~ 495초, 3분간)
-    if (currentT >= 315 && currentT < 495) {
-        const remainSec = Math.max(1, Math.floor(495 - currentT));
-        if (typeof startDodgeFarmersGame === 'function') {
-            startDodgeFarmersGame(true, 'angel_devil', remainSec, false);
+    // 4. T=325 이후: 1차 스냅 (메테오 3분 325~505s, 퓨즈/나무 5분 325~625s)
+    if (currentT >= 325 && currentT < 505) {
+        const remainingSec = Math.max(1, Math.floor(505 - currentT));
+        if (typeof startMeteorTrait === 'function' && (!window.meteorTrait || !window.meteorTrait.active)) {
+            startMeteorTrait(remainingSec);
         }
     }
+    if (currentT >= 325 && currentT < 625) {
+        const remainingSec = Math.max(1, Math.floor(625 - currentT));
+        if (typeof activateFuseLuck === 'function') activateFuseLuck(remainingSec);
+        if (typeof activateTripleLuck === 'function') activateTripleLuck(remainingSec);
+    }
 
-    // 망치 배달 소환 (T: 495초 ~ 675초, 3분간 유지, 2분간 조합)
-    if (currentT >= 495 && currentT < 675) {
+    // 5. T=385~505 (2분간): 포지 망치 소환 유지
+    if (currentT >= 385 && currentT < 505) {
         window.hammerDeliveryActive = true;
-        window.hammerDeliveryEndTime = Date.now() + Math.max(1, 675 - currentT) * 1000;
+        window.hammerDeliveryEndTime = Date.now() + Math.max(1000, (505 - currentT) * 1000);
+    } else if (currentT >= 505) {
+        window.hammerDeliveryActive = false;
+    }
+
+    // 6. T=505~685 (3분간): 4타임 천사악마 피하기 복원
+    if (currentT >= 505 && currentT < 685) {
+        const remainingSec = Math.max(1, Math.floor(685 - currentT));
+        if (typeof startDodgeFarmersGame === 'function') {
+            startDodgeFarmersGame(true, 'angel_devil', remainingSec, false);
+        }
+    } else if (currentT >= 685 && typeof dodgeFarmersState !== 'undefined' && dodgeFarmersState && dodgeFarmersState.active && dodgeFarmersState.isLiveEvent) {
+        dodgeFarmersState.active = false;
+    }
+
+    // 7. T=695 이후: 2차 스냅 (꽃게 5분 695~995s, 퓨즈/나무 5분 695~995s)
+    if (currentT >= 695 && currentT < 995) {
+        const remainingSec = Math.max(1, Math.floor(995 - currentT));
+        if (typeof startCrabTrait === 'function' && (!window.crabTrait || !window.crabTrait.active)) {
+            startCrabTrait(remainingSec);
+        }
+        if (typeof activateFuseLuck === 'function') activateFuseLuck(remainingSec);
+        if (typeof activateTripleLuck === 'function') activateTripleLuck(remainingSec);
+    }
+
+    // 8. T=1065 이후: 3차 스냅 (불꽃 5분 1065~1365s, 퓨즈/나무 5분 1065~1365s)
+    if (currentT >= 1065 && currentT < 1365) {
+        const remainingSec = Math.max(1, Math.floor(1365 - currentT));
+        if (typeof startFireTrait === 'function' && (!window.fireTrait || !window.fireTrait.active)) {
+            startFireTrait(remainingSec);
+        }
+        if (typeof activateFuseLuck === 'function') activateFuseLuck(remainingSec);
+        if (typeof activateTripleLuck === 'function') activateTripleLuck(remainingSec);
     }
 }
 
@@ -37554,37 +37677,21 @@ function checkAndTick9PmLiveEvent() {
                 showForgeBroadcast(step.text, step.dur);
             }
 
-            // 1. 1.5배 럭 20분 즉시 활성화
-            if (step.action === 'activate_luck_20m') {
-                if (typeof activateLuck15Buff === 'function') {
-                    activateLuck15Buff(20 * 60 * 1000);
-                }
-                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
-                    floatTexts.push({ x: player.x, y: player.y - 70, text: '🍀 [Forge] 20분간 1.5배 행운 버프 발동!', color: '#facc15', life: 140, size: 22 });
-                }
-            }
-            // 2. 해적 지형 출시
-            else if (step.action === 'unlock_pirate') {
-                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
-                    floatTexts.push({ x: player.x, y: player.y - 70, text: '🏴‍☠️ [해적 지형 정식 출시!] 아래로 탐험을 시작하세요!', color: '#38bdf8', life: 140, size: 22 });
-                }
-            }
-            // 3. 해적 낚시 30분 활성화 (지형 진입 시 전원 낚시대 제공)
-            else if (step.action === 'activate_fishing_30m') {
-                window._globalFishing30mActive = true;
-                window._globalFishing30mEndTime = Date.now() + 30 * 60 * 1000;
-                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
-                    floatTexts.push({ x: player.x, y: player.y - 70, text: '🎣 [해적 낚시 30분 오픈!] 해적 지형에서 낚시대 지급!', color: '#38bdf8', life: 150, size: 22 });
-                }
-                alert('🎣 [Forge 해적 낚시 30분 오픈!]\n\n해적 지형에 들어가면 모든 플레이어에게 스컬 낚시대가 지급되고 낚시가 가능합니다!');
-            }
-            // 4. 배 미니게임 발동
-            else if (step.action === 'start_boat_race') {
+            // 1. 배 미니게임 발동 (1분)
+            if (step.action === 'start_boat_race') {
                 if (typeof startBoatRaceGame === 'function') {
                     startBoatRaceGame();
                 }
             }
-            // 5. 빨강불 초록불 발동 (3분)
+            // 2. 낚시 미니게임 15분 활성화
+            else if (step.action === 'start_fishing_15m') {
+                window._globalFishing30mActive = true;
+                window._globalFishing30mEndTime = Date.now() + 15 * 60 * 1000;
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: player.x, y: player.y - 70, text: '🎣 [해적 낚시 15분 활성화!] 지형 진입 시 낚시대 지급!', color: '#38bdf8', life: 150, size: 22 });
+                }
+            }
+            // 3. 빨간불 초록불 발동 (3분)
             else if (step.action === 'start_rlgl') {
                 if (window.inBoatRaceDimension && typeof exitBoatRace === 'function') {
                     exitBoatRace();
@@ -37593,33 +37700,31 @@ function checkAndTick9PmLiveEvent() {
                     startRedLightGreenLightGame(true, 180, false);
                 }
             }
-            // 6. 천사악마 피하기 발동 (3분, 한 줄 최대 3개 & 일정 거리)
+            // 4. 1차 스냅 활성화 (메테오 2.5배 3분 + 퓨즈 2배 럭 5분 + 나무 3배 럭 5분)
+            else if (step.action === 'snap_stage_1') {
+                triggerForgeHouseSnap(1);
+            }
+            // 5. 한정타임 (포지 망치 2분 소환)
+            else if (step.action === 'start_hammer') {
+                window.hammerDeliveryActive = true;
+                window.hammerDeliveryEndTime = Date.now() + 2 * 60 * 1000;
+                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+                    floatTexts.push({ x: 370, y: 550, text: '🔨 [한정타임] 일반지형 나무 밑에 포지 망치 2분간 소환!', color: '#c084fc', life: 160, size: 22 });
+                }
+            }
+            // 6. 4타임: 천사악마 피하기 (3분)
             else if (step.action === 'start_dodge') {
                 if (typeof startDodgeFarmersGame === 'function') {
                     startDodgeFarmersGame(true, 'angel_devil', 180, false);
                 }
             }
-            // 7. 한정 조합 망치 배달 (나무 밑에 3분간 출현, 2분간 조합 가능)
-            else if (step.action === 'start_hammer') {
-                window.hammerDeliveryActive = true;
-                window.hammerDeliveryEndTime = Date.now() + 3 * 60 * 1000;
-                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
-                    floatTexts.push({ x: 370, y: 550, text: '🔨 [한정조합 타임] 일반지형 나무 밑에 제작 망치가 배달되었습니다!', color: '#c084fc', life: 160, size: 22 });
-                }
-                alert('🔨 [한정 조합 타임!]\n\n일반지형 나무 밑(X: 370, Y: 550)에 제작 망치가 배달되었습니다!\n2분 동안 서양검사 + 일반검사 = 유니버셜 검사 합성이 가능합니다!\n(망치는 3분 뒤 사라집니다)');
+            // 7. 2차 스냅 활성화 (꽃게 5분 + 퓨즈 2배 럭 5분 + 나무 3배 럭 5분)
+            else if (step.action === 'snap_stage_2') {
+                triggerForgeHouseSnap(2);
             }
-            // 8. 한정 조합 종료 멘트
-            else if (step.action === 'craft_close') {
-                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
-                    floatTexts.push({ x: 370, y: 550, text: '⏱️ 한정 조합 타임 종료! (망치는 1분 후 소멸)', color: '#94a3b8', life: 120, size: 20 });
-                }
-            }
-            // 9. JaeJae 피날레 코드 공개 (럭블 20개)
-            else if (step.action === 'reveal_jaejae') {
-                if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
-                    floatTexts.push({ x: player.x, y: player.y - 80, text: '🔑 [피날레 코드 공개] JaeJae (럭블 20개!)', color: '#f5d0fe', life: 180, size: 26 });
-                }
-                alert('🎉 [피날레 쿠폰 코드 공개!]\n\n코드: JaeJae\n\n우측 상단 [코드] 버튼을 눌러 입력하면 🎁 럭키블록 20개가 즉시 지급됩니다!');
+            // 8. 3차 스냅 활성화 (불꽃 5분 + 퓨즈 2배 럭 5분 + 나무 3배 럭 5분)
+            else if (step.action === 'snap_stage_3') {
+                triggerForgeHouseSnap(3);
             }
         }
     });
@@ -40217,8 +40322,9 @@ window.renderIndexGrid = renderIndexGrid;
         window.tripleLuckTime = 0;
         window.tripleLuckInterval = null;
 
-        // 1. 스냅 실행 트리거
-        function triggerForgeHouseSnap() {
+        // 1. 스냅 실행 트리거 (1·2·3차 스냅 지원 & 포지 대사 방송 완전 삭제!)
+        function triggerForgeHouseSnap(stage = 1) {
+            window._currentSnapStage = stage;
             closeWeqwxe3EventModal();
             if (window.snapCutscene.active) return;
 
@@ -40229,9 +40335,7 @@ window.renderIndexGrid = renderIndexGrid;
             window.snapCutscene.armsUp = false;
             window.snapCutscene.screenGray = false;
 
-            if (typeof showForgeBroadcast === 'function') {
-                showForgeBroadcast("⚡ 타이탄 포지 하우스가 불꽃 지형에 강림했습니다!", 3000);
-            }
+            // 🚫 [요청 반영] 포지 대사 방송 일절 삭제!
 
             // 카메라를 포지 하우스 위치로 서서히 유도
             cameraY = window.snapCutscene.startY - 200;
@@ -40250,7 +40354,7 @@ window.renderIndexGrid = renderIndexGrid;
                     floatTexts.push({ x: 300, y: 150, text: '☠️ SNAP!!!', color: '#ef4444', life: 100, size: 38 });
                 }
 
-                // 3초 동안 양팔 든 채 유지 후 소멸 및 메테오 특성 발동
+                // 3초 동안 양팔 든 채 유지 후 소멸 및 차수별 특성 발동
                 setTimeout(() => {
                     const overlay = document.getElementById('snap-screen-overlay');
                     if (overlay) overlay.style.display = 'none';
@@ -40258,19 +40362,269 @@ window.renderIndexGrid = renderIndexGrid;
                     window.snapCutscene.active = false;
                     window.snapCutscene.armsUp = false;
 
-                    // ☄️ 3분(180초) 메테오 특성 + ⚙️ 5분(300초) 퓨즈 2배 럭 + 🟣 5분(300초) 나무 3배 럭 동시 발동!
-                    startMeteorTrait(180);
+                    // 차수별 분기:
+                    // 1차: ☄️ 메테오 특성(3분, 2.5배) + ⚙️ 퓨즈 2배 럭(5분) + 🟣 나무 3배 럭(5분)
+                    // 2차: 🦀 꽃게 특성(5분, 3배) + ⚙️ 퓨즈 2배 럭(5분) + 🟣 나무 3배 럭(5분)
+                    // 3차: 🔥 불꽃 특성(5분, 3배) + ⚙️ 퓨즈 2배 럭(5분) + 🟣 나무 3배 럭(5분)
+                    const s = window._currentSnapStage || 1;
+                    if (s === 1) {
+                        startMeteorTrait(180);
+                    } else if (s === 2) {
+                        startCrabTrait(300);
+                    } else if (s === 3) {
+                        startFireTrait(300);
+                    }
                     activateFuseLuck(300);
                     activateTripleLuck(300);
 
-                    if (typeof showForgeBroadcast === 'function') {
-                        showForgeBroadcast("⚡ TITAN SNAP! ☄️메테오(3분) + ⚙️퓨즈 2배 럭(5분) + 🟣나무 3배 럭(5분) 가동!", 4500);
-                    }
+                    // 🚫 [요청 반영] 스냅 완료 포지 대사 삭제!
                 }, 3000); // 3초 동안 손 든 채 유지
 
             }, 5000); // 5초 동안 느리게 걸어옴
         }
         window.triggerForgeHouseSnap = triggerForgeHouseSnap;
+        
+        // 🦀 [꽃게 특성 엔진] 5분간 각 지형 5마리 꽃게 스폰 ➔ 10% 손님 부착 ➔ 3배 가격 구매!
+        window.crabTrait = {
+            active: false,
+            remainingSeconds: 0,
+            crabs: [],
+            timerInterval: null
+        };
+
+        function startCrabTrait(durationSec = 300) {
+            window.crabTrait.active = true;
+            window.crabTrait.remainingSeconds = durationSec;
+            window.crabTrait.crabs = [];
+
+            // 각 지형(일반, 얼음, 불꽃, 캔디, 해적)마다 꽃게 5마리씩 스폰
+            const terrainBases = [350, 1050, 1750, 2450, 3150];
+            terrainBases.forEach(baseX => {
+                for (let i = 0; i < 5; i++) {
+                    window.crabTrait.crabs.push({
+                        x: baseX + (Math.random() - 0.5) * 450,
+                        y: 500 + Math.random() * 120,
+                        vx: (Math.random() - 0.5) * 1.5,
+                        vy: (Math.random() - 0.5) * 0.8,
+                        clawAngle: 0,
+                        clawSpeed: 0.08 + Math.random() * 0.05,
+                        baseX: baseX
+                    });
+                }
+            });
+
+            // 기존 대기열 손님 중 10%에게 꽃게 즉시 부착
+            try {
+                if (Array.isArray(shops)) {
+                    shops.forEach(s => {
+                        if (Array.isArray(s.queue)) {
+                            s.queue.forEach(c => {
+                                if (Math.random() < 0.10) c.crabAttached = true;
+                            });
+                        }
+                    });
+                }
+            } catch(e) {}
+
+            const hudEl = document.getElementById('hud-buff-crab');
+            const timerEl = document.getElementById('hud-timer-crab');
+            if (hudEl) hudEl.style.display = 'flex';
+
+            if (window.crabTrait.timerInterval) clearInterval(window.crabTrait.timerInterval);
+            window.crabTrait.timerInterval = setInterval(() => {
+                window.crabTrait.remainingSeconds--;
+                if (window.crabTrait.remainingSeconds <= 0) {
+                    stopCrabTrait();
+                } else if (timerEl) {
+                    const m = Math.floor(window.crabTrait.remainingSeconds / 60);
+                    const s = window.crabTrait.remainingSeconds % 60;
+                    timerEl.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+        window.startCrabTrait = startCrabTrait;
+
+        function stopCrabTrait() {
+            window.crabTrait.active = false;
+            window.crabTrait.remainingSeconds = 0;
+            window.crabTrait.crabs = [];
+            if (window.crabTrait.timerInterval) clearInterval(window.crabTrait.timerInterval);
+            const hudEl = document.getElementById('hud-buff-crab');
+            if (hudEl) hudEl.style.display = 'none';
+        }
+        window.stopCrabTrait = stopCrabTrait;
+
+        function updateAndRenderCrabs(ctx) {
+            if (!window.crabTrait.active) return;
+            window.crabTrait.crabs.forEach(c => {
+                c.x += c.vx;
+                c.y += c.vy;
+                if (c.x < c.baseX - 250) c.vx = Math.abs(c.vx);
+                if (c.x > c.baseX + 250) c.vx = -Math.abs(c.vx);
+                if (c.y < 480) c.vy = Math.abs(c.vy);
+                if (c.y > 640) c.vy = -Math.abs(c.vy);
+                c.clawAngle += c.clawSpeed;
+
+                ctx.save();
+                ctx.translate(c.x, c.y);
+                
+                // 그림자
+                ctx.fillStyle = 'rgba(0,0,0,0.25)';
+                ctx.beginPath();
+                ctx.ellipse(0, 8, 14, 6, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 몸체
+                ctx.fillStyle = '#ef4444';
+                ctx.strokeStyle = '#b91c1c';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 12, 9, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // 집게발 (좌/우 까딱까딱)
+                const clawSwing = Math.sin(c.clawAngle) * 0.3;
+                // 좌측 집게
+                ctx.save();
+                ctx.translate(-10, -5);
+                ctx.rotate(-0.4 + clawSwing);
+                ctx.fillStyle = '#dc2626';
+                ctx.fillRect(-6, -8, 6, 8);
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(-3, -8, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                // 우측 집게
+                ctx.save();
+                ctx.translate(10, -5);
+                ctx.rotate(0.4 - clawSwing);
+                ctx.fillStyle = '#dc2626';
+                ctx.fillRect(0, -8, 6, 8);
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(3, -8, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                // 눈
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(-4, -6, 2.5, 0, Math.PI * 2);
+                ctx.arc(4, -6, 2.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.arc(-4, -6, 1.2, 0, Math.PI * 2);
+                ctx.arc(4, -6, 1.2, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+            });
+        }
+        window.updateAndRenderCrabs = updateAndRenderCrabs;
+
+        // 🔥 [불 특성 엔진] 5분간 전 지형 화염 낙하 ➔ 10% 손님 달라붙음 ➔ 3배 가격 구매!
+        window.fireTrait = {
+            active: false,
+            remainingSeconds: 0,
+            flames: [],
+            timerInterval: null
+        };
+
+        function startFireTrait(durationSec = 300) {
+            window.fireTrait.active = true;
+            window.fireTrait.remainingSeconds = durationSec;
+            window.fireTrait.flames = [];
+
+            // 기존 대기열 손님 중 10%에게 화염 즉시 부착
+            try {
+                if (Array.isArray(shops)) {
+                    shops.forEach(s => {
+                        if (Array.isArray(s.queue)) {
+                            s.queue.forEach(c => {
+                                if (Math.random() < 0.10) c.fireAttached = true;
+                            });
+                        }
+                    });
+                }
+            } catch(e) {}
+
+            const hudEl = document.getElementById('hud-buff-fire');
+            const timerEl = document.getElementById('hud-timer-fire');
+            if (hudEl) hudEl.style.display = 'flex';
+
+            if (window.fireTrait.timerInterval) clearInterval(window.fireTrait.timerInterval);
+            window.fireTrait.timerInterval = setInterval(() => {
+                window.fireTrait.remainingSeconds--;
+                if (window.fireTrait.remainingSeconds <= 0) {
+                    stopFireTrait();
+                } else if (timerEl) {
+                    const m = Math.floor(window.fireTrait.remainingSeconds / 60);
+                    const s = window.fireTrait.remainingSeconds % 60;
+                    timerEl.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+        window.startFireTrait = startFireTrait;
+
+        function stopFireTrait() {
+            window.fireTrait.active = false;
+            window.fireTrait.remainingSeconds = 0;
+            window.fireTrait.flames = [];
+            if (window.fireTrait.timerInterval) clearInterval(window.fireTrait.timerInterval);
+            const hudEl = document.getElementById('hud-buff-fire');
+            if (hudEl) hudEl.style.display = 'none';
+        }
+        window.stopFireTrait = stopFireTrait;
+
+        function updateAndRenderFlames(ctx) {
+            if (!window.fireTrait.active) return;
+            if (Math.random() < 0.35) {
+                const screenLeft = (typeof cameraX !== 'undefined') ? cameraX - 200 : 0;
+                window.fireTrait.flames.push({
+                    x: screenLeft + Math.random() * (canvas.width + 500),
+                    y: -40,
+                    vx: 1.5 + Math.random() * 2,
+                    vy: 3.5 + Math.random() * 3,
+                    size: 14 + Math.random() * 12,
+                    alpha: 1.0,
+                    targetGround: 520 + Math.random() * 120
+                });
+            }
+
+            for (let i = window.fireTrait.flames.length - 1; i >= 0; i--) {
+                const f = window.fireTrait.flames[i];
+                f.x += f.vx;
+                f.y += f.vy;
+
+                ctx.save();
+                ctx.translate(f.x, f.y);
+                ctx.globalAlpha = f.alpha;
+
+                const grad = ctx.createRadialGradient(0, 0, 2, 0, 0, f.size);
+                grad.addColorStop(0, '#ffffff');
+                grad.addColorStop(0.3, '#facc15');
+                grad.addColorStop(0.7, '#f97316');
+                grad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(0, 0, f.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+
+                if (f.y >= f.targetGround) {
+                    f.alpha -= 0.08;
+                    if (f.alpha <= 0) {
+                        window.fireTrait.flames.splice(i, 1);
+                    }
+                }
+            }
+        }
+        window.updateAndRenderFlames = updateAndRenderFlames;
 
         // 2. 메테오 특성 가동 함수 (기본 3분 = 180초)
         function startMeteorTrait(seconds = 180) {
