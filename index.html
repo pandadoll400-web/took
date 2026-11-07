@@ -667,7 +667,7 @@
 
         <!-- 👑 실시간 투표 모달 (오늘 플레이 하나요? - 30초 한정) -->
                 <!-- 🍀 행운 1.5배 버프 위젯 (우측 하단) -->
-        <div id="luck-buffs-wrapper" style="position: absolute; bottom: 20px; right: 20px; z-index: 25; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: none;">
+        <div id="luck-buffs-wrapper" style="position: absolute; bottom: 95px; right: 18px; z-index: 25; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; pointer-events: none;">
             <div id="luck-container" style="pointer-events: auto; text-align: center; display: none; flex-direction: column; align-items: center; cursor: pointer; user-select: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'" onclick="alert('🍀 [행운 1.5배 버프 발동 중]\n\n10분 동안 모든 나무 및 고대 화석의 희귀/영웅/전설/신화 아이템 드롭 확률이 1.5배 증가합니다!');">
                 <div id="luck-icon" style="font-size: 28px; filter: drop-shadow(0 0 10px #2ecc71); animation: luckFloat 2s ease-in-out infinite;">🍀</div>
                 <div id="luck-timer" style="color: #2ecc71; font-weight: 800; background: rgba(15, 23, 42, 0.94); padding: 5px 12px; border-radius: 14px; font-size: 12px; margin-top: 2px; border: 1.5px solid #2ecc71; box-shadow: 0 4px 14px rgba(46, 204, 113, 0.45); white-space: nowrap; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
@@ -1040,7 +1040,7 @@
         </div>
 
         <!-- 🍀 [유저 제공 사진 3종 1:1 반영] 하단 액티브 버프 HUD (메테오 특성 / 퓨즈 2배 럭 / 3배 럭) -->
-        <div id="active-buffs-hud" style="position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 998; display: flex; gap: 24px; align-items: flex-end; pointer-events: none;">
+        <div id="active-buffs-hud" style="position: fixed; bottom: 18px; right: 18px; z-index: 998; display: flex; gap: 16px; align-items: flex-end; pointer-events: none;">
             
             <!-- ☄️ 1. 메테오 특성 (Image 1 스타일: 핑크/마젠타 불꽃 구체 + 볼드 타이머) -->
             <div id="hud-buff-meteor" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('☄️ [메테오 특성 발동 중]\n\n3분 동안 하늘에서 메테오가 떨어집니다!\n10% 확률로 줄 선 손님이 메테오에 맞으면 황금빛으로 빛나며 과일을 2.5배 가격으로 대량 구매합니다!');">
@@ -1367,7 +1367,7 @@
                         • 성난 농부보다 거대한 <strong>타이탄 포지 하우스</strong>가 불꽃 지형에 소환됩니다.<br>
                         • 5초 동안 일반 지형까지 웅장하고 느리게 걸어온 후 양팔을 번쩍 들어올립니다.<br>
                         • 화면 전체가 회색으로 변하고 거대한 해골(☠️)과 함께 양팔을 3초 동안 번쩍 든 채 유지됩니다.<br>
-                        • 스냅 종료 후 <strong>3분간 메테오 특성</strong>이 지속되며, 10% 확률로 줄 선 손님에게 직격 시 <strong>과일 2.5배 가격 구매</strong>!
+                        • 스냅 종료 후 <strong>3분간 메테오 특성</strong>(주민 2.5배 구매) + <strong>5분간 퓨즈 2배 럭</strong>(희귀 스킨 2배) + <strong>5분간 나무 3배 럭</strong>(나무 희귀드롭 3배)이 동시 발동됩니다!
                     </div>
                     <button onclick="triggerForgeHouseSnap()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: 2px solid #fdba74; border-radius: 12px; font-weight: 950; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.6); text-shadow: 0 1px 2px #000;">
                         ⚡ 스냅 실행하기
@@ -26926,14 +26926,23 @@ window.claimPirateShipSkin = claimPirateShipSkin;
 
         function getAdjustedTables(type) {
             let tables = getTables(type);
-            if (!isLuck15Active || !tables || tables.length === 0) return tables;
+            if (!tables || tables.length === 0) return tables;
+
+            // 🟣 3배 럭 우선 적용 (나무에서 좋은 거 뜰 확률 3배!) 또는 🍀 1.5배 럭 적용
+            let luckMult = 1.0;
+            if (window.tripleLuckTime && window.tripleLuckTime > 0) {
+                luckMult = 3.0;
+            } else if (typeof isLuck15Active !== 'undefined' && isLuck15Active) {
+                luckMult = 1.5;
+            }
+            if (luckMult <= 1.0) return tables;
             
-            // 일반 등급(0번) 제외 희귀 등급 확률 1.5배 증가
+            // 일반 등급(0번) 제외 희귀/영웅/전설/신화 등급 확률 luckMult배 증가
             let adjusted = JSON.parse(JSON.stringify(tables));
             let boostSum = 0;
             for (let i = 1; i < adjusted.length; i++) {
-                let diff = (adjusted[i].chance * 1.5) - adjusted[i].chance;
-                adjusted[i].chance *= 1.5;
+                let diff = (adjusted[i].chance * luckMult) - adjusted[i].chance;
+                adjusted[i].chance *= luckMult;
                 boostSum += diff;
             }
             adjusted[0].chance -= boostSum;
@@ -35969,8 +35978,6 @@ ctx.restore();
             }
             // 룰렛 머신 삭제 (사용자 요청: 룰렛은 일단 삭제해줘)
 
-            if (typeof renderSnapCutscene === 'function') renderSnapCutscene(ctx);
-            if (typeof updateAndRenderMeteors === 'function') updateAndRenderMeteors(ctx);
             renderList.sort((a, b) => a.y - b.y);
 
             renderList.forEach(item => {
@@ -36551,6 +36558,10 @@ ctx.restore();
             shops.forEach(shop => {
                 drawShop(ctx, shop);
             });
+
+            // ⚡ [스냅 컷씬 & 메테오] 나무/상점 등 모든 월드 오브젝트 전면 렌더링 (나무에 가려짐 100% 방지)
+            if (typeof renderSnapCutscene === 'function') renderSnapCutscene(ctx);
+            if (typeof updateAndRenderMeteors === 'function') updateAndRenderMeteors(ctx);
             // 융합 호박 머신 삭제됨 (크래프팅 머신만 렌더링 유지)
 
             // 👑 어드민 스토리 퀘스트: 할로윈 지형 원숭이 10마리 & 미친 박사 렌더링
@@ -40038,12 +40049,31 @@ window.renderIndexGrid = renderIndexGrid;
             oddsGrid.style.gap = '6px';
             oddsGrid.innerHTML = '';
 
-            pirateFuseSkinsData.forEach(s => {
+            // ⚙️🍀 퓨즈 2배 럭 반영 실시간 확률 계산
+            const isFuseLuckOn = Boolean(window.fuseLuckTime && window.fuseLuckTime > 0);
+            let pool = pirateFuseSkinsData.map(s => {
+                let w = s.weight;
+                if (isFuseLuckOn && (s.weight <= 20 || s.id === 'deepsea_poseidon' || s.id === 'davy_jones' || s.id === 'cursed_mariner')) {
+                    w *= 2;
+                }
+                return { ...s, calcWeight: w };
+            });
+            let totalWeight = pool.reduce((sum, item) => sum + item.calcWeight, 0);
+
+            pool.forEach(s => {
                 const card = document.createElement('div');
-                card.style.cssText = 'background: rgba(30, 41, 59, 0.85); border: 1.5px solid #ca8a04; border-radius: 8px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; text-align: center;';
+                const isBoosted = isFuseLuckOn && s.calcWeight > s.weight;
+                card.style.cssText = isBoosted
+                    ? 'background: rgba(30, 58, 138, 0.9); border: 1.8px solid #60a5fa; border-radius: 8px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 0 10px rgba(96, 165, 250, 0.4);'
+                    : 'background: rgba(30, 41, 59, 0.85); border: 1.5px solid #ca8a04; border-radius: 8px; padding: 6px 2px; display: flex; flex-direction: column; align-items: center; text-align: center;';
+                
+                const percent = Math.round((s.calcWeight / totalWeight) * 100);
+                const badgeBg = isBoosted ? 'linear-gradient(135deg, #2563eb, #1d4ed8)' : '#ea580c';
+                const badgeText = isBoosted ? `${percent}% (2X)` : `${percent}%`;
+
                 card.innerHTML = `
-                    <div style="background: #ea580c; color: white; font-size: 9.5px; font-weight: 950; padding: 1px 6px; border-radius: 6px; margin-bottom: 3px;">
-                        ${s.weight}%
+                    <div style="background: ${badgeBg}; color: white; font-size: 9px; font-weight: 950; padding: 1px 4px; border-radius: 6px; margin-bottom: 3px; white-space: nowrap;">
+                        ${badgeText}
                     </div>
                     <canvas id="pfuse-prev-${s.id}" width="46" height="58" style="background: rgba(0,0,0,0.4); border-radius: 6px; margin-bottom: 3px;"></canvas>
                     <div style="font-size: 9.5px; font-weight: 900; color: #ffffff; line-height: 1.1; word-break: keep-all;">
@@ -40166,7 +40196,7 @@ window.renderIndexGrid = renderIndexGrid;
             startX: 300,
             startY: -650, // 불꽃 지형
             targetX: 300,
-            targetY: 250, // 일반 지형 중앙
+            targetY: 130, // 일반 지형 북쪽 탁 트인 평원 (나무에 가려지지 않음)
             currentX: 300,
             currentY: -650,
             armsUp: false,
@@ -40228,11 +40258,13 @@ window.renderIndexGrid = renderIndexGrid;
                     window.snapCutscene.active = false;
                     window.snapCutscene.armsUp = false;
 
-                    // ☄️ 3분(180초) 메테오 특성 즉시 발동
+                    // ☄️ 3분(180초) 메테오 특성 + ⚙️ 5분(300초) 퓨즈 2배 럭 + 🟣 5분(300초) 나무 3배 럭 동시 발동!
                     startMeteorTrait(180);
+                    activateFuseLuck(300);
+                    activateTripleLuck(300);
 
                     if (typeof showForgeBroadcast === 'function') {
-                        showForgeBroadcast("☄️ 스냅 성공! 3분간 전 지형에 메테오 특성이 시작되었습니다!", 4000);
+                        showForgeBroadcast("⚡ TITAN SNAP! ☄️메테오(3분) + ⚙️퓨즈 2배 럭(5분) + 🟣나무 3배 럭(5분) 가동!", 4500);
                     }
                 }, 3000); // 3초 동안 손 든 채 유지
 
