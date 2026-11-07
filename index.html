@@ -1365,8 +1365,8 @@
                     </div>
                     <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5; margin-bottom: 14px; background: rgba(0,0,0,0.35); padding: 10px; border-radius: 8px;">
                         • 성난 농부보다 거대한 <strong>타이탄 포지 하우스</strong>가 불꽃 지형에 소환됩니다.<br>
-                        • 2초 동안 일반 지형까지 행진한 후 양팔을 번쩍 들어올립니다.<br>
-                        • 화면 전체가 회색으로 변하고 거대한 해골(☠️)이 1초간 유지된 후 사라집니다.<br>
+                        • 5초 동안 일반 지형까지 웅장하고 느리게 걸어온 후 양팔을 번쩍 들어올립니다.<br>
+                        • 화면 전체가 회색으로 변하고 거대한 해골(☠️)과 함께 양팔을 3초 동안 번쩍 든 채 유지됩니다.<br>
                         • 스냅 종료 후 <strong>3분간 메테오 특성</strong>이 지속되며, 10% 확률로 줄 선 손님에게 직격 시 <strong>과일 2.5배 가격 구매</strong>!
                     </div>
                     <button onclick="triggerForgeHouseSnap()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #ea580c, #c2410c); color: white; border: 2px solid #fdba74; border-radius: 12px; font-weight: 950; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.6); text-shadow: 0 1px 2px #000;">
@@ -40162,7 +40162,7 @@ window.renderIndexGrid = renderIndexGrid;
         window.snapCutscene = {
             active: false,
             startTime: 0,
-            duration: 2000, // 2초간 일반 지형까지 행진
+            duration: 5000, // 5초간 일반 지형까지 웅장하고 느리게 행진
             startX: 300,
             startY: -650, // 불꽃 지형
             targetX: 300,
@@ -40206,7 +40206,7 @@ window.renderIndexGrid = renderIndexGrid;
             // 카메라를 포지 하우스 위치로 서서히 유도
             cameraY = window.snapCutscene.startY - 200;
 
-            // 2초 후 팔 들어올림 및 화면 회색 암전 & 해골 연출
+            // 5초 동안 천천히 걸어온 후 팔 들어올림 및 화면 회색 암전 & 해골 연출
             setTimeout(() => {
                 if (!window.snapCutscene.active) return;
                 window.snapCutscene.armsUp = true;
@@ -40217,10 +40217,10 @@ window.renderIndexGrid = renderIndexGrid;
                 if (overlay) overlay.style.display = 'flex';
 
                 if (typeof floatTexts !== 'undefined') {
-                    floatTexts.push({ x: 300, y: 150, text: '☠️ SNAP!!!', color: '#ef4444', life: 70, size: 36 });
+                    floatTexts.push({ x: 300, y: 150, text: '☠️ SNAP!!!', color: '#ef4444', life: 100, size: 38 });
                 }
 
-                // 1초 유지 후 소멸 및 메테오 특성 발동
+                // 3초 동안 양팔 든 채 유지 후 소멸 및 메테오 특성 발동
                 setTimeout(() => {
                     const overlay = document.getElementById('snap-screen-overlay');
                     if (overlay) overlay.style.display = 'none';
@@ -40234,9 +40234,9 @@ window.renderIndexGrid = renderIndexGrid;
                     if (typeof showForgeBroadcast === 'function') {
                         showForgeBroadcast("☄️ 스냅 성공! 3분간 전 지형에 메테오 특성이 시작되었습니다!", 4000);
                     }
-                }, 1000);
+                }, 3000); // 3초 동안 손 든 채 유지
 
-            }, 2000);
+            }, 5000); // 5초 동안 느리게 걸어옴
         }
         window.triggerForgeHouseSnap = triggerForgeHouseSnap;
 
@@ -40471,10 +40471,12 @@ window.renderIndexGrid = renderIndexGrid;
             const elapsed = Date.now() - sc.startTime;
 
             if (elapsed < sc.duration) {
-                // 2초 동안 불꽃 지형에서 일반 지형까지 행진
+                // 5초 동안 불꽃 지형에서 일반 지형까지 웅장하고 느리게 행진
                 let progress = elapsed / sc.duration;
                 sc.currentX = sc.startX + (sc.targetX - sc.startX) * progress;
                 sc.currentY = sc.startY + (sc.targetY - sc.startY) * progress;
+                // 카메라가 걸어오는 거대 포지 하우스를 자연스럽게 추적
+                cameraY = sc.currentY - 200;
             } else {
                 sc.currentX = sc.targetX;
                 sc.currentY = sc.targetY;
@@ -40491,10 +40493,11 @@ window.renderIndexGrid = renderIndexGrid;
             ctx.ellipse(0, 26, 32, 11, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // 다리
+            // 다리 (5초간 묵직하고 느리게 걷는 다리 스윙)
+            let legWalk = (elapsed < sc.duration) ? Math.sin(Date.now() * 0.007) * 7 : 0;
             ctx.fillStyle = '#1e272e';
-            ctx.fillRect(-10, 14, 8, 12);
-            ctx.fillRect(3, 14, 8, 12);
+            ctx.fillRect(-10, 14 + legWalk, 8, 12);
+            ctx.fillRect(3, 14 - legWalk, 8, 12);
 
             // 본체 대장간 박스
             ctx.fillStyle = '#34495e';
@@ -40525,8 +40528,8 @@ window.renderIndexGrid = renderIndexGrid;
             ctx.arc(8, 0, 3.5, 0, Math.PI * 2);
             ctx.fill();
 
-            // 양팔: 스냅 시전 시 번쩍 들어올림!
-            let armAngle = sc.armsUp ? -2.2 : (Math.sin(Date.now() * 0.01) * 0.5);
+            // 양팔: 5초간 느리게 흔들며 걸어오고, 스냅 시전 시 3초 동안 번쩍 들어올림!
+            let armAngle = sc.armsUp ? -2.35 : ((elapsed < sc.duration) ? (Math.sin(Date.now() * 0.007) * 0.6) : 0);
 
             // 좌측 팔 (거대 해머)
             ctx.save();
