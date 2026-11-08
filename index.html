@@ -759,27 +759,31 @@
             <div id="forge-broadcast-text" style="font-size: 15px; font-weight: 800; color: #ffffff; line-height: 1.4; text-shadow: 0 1px 3px rgba(0,0,0,0.8);"></div>
         </div>
 
-        <!-- 📊 [Forge 실시간 투표 모달] (W 15 : L 13) -->
-        <div id="forge-live-vote-modal" style="display: none; position: fixed; top: 120px; right: 16px; z-index: 90; background: rgba(15, 23, 42, 0.94); border: 2px solid #38bdf8; border-radius: 14px; padding: 12px 14px; width: 270px; box-shadow: 0 8px 30px rgba(0,0,0,0.7), 0 0 16px rgba(56, 189, 248, 0.35); text-align: center; color: white;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <div style="font-size: 13.5px; font-weight: 950; color: #facc15; text-align: left;">T: 오늘 게임 어떰?</div>
-                <button onclick="closeLiveVoteModal()" style="background: none; border: none; color: #94a3b8; font-size: 14px; cursor: pointer; padding: 0 2px;">✕</button>
+        <!-- 📊 [Forge 실시간 투표 모달 (화면 중앙)] (토픽: 좋은거 얻은 사람? / W 18 : L 17) -->
+        <div id="forge-live-vote-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.72); backdrop-filter: blur(4px); z-index: 99998;" onclick="closeLiveVoteModal()"></div>
+        <div id="forge-live-vote-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999; background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98)); border: 2.5px solid #38bdf8; border-radius: 18px; padding: 18px 20px; width: 320px; box-shadow: 0 12px 40px rgba(0,0,0,0.85), 0 0 25px rgba(56, 189, 248, 0.45); text-align: center; color: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div style="font-size: 15px; font-weight: 950; color: #facc15; text-align: left; letter-spacing: -0.3px;">🗳️ T: 좋은거 얻은 사람?</div>
+                <button onclick="closeLiveVoteModal()" style="background: rgba(255,255,255,0.1); border: none; color: #94a3b8; font-size: 14px; cursor: pointer; border-radius: 6px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">✕</button>
             </div>
 
-            <!-- 백분율 프로그레스 바 [ 20% | 80% ] -->
-            <div style="height: 18px; background: rgba(0,0,0,0.6); border: 1px solid #334155; border-radius: 6px; overflow: hidden; display: flex; margin-bottom: 8px; font-size: 10px; font-weight: 900; line-height: 18px;">
-                <div id="compact-vote-w-bar" style="width: 20%; background: #22c55e; color: #000; text-align: center; transition: width 0.3s;">20%</div>
-                <div id="compact-vote-l-bar" style="width: 80%; background: #ef4444; color: #fff; text-align: center; transition: width 0.3s;">80%</div>
+            <!-- 백분율 프로그레스 바 [ 0% | 0% ] ➔ [ 51% | 49% ] -->
+            <div style="height: 22px; background: rgba(0,0,0,0.65); border: 1.5px solid #334155; border-radius: 8px; overflow: hidden; display: flex; margin-bottom: 14px; font-size: 11px; font-weight: 950; line-height: 22px;">
+                <div id="compact-vote-w-bar" style="width: 50%; background: linear-gradient(90deg, #10b981, #22c55e); color: #000; text-align: center; transition: width 0.25s ease;">0%</div>
+                <div id="compact-vote-l-bar" style="width: 50%; background: linear-gradient(90deg, #ef4444, #dc2626); color: #fff; text-align: center; transition: width 0.25s ease;">0%</div>
             </div>
 
-            <!-- 투표 버튼 2종 [ W ] 12  [ L ] 30 -->
-            <div style="display: flex; gap: 8px;">
-                <button onclick="castUserVote('W')" style="flex: 1; padding: 7px 6px; background: rgba(34, 197, 94, 0.2); border: 1.5px solid #22c55e; border-radius: 8px; color: #4ade80; font-weight: 950; font-size: 13px; cursor: pointer; display: flex; justify-content: space-around; align-items: center;">
-                    <span>W</span> <span id="vote-w-count" style="color: #fff; font-size: 12px;">12</span>
+            <!-- 투표 버튼 2종 [ W ] 18  [ L ] 17 (1씩 틱틱 올라감) -->
+            <div style="display: flex; gap: 10px;">
+                <button onclick="castUserVote('W')" style="flex: 1; padding: 10px 8px; background: rgba(34, 197, 94, 0.18); border: 2px solid #22c55e; border-radius: 10px; color: #4ade80; font-weight: 950; font-size: 15px; cursor: pointer; display: flex; justify-content: space-around; align-items: center; transition: transform 0.1s, background 0.2s;" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">
+                    <span>W</span> <span id="vote-w-count" style="color: #fff; font-size: 14px; font-weight: 900;">0</span>
                 </button>
-                <button onclick="castUserVote('L')" style="flex: 1; padding: 7px 6px; background: rgba(239, 68, 68, 0.2); border: 1.5px solid #ef4444; border-radius: 8px; color: #f87171; font-weight: 950; font-size: 13px; cursor: pointer; display: flex; justify-content: space-around; align-items: center;">
-                    <span>L</span> <span id="vote-l-count" style="color: #fff; font-size: 12px;">30</span>
+                <button onclick="castUserVote('L')" style="flex: 1; padding: 10px 8px; background: rgba(239, 68, 68, 0.18); border: 2px solid #ef4444; border-radius: 10px; color: #f87171; font-weight: 950; font-size: 15px; cursor: pointer; display: flex; justify-content: space-around; align-items: center; transition: transform 0.1s, background 0.2s;" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'">
+                    <span>L</span> <span id="vote-l-count" style="color: #fff; font-size: 14px; font-weight: 900;">0</span>
                 </button>
+            </div>
+            <div style="margin-top: 10px; font-size: 11px; color: #94a3b8;">
+                ✨ 실시간 실황 투표 집계 중...
             </div>
         </div>
         <div id="kraken-kill-banner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); z-index: 9999; display: none; opacity: 0; transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif; pointer-events: auto;">
@@ -1535,6 +1539,9 @@
                     </button>
                     <button onclick="start430PmEventTest(2165); closeWeqwxe3EventModal();" style="padding: 9px 6px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; border-radius: 8px; font-size: 11.5px; font-weight: 950; cursor: pointer;">
                         💰 [2165s] 피날레 머니머니 (5분)
+                    </button>
+                    <button onclick="openLiveVoteModal(); closeWeqwxe3EventModal();" style="padding: 9px 6px; background: linear-gradient(135deg, #06b6d4, #0284c7); color: white; border: none; border-radius: 8px; font-size: 11.5px; font-weight: 950; cursor: pointer; grid-column: span 2;">
+                        🗳️ [화면 중앙] 좋은거 얻은 사람? 투표 모달 즉시 테스트 (W18:L17)
                     </button>
                     <button onclick="start430PmEventTest(2465); closeWeqwxe3EventModal();" style="padding: 9px 6px; background: rgba(255,255,255,0.06); border: 1px solid #94a3b8; color: #cbd5e1; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer; grid-column: span 2;">
                         🏁 [2465s] 피날레 (시즌2에 보자~~)
@@ -37996,6 +38003,8 @@ function syncLive430PmEventState(currentT) {
     // 15. 💰 피날레 머니머니 복원 (T = 2165 ~ 2465: 5분간)
     if (currentT >= 2165 && currentT < 2465) {
         startInfinityMinigame(Math.floor(2465 - currentT));
+    } else if (currentT >= 2465) {
+        openLiveVoteModal(); // 🗳️ 이벤트 종료 후 접속/새로고침 시에도 화면 중앙 투표 모달 자동 팝업!
     }
 }
 window.syncLive430PmEventState = syncLive430PmEventState;
@@ -38108,6 +38117,7 @@ function checkAndTick430PmLiveEvent() {
                 if (rem > 0) startInfinityMinigame(rem);
             } else if (step.action === 'event_end') {
                 console.log('피날레 이벤트 전체 종료!');
+                openLiveVoteModal(); // 🗳️ [유저 요청] 피날레 종료 시 화면 중앙 투표 모달 자동 팝업!
             }
         }
     });
@@ -39999,29 +40009,111 @@ try {
 // ------------------------------------------------------------
 // 📊 [신규] Forge 컴팩트 실시간 투표 엔진 (Image 2)
 // ------------------------------------------------------------
-window.voteWCount = 12;
-window.voteLCount = 30;
+// ------------------------------------------------------------
+// 📊 [신규] Forge 컴팩트 실시간 투표 엔진 (토픽: 좋은거 얻은 사람? / W18:L17 카운트업)
+// ------------------------------------------------------------
+window.voteWCount = 0;
+window.voteLCount = 0;
+window._voteCountUpTimer = null;
+window._voteCountUpDone = false;
+window._hasUserVoted = false;
 
-function castUserVote(choice) {
-    if (choice === 'W') {
-        window.voteWCount++;
-    } else {
-        window.voteLCount++;
-    }
-
+function updateVoteDisplayUI() {
     const total = window.voteWCount + window.voteLCount;
-    const wPct = Math.round((window.voteWCount / total) * 100);
-    const lPct = 100 - wPct;
+    let wPct = 50;
+    let lPct = 50;
+    if (total > 0) {
+        wPct = Math.round((window.voteWCount / total) * 100);
+        lPct = 100 - wPct;
+    }
 
     const wBar = document.getElementById('compact-vote-w-bar');
     const lBar = document.getElementById('compact-vote-l-bar');
     const wCountEl = document.getElementById('vote-w-count');
     const lCountEl = document.getElementById('vote-l-count');
 
-    if (wBar) { wBar.style.width = wPct + '%'; wBar.innerText = wPct + '%'; }
-    if (lBar) { lBar.style.width = lPct + '%'; lBar.innerText = lPct + '%'; }
+    if (wBar) { 
+        wBar.style.width = Math.max(10, Math.min(90, wPct)) + '%'; 
+        wBar.innerText = total > 0 ? (wPct + '%') : '0%'; 
+    }
+    if (lBar) { 
+        lBar.style.width = Math.max(10, Math.min(90, lPct)) + '%'; 
+        lBar.innerText = total > 0 ? (lPct + '%') : '0%'; 
+    }
     if (wCountEl) wCountEl.innerText = window.voteWCount;
     if (lCountEl) lCountEl.innerText = window.voteLCount;
+}
+window.updateVoteDisplayUI = updateVoteDisplayUI;
+
+// 📈 W는 18까지, L은 17까지 1씩 실시간으로 올라가는 카운트업 연출 (약 280ms 간격)
+function startVoteCountUpAnimation() {
+    if (window._voteCountUpDone) {
+        window.voteWCount = 18;
+        window.voteLCount = 17;
+        updateVoteDisplayUI();
+        return;
+    }
+
+    if (window._voteCountUpTimer) clearInterval(window._voteCountUpTimer);
+    window.voteWCount = 0;
+    window.voteLCount = 0;
+    updateVoteDisplayUI();
+
+    window._voteCountUpTimer = setInterval(() => {
+        let canIncW = window.voteWCount < 18;
+        let canIncL = window.voteLCount < 17;
+
+        if (!canIncW && !canIncL) {
+            clearInterval(window._voteCountUpTimer);
+            window._voteCountUpTimer = null;
+            window._voteCountUpDone = true;
+            return;
+        }
+
+        if (canIncW && canIncL) {
+            if (Math.random() < 0.52) {
+                window.voteWCount++;
+            } else {
+                window.voteLCount++;
+            }
+        } else if (canIncW) {
+            window.voteWCount++;
+        } else if (canIncL) {
+            window.voteLCount++;
+        }
+
+        updateVoteDisplayUI();
+    }, 280);
+}
+window.startVoteCountUpAnimation = startVoteCountUpAnimation;
+
+function castUserVote(choice) {
+    if (window._hasUserVoted) {
+        if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+            floatTexts.push({
+                x: player.x,
+                y: player.y - 70,
+                text: '이미 투표에 참여하셨습니다!',
+                color: '#facc15',
+                life: 70,
+                size: 20
+            });
+        }
+        return;
+    }
+    window._hasUserVoted = true;
+
+    if (choice === 'W') {
+        window.voteWCount++;
+    } else {
+        window.voteLCount++;
+    }
+
+    updateVoteDisplayUI();
+
+    const total = window.voteWCount + window.voteLCount;
+    const wPct = Math.round((window.voteWCount / total) * 100);
+    const lPct = 100 - wPct;
 
     if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
         floatTexts.push({
@@ -40038,13 +40130,20 @@ window.castUserVote = castUserVote;
 
 function openLiveVoteModal() {
     const modal = document.getElementById('forge-live-vote-modal');
-    if (modal) modal.style.display = 'block';
+    const backdrop = document.getElementById('forge-live-vote-backdrop');
+    if (backdrop) backdrop.style.display = 'block';
+    if (modal) {
+        modal.style.display = 'block';
+        startVoteCountUpAnimation();
+    }
 }
 window.openLiveVoteModal = openLiveVoteModal;
 
 function closeLiveVoteModal() {
     const modal = document.getElementById('forge-live-vote-modal');
+    const backdrop = document.getElementById('forge-live-vote-backdrop');
     if (modal) modal.style.display = 'none';
+    if (backdrop) backdrop.style.display = 'none';
 }
 window.closeLiveVoteModal = closeLiveVoteModal;
 
