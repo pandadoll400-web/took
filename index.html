@@ -1176,6 +1176,112 @@
                 </div>
             </div>
 
+            <!-- 🚦 [미니게임 HUD] 1. 빨간불 초록불 (신호등 위젯) -->
+            <div id="hud-minigame-rlgl" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('🚦 [빨간불 초록불 미니게임]\n\n🟢 초록불일 때 전력 질주하고, 🔴 빨간불일 때는 즉시 멈추세요!\n우주 꼭대기에 도달하여 해커 스킨을 탈출시키세요!');">
+                <svg id="svg-traffic-light" width="46" height="52" viewBox="0 0 46 52" style="filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.85)); animation: luckFloat 2s ease-in-out infinite;">
+                    <!-- 신호등 외곽 케이스 -->
+                    <rect x="10" y="3" width="26" height="46" rx="10" fill="#0f172a" stroke="#334155" stroke-width="2.5"/>
+                    <!-- 상단 빨간불 -->
+                    <circle id="traffic-light-red" cx="23" cy="16" r="8" fill="#450a0a" stroke="#7f1d1d" stroke-width="1.5"/>
+                    <!-- 하단 초록불 -->
+                    <circle id="traffic-light-green" cx="23" cy="36" r="8" fill="#22c55e" stroke="#14532d" stroke-width="1.5" style="filter: drop-shadow(0 0 6px #22c55e);"/>
+                </svg>
+                <div id="hud-timer-rlgl" style="font-size: 20px; font-weight: 950; color: #ffffff; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 6px rgba(0,0,0,0.9); font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 0.5px; margin-top: -3px;">03:00</div>
+            </div>
+
+            <!-- 👼😈 [미니게임 HUD] 2. 천사&악마 피하기 (천사 반쪽 + 악마 반쪽 결합 위젯) -->
+            <div id="hud-minigame-angeldevil" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('👼😈 [천사와 악마 피하기]\n\n돌진하는 천사와 악마들을 따돌리고 우주로 올라가 서양 검사 스킨을 챙겨 일반 지형으로 탈출하세요!');">
+                <svg width="52" height="52" viewBox="0 0 52 52" style="filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.85)); animation: luckFloat 2s ease-in-out infinite;">
+                    <defs>
+                        <!-- 좌측 반쪽 클립: 천사 영역 -->
+                        <clipPath id="angelHalfClip">
+                            <rect x="0" y="0" width="26" height="52"/>
+                        </clipPath>
+                        <!-- 우측 반쪽 클립: 악마 영역 -->
+                        <clipPath id="devilHalfClip">
+                            <rect x="26" y="0" width="26" height="52"/>
+                        </clipPath>
+                    </defs>
+
+                    <!-- 중앙 헤드 배경 -->
+                    <circle cx="26" cy="28" r="14" fill="#1e293b"/>
+
+                    <!-- 👼 좌측 반쪽: 천사 (헤일로, 순백 날개, 하늘빛) -->
+                    <g clip-path="url(#angelHalfClip)">
+                        <!-- 골드 헤일로 -->
+                        <ellipse cx="26" cy="11" rx="13" ry="4" fill="none" stroke="#facc15" stroke-width="2.5" style="filter: drop-shadow(0 0 4px #facc15);"/>
+                        <!-- 천사 날개 -->
+                        <path d="M 24 24 C 14 16, 4 20, 3 32 C 6 36, 14 36, 22 30 Z" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5"/>
+                        <!-- 천사 반쪽 얼굴 -->
+                        <circle cx="26" cy="28" r="14" fill="#38bdf8" stroke="#0284c7" stroke-width="1.5"/>
+                        <circle cx="20" cy="27" r="2.5" fill="#0f172a"/>
+                        <circle cx="21" cy="26" r="1" fill="#ffffff"/>
+                    </g>
+
+                    <!-- 😈 우측 반쪽: 악마 (붉은 뿔, 박쥐 날개, 진홍빛) -->
+                    <g clip-path="url(#devilHalfClip)">
+                        <!-- 악마 뿔 -->
+                        <path d="M 28 17 C 32 9, 39 8, 41 14 C 38 18, 33 20, 28 21 Z" fill="#ef4444" stroke="#991b1b" stroke-width="1.5"/>
+                        <!-- 악마 박쥐 날개 -->
+                        <path d="M 28 26 C 38 16, 49 19, 49 32 C 45 33, 40 28, 37 34 C 34 29, 30 33, 28 30 Z" fill="#b91c1c" stroke="#450a0a" stroke-width="1.5"/>
+                        <!-- 악마 반쪽 얼굴 -->
+                        <circle cx="26" cy="28" r="14" fill="#dc2626" stroke="#7f1d1d" stroke-width="1.5"/>
+                        <polygon points="30,26 34,25 32,29" fill="#fef08a"/>
+                    </g>
+
+                    <!-- 중앙 분할선 빛줄기 -->
+                    <line x1="26" y1="6" x2="26" y2="44" stroke="#ffffff" stroke-width="1.5" opacity="0.8"/>
+                </svg>
+                <div id="hud-timer-angeldevil" style="font-size: 20px; font-weight: 950; color: #ffffff; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 6px rgba(0,0,0,0.9); font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 0.5px; margin-top: -3px;">03:00</div>
+            </div>
+
+            <!-- 🚤 [미니게임 HUD] 3. 배 피하기 (스피드보트 레이스) -->
+            <div id="hud-minigame-boat" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('🚤 [배 피하기 미니게임]\n\n좌우로 배를 조종하여 암초와 통을 피하고 결승선까지 질주하세요!');">
+                <svg width="48" height="48" viewBox="0 0 52 52" style="filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.9)); animation: luckFloat 2s ease-in-out infinite;">
+                    <!-- 물보라 파도 -->
+                    <path d="M 4 40 C 14 36, 26 44, 48 38" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+                    <!-- 보트 선체 -->
+                    <path d="M 8 36 L 44 36 L 38 24 L 14 24 Z" fill="#ea580c" stroke="#9a3412" stroke-width="2"/>
+                    <!-- 앞유리 -->
+                    <path d="M 20 24 L 28 16 L 36 24 Z" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.5"/>
+                    <!-- 선체 하이라이트 -->
+                    <line x1="12" y1="30" x2="40" y2="30" stroke="#fef08a" stroke-width="2"/>
+                </svg>
+                <div id="hud-timer-boat" style="font-size: 20px; font-weight: 950; color: #ffffff; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 6px rgba(0,0,0,0.9); font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 0.5px; margin-top: -3px;">01:00</div>
+            </div>
+
+            <!-- 🎣 [미니게임 HUD] 4. 해적 낚시 (15분 글로벌 낚시) -->
+            <div id="hud-minigame-fishing" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('🎣 [해적 낚시 15분 이벤트]\n\n바다 및 해적 지형에서 전설 해적 물고기를 낚아보세요!');">
+                <svg width="48" height="48" viewBox="0 0 52 52" style="filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.9)); animation: luckFloat 2s ease-in-out infinite;">
+                    <!-- 낚싯대 -->
+                    <line x1="8" y1="44" x2="38" y2="10" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>
+                    <!-- 낚싯줄 -->
+                    <path d="M 38 10 Q 48 24 40 38" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+                    <!-- 물고기 -->
+                    <path d="M 36 36 C 44 32, 48 42, 38 46 L 46 50 L 46 32 Z" fill="#38bdf8" stroke="#0369a1" stroke-width="1.5"/>
+                    <circle cx="39" cy="38" r="1.5" fill="#0f172a"/>
+                </svg>
+                <div id="hud-timer-fishing" style="font-size: 20px; font-weight: 950; color: #ffffff; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 6px rgba(0,0,0,0.9); font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 0.5px; margin-top: -3px;">15:00</div>
+            </div>
+
+            <!-- 🕺 [미니게임 HUD] 5. 포지 콘서트 댄스쇼 (전용 차원 공연장) -->
+            <div id="hud-minigame-concert" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('🕺 [포지 라이브 콘서트 공연 관람 중]\n\n전용 공연장에서 포지와 케이크의 신나는 댄스 쇼를 감상하세요!');">
+                <svg width="48" height="48" viewBox="0 0 52 52" style="filter: drop-shadow(0 0 12px rgba(236, 72, 153, 0.95)); animation: luckFloat 2s ease-in-out infinite;">
+                    <!-- 미러볼 -->
+                    <circle cx="26" cy="22" r="14" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+                    <line x1="26" y1="0" x2="26" y2="8" stroke="#94a3b8" stroke-width="2"/>
+                    <!-- 반짝이 그리드 -->
+                    <line x1="16" y1="16" x2="36" y2="28" stroke="#f472b6" stroke-width="1.5"/>
+                    <line x1="16" y1="28" x2="36" y2="16" stroke="#f472b6" stroke-width="1.5"/>
+                    <circle cx="26" cy="22" r="3" fill="#fdf2f8"/>
+                    <!-- 음표 2개 -->
+                    <path d="M 38 32 L 44 26 L 44 38" fill="none" stroke="#facc15" stroke-width="2"/>
+                    <circle cx="37" cy="40" r="3" fill="#facc15"/>
+                    <circle cx="43" cy="38" r="3" fill="#facc15"/>
+                </svg>
+                <div id="hud-timer-concert" style="font-size: 20px; font-weight: 950; color: #ffffff; text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 6px rgba(0,0,0,0.9); font-family: 'Impact', 'Arial Black', sans-serif; letter-spacing: 0.5px; margin-top: -3px;">01:00</div>
+            </div>
+
             <div id="hud-buff-tripleluck" style="display: none; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer;" onclick="alert('🟣 [3배 럭 버프 발동 중]\n\n모든 채집, 낚시, 드롭 시 희귀/전설 아이템 획득 확률이 3배 증가합니다!');">
                 <svg width="48" height="48" viewBox="0 0 54 54" style="filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.9)); animation: luckFloat 2s ease-in-out infinite;">
                     <path d="M 27 30 C 27 40, 29 46, 34 48" fill="none" stroke="#581c87" stroke-width="3" stroke-linecap="round"/>
@@ -5168,6 +5274,7 @@
             if (typeof updateInfinityShopGauge === 'function') updateInfinityShopGauge();
         }
         window.updateInfinityCoinDisplay = updateInfinityCoinDisplay;
+        setTimeout(() => { if (typeof updateInfinityCoinDisplay === 'function') updateInfinityCoinDisplay(0); }, 50);
 
         // ⏱️ [weqwxe3 전용] 머니 미니게임 시작 (8개 지형에 15개씩 총 120개 스폰, 3분 제한시간, 재스폰 없음)
         function startInfinityMinigame(durationSec = 300) {
@@ -8468,12 +8575,8 @@
             window.groundInfinityCoins = [];
             const infHud = document.getElementById('infinity-minigame-hud');
             if (infHud) infHud.style.display = 'none';
-            const infCoinDisp = document.getElementById('infinity-coin-display');
-            if (infCoinDisp) infCoinDisp.style.display = 'none';
             const chargeEl = document.getElementById('fishing-charge-container');
             if (chargeEl) chargeEl.style.display = 'none';
-            const infDisp = document.getElementById('infinity-coin-display');
-            if (infDisp) infDisp.style.display = 'none';
             if (typeof closeWeqwxe3EventModal === 'function') closeWeqwxe3EventModal();
             if (typeof closeAdminPanelModal === 'function') closeAdminPanelModal();
             if (typeof closeMoneyShopModal === 'function') closeMoneyShopModal();
@@ -15238,21 +15341,7 @@
                 }
             }
 
-            // 🎪 [공개 서버] 포지 콘서트 무대 클릭 대사
-            if (!(typeof isAdmin === 'function' && isAdmin())) {
-                let stageDist = Math.hypot(cx - 300, cy - 1460);
-                if (stageDist < 120) {
-                    if (typeof floatTexts !== 'undefined') {
-                        const isDancing = (typeof isForgeDancingTime === 'function' && isForgeDancingTime());
-                        floatTexts.push({
-                            x: 300, y: 1720,
-                            text: isDancing ? '🔨 포지: "이 리듬을 느껴봐! 오늘 밤 댄스는 멈추지 않아!"' : '🎂 케이크: "잠시 후 시작될 정각 댄스 쇼를 기대해주세요!"',
-                            color: '#facc15', life: 110, size: 20
-                        });
-                    }
-                    return;
-                }
-            }
+            // 🎪 포지 콘서트 무대 클릭 대사는 전용 공연장 차원에서만 처리됨 (해적 지형 나무 벌목 정상화)
 
             if (inFarmDimension) {
                 handleFarmDimensionClick(cx, cy, isSpacebar);
@@ -15465,13 +15554,15 @@
                     }
                 }
 
-                // 🏪 [할로윈 캔디콘 상점] 클릭 감지 (공개 서버 전체 오픈: 평소 Y: 2020 / 집 10채 생성 시 Y: 3450)
-                let ccPos = (typeof getCandyCornShopPos === 'function') ? getCandyCornShopPos() : { x: GAME_WIDTH / 2, y: window.candyHousesSpawned ? 3450 : 2020 };
-                let sDist = Math.hypot(cx - ccPos.x, cy - ccPos.y);
-                let spDist = Math.hypot(player.x - ccPos.x, player.y - ccPos.y);
-                if (sDist < 110 || (isSpacebar && spDist < 125)) {
-                    openCandyCornShopModal();
-                    return;
+                // 🏪 [할로윈 캔디콘 상점] 클릭 감지 (이벤트 집 10채 활성화 시에만 Y: 3450에서 오픈, 해적 지형 허공 클릭 방지)
+                if (window.candyHousesSpawned) {
+                    let ccPos = { x: GAME_WIDTH / 2, y: 3450 };
+                    let sDist = Math.hypot(cx - ccPos.x, cy - ccPos.y);
+                    let spDist = Math.hypot(player.x - ccPos.x, player.y - ccPos.y);
+                    if (sDist < 80 || (isSpacebar && spDist < 100)) {
+                        openCandyCornShopModal();
+                        return;
+                    }
                 }
 
                 // 🔮 크래프팅 머신 클릭 감지 (일반 지역 중앙)
@@ -19778,6 +19869,16 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             if (rlglHud) rlglHud.style.display = 'none';
             const dodgeHud = document.getElementById('dodge-minigame-hud');
             if (dodgeHud) dodgeHud.style.display = 'none';
+            const snapRlglHud = document.getElementById('hud-minigame-rlgl');
+            if (snapRlglHud) snapRlglHud.style.display = 'none';
+            const snapDodgeHud = document.getElementById('hud-minigame-angeldevil');
+            if (snapDodgeHud) snapDodgeHud.style.display = 'none';
+            const snapBoatHud = document.getElementById('hud-minigame-boat');
+            if (snapBoatHud) snapBoatHud.style.display = 'none';
+            const snapFishHud = document.getElementById('hud-minigame-fishing');
+            if (snapFishHud) snapFishHud.style.display = 'none';
+            const snapConcertHud = document.getElementById('hud-minigame-concert');
+            if (snapConcertHud) snapConcertHud.style.display = 'none';
 
             closeAdminPanelModal();
             if (wasActive) {
@@ -19998,19 +20099,16 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             // 1. 타이머 감소 및 상단 HUD 실시간 표시
             state.timeLeft -= 1 / 60;
             const dodgeHud = document.getElementById('dodge-minigame-hud');
-            const dodgeTimerEl = document.getElementById('dodge-hud-timer');
-            const dodgeTitleEl = document.getElementById('dodge-hud-title');
-            const dodgeSkinEl = document.getElementById('dodge-hud-skin-status');
-            if (dodgeHud) dodgeHud.style.display = 'block';
-            if (dodgeTitleEl) {
-                dodgeTitleEl.innerText = (state.mode === 'angel_devil') ? '👼😈 천사와 악마 피하기' : '👨‍🌾 성난 거대 농부 피하기';
-                dodgeTitleEl.style.color = (state.mode === 'angel_devil') ? '#f87171' : '#f59e0b';
-            }
-            if (dodgeTimerEl) {
-                const m = Math.floor(Math.max(0, state.timeLeft) / 60);
-                const s = Math.floor(Math.max(0, state.timeLeft) % 60);
-                dodgeTimerEl.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-            }
+            if (dodgeHud) dodgeHud.style.display = 'none';
+
+            const m = Math.floor(Math.max(0, state.timeLeft) / 60);
+            const s = Math.floor(Math.max(0, state.timeLeft) % 60);
+            const timeStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+            const snapDodgeHud = document.getElementById('hud-minigame-angeldevil');
+            const snapDodgeTimer = document.getElementById('hud-timer-angeldevil');
+            if (snapDodgeHud) snapDodgeHud.style.display = 'flex';
+            if (snapDodgeTimer) snapDodgeTimer.innerText = timeStr;
             if (dodgeSkinEl) {
                 if (state.carryingSkin) {
                     dodgeSkinEl.innerText = (state.mode === 'angel_devil' ? '🎉 악마 스킨 획득 완료! 일반 지형(아래)으로 탈출하세요!' : '🎉 서양 검사 스킨 획득 완료! 일반 지형(아래)으로 탈출하세요!');
@@ -23033,12 +23131,8 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             }
             const infDisp = document.getElementById('infinity-coin-display');
             if (infDisp) {
-                if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) {
-                    infDisp.style.display = 'block';
-                    if (typeof updateInfinityCoinDisplay === 'function') updateInfinityCoinDisplay(0);
-                } else {
-                    infDisp.style.display = 'none';
-                }
+                infDisp.style.display = 'flex';
+                if (typeof updateInfinityCoinDisplay === 'function') updateInfinityCoinDisplay(0);
             }
             if (typeof updateQuestHudBadge === 'function') updateQuestHudBadge();
         }
@@ -27592,59 +27686,48 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 }
             }
 
-            // ♾️ [weqwxe3 전용 머니머니 미니게임] 바닥에 떨어진 인피니티 코인 근접 픽업 (주우면 개당 10~15개 지급!)
-            if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser)) {
-                // ⏱️ 머니 미니게임 활성화 시에만 3분 타이머 및 코인 픽업 (재스폰 없음!)
-                if (window.infinityMinigameState && window.infinityMinigameState.active) {
-                    let remaining = Math.max(0, Math.ceil((window.infinityMinigameState.endTime - Date.now()) / 1000));
-                    window.infinityMinigameState.timeLeft = remaining;
-                    let m = Math.floor(remaining / 60);
-                    let s = remaining % 60;
-                    let timerEl = document.getElementById('infinity-minigame-timer');
-                    if (timerEl) timerEl.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            // ♾️ [머니머니 미니게임] 바닥에 떨어진 인피니티 코인 근접 픽업 (공개 서버 전체 지원)
+            if (window.infinityMinigameState && window.infinityMinigameState.active) {
+                let remaining = Math.max(0, Math.ceil((window.infinityMinigameState.endTime - Date.now()) / 1000));
+                window.infinityMinigameState.timeLeft = remaining;
+                let m = Math.floor(remaining / 60);
+                let s = remaining % 60;
+                let timerEl = document.getElementById('infinity-minigame-timer');
+                if (timerEl) timerEl.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 
-                    if (remaining <= 0) {
-                        finishInfinityMinigame();
-                    } else if (Array.isArray(window.groundInfinityCoins)) {
-                        for (let i = window.groundInfinityCoins.length - 1; i >= 0; i--) {
-                            let coin = window.groundInfinityCoins[i];
-                            let d = Math.hypot(player.x - coin.x, player.y - coin.y);
-                            if (d < 45) {
-                                window.groundInfinityCoins.splice(i, 1);
-                                let gain = Math.floor(Math.random() * 6) + 10; // 10 ~ 15개 지급!
-                                updateInfinityCoinDisplay(gain);
-                                window.infinityMinigameState.roundCollected += gain;
-                                let collEl = document.getElementById('infinity-minigame-collected');
-                                if (collEl) collEl.innerText = window.infinityMinigameState.roundCollected.toLocaleString();
+                if (remaining <= 0) {
+                    finishInfinityMinigame();
+                } else if (Array.isArray(window.groundInfinityCoins)) {
+                    for (let i = window.groundInfinityCoins.length - 1; i >= 0; i--) {
+                        let coin = window.groundInfinityCoins[i];
+                        let d = Math.hypot(player.x - coin.x, player.y - coin.y);
+                        if (d < 45) {
+                            window.groundInfinityCoins.splice(i, 1);
+                            let gain = Math.floor(Math.random() * 6) + 10; // 10 ~ 15개 지급!
+                            updateInfinityCoinDisplay(gain);
+                            window.infinityMinigameState.roundCollected += gain;
+                            let collEl = document.getElementById('infinity-minigame-collected');
+                            if (collEl) collEl.innerText = window.infinityMinigameState.roundCollected.toLocaleString();
 
-                                if (typeof floatTexts !== 'undefined') {
-                                    floatTexts.push({
-                                        x: player.x,
-                                        y: player.y - 70,
-                                        text: `+${gain} ♾️`,
-                                        color: '#38bdf8',
-                                        life: 60,
-                                        size: 20
-                                    });
-                                }
+                            if (typeof floatTexts !== 'undefined') {
+                                floatTexts.push({
+                                    x: player.x,
+                                    y: player.y - 70,
+                                    text: `+${gain} ♾️`,
+                                    color: '#38bdf8',
+                                    life: 60,
+                                    size: 20
+                                });
                             }
                         }
-                        if (window.groundInfinityCoins.length === 0) {
-                            finishInfinityMinigame();
-                        }
+                    }
+                    if (window.groundInfinityCoins.length === 0) {
+                        finishInfinityMinigame();
                     }
                 }
             } else {
-                if (window.infinityMinigameState && window.infinityMinigameState.active) {
-                    window.infinityMinigameState.active = false;
-                }
-                if (Array.isArray(window.groundInfinityCoins) && window.groundInfinityCoins.length > 0) {
-                    window.groundInfinityCoins = [];
-                }
                 const infHud = document.getElementById('infinity-minigame-hud');
                 if (infHud) infHud.style.display = 'none';
-                const infDisp = document.getElementById('infinity-coin-display');
-                if (infDisp) infDisp.style.display = 'none';
             }
 
             shops.forEach(shop => {
@@ -36006,7 +36089,47 @@ ctx.restore();
 
         function draw() {
             if (typeof drawLuckyCoinMinigame === 'function') drawLuckyCoinMinigame(ctx);
-            if (window.inBoatRaceDimension && typeof drawBoatRaceDimension === 'function') {
+            if (window.inForgeConcertDimension) {
+        ctx.save();
+        // 1. 심야 콘서트 네온 배경
+        let bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        bgGrad.addColorStop(0, '#020617');
+        bgGrad.addColorStop(0.5, '#0f172a');
+        bgGrad.addColorStop(1, '#1e1b4b');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 2. 콘서트 무대 및 댄서 렌더링
+        drawPublicForgeConcertStage(ctx);
+
+        // 3. 공연 관람자 플레이어 렌더링
+        if (typeof player !== 'undefined') {
+            ctx.save();
+            ctx.translate(player.x, player.y - cameraY);
+            if (typeof drawPlayerAvatar === 'function') drawPlayerAvatar(ctx);
+            ctx.restore();
+        }
+
+        // 4. 좌측 상단 [🚪 공연장 나가기] 버튼 안내
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.strokeStyle = '#f472b6';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(14, 14, 130, 32, 10);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#fde047';
+        ctx.font = '900 12.5px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🚪 공연장 나가기', 79, 30);
+
+        ctx.restore();
+        requestAnimationFrame(render);
+        return;
+    }
+
+    if (window.inBoatRaceDimension && typeof drawBoatRaceDimension === 'function') {
                 drawBoatRaceDimension();
                 return;
             }
@@ -36068,12 +36191,8 @@ ctx.restore();
             ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1150); 
             // 🗺️ [신규 지형 렌더링]
             // 어드민 전용: 해적 지형 (정중앙 거대한 흔들리는 난파선 배 나무 & 일반 상점형 해적 상점)
-            // 공개 서버 전체: 포지 라이브 콘서트 무대 지형 (무대 위 포지 하우스 & 포지 케이크)
-            if (typeof isPirateTerrainUser === 'function' && isPirateTerrainUser()) {
-                drawAdminPirateTerrain(ctx);
-            } else {
-                drawPublicForgeConcertStage(ctx);
-            }
+            // 🏴‍☠️ 공개 서버 전체: 해적 지형 및 퓨즈머신 상시 렌더링
+            drawAdminPirateTerrain(ctx);
 
             // 🔮 핑크 물음표 지형 삭제 완료 - 캔디 조약돌 길과 지형이 Y: 4000 상점까지 시원하게 이어집니다.
 
@@ -36173,8 +36292,8 @@ ctx.restore();
             if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser) && window.hammerDeliveryActive) {
                 renderList.push({ type: 'deliveryHammer', obj: { x: 370, y: 550 }, y: 550 });
             }
-            // ♾️ [weqwxe3 전용] 머니머니 미니게임: 필드에 떨어진 인피니티 코인
-            if (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(currentUser) && Array.isArray(window.groundInfinityCoins)) {
+            // ♾️ 머니머니 미니게임: 필드에 떨어진 인피니티 코인 (공개 서버 전체 렌더링)
+            if (Array.isArray(window.groundInfinityCoins)) {
                 window.groundInfinityCoins.forEach(coin => {
                     renderList.push({ type: 'groundInfinityCoin', obj: coin, y: coin.y });
                 });
@@ -38239,7 +38358,34 @@ window.fishingState = {
 };
 
 // 🎣 weqwxe3 / 어드민 즉시 낚시 테스트 & 텔레포트
+function startFishingEvent(durationSec = 900) {
+    window._globalFishing30mActive = true;
+    window._globalFishing30mEndTime = Date.now() + durationSec * 1000;
+    if (window.fishingState) window.fishingState.isHoldingRod = true;
+
+    const fishHud = document.getElementById('hud-minigame-fishing');
+    const timerEl = document.getElementById('hud-timer-fishing');
+    if (fishHud) fishHud.style.display = 'flex';
+
+    if (window._globalFishTimerInterval) clearInterval(window._globalFishTimerInterval);
+    window._globalFishTimerInterval = setInterval(() => {
+        const remSec = Math.max(0, Math.floor((window._globalFishing30mEndTime - Date.now()) / 1000));
+        if (timerEl) {
+            const m = Math.floor(remSec / 60);
+            const s = remSec % 60;
+            timerEl.innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+        }
+        if (remSec <= 0) {
+            clearInterval(window._globalFishTimerInterval);
+            if (fishHud) fishHud.style.display = 'none';
+            window._globalFishing30mActive = false;
+        }
+    }, 1000);
+}
+window.startFishingEvent = startFishingEvent;
+
 function startWeqwxe3FishingTest() {
+    startFishingEvent(900);
     if (typeof player === 'undefined') return;
     if (typeof isUserWeqwxe3 !== 'function' || !isUserWeqwxe3(currentUser)) {
         alert('❌ weqwxe3 계정 전용 낚시 미니게임입니다!');
@@ -38470,6 +38616,8 @@ window.handleFishingReelClick = handleFishingReelClick;
 // 🚤 [보트 피하기 (배 레이스 1분 완주 미니게임) 엔진]
 // ============================================================================
 window.inBoatRaceDimension = false;
+    const boatHud = document.getElementById('hud-minigame-boat');
+    if (boatHud) boatHud.style.display = 'none';
 window.boatRaceState = {
     active: false,
     startTime: 0,
@@ -38503,6 +38651,8 @@ function startBoatRaceGame(customTimeLeft = 60.0) {
     if (typeof player === 'undefined') return;
     window.inBoatRaceDimension = true;
     window._boatRaceReturnPos = { x: player.x, y: player.y };
+    const boatHud = document.getElementById('hud-minigame-boat');
+    if (boatHud) boatHud.style.display = 'flex';
 
     const bs = window.boatRaceState;
     bs.active = true;
@@ -38859,21 +39009,65 @@ function isForgeDancingTime() {
 window.isForgeDancingTime = isForgeDancingTime;
 
 // 🎪 포지 콘서트 무대로 즉시 텔레포트
-function teleportToForgeStage() {
+// 🎪 [전용 공연장 차원] 포지 라이브 콘서트 & 댄스쇼 전용 차원 엔진
+window.inForgeConcertDimension = false;
+window._concertReturnPos = null;
+
+function startForgeConcertShow(durationSec = 60) {
     if (typeof player === 'undefined') return;
+    window.inForgeConcertDimension = true;
+    window._concertReturnPos = { x: player.x, y: player.y };
     player.x = 300;
     player.y = 1620;
-    if (typeof cameraY !== 'undefined') cameraY = player.y - canvas.height / 2;
+    if (typeof cameraY !== 'undefined') cameraY = 1620 - (typeof canvas !== 'undefined' ? canvas.height / 2 : 300);
+    window._concertDancing = true;
+
+    const hud = document.getElementById('hud-minigame-concert');
+    const timer = document.getElementById('hud-timer-concert');
+    if (hud) hud.style.display = 'flex';
+
+    let rem = durationSec;
+    if (window._concertTimerInterval) clearInterval(window._concertTimerInterval);
+    window._concertTimerInterval = setInterval(() => {
+        rem--;
+        if (timer) {
+            const m = Math.floor(rem / 60);
+            const s = rem % 60;
+            timer.innerText = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+        }
+        if (rem <= 0) {
+            endForgeConcertShow();
+        }
+    }, 1000);
+
     if (typeof floatTexts !== 'undefined') {
-        floatTexts.push({
-            x: player.x,
-            y: player.y - 70,
-            text: '🎪 포지 라이브 콘서트 무대에 도착했습니다!',
-            color: '#facc15',
-            life: 120,
-            size: 22
-        });
+        floatTexts.push({ x: 300, y: 1550, text: '🎪 [포지 콘서트장 입장!] 전용 공연장에서 댄스 쇼가 펼쳐집니다!', color: '#facc15', life: 130, size: 22 });
     }
+}
+window.startForgeConcertShow = startForgeConcertShow;
+
+function endForgeConcertShow() {
+    if (!window.inForgeConcertDimension) return;
+    window.inForgeConcertDimension = false;
+    window._concertDancing = false;
+    if (window._concertTimerInterval) clearInterval(window._concertTimerInterval);
+    const hud = document.getElementById('hud-minigame-concert');
+    if (hud) hud.style.display = 'none';
+
+    if (window._concertReturnPos && typeof player !== 'undefined') {
+        player.x = window._concertReturnPos.x;
+        player.y = window._concertReturnPos.y;
+        if (typeof cameraY !== 'undefined') cameraY = player.y - (typeof canvas !== 'undefined' ? canvas.height / 2 : 300);
+    }
+
+    if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+        floatTexts.push({ x: player.x, y: player.y - 70, text: '🎪 콘서트가 종료되어 원래 위치로 안전하게 복귀했습니다!', color: '#4ade80', life: 120, size: 20 });
+    }
+}
+window.endForgeConcertShow = endForgeConcertShow;
+
+function teleportToForgeStage() {
+    startForgeConcertShow(60);
 }
 window.teleportToForgeStage = teleportToForgeStage;
 
@@ -40700,18 +40894,28 @@ window.renderIndexGrid = renderIndexGrid;
             window.crabTrait.remainingSeconds = durationSec;
             window.crabTrait.crabs = [];
 
-            // 각 지형(일반, 얼음, 불꽃, 캔디, 해적)마다 꽃게 5마리씩 스폰
-            const terrainBases = [350, 1050, 1750, 2450, 3150];
-            terrainBases.forEach(baseX => {
+            // 🦀 8개 전 지형 (Y: -10500 ~ +3400)마다 꽃게 5마리씩 총 40마리 스폰!
+            const ALL_EVENT_TERRAINS = [
+                { name: '천사&악마', minY: -10500, maxY: -9200 },
+                { name: '얼음의 협곡', minY: -8800, maxY: -7800 },
+                { name: '우주', minY: -7200, maxY: -5700 },
+                { name: '방사능', minY: -5200, maxY: -4100 },
+                { name: '동굴', minY: -3700, maxY: -2600 },
+                { name: '바다', minY: -2200, maxY: -1400 },
+                { name: '일반 지형', minY: 150, maxY: 950 },
+                { name: '사탕 마을/해적', minY: 1350, maxY: 3400 }
+            ];
+            ALL_EVENT_TERRAINS.forEach(t => {
                 for (let i = 0; i < 5; i++) {
                     window.crabTrait.crabs.push({
-                        x: baseX + (Math.random() - 0.5) * 450,
-                        y: 500 + Math.random() * 120,
-                        vx: (Math.random() - 0.5) * 1.5,
+                        x: 100 + Math.random() * 400,
+                        y: t.minY + 80 + Math.random() * (t.maxY - t.minY - 160),
+                        vx: (Math.random() - 0.5) * 1.6,
                         vy: (Math.random() - 0.5) * 0.8,
+                        minY: t.minY + 40,
+                        maxY: t.maxY - 40,
                         clawAngle: 0,
-                        clawSpeed: 0.08 + Math.random() * 0.05,
-                        baseX: baseX
+                        clawSpeed: 0.08 + Math.random() * 0.05
                     });
                 }
             });
@@ -40762,10 +40966,11 @@ window.renderIndexGrid = renderIndexGrid;
             window.crabTrait.crabs.forEach(c => {
                 c.x += c.vx;
                 c.y += c.vy;
-                if (c.x < c.baseX - 250) c.vx = Math.abs(c.vx);
-                if (c.x > c.baseX + 250) c.vx = -Math.abs(c.vx);
-                if (c.y < 480) c.vy = Math.abs(c.vy);
-                if (c.y > 640) c.vy = -Math.abs(c.vy);
+                if (c.x < 70) c.vx = Math.abs(c.vx);
+                if (c.x > 530) c.vx = -Math.abs(c.vx);
+                let minY = c.minY || 150, maxY = c.maxY || 950;
+                if (c.y < minY) c.vy = Math.abs(c.vy);
+                if (c.y > maxY) c.vy = -Math.abs(c.vy);
                 c.clawAngle += c.clawSpeed;
 
                 ctx.save();
@@ -40844,17 +41049,27 @@ window.renderIndexGrid = renderIndexGrid;
             window.extinctionTrait.remainingSeconds = durationSec;
             window.extinctionTrait.skulls = [];
 
-            // 각 지형마다 해골 5마리씩 스폰
-            const terrainBases = [350, 1050, 1750, 2450, 3150];
-            terrainBases.forEach(baseX => {
+            // 💀 8개 전 지형 (Y: -10500 ~ +3400)마다 해골 5마리씩 총 40마리 스폰!
+            const ALL_EVENT_TERRAINS = [
+                { name: '천사&악마', minY: -10500, maxY: -9200 },
+                { name: '얼음의 협곡', minY: -8800, maxY: -7800 },
+                { name: '우주', minY: -7200, maxY: -5700 },
+                { name: '방사능', minY: -5200, maxY: -4100 },
+                { name: '동굴', minY: -3700, maxY: -2600 },
+                { name: '바다', minY: -2200, maxY: -1400 },
+                { name: '일반 지형', minY: 150, maxY: 950 },
+                { name: '사탕 마을/해적', minY: 1350, maxY: 3400 }
+            ];
+            ALL_EVENT_TERRAINS.forEach(t => {
                 for (let i = 0; i < 5; i++) {
                     window.extinctionTrait.skulls.push({
-                        x: baseX + (Math.random() - 0.5) * 450,
-                        y: 500 + Math.random() * 120,
+                        x: 100 + Math.random() * 400,
+                        y: t.minY + 80 + Math.random() * (t.maxY - t.minY - 160),
                         vx: (Math.random() - 0.5) * 1.5,
                         vy: (Math.random() - 0.5) * 0.8,
-                        floatOffset: Math.random() * Math.PI * 2,
-                        baseX: baseX
+                        minY: t.minY + 40,
+                        maxY: t.maxY - 40,
+                        floatOffset: Math.random() * Math.PI * 2
                     });
                 }
             });
@@ -40910,10 +41125,11 @@ window.renderIndexGrid = renderIndexGrid;
             window.extinctionTrait.skulls.forEach(sk => {
                 sk.x += sk.vx;
                 sk.y += sk.vy;
-                if (sk.x < sk.baseX - 250) sk.vx = Math.abs(sk.vx);
-                if (sk.x > sk.baseX + 250) sk.vx = -Math.abs(sk.vx);
-                if (sk.y < 480) sk.vy = Math.abs(sk.vy);
-                if (sk.y > 640) sk.vy = -Math.abs(sk.vy);
+                if (sk.x < 70) sk.vx = Math.abs(sk.vx);
+                if (sk.x > 530) sk.vx = -Math.abs(sk.vx);
+                let minY = sk.minY || 150, maxY = sk.maxY || 950;
+                if (sk.y < minY) sk.vy = Math.abs(sk.vy);
+                if (sk.y > maxY) sk.vy = -Math.abs(sk.vy);
 
                 ctx.save();
                 ctx.translate(sk.x, sk.y);
