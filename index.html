@@ -38137,6 +38137,62 @@ function showForgeBroadcast(text, duration = 4800) {
 }
 window.showForgeBroadcast = showForgeBroadcast;
 
+// 🏴‍☠️ 해적 지형 표시 대상자 판별 함수 (공개 서버 전체 공개)
+function isPirateTerrainUser() {
+    return true;
+}
+window.isPirateTerrainUser = isPirateTerrainUser;
+
+// ⏳ 화면 상단 공개 HUD: 오늘 4:30 라이브 카운트다운
+function updateCountdownHUD() {
+    const hud = document.getElementById('admin-abuse-countdown-hud');
+    const titleEl = document.getElementById('countdown-hud-title');
+    const timerEl = document.getElementById('countdown-hud-timer');
+    if (!titleEl || !timerEl || !hud) return;
+
+    if (window._isConcertCinematic || (typeof isLive430PmEventActive === 'function' && isLive430PmEventActive())) {
+        hud.style.display = 'none';
+        return;
+    }
+
+    hud.style.display = 'block';
+    const now = Date.now();
+    const target = LIVE_430PM_TARGET_TIMESTAMP;
+
+    if (now < target) {
+        const diffSec = Math.floor((target - now) / 1000);
+        const hours = Math.floor(diffSec / 3600);
+        const minutes = Math.floor((diffSec % 3600) / 60);
+        const seconds = diffSec % 60;
+        titleEl.innerText = '🔥 오늘 오후 4:30 시즌 1 찐막 어뷰즈 피날레 라이브';
+        titleEl.style.color = '#facc15';
+        timerEl.innerText = `${hours > 0 ? hours + '시간 ' : ''}${minutes}분 ${seconds < 10 ? '0' : ''}${seconds}초 남음`;
+        timerEl.style.color = '#ffffff';
+    } else {
+        hud.style.display = 'none';
+    }
+}
+window.updateCountdownHUD = updateCountdownHUD;
+updateCountdownHUD();
+setInterval(updateCountdownHUD, 1000);
+
+// 페이지 로드 시 인트로 초기화 및 가동 (DOM Event 인자가 넘어오지 않도록 콜백 래핑)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        checkAndInitTreeBusterIntro(false);
+    });
+} else {
+    checkAndInitTreeBusterIntro(false);
+}
+
+// 🛡️ [안전 보장 가드] 어떤 브라우저 환경에서도 검은 화면 방지 (0.8초 내 게임 루프 미실행 시 즉시 자동 시작)
+setTimeout(() => {
+    if (!isGameLoopRunning && typeof startGameLoop === 'function') {
+        console.log('[Game Loop Guard] startGameLoop started automatically');
+        startGameLoop();
+    }
+}, 800);
+
 // 🎣 해적 낚시 활성화 판정: 1) 토요일 피날레 30분 이벤트 전체 개방 / 2) weqwxe3 전용 명시적 미니게임
 function isFishingEventActive() {
     // 피날레 이벤트 30분 해적 낚시 전체 유저 개방
