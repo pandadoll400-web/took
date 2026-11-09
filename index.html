@@ -640,10 +640,21 @@
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
         <div id="money-display">💰 0</div>
-        <!-- ♾️ 인피니티 코인 표시 (돈 밑에 상시 배치) -->
-        <div id="infinity-coin-display">
-            <span style="display: inline-flex; align-items: center; justify-content: center; width: 19px; height: 19px; background: #8b5cf6; border-radius: 4px; color: white; font-size: 13px; font-weight: 900; box-shadow: 0 0 6px rgba(139, 92, 246, 0.7);">∞</span>
+        <!-- 🍂 날개 달린 가을낙엽 표시 (돈 밑에 상시 배치, 전 서버 0부터 시작) -->
+        <div id="fall-leaf-display" style="position: absolute; top: 48px; left: 10px; background: rgba(26, 16, 8, 0.94); color: #f59e0b; font-size: 14px; font-weight: 900; padding: 4px 12px; border-radius: 16px; border: 2.2px solid #f97316; pointer-events: auto; cursor: pointer; z-index: 15; white-space: nowrap; box-shadow: 0 0 14px rgba(249, 115, 22, 0.55); display: flex; align-items: center; gap: 7px;" onclick="openFallShopModal()">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: linear-gradient(135deg, #ea580c, #f59e0b); border-radius: 6px; color: white; font-size: 13px; box-shadow: 0 0 8px rgba(245, 158, 11, 0.7);">🪽🍂</span>
+            <span id="fall-leaf-amount" style="color: #fed7aa; font-size: 14px; font-weight: 950;">0</span>
+        </div>
+        <!-- ♾️ 인피니티 코인 표시 (어드민 전용 숨김 처리) -->
+        <div id="infinity-coin-display" style="display: none; position: absolute; top: 88px; left: 10px; background: rgba(15, 23, 42, 0.92); color: #facc15; font-size: 13px; font-weight: 900; padding: 3px 10px; border-radius: 14px; border: 1.8px solid #38bdf8; pointer-events: none; z-index: 15; white-space: nowrap; box-shadow: 0 0 10px rgba(56, 189, 248, 0.45); align-items: center; gap: 6px;">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; background: #8b5cf6; border-radius: 4px; color: white; font-size: 11px; font-weight: 900;">∞</span>
             <span id="infinity-coin-amount">0</span>
+        </div>
+        <!-- 🍂 가을낙엽 줍기 미니게임 상단 전용 HUD (4번째 사진) -->
+        <div id="fall-leaf-minigame-hud" style="display: none; position: absolute; top: 80px; left: 50%; transform: translateX(-50%); z-index: 15; background: rgba(20, 10, 5, 0.95); border: 2.2px solid #f97316; border-radius: 20px; padding: 5px 16px; color: white; font-size: 13px; font-weight: 950; box-shadow: 0 0 16px rgba(249, 115, 22, 0.6); align-items: center; gap: 10px; white-space: nowrap;">
+            <span style="color: #fdba74;">🪽🍂 [가을낙엽 줍기]</span>
+            <span id="fall-leaf-minigame-count-text" style="color: #facc15;">수집한 낙엽: 0개</span>
+            <span style="color: #94a3b8; font-size: 11px;">(필드 낙엽에 닿으면 자동 획득!)</span>
         </div>
         <!-- ⏱️ [weqwxe3 전용] 머니 미니게임 3분 타이머 HUD -->
         <div id="infinity-minigame-hud" style="display: none; position: absolute; top: 82px; left: 10px; z-index: 15; background: rgba(15, 23, 42, 0.94); border: 2px solid #38bdf8; border-radius: 14px; padding: 4px 10px; color: white; font-size: 12.5px; font-weight: 900; box-shadow: 0 0 12px rgba(56, 189, 248, 0.45); align-items: center; gap: 8px;">
@@ -2136,14 +2147,54 @@
             </div>
         </div>
         
-        <div id="shop-modal">
+        <!-- 🍂 [가을 상점 팝업 모달] (3번째 사진 스케치 완벽 구현: fall shop / fall's hero / 게이지바 / 스폰 버튼) -->
+    <div id="fall-shop-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(5px); z-index: 99990; justify-content: center; align-items: center;">
+        <div style="background: linear-gradient(160deg, #1c1108 0%, #2b1704 50%, #170c02 100%); border: 3px solid #f97316; border-radius: 20px; width: 92%; max-width: 360px; padding: 16px 18px; color: white; box-shadow: 0 10px 40px rgba(0,0,0,0.85), 0 0 25px rgba(249, 115, 22, 0.5); position: relative; text-align: center; font-family: sans-serif;">
+            
+            <!-- 타이틀 바 [ fall shop ] [ X ] -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed rgba(249, 115, 22, 0.4); padding-bottom: 8px; margin-bottom: 12px;">
+                <div style="font-size: 18px; font-weight: 950; color: #fdba74; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                    🍂 <span>fall shop</span>
+                </div>
+                <button onclick="closeFallShopModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fdba74; font-size: 16px; font-weight: 900; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">✕</button>
+            </div>
+
+            <!-- 메인 일러스트: fall's hero (3번째 사진 스케치 완벽 렌더링 캔버스) -->
+            <div style="background: rgba(0, 0, 0, 0.45); border: 2px solid rgba(249, 115, 22, 0.35); border-radius: 14px; padding: 10px 6px; margin-bottom: 12px; position: relative;">
+                <canvas id="fallHeroCanvas" width="280" height="170" style="display: block; margin: 0 auto;"></canvas>
+                <div style="font-size: 14px; font-weight: 950; color: #fed7aa; margin-top: 4px; letter-spacing: 0.5px; text-shadow: 0 2px 6px rgba(0,0,0,0.8);">fall's hero</div>
+            </div>
+
+            <!-- 수집 게이지바: 날개 달린 낙엽 아이콘 + [ 0 / 100,000 ] -->
+            <div style="margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 900; color: #fed7aa; margin-bottom: 5px; padding: 0 4px;">
+                    <span style="display: flex; align-items: center; gap: 4px;">🪽🍂 낙엽 수집량</span>
+                    <span><strong id="fall-shop-leaf-val" style="color: #facc15; font-size: 14px;">0</strong> / 100,000</span>
+                </div>
+                <div style="height: 24px; background: rgba(0, 0, 0, 0.65); border: 2px solid #f97316; border-radius: 12px; overflow: hidden; position: relative; display: flex; align-items: center; box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);">
+                    <div id="fall-shop-gauge-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ea580c, #f59e0b, #facc15); border-radius: 10px; transition: width 0.4s ease; box-shadow: 0 0 12px rgba(245, 158, 11, 0.8);"></div>
+                    <div style="position: absolute; left: 8px; font-size: 14px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9));">🪽🍂</div>
+                </div>
+            </div>
+
+            <!-- 하단 스폰 버튼 영역: [스냅과 함께 스폰] + [ 스폰 ! ] -->
+            <div style="background: rgba(0, 0, 0, 0.35); border-radius: 12px; padding: 10px; border: 1.5px solid rgba(245, 158, 11, 0.25);">
+                <div style="font-size: 12px; font-weight: 900; color: #fdba74; margin-bottom: 6px; letter-spacing: -0.2px;">⚡ 스냅과 함께 스폰</div>
+                <button id="fall-shop-spawn-btn" onclick="triggerFallLeafSpawnEvent()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #f97316, #ea580c, #c2410c); border: 2px solid #ffedd5; border-radius: 12px; color: white; font-size: 17px; font-weight: 950; cursor: pointer; box-shadow: 0 6px 20px rgba(234, 88, 12, 0.6), 0 0 14px rgba(249, 115, 22, 0.4); text-shadow: 0 2px 4px rgba(0,0,0,0.6); transition: transform 0.1s, box-shadow 0.2s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
+                    스 폰 !
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="shop-modal">
             <h2>상점</h2>
             <div class="shop-tabs" style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; justify-content: center; flex-wrap: wrap;">
                 <button class="shop-tab-btn active" onclick="switchShopTab('axe')">도끼</button>
                 
                 <button class="shop-tab-btn" onclick="switchShopTab('skin')">시즌 스킨!</button>
                 <button class="shop-tab-btn" id="shop-tab-lucky-btn" onclick="switchShopTab('lucky')" style="display: inline-block; background: linear-gradient(135deg, #ea580c, #c2410c); color: #ffffff; font-weight: 900; box-shadow: 0 3px 10px rgba(234,88,12,0.45); border: 1.5px solid #fed7aa;">🏴‍☠️ 해적 럭키블럭</button>
-                <button class="shop-tab-btn" onclick="openIndexModal(); closeShopModal();" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; font-weight: 900; box-shadow: 0 3px 10px rgba(59,130,246,0.4);">📖 도감 (INDEX)</button>
+                <button class="shop-tab-btn" id="shop-tab-craft-btn" onclick="switchShopTab('craft')" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; font-weight: 900; box-shadow: 0 3px 10px rgba(139, 92, 246, 0.45); border: 1.5px solid #c4b5fd;">⚔️ 조합 / 합성</button>
             </div>
             
             <div id="shop-axe" style="display: block;">
@@ -2199,6 +2250,14 @@
             </div>
 
             <!-- 👑 [ADMIN 전용] 천악 럭키블록 상점 섹션 -->
+            <!-- ⚔️ [신규] 상점 내 크래프트/조합/합성 탭 섹션 -->
+            <div id="shop-craft-tab-content" style="display: none; padding-top: 10px; max-height: 380px; overflow-y: auto;">
+                <div style="font-size: 13px; color: #a78bfa; font-weight: 800; margin-bottom: 8px; text-align: left; padding-left: 4px;">
+                    ⚔️ 스킨 파편을 모아 특별한 한정 스킨을 합성하세요!
+                </div>
+                <div id="shop-craft-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+            </div>
+
             <div id="shop-lucky" style="display: none; padding-top: 6px;">
                 <div style="background: radial-gradient(circle at top, #2c1810, #0f172a); border: 2.5px solid #f97316; border-radius: 16px; padding: 18px 14px; text-align: center; margin: 10px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.7), 0 0 20px rgba(249, 115, 22, 0.35);">
                     <!-- 🏴‍☠️ [스케치 충실 구현] 치솟은 곡선 날개 + 꽂힌 칼 + 해적 안대 해적 럭키블록 (날개 간격 0px 완벽 밀착 + 고급 원목 & 놋쇠 큐브) -->
@@ -11376,18 +11435,18 @@
             const now = Date.now();
             let aTime = now * 0.002;
 
-            // --- 1. 좌측 천사 구역 (X: 0 ~ 300, Y: -10800 ~ -9000) ---
-            let angelGrad = ctx.createLinearGradient(0, -10800, 300, -9000);
+            // --- 1. 좌측 천사 구역 (X: 0 ~ 300, Y: -10000 ~ -9000: 1000px 표준 크기) ---
+            let angelGrad = ctx.createLinearGradient(0, -10000, 300, -9000);
             angelGrad.addColorStop(0, '#fef9c3');
             angelGrad.addColorStop(0.35, '#fef08a');
             angelGrad.addColorStop(0.7, '#e0f2fe');
             angelGrad.addColorStop(1, '#bae6fd');
             ctx.fillStyle = angelGrad;
-            ctx.fillRect(0, -10800, GAME_WIDTH / 2, 1800);
+            ctx.fillRect(0, -10000, GAME_WIDTH / 2, 1000);
 
-            // 천사 구역 순백 몽실몽실 구름 텍스처
+            // 천사 구역 구름 텍스처
             ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
-            for (let ay = -10750; ay < -9050; ay += 110) {
+            for (let ay = -9950; ay < -9050; ay += 110) {
                 let ax = 60 + (Math.sin(ay * 0.03) * 40);
                 ctx.beginPath(); ctx.ellipse(ax, ay, 55, 25, 0, 0, Math.PI * 2); ctx.fill();
                 ctx.beginPath(); ctx.ellipse(ax + 70, ay + 15, 65, 28, 0, 0, Math.PI * 2); ctx.fill();
@@ -11395,46 +11454,41 @@
 
             // 천사 순백 깃털 부유 파티클
             ctx.fillStyle = '#ffffff';
-            for (let af = 0; af < 22; af++) {
+            for (let af = 0; af < 16; af++) {
                 let afx = ((af * 71 + aTime * 20) % (GAME_WIDTH / 2 - 20));
-                let afy = -10780 + ((af * 89 + aTime * 35) % 1750);
+                let afy = -9980 + ((af * 89 + aTime * 35) % 960);
                 ctx.beginPath(); ctx.ellipse(afx, afy, 6, 2.5, 0.4, 0, Math.PI * 2); ctx.fill();
             }
 
-            // --- 2. 우측 악마 구역 (X: 300 ~ 600, Y: -10800 ~ -9000) ---
-            let devilGrad = ctx.createLinearGradient(300, -10800, 600, -9000);
+            // --- 2. 우측 악마 구역 (X: 300 ~ 600, Y: -10000 ~ -9000) ---
+            let devilGrad = ctx.createLinearGradient(300, -10000, 600, -9000);
             devilGrad.addColorStop(0, '#18181b');
             devilGrad.addColorStop(0.35, '#450a0a');
             devilGrad.addColorStop(0.75, '#7f1d1d');
             devilGrad.addColorStop(1, '#09090b');
             ctx.fillStyle = devilGrad;
-            ctx.fillRect(GAME_WIDTH / 2, -10800, GAME_WIDTH / 2, 1800);
+            ctx.fillRect(GAME_WIDTH / 2, -10000, GAME_WIDTH / 2, 1000);
 
-            // 악마 구역 지옥불 용암 균열선
-            ctx.strokeStyle = 'rgba(239, 68, 68, 0.55)';
+            // 악마 마그마 균열 텍스처
+            ctx.strokeStyle = '#ef4444';
             ctx.lineWidth = 2.5;
-            for (let dy = -10740; dy < -9050; dy += 100) {
-                let dx = 360 + (Math.cos(dy * 0.03) * 40);
+            ctx.shadowColor = '#dc2626';
+            ctx.shadowBlur = 10;
+            for (let dy = -9920; dy < -9050; dy += 140) {
+                let dx = 360 + (Math.cos(dy * 0.02) * 45);
                 ctx.beginPath();
-                ctx.moveTo(dx, dy); ctx.lineTo(dx + 40, dy + 25); ctx.lineTo(dx + 90, dy + 15); ctx.stroke();
+                ctx.moveTo(dx, dy);
+                ctx.lineTo(dx + 35, dy + 25);
+                ctx.lineTo(dx + 70, dy + 15);
+                ctx.stroke();
             }
-
-            // 지옥불 불티 파티클
-            ctx.fillStyle = '#f97316';
-            for (let df = 0; df < 22; df++) {
-                let dfx = 310 + ((df * 73 + aTime * 25) % (GAME_WIDTH / 2 - 20));
-                let dfy = -10780 + ((df * 97 - aTime * 40 + 17500) % 1750);
-                ctx.beginPath(); ctx.arc(dfx, dfy, 2.8, 0, Math.PI * 2); ctx.fill();
-            }
-
-            // --- 3. 중앙 분할 결투선 (X: 300, Y: -10800 ~ -9000) ---
-            let seamGrad = ctx.createLinearGradient(0, -10800, 0, -9000);
-            seamGrad.addColorStop(0, '#facc15'); seamGrad.addColorStop(0.5, '#ef4444'); seamGrad.addColorStop(1, '#a855f7');
-            ctx.strokeStyle = seamGrad;
-            ctx.lineWidth = 4;
-            ctx.shadowColor = '#facc15'; ctx.shadowBlur = 12;
-            ctx.beginPath(); ctx.moveTo(GAME_WIDTH / 2, -10800); ctx.lineTo(GAME_WIDTH / 2, -9000); ctx.stroke();
             ctx.shadowBlur = 0;
+
+            // 중앙 경계 에너지선
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(GAME_WIDTH / 2, -10000); ctx.lineTo(GAME_WIDTH / 2, -9000); ctx.stroke();
         }
         window.drawAngelDevilTerrain = drawAngelDevilTerrain;
 
@@ -15434,7 +15488,8 @@
             {
                 let tpDist = Math.hypot(cx - 515, cy - 360);
                 let tpPlayerDist = Math.hypot(player.x - 515, player.y - 360);
-                if (tpDist < 75 || (isSpacebar && tpPlayerDist < 90)) {
+                const canAccessMoneyShop = (typeof isAdmin === 'function' && isAdmin()) || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3());
+                if (canAccessMoneyShop && (tpDist < 75 || (isSpacebar && tpPlayerDist < 90))) {
                     if (typeof openMoneyShopModal === 'function') openMoneyShopModal();
                     return;
                 }
@@ -15619,14 +15674,25 @@
                     }
                 }
 
-                // 🔮 크래프팅 머신 클릭 감지 (일반 지역 중앙)
-                if (typeof craftingMachine !== 'undefined') {
-                    let cmDist = Math.hypot(cx - craftingMachine.x, cy - craftingMachine.y);
-                    let cmPlayerDist = Math.hypot(player.x - craftingMachine.x, player.y - craftingMachine.y);
-                    if (cmDist < 75 || (isSpacebar && cmPlayerDist < 100)) {
-                        openTradeMachineModal();
-                        return;
+                // 🍂 가을 상점 클릭 감지 (X: 300, Y: 930, 2번째/3번째 사진)
+                let fsDist = Math.hypot(cx - 300, cy - 930);
+                let fsPlayerDist = Math.hypot(player.x - 300, player.y - 930);
+                if (fsDist < 65 || (isSpacebar && fsPlayerDist < 85)) {
+                    openFallShopModal();
+                    return;
+                }
+
+                // 👑 로얄 머신 클릭 감지 (X: 160, Y: 1750, 1번째 사진)
+                let rmDist = Math.hypot(cx - 160, cy - 1750);
+                let rmPlayerDist = Math.hypot(player.x - 160, player.y - 1750);
+                if (rmDist < 65 || (isSpacebar && rmPlayerDist < 85)) {
+                    const isAdminUser = (typeof isAdmin === 'function' && isAdmin()) || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(typeof currentUser !== 'undefined' ? currentUser : ''));
+                    if (isAdminUser) {
+                        floatTexts.push({ x: 160, y: 1680, text: '👑 [로얄 머신] 관리자 권한 확인 완료!', color: '#facc15', life: 80, size: 20 });
+                    } else {
+                        floatTexts.push({ x: 160, y: 1680, text: '🔒 [잠김] 아직 공개되지 않은 신비의 머신입니다.', color: '#94a3b8', life: 80, size: 20 });
                     }
+                    return;
                 }
                 // 호박 융합 머신 삭제됨
             }
@@ -15650,6 +15716,19 @@
                 if (player.targetTree === target) {
                     player.targetTree = null;
                 } else {
+                    // 👑 [유저 요청 완벽 반영] 로얄 지형 왕관 나무는 현재 흔들기 불가!
+                    if (target.id === 'royal') {
+                        player.targetTree = null;
+                        floatTexts.push({
+                            x: target.x,
+                            y: target.y - 70,
+                            text: '👑 로얄 왕관 나무는 현재 흔들 수 없습니다!',
+                            color: '#facc15',
+                            life: 75,
+                            size: 20
+                        });
+                        return;
+                    }
                     if (!target.unlocked) {
                         if (isAdmin() || money >= target.price) {
                             if (!isAdmin()) { money -= target.price; updateMoney(); }
@@ -17187,6 +17266,9 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             document.getElementById('shop-skin').style.display = tab === 'skin' ? 'block' : 'none';
             const luckySec = document.getElementById('shop-lucky');
             if (tab === 'lucky') { renderPirateLuckyShopHTML(); }
+            if (tab === 'craft') { renderShopCraftTab(); }
+            const craftSec = document.getElementById('shop-craft-tab-content');
+            if (craftSec) { craftSec.style.display = (tab === 'craft') ? 'block' : 'none'; }
             if (luckySec) {
                 luckySec.style.display = (tab === 'lucky') ? 'block' : 'none';
             }
@@ -19507,9 +19589,14 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             },
 
             {
-                id: 'angel_devil', type: 'angel_devil', x: GAME_WIDTH / 2, y: -9800, radius: 155, trunkRadius: 48,
+                id: 'angel_devil', type: 'angel_devil', x: GAME_WIDTH / 2, y: -9500, radius: 150, trunkRadius: 48,
                 name: '천사악마 나무', progress: 0, maxProgress: 300, shakeAngle: 0,
                 unlocked: true, price: 0, reqLevel: 135, color1: '#fef08a', color2: '#ef4444', drops: [4, 8]
+            },
+            {
+                id: 'royal', type: 'royal', x: GAME_WIDTH / 2, y: 1450, radius: 155, trunkRadius: 52,
+                name: '로얄 왕관 나무', progress: 0, maxProgress: 9999, shakeAngle: 0,
+                unlocked: true, price: 0, reqLevel: 1, color1: '#f59e0b', color2: '#b45309', drops: [0, 0]
             }
         ];
 
@@ -19526,7 +19613,8 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             { type: 'cave', name: '동굴 상점', x: 420, y: -6300, frontX: shopFrontX, queueY: -6150, queue: [] },
             { type: 'space', name: '우주 상점', x: 420, y: -7300, frontX: shopFrontX, queueY: -7150, queue: [] },
             { type: 'ice_canyon', name: '얼음 협곡 상점', x: 420, y: -8300, frontX: shopFrontX, queueY: -8150, queue: [] },
-            { type: 'angel_devil', name: '천악 상점', x: 420, y: -9400, frontX: shopFrontX, queueY: -9250, queue: [] }
+            { type: 'angel_devil', name: '천악 상점', x: 420, y: -9300, frontX: shopFrontX, queueY: -9180, queue: [], roofColor: '#fef08a', wallColor: '#450a0a' },
+            { type: 'royal', name: '로얄 상점', x: 420, y: 1750, frontX: shopFrontX, queueY: 1880, queue: [], roofColor: '#f59e0b', wallColor: '#581c87' }
         ];
 
         // 🔮 크래프팅 머신 (일반 지역 중앙 배치)
@@ -27562,7 +27650,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
             const maxBottomLimit = 3950; // 사탕 마을(집 10채) 및 Y:3600 캔디콘 상점까지 자유롭게 이동 가능
-            player.y = Math.max(-10750, Math.min(maxBottomLimit - player.radius, player.y));
+            player.y = Math.max(-11200, Math.min(2100, player.y));
             
             // 🔒 맨 마지막 지역: 얼음의 협곡(Y: -8000 이하) 이번주 토요일 21:30 공개 및 레벨 125 체크
             if (!isRingMinigameActive && !isIceCanyonEventStarted() && player.y <= -7970 && player.y >= -9000) {
@@ -36273,7 +36361,10 @@ ctx.restore();
             }
             ctx.globalAlpha = 1.0;
 
-            // 👼😈 [신규 지역 : 천사 & 악마 지형] (얼음 협곡 위, 레벨 135 진입 가능, Y: -10800 ~ -9000)
+            // 🏴‍☠️ [유저 요청 완벽 반영] 해적 지형: 천사 지형 위쪽(Y: -11000 ~ -10000)으로 통째로 이동!
+            drawAdminPirateTerrain(ctx);
+
+            // 👼😈 [신규 지역 : 천사 & 악마 지형] (Y: -10000 ~ -9000, 1000px 표준 크기로 축소!)
             drawAngelDevilTerrain(ctx);
 
             // ❄️ 신규 지역: 얼음의 협곡 (-9000 ~ -8000, 레벨 125 진입 가능)
@@ -36287,12 +36378,11 @@ ctx.restore();
             ctx.fillStyle = '#273c75'; ctx.fillRect(0, -3000, GAME_WIDTH, 1000); 
             ctx.fillStyle = '#2c3e50'; ctx.fillRect(0, -2000, GAME_WIDTH, 1000);  
             ctx.fillStyle = '#cf3a24'; ctx.fillRect(0, -1000, GAME_WIDTH, 1000); 
-            // 🌿 일반 지역 연장 (Y: 1150까지 잔디 대지 확장)
-            ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1150); 
-            // 🗺️ [신규 지형 렌더링]
-            // 어드민 전용: 해적 지형 (정중앙 거대한 흔들리는 난파선 배 나무 & 일반 상점형 해적 상점)
-            // 🏴‍☠️ 공개 서버 전체: 해적 지형 및 퓨즈머신 상시 렌더링
-            drawAdminPirateTerrain(ctx);
+            // 🌿 일반 지역 (Y: 0 ~ 1000)
+            ctx.fillStyle = '#55a630'; ctx.fillRect(0, 0, GAME_WIDTH, 1000); 
+
+            // 👑 [신규 지형 : 로얄 지형] (일반 지형 바로 밑, Y: 1000 ~ 2000, 높이 1000px)
+            drawRoyalTerrain(ctx);
 
             // 🔮 핑크 물음표 지형 삭제 완료 - 캔디 조약돌 길과 지형이 Y: 4000 상점까지 시원하게 이어집니다.
 
@@ -36382,12 +36472,17 @@ ctx.restore();
             }
             // 할로윈 텔레포터 비콘 렌더링 삭제됨
             renderList.push({ type: 'rankingBoard', obj: rankingBoard, y: rankingBoard.y });
-            if (typeof craftingMachine !== 'undefined') {
-                renderList.push({ type: 'craftingMachine', obj: craftingMachine, y: craftingMachine.y });
-            }
+            // 🍂 [2번째 사진 스케치] 크래프트 머신 자리에 가을 상점(Fall Shop) 배치
+            renderList.push({ type: 'fallShop', obj: { x: 300, y: 930 }, y: 930 });
+            // 👑 [1번째 사진 스케치] 로얄 지형 머신 배치 (X: 160, Y: 1750)
+            renderList.push({ type: 'royalMachine', obj: { x: 160, y: 1750 }, y: 1750 });
 
             // 🪙 [weqwxe3 전용] 원숭이 보스전 자리의 큰 황금 동전 (머니상점)
-            renderList.push({ type: 'bigMoneyCoin', obj: { x: 515, y: 360 }, y: 360 });
+            // 🪙 [어드민 전용] 공개 서버에서는 일반 유저에게 인피니티 코인 상점 숨김
+            const canSeeMoneyShop = (typeof isAdmin === 'function' && isAdmin()) || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3());
+            if (canSeeMoneyShop) {
+                renderList.push({ type: 'bigMoneyCoin', obj: { x: 515, y: 360 }, y: 360 });
+            }
             // 🔨 망치 배달: 일반지형 나무 밑(x: 370, y: 550)의 한정 조합 망치 (공개 서버 전체 렌더링)
             if (window.hammerDeliveryActive) {
                 renderList.push({ type: 'deliveryHammer', obj: { x: 370, y: 550 }, y: 550 });
@@ -36551,6 +36646,11 @@ ctx.restore();
                 } else if (item.type === 'tree') {
                     let t = item.obj;
                     ctx.save(); ctx.translate(t.x, t.y); ctx.rotate(t.shakeAngle);
+                    if (t.type === 'royal') {
+                        drawRoyalCrownTree(ctx, t);
+                        ctx.restore();
+                        return;
+                    }
                     if (t.type === 'shipwreck') {
                         // 🏴‍☠️ [어드민 전용 난파선 배 나무] 플레이어가 팰 때마다 ctx.rotate(t.shakeAngle)로 배가 거세게 흔들림!
                         drawShipwreckTree(ctx, t);
@@ -37027,8 +37127,10 @@ ctx.restore();
                     drawGroundCandyCorn(ctx, item.obj);
                 } else if (item.type === 'ringItem') {
                     drawMinigameRing(ctx, item.obj);
-                } else if (item.type === 'craftingMachine') {
-                    drawCraftingMachine(ctx, item.obj);
+                } else if (item.type === 'fallShop') {
+                    drawFallShop(ctx, item.obj.x, item.obj.y);
+                } else if (item.type === 'royalMachine') {
+                    drawRoyalMachine(ctx, item.obj.x, item.obj.y);
                 } else if (item.type === 'rouletteMachine') {
                     // 삭제됨
                 } else if (item.type === 'adminSword') {
@@ -39375,23 +39477,23 @@ window.startWeqwxe3StageDanceTest = startWeqwxe3StageDanceTest;
 function drawAdminPirateTerrain(ctx) {
     const time = Date.now() * 0.002;
 
-    // 1. 모래사장 및 해변 배경 (Y: 1150 ~ 3600)
-    let sandGrad = ctx.createLinearGradient(0, 1150, 0, 3600);
+    // 🏴‍☠️ [유저 요청 완벽 반영] 해적 지형을 통째로 천사 지형 위쪽(Y: -11000 ~ -10000)으로 이동!
+    let sandGrad = ctx.createLinearGradient(0, -11000, 0, -10000);
     sandGrad.addColorStop(0, '#e9c46a');
     sandGrad.addColorStop(0.3, '#f4a261');
     sandGrad.addColorStop(0.7, '#deb887');
     sandGrad.addColorStop(1, '#d4a373');
     ctx.fillStyle = sandGrad;
-    ctx.fillRect(0, 1150, GAME_WIDTH, 2450);
+    ctx.fillRect(0, -11000, GAME_WIDTH, 1000);
 
     // 좌우 에메랄드 바다 해안선 (X: 0~35, GAME_WIDTH-35~GAME_WIDTH)
     ctx.fillStyle = '#0077b6';
-    ctx.fillRect(0, 1150, 35, 2450);
-    ctx.fillRect(GAME_WIDTH - 35, 1150, 35, 2450);
+    ctx.fillRect(0, -11000, 35, 1000);
+    ctx.fillRect(GAME_WIDTH - 35, -11000, 35, 1000);
 
-    // 잔잔하고 부드러운 해안 파도 애니메이션 (화면 흔들림 완전 차단)
+    // 잔잔한 해안 파도 애니메이션
     ctx.fillStyle = 'rgba(202, 240, 248, 0.75)';
-    for (let wy = 1170; wy < 3600; wy += 80) {
+    for (let wy = -10970; wy < -10020; wy += 80) {
         let waveLeft = Math.sin(time * 0.5 + wy * 0.015) * 3;
         let waveRight = Math.cos(time * 0.5 + wy * 0.015) * 3;
         ctx.beginPath(); ctx.ellipse(35 + waveLeft, wy, 10, 26, 0, 0, Math.PI * 2); ctx.fill();
@@ -39401,22 +39503,362 @@ function drawAdminPirateTerrain(ctx) {
     // 모래 언덕 물결선
     ctx.strokeStyle = 'rgba(180, 120, 60, 0.25)';
     ctx.lineWidth = 2;
-    for (let dy = 1200; dy < 3580; dy += 130) {
+    for (let dy = -10950; dy < -10050; dy += 120) {
         ctx.beginPath();
         ctx.moveTo(40, dy);
         ctx.bezierCurveTo(200, dy + 15, 400, dy - 15, GAME_WIDTH - 40, dy);
         ctx.stroke();
     }
 
-    // 해적 야자수
+    // 해적 야자수 (Y: -10600)
     if (typeof drawShakablePiratePalmTree === 'function') {
-        drawShakablePiratePalmTree(ctx, 160, 1500, time);
+        drawShakablePiratePalmTree(ctx, 160, -10600, time);
     }
-    // ⚡ [공개 서버 정식 출시] 해적 퓨즈머신 상시 렌더링
+    // 해적 퓨즈머신 (Y: -10350)
     if (typeof drawPirateFuseMachine === 'function') {
-        drawPirateFuseMachine(ctx, 320, 1980);
+        drawPirateFuseMachine(ctx, 320, -10350);
     }
 }
+window.drawAdminPirateTerrain = drawAdminPirateTerrain;
+
+// ============================================================================
+// 👑 [신규 지형 : 로얄 지형] (일반 지형 밑, Y: 1000 ~ 2000, 높이 1000px)
+// ============================================================================
+function drawRoyalTerrain(ctx) {
+    const time = Date.now() * 0.002;
+
+    // 1. 고귀한 로얄 퍼플 & 벨벳 버건디 바닥 (Y: 1000 ~ 2000)
+    let royalGrad = ctx.createLinearGradient(0, 1000, 0, 2000);
+    royalGrad.addColorStop(0, '#2e1065');
+    royalGrad.addColorStop(0.35, '#3b0764');
+    royalGrad.addColorStop(0.7, '#4a044e');
+    royalGrad.addColorStop(1, '#1e1b4b');
+    ctx.fillStyle = royalGrad;
+    ctx.fillRect(0, 1000, GAME_WIDTH, 1000);
+
+    // 2. 황금 로얄 대리석 타일 격자 문양
+    ctx.strokeStyle = 'rgba(250, 204, 21, 0.14)';
+    ctx.lineWidth = 1.5;
+    for (let ty = 1000; ty < 2000; ty += 80) {
+        ctx.beginPath(); ctx.moveTo(0, ty); ctx.lineTo(GAME_WIDTH, ty); ctx.stroke();
+    }
+    for (let tx = 0; tx < GAME_WIDTH; tx += 80) {
+        ctx.beginPath(); ctx.moveTo(tx, 1000); ctx.lineTo(tx, 2000); ctx.stroke();
+    }
+
+    // 3. 중앙 로얄 레드 & 골드 카펫 (X: 180 ~ 420, Y: 1000 ~ 2000)
+    ctx.fillStyle = '#7f1d1d';
+    ctx.fillRect(180, 1000, 240, 1000);
+    ctx.strokeStyle = '#facc15';
+    ctx.lineWidth = 3.5;
+    ctx.strokeRect(180, 1000, 240, 1000);
+
+    // 카펫 황금 문양 장식
+    ctx.strokeStyle = 'rgba(250, 204, 21, 0.35)';
+    ctx.lineWidth = 2;
+    for (let cy = 1050; cy < 1980; cy += 120) {
+        ctx.strokeRect(210, cy, 180, 60);
+    }
+}
+window.drawRoyalTerrain = drawRoyalTerrain;
+
+// 👑 [로얄 왕관 나무 렌더러] (나무 기둥 + 거대 황금 왕관 지붕 + 보석 장식)
+function drawRoyalCrownTree(ctx, tree) {
+    const x = tree.x;
+    const y = tree.y;
+    ctx.save();
+    ctx.translate(x, y);
+
+    // 1. 기둥 그림자 & 튼튼한 목재 기둥
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+    ctx.beginPath(); ctx.ellipse(0, 50, 65, 20, 0, 0, Math.PI * 2); ctx.fill();
+
+    let trunkGrad = ctx.createLinearGradient(-26, 0, 26, 0);
+    trunkGrad.addColorStop(0, '#581c87');
+    trunkGrad.addColorStop(0.5, '#78350f');
+    trunkGrad.addColorStop(1, '#451a03');
+    ctx.fillStyle = trunkGrad;
+    ctx.fillRect(-22, -10, 44, 60);
+
+    // 2. 거대한 황금 왕관 지붕 (3개의 찬란한 봉우리)
+    let crownGrad = ctx.createLinearGradient(-90, -120, 90, 20);
+    crownGrad.addColorStop(0, '#fef08a');
+    crownGrad.addColorStop(0.3, '#facc15');
+    crownGrad.addColorStop(0.7, '#eab308');
+    crownGrad.addColorStop(1, '#b45309');
+    ctx.fillStyle = crownGrad;
+    ctx.strokeStyle = '#78350f';
+    ctx.lineWidth = 4;
+
+    ctx.beginPath();
+    ctx.moveTo(-90, 10);
+    ctx.lineTo(90, 10);
+    ctx.lineTo(80, -70); // 우측 외곽 꼭지
+    ctx.lineTo(40, -35); // 우측 홈
+    ctx.lineTo(0, -95);  // 중앙 최고봉 꼭지
+    ctx.lineTo(-40, -35); // 좌측 홈
+    ctx.lineTo(-80, -70); // 좌측 외곽 꼭지
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // 3. 왕관 봉우리 3대 황금 구슬
+    ctx.fillStyle = '#fef08a';
+    ctx.strokeStyle = '#92400e';
+    ctx.lineWidth = 2.5;
+    [-80, 0, 80].forEach((bx, idx) => {
+        let by = (idx === 1) ? -95 : -70;
+        ctx.beginPath(); ctx.arc(bx, by, 11, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    });
+
+    // 4. 왕관 하단 루비/에메랄드/사파이어 보석 박힘
+    const gems = [
+        { x: -55, color: '#ef4444' }, // 루비
+        { x: -20, color: '#3b82f6' }, // 사파이어
+        { x: 20, color: '#10b981' },  // 에메랄드
+        { x: 55, color: '#a855f7' }   // 자수정
+    ];
+    gems.forEach(g => {
+        ctx.fillStyle = g.color;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(g.x, -5, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    });
+
+    // 자물쇠 표시 ("지금은 흔들기 불가")
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+    ctx.beginPath(); ctx.roundRect(-38, 22, 76, 22, 6); ctx.fill();
+    ctx.fillStyle = '#facc15';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🔒 흔들기 잠김', 0, 33);
+
+    ctx.restore();
+}
+window.drawRoyalCrownTree = drawRoyalCrownTree;
+
+// 🏰 [1번째 사진 스케치 충실 구현] 로얄 머신 (공개 서버: 검정 실루엣 / 어드민: 풀컬러 오픈)
+function drawRoyalMachine(ctx, x = 160, y = 1750) {
+    const isAdminUser = (typeof isAdmin === 'function' && isAdmin()) || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(typeof currentUser !== 'undefined' ? currentUser : ''));
+    ctx.save();
+    ctx.translate(x, y);
+
+    if (!isAdminUser) {
+        // 🔒 [유저 요청 완벽 반영] 공개 서버: 완전히 검정 실루엣(Black Silhouette)으로 미공개 처리!
+        ctx.fillStyle = '#050505';
+        ctx.strokeStyle = '#1e1b2e';
+        ctx.lineWidth = 3;
+
+        // 메인 왕관 셔터 건물 실루엣
+        ctx.beginPath();
+        ctx.moveTo(-50, 40);
+        ctx.lineTo(50, 40);
+        ctx.lineTo(50, -30);
+        ctx.lineTo(40, -45);
+        ctx.lineTo(20, -25);
+        ctx.lineTo(0, -55);
+        ctx.lineTo(-20, -25);
+        ctx.lineTo(-40, -45);
+        ctx.lineTo(-50, -30);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 좌측 검/안테나 타워 실루엣
+        ctx.fillRect(-90, -10, 36, 50);
+        ctx.beginPath(); ctx.moveTo(-72, -10); ctx.lineTo(-72, -45); ctx.lineWidth = 6; ctx.stroke();
+        ctx.beginPath(); ctx.arc(-72, -48, 6, 0, Math.PI * 2); ctx.fill();
+
+        // 우측 팔/손 기둥 실루엣
+        ctx.beginPath(); ctx.moveTo(50, 20); ctx.lineTo(75, 20); ctx.lineTo(78, -50); ctx.lineTo(88, -65); ctx.lineTo(68, -48); ctx.closePath(); ctx.fill();
+
+        // 물음표 표시
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = 'bold 22px sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('?', 0, 0);
+
+        ctx.restore();
+        return;
+    }
+
+    // 👑 [어드민 계정 전용] 화려한 골드 & 로얄 퍼플 풀컬러 공개 렌더링 (1번째 사진 스케치)
+    // 1. 좌측 제어 박스 & 검 스위치
+    ctx.fillStyle = '#4c1d95';
+    ctx.strokeStyle = '#facc15';
+    ctx.lineWidth = 2.5;
+    ctx.fillRect(-92, -12, 38, 52);
+    ctx.strokeRect(-92, -12, 38, 52);
+    ctx.fillStyle = '#1e1b4b';
+    ctx.fillRect(-87, 0, 28, 14);
+
+    // 비스듬히 꽂힌 제어 검(스위치)
+    ctx.save();
+    ctx.translate(-73, -12);
+    ctx.rotate(-0.35);
+    ctx.fillStyle = '#e2e8f0';
+    ctx.fillRect(-4, -38, 8, 40);
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(-10, -30, 20, 6);
+    ctx.beginPath(); ctx.arc(0, -42, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    // 2. 메인 건물 & 왕관 3봉우리 지붕 (1번째 사진)
+    let bodyGrad = ctx.createLinearGradient(-50, -55, 50, 40);
+    bodyGrad.addColorStop(0, '#facc15');
+    bodyGrad.addColorStop(0.5, '#7e22ce');
+    bodyGrad.addColorStop(1, '#3b0764');
+    ctx.fillStyle = bodyGrad;
+    ctx.strokeStyle = '#facc15';
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+    ctx.moveTo(-52, 40);
+    ctx.lineTo(52, 40);
+    ctx.lineTo(52, -28);
+    ctx.lineTo(44, -50);
+    ctx.lineTo(22, -28);
+    ctx.lineTo(0, -60);
+    ctx.lineTo(-22, -28);
+    ctx.lineTo(-44, -50);
+    ctx.lineTo(-52, -28);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // 지붕 3대 황금 볼
+    ctx.fillStyle = '#fef08a';
+    [-44, 0, 44].forEach((bx, idx) => {
+        let by = (idx === 1) ? -60 : -50;
+        ctx.beginPath(); ctx.arc(bx, by, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    });
+
+    // 가로 줄무늬 셔터 문
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(-36, -8, 72, 46);
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 2;
+    for (let sy = -4; sy < 38; sy += 7) {
+        ctx.beginPath(); ctx.moveTo(-34, sy); ctx.lineTo(34, sy); ctx.stroke();
+    }
+    ctx.strokeRect(-36, -8, 72, 46);
+
+    // 3. 우측 기둥 & 위로 뻗은 장갑/손
+    ctx.fillStyle = '#581c87';
+    ctx.strokeStyle = '#facc15';
+    ctx.lineWidth = 2.5;
+    ctx.fillRect(52, -20, 16, 60);
+    ctx.strokeRect(52, -20, 16, 60);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(60, -20);
+    ctx.lineTo(76, -35);
+    ctx.lineTo(82, -68);
+    ctx.lineTo(72, -68);
+    ctx.lineTo(64, -45);
+    ctx.lineTo(56, -20);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.restore();
+}
+window.drawRoyalMachine = drawRoyalMachine;
+
+// 🍂 [2번째 사진 스케치 충실 구현] 가을 상점 (Fall Shop, 크래프트 머신 자리에 배치)
+function drawFallShop(ctx, x = 300, y = 930) {
+    ctx.save();
+    ctx.translate(x, y);
+
+    // 1. 상점 바닥 그림자
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.beginPath(); ctx.ellipse(0, 42, 55, 18, 0, 0, Math.PI * 2); ctx.fill();
+
+    // 2. 상점 본체 사각 건물
+    let wallGrad = ctx.createLinearGradient(-42, -35, 42, 38);
+    wallGrad.addColorStop(0, '#78350f');
+    wallGrad.addColorStop(0.5, '#9a3412');
+    wallGrad.addColorStop(1, '#451a03');
+    ctx.fillStyle = wallGrad;
+    ctx.strokeStyle = '#431407';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.roundRect(-42, -35, 84, 75, 8); ctx.fill(); ctx.stroke();
+
+    // 3. 상점 창문 & 상인 NPC (2번째 사진)
+    ctx.fillStyle = '#1c1917';
+    ctx.fillRect(-22, -20, 54, 32);
+    ctx.strokeStyle = '#fed7aa';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(-22, -20, 54, 32);
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.beginPath(); ctx.arc(5, -6, 10, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#0284c7';
+    ctx.beginPath(); ctx.arc(5, 12, 14, Math.PI, 0); ctx.fill();
+
+    // 4. 창문 아래 [ fall ! ] 문구 (2번째 사진)
+    ctx.fillStyle = '#fef08a';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('fall !', 5, 23);
+
+    // 5. 왼쪽 대형 단풍잎 장식 (2번째 사진)
+    ctx.save();
+    ctx.translate(-36, -5);
+    ctx.rotate(-0.15);
+    let leafDecoGrad = ctx.createLinearGradient(-18, -35, 18, 35);
+    leafDecoGrad.addColorStop(0, '#f97316');
+    leafDecoGrad.addColorStop(0.5, '#ea580c');
+    leafDecoGrad.addColorStop(1, '#b91c1c');
+    ctx.fillStyle = leafDecoGrad;
+    ctx.strokeStyle = '#431407';
+    ctx.lineWidth = 2.5;
+
+    ctx.beginPath();
+    ctx.moveTo(0, -38);
+    ctx.bezierCurveTo(24, -20, 22, 18, 6, 36);
+    ctx.bezierCurveTo(-6, 42, -18, 28, -20, 8);
+    ctx.bezierCurveTo(-24, -12, -14, -28, 0, -38);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // 단풍잎 잎맥
+    ctx.strokeStyle = '#451a03';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, -32); ctx.quadraticCurveTo(6, 4, -4, 34);
+    ctx.moveTo(-2, -16); ctx.lineTo(-14, -8);
+    ctx.moveTo(2, -8); ctx.lineTo(14, 0);
+    ctx.moveTo(-1, 8); ctx.lineTo(-12, 16);
+    ctx.stroke();
+    ctx.restore();
+
+    // 6. 상단 매달린 널빤지 [ Shop ] 간판 (2번째 사진)
+    ctx.strokeStyle = '#78350f';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-22, -35); ctx.lineTo(-22, -48);
+    ctx.moveTo(22, -35); ctx.lineTo(22, -48);
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffedd5';
+    ctx.strokeStyle = '#7c2d12';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.roundRect(-35, -60, 70, 20, 5); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#431407';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('Shop', 0, -49);
+
+    ctx.restore();
+}
+window.drawFallShop = drawFallShop;
+
 
 // 🏴‍☠️ 난파선 렌더링 (부러진 돛대, 찢어진 해적 깃발, 대포, 보물상자, 금화)
 function drawShipwreck(ctx, x, y, time) {
@@ -40005,6 +40447,498 @@ try {
 
 
 // (인피니티 코인 & 머니 미니게임 엔진은 스크립트 최상단으로 이전 완료)
+
+// ============================================================================
+// 🍂 [신규 시즌] 가을낙엽 & 가을 상점(Fall Shop) & 날개 낙엽 수집 미니게임 엔진
+// ============================================================================
+let savedFallLeaves = 0;
+try {
+    const rawLeaf = localStorage.getItem('fall_leaf_count');
+    if (rawLeaf !== null) savedFallLeaves = parseInt(rawLeaf, 10) || 0;
+} catch(e) {}
+window.fallLeafCount = savedFallLeaves;
+
+function updateFallLeafDisplay() {
+    const amountEl = document.getElementById('fall-leaf-amount');
+    if (amountEl) amountEl.innerText = window.fallLeafCount.toLocaleString();
+
+    // 가을 상점 모달 내 수치 & 게이지바 실시간 동기화 (3번째 사진 스케치)
+    const shopValEl = document.getElementById('fall-shop-leaf-val');
+    const shopFillEl = document.getElementById('fall-shop-gauge-fill');
+    if (shopValEl) shopValEl.innerText = window.fallLeafCount.toLocaleString();
+    if (shopFillEl) {
+        const pct = Math.min(100, Math.max(0, (window.fallLeafCount / 100000) * 100));
+        shopFillEl.style.width = pct + '%';
+    }
+
+    // 미니게임 상단 HUD 동기화
+    const miniText = document.getElementById('fall-leaf-minigame-count-text');
+    if (miniText) miniText.innerText = '수집한 낙엽: ' + window.fallLeafCount.toLocaleString() + '개';
+}
+window.updateFallLeafDisplay = updateFallLeafDisplay;
+
+function addFallLeaves(count = 1) {
+    window.fallLeafCount += count;
+    try {
+        localStorage.setItem('fall_leaf_count', window.fallLeafCount.toString());
+    } catch(e) {}
+    updateFallLeafDisplay();
+}
+window.addFallLeaves = addFallLeaves;
+
+// 🪽🍂 [4번째 사진 스케치 충실 구현] 날개 달린 가을낙엽 아이템 렌더링
+function drawWingedFallLeaf(ctx, x, y, scale = 1.0, angle = 0, wingFlap = 0) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    ctx.scale(scale, scale);
+
+    const flapOffset = Math.sin(wingFlap) * 5;
+
+    // --- 1. 좌우 천사 깃털 날개 (4번째 사진 스케치) ---
+    // 좌측 날개
+    ctx.save();
+    ctx.translate(-16, -2 + flapOffset);
+    ctx.fillStyle = '#ffedd5';
+    ctx.strokeStyle = '#c2410c';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(-22, -18, -34, -4);
+    ctx.quadraticCurveTo(-26, 8, -12, 10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    // 날개 깃털 결선
+    ctx.beginPath();
+    ctx.moveTo(-10, -3); ctx.lineTo(-24, -2);
+    ctx.moveTo(-8, 3); ctx.lineTo(-20, 5);
+    ctx.stroke();
+    ctx.restore();
+
+    // 우측 날개
+    ctx.save();
+    ctx.translate(16, -2 + flapOffset);
+    ctx.fillStyle = '#ffedd5';
+    ctx.strokeStyle = '#c2410c';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(22, -18, 34, -4);
+    ctx.quadraticCurveTo(26, 8, 12, 10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    // 날개 깃털 결선
+    ctx.beginPath();
+    ctx.moveTo(10, -3); ctx.lineTo(24, -2);
+    ctx.moveTo(8, 3); ctx.lineTo(20, 5);
+    ctx.stroke();
+    ctx.restore();
+
+    // --- 2. 중앙 가을 단풍 잎사귀 (우아한 곡선 & 선명한 잎맥) ---
+    let leafGrad = ctx.createLinearGradient(-15, -28, 15, 28);
+    leafGrad.addColorStop(0, '#f97316');
+    leafGrad.addColorStop(0.5, '#ea580c');
+    leafGrad.addColorStop(1, '#b91c1c');
+    ctx.fillStyle = leafGrad;
+    ctx.strokeStyle = '#7c2d12';
+    ctx.lineWidth = 2.2;
+
+    ctx.beginPath();
+    ctx.moveTo(0, -28); // 잎 꼭대기
+    ctx.bezierCurveTo(18, -18, 22, 6, 8, 22);
+    ctx.bezierCurveTo(2, 30, -4, 34, -8, 30);
+    ctx.bezierCurveTo(-2, 22, -6, 12, -18, 2);
+    ctx.bezierCurveTo(-24, -14, -14, -24, 0, -28);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // 잎 중심맥 & 가지맥
+    ctx.strokeStyle = '#431407';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(0, -24);
+    ctx.quadraticCurveTo(4, 2, -5, 28); // 중심 곡선 잎맥
+    // 곁맥들
+    ctx.moveTo(-2, -18); ctx.lineTo(-12, -12);
+    ctx.moveTo(1, -14); ctx.lineTo(12, -8);
+    ctx.moveTo(-1, -6); ctx.lineTo(-14, 0);
+    ctx.moveTo(2, -2); ctx.lineTo(13, 6);
+    ctx.moveTo(0, 8); ctx.lineTo(-10, 14);
+    ctx.moveTo(0, 16); ctx.lineTo(8, 20);
+    ctx.stroke();
+
+    ctx.restore();
+}
+window.drawWingedFallLeaf = drawWingedFallLeaf;
+
+// 🎨 [3번째 사진 스케치 충실 구현] fall's hero 캐릭터 일러스트 렌더러
+function drawFallHeroCanvas() {
+    const canvas = document.getElementById('fallHeroCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height * 0.52;
+    const t = Date.now() * 0.003;
+    const floatY = Math.sin(t) * 3;
+
+    ctx.save();
+    ctx.translate(cx, cy + floatY);
+
+    // 1. 망토 (붉은 가을 망토)
+    ctx.fillStyle = '#b91c1c';
+    ctx.strokeStyle = '#7f1d1d';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(-35, -15);
+    ctx.lineTo(-55, 38 + Math.sin(t*1.5)*3);
+    ctx.lineTo(55, 38 + Math.cos(t*1.5)*3);
+    ctx.lineTo(35, -15);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // 2. 다리 & 발
+    ctx.strokeStyle = '#451a03';
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    // 왼다리
+    ctx.moveTo(-16, 25); ctx.lineTo(-16, 46); ctx.lineTo(-24, 46);
+    // 오른다리
+    ctx.moveTo(16, 25); ctx.lineTo(16, 46); ctx.lineTo(24, 46);
+    ctx.stroke();
+
+    // 3. 단풍 영웅 본체 (귀여운 단풍잎 몸체)
+    let bodyGrad = ctx.createLinearGradient(-35, -35, 35, 35);
+    bodyGrad.addColorStop(0, '#f97316');
+    bodyGrad.addColorStop(0.5, '#f59e0b');
+    bodyGrad.addColorStop(1, '#ea580c');
+    ctx.fillStyle = bodyGrad;
+    ctx.strokeStyle = '#7c2d12';
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+    // 단풍잎 형태 (스케치의 귀여운 5갈래 단풍 형태)
+    ctx.moveTo(0, -38); // 윗봉우리
+    ctx.lineTo(14, -22);
+    ctx.lineTo(38, -26); // 우상단 팁
+    ctx.lineTo(28, -6);
+    ctx.lineTo(44, 12);  // 우하단 팁
+    ctx.lineTo(20, 18);
+    ctx.lineTo(0, 32);   // 아래 꼭지
+    ctx.lineTo(-20, 18);
+    ctx.lineTo(-44, 12); // 좌하단 팁
+    ctx.lineTo(-28, -6);
+    ctx.lineTo(-38, -26); // 좌상단 팁
+    ctx.lineTo(-14, -22);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // 4. 귀여운 눈 & 미소 (스케치 반영)
+    ctx.fillStyle = '#1c1917';
+    ctx.beginPath();
+    ctx.ellipse(-11, -4, 4.5, 7, 0, 0, Math.PI * 2);
+    ctx.ellipse(11, -4, 4.5, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // 눈 하이라이트
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(-13, -7, 2, 0, Math.PI * 2);
+    ctx.arc(9, -7, 2, 0, Math.PI * 2);
+    ctx.fill();
+    // 귀여운 입
+    ctx.strokeStyle = '#431407';
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.arc(0, 5, 6.5, 0.15, Math.PI - 0.15);
+    ctx.stroke();
+
+    // 5. 머리 위 [천사 링 (Halo)] (왼쪽) & [악마 뿔 (Devil Horn)] (오른쪽)
+    // 천사 링
+    ctx.save();
+    ctx.translate(-14, -44 + Math.sin(t*2)*2);
+    ctx.strokeStyle = '#facc15';
+    ctx.lineWidth = 3.5;
+    ctx.shadowColor = '#facc15';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 14, 5.5, -0.15, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    // 악마 뿔 (오른쪽 꼭지에 돋아난 붉은 뿔)
+    ctx.save();
+    ctx.translate(22, -32);
+    ctx.fillStyle = '#dc2626';
+    ctx.strokeStyle = '#7f1d1d';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(8, -12, 14, -20);
+    ctx.quadraticCurveTo(4, -8, -8, -4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // 6. 오른손 지팡이 (스케치의 스태프)
+    ctx.strokeStyle = '#78350f';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-36, 10); ctx.lineTo(-44, -36);
+    ctx.stroke();
+    // 지팡이 머리 보석
+    ctx.fillStyle = '#facc15';
+    ctx.beginPath();
+    ctx.arc(-44, -38, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 7. 왼손 [ASD] 깃발 (스케치의 ASD 깃발)
+    ctx.strokeStyle = '#78350f';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(34, 12); ctx.lineTo(44, -32);
+    ctx.stroke();
+    // 깃발 사각형 [ ASD ]
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 2;
+    ctx.fillRect(44, -34, 38, 22);
+    ctx.strokeRect(44, -34, 38, 22);
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('ASD', 63, -23);
+
+    ctx.restore();
+}
+window.drawFallHeroCanvas = drawFallHeroCanvas;
+
+// 🍂 가을 상점 팝업 모달 제어
+function openFallShopModal() {
+    const modal = document.getElementById('fall-shop-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        updateFallLeafDisplay();
+        setTimeout(drawFallHeroCanvas, 50);
+    }
+}
+window.openFallShopModal = openFallShopModal;
+
+function closeFallShopModal() {
+    const modal = document.getElementById('fall-shop-modal');
+    if (modal) modal.style.display = 'none';
+}
+window.closeFallShopModal = closeFallShopModal;
+
+// ⚡ [스폰 !] 버튼 클릭 시 발동: 스냅 연출과 함께 필드에 날개 달린 가을낙엽 대량 스폰
+function triggerFallLeafSpawnEvent() {
+    closeFallShopModal();
+    // 화면 스냅 암전 효과
+    const overlay = document.getElementById('snap-screen-overlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+        setTimeout(() => { overlay.style.display = 'none'; }, 500);
+    }
+
+    if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+        floatTexts.push({
+            x: player.x,
+            y: player.y - 80,
+            text: '⚡ SNAP! 필드 전역에 날개 달린 가을낙엽이 쏟아져 내립니다!',
+            color: '#f97316',
+            life: 140,
+            size: 22
+        });
+    }
+
+    // 대량 스폰: 일반 지형(0~1000) 및 로얄 지형(1000~2000)에 60개 낙엽 흩뿌리기
+    if (!window.groundFallLeaves) window.groundFallLeaves = [];
+    for (let i = 0; i < 60; i++) {
+        window.groundFallLeaves.push({
+            x: 50 + Math.random() * (GAME_WIDTH - 100),
+            y: 150 + Math.random() * 1800,
+            scale: 0.85 + Math.random() * 0.35,
+            angle: (Math.random() - 0.5) * 0.6,
+            wingFlap: Math.random() * Math.PI * 2,
+            flapSpeed: 0.08 + Math.random() * 0.06,
+            driftVx: (Math.random() - 0.5) * 0.8,
+            driftVy: 0.2 + Math.random() * 0.4
+        });
+    }
+
+    // 상단 미니게임 HUD 표시
+    const hud = document.getElementById('fall-leaf-minigame-hud');
+    if (hud) hud.style.display = 'flex';
+}
+window.triggerFallLeafSpawnEvent = triggerFallLeafSpawnEvent;
+
+// 🍂 필드 가을낙엽 상시 초기 스폰 (20개 유지)
+window.groundFallLeaves = [];
+for (let i = 0; i < 22; i++) {
+    window.groundFallLeaves.push({
+        x: 60 + Math.random() * (GAME_WIDTH - 120),
+        y: 200 + Math.random() * 1700,
+        scale: 0.9 + Math.random() * 0.3,
+        angle: (Math.random() - 0.5) * 0.6,
+        wingFlap: Math.random() * Math.PI * 2,
+        flapSpeed: 0.07 + Math.random() * 0.05,
+        driftVx: (Math.random() - 0.5) * 0.6,
+        driftVy: 0.15 + Math.random() * 0.3
+    });
+}
+
+// 🍂 매 프레임 가을낙엽 애니메이션 & 플레이어 수집 판정
+function updateFallLeavesLoop() {
+    if (!window.groundFallLeaves || !window.groundFallLeaves.length) return;
+    if (typeof player === 'undefined') return;
+
+    for (let i = window.groundFallLeaves.length - 1; i >= 0; i--) {
+        let leaf = window.groundFallLeaves[i];
+        leaf.wingFlap += leaf.flapSpeed;
+        leaf.x += leaf.driftVx + Math.sin(leaf.wingFlap * 0.5) * 0.4;
+        leaf.y += leaf.driftVy;
+
+        // 벽 반사
+        if (leaf.x < 40) { leaf.x = 40; leaf.driftVx *= -1; }
+        if (leaf.x > GAME_WIDTH - 40) { leaf.x = GAME_WIDTH - 40; leaf.driftVx *= -1; }
+        if (leaf.y > 2100) leaf.y = 150;
+
+        // 플레이어 습득 판정
+        const dist = Math.hypot(player.x - leaf.x, player.y - leaf.y);
+        if (dist < 42) {
+            window.groundFallLeaves.splice(i, 1);
+            addFallLeaves(1);
+
+            if (typeof floatTexts !== 'undefined') {
+                floatTexts.push({
+                    x: leaf.x,
+                    y: leaf.y - 25,
+                    text: '+1 🪽🍂',
+                    color: '#f97316',
+                    life: 50,
+                    size: 18
+                });
+            }
+
+            // 습득 후 상시 15개 이상 유지되도록 보충
+            if (window.groundFallLeaves.length < 18) {
+                window.groundFallLeaves.push({
+                    x: 60 + Math.random() * (GAME_WIDTH - 120),
+                    y: 180 + Math.random() * 1700,
+                    scale: 0.9 + Math.random() * 0.3,
+                    angle: (Math.random() - 0.5) * 0.6,
+                    wingFlap: Math.random() * Math.PI * 2,
+                    flapSpeed: 0.07 + Math.random() * 0.05,
+                    driftVx: (Math.random() - 0.5) * 0.6,
+                    driftVy: 0.15 + Math.random() * 0.3
+                });
+            }
+        }
+    }
+}
+window.updateFallLeavesLoop = updateFallLeavesLoop;
+
+function drawFallLeavesWorld(ctx) {
+    if (!window.groundFallLeaves || !window.groundFallLeaves.length) return;
+    window.groundFallLeaves.forEach(leaf => {
+        drawWingedFallLeaf(ctx, leaf.x, leaf.y, leaf.scale, leaf.angle, leaf.wingFlap);
+    });
+}
+window.drawFallLeavesWorld = drawFallLeavesWorld;
+
+// ⚔️ 상점 내부 [조합 / 합성] 탭 렌더링 함수
+function renderShopCraftTab() {
+    const listEl = document.getElementById('shop-craft-list');
+    if (!listEl) return;
+    
+    // 기존 스킨 파편 현황 & 조합 가능한 레시피들 렌더링
+    const recipes = [
+        { id: 'ronin', name: '일본풍 검사 (닌자/로닌)', reqShards: 5, shardKey: 'ronin_shards', icon: '⚔️' },
+        { id: 'western_swordsman', name: '서양 검사', reqShards: 5, shardKey: 'swordsman_shards', icon: '🤺' },
+        { id: 'pirate_captain', name: '해적 선장', reqShards: 5, shardKey: 'pirate_shards', icon: '🏴‍☠️' },
+        { id: 'fire_and_space', name: '불과 행성', reqShards: 5, shardKey: 'fire_space_shards', icon: '🔥🪐' },
+        { id: 'hacker', name: '사이버 해커', reqShards: 5, shardKey: 'hacker_shards', icon: '💻' }
+    ];
+
+    let htmlStr = '';
+    recipes.forEach(r => {
+        let ownedShards = 0;
+        try {
+            if (typeof skinShards !== 'undefined' && skinShards[r.shardKey]) ownedShards = skinShards[r.shardKey];
+            else if (typeof skinShards !== 'undefined' && skinShards[r.id]) ownedShards = skinShards[r.id];
+        } catch(e) {}
+
+        const canCraft = ownedShards >= r.reqShards;
+        const isOwned = (typeof ownedSkins !== 'undefined' && ownedSkins.includes(r.id));
+
+        htmlStr += `
+            <div style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid ${canCraft ? '#22c55e' : '#475569'}; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 10px; text-align: left;">
+                    <span style="font-size: 26px;">${r.icon}</span>
+                    <div>
+                        <div style="font-size: 13.5px; font-weight: 950; color: #f1f5f9;">${r.name}</div>
+                        <div style="font-size: 11px; color: ${canCraft ? '#4ade80' : '#94a3b8'};">파편: ${ownedShards} / ${r.reqShards}개 ${isOwned ? '<span style="color:#facc15;">(보유중)</span>' : ''}</div>
+                    </div>
+                </div>
+                <button onclick="craftSkinFromShop('${r.id}', '${r.shardKey}', ${r.reqShards})" style="padding: 8px 14px; background: ${canCraft ? 'linear-gradient(135deg, #10b981, #059669)' : '#334155'}; color: white; border: none; border-radius: 8px; font-weight: 950; font-size: 12px; cursor: ${canCraft ? 'pointer' : 'not-allowed'}; box-shadow: ${canCraft ? '0 2px 8px rgba(16,185,129,0.5)' : 'none'};" ${canCraft ? '' : 'disabled'}>
+                    ${isOwned ? '완제 보유' : (canCraft ? '조합하기' : '재료 부족')}
+                </button>
+            </div>
+        `;
+    });
+
+    listEl.innerHTML = htmlStr;
+}
+window.renderShopCraftTab = renderShopCraftTab;
+
+function craftSkinFromShop(skinId, shardKey, reqShards) {
+    if (typeof ownedSkins !== 'undefined' && ownedSkins.includes(skinId)) {
+        alert('이미 보유하고 있는 스킨입니다!');
+        return;
+    }
+    let ownedShards = 0;
+    try {
+        if (typeof skinShards !== 'undefined' && skinShards[shardKey]) ownedShards = skinShards[shardKey];
+    } catch(e) {}
+
+    if (ownedShards < reqShards) {
+        alert('조합에 필요한 파편이 부족합니다!');
+        return;
+    }
+
+    if (typeof skinShards !== 'undefined' && skinShards[shardKey]) {
+        skinShards[shardKey] -= reqShards;
+    }
+    if (typeof ownedSkins !== 'undefined') {
+        ownedSkins.push(skinId);
+        equippedSkin = skinId;
+    }
+    if (typeof saveGame === 'function') saveGame(true);
+    if (typeof updateInvSkinUI === 'function') updateInvSkinUI();
+    renderShopCraftTab();
+
+    if (typeof floatTexts !== 'undefined' && typeof player !== 'undefined') {
+        floatTexts.push({
+            x: player.x,
+            y: player.y - 80,
+            text: '🎉 [스킨 조합 대성공!] 스킨이 인벤토리에 지급되었습니다!',
+            color: '#22c55e',
+            life: 120,
+            size: 22
+        });
+    }
+    alert('🎉 축하합니다! 스킨 파편을 합성하여 영구 스킨 완제품을 획득했습니다!');
+}
+window.craftSkinFromShop = craftSkinFromShop;
+
 
 // ------------------------------------------------------------
 // 📊 [신규] Forge 컴팩트 실시간 투표 엔진 (Image 2)
