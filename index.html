@@ -41,7 +41,8 @@
             padding: 4px 12px; border-radius: 16px;
             border: 2.2px solid #38bdf8; pointer-events: none; z-index: 15;
             white-space: nowrap; box-shadow: 0 0 14px rgba(56, 189, 248, 0.55);
-            display: flex; align-items: center; gap: 7px;
+            display: none !important; /* 기본 완전 숨김 */
+            align-items: center; gap: 7px;
         }
         
         #level-container {
@@ -23319,8 +23320,8 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             }
             const infDisp = document.getElementById('infinity-coin-display');
             if (infDisp) {
-                infDisp.style.display = 'flex';
-                if (typeof updateInfinityCoinDisplay === 'function') updateInfinityCoinDisplay(0);
+                const canSee = (typeof isAdmin === 'function' && isAdmin()) || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3());
+                infDisp.style.display = canSee ? 'flex' : 'none';
             }
             if (typeof updateQuestHudBadge === 'function') updateQuestHudBadge();
         }
@@ -27651,6 +27652,15 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
             const maxBottomLimit = 3950; // 사탕 마을(집 10채) 및 Y:3600 캔디콘 상점까지 자유롭게 이동 가능
             player.y = Math.max(-11200, Math.min(2100, player.y));
+        // 🏴‍☠️ [해적 지형 145레벨 출입 제한] 천사 지형 위(y < -10000) 진입 검사
+        const currentPLevel = (typeof level !== 'undefined') ? level : 1;
+        if (player.y < -10000 && currentPLevel < 145) {
+            player.y = -9980;
+            if (typeof showFloatingText === 'function') {
+                showFloatingText("⛔ [출입 제한] 해적 지형은 145레벨부터 입장할 수 있습니다! (현재 Lv." + currentPLevel + ")", player.x, player.y - 40, '#ef4444');
+            }
+        }
+
             
             // 🔒 맨 마지막 지역: 얼음의 협곡(Y: -8000 이하) 이번주 토요일 21:30 공개 및 레벨 125 체크
             if (!isRingMinigameActive && !isIceCanyonEventStarted() && player.y <= -7970 && player.y >= -9000) {
@@ -36410,7 +36420,7 @@ ctx.restore();
             if (typeof isPirateTerrainUser === 'function' && isPirateTerrainUser()) {
                 ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1150); ctx.lineTo(GAME_WIDTH, 1150); ctx.stroke();
                 ctx.fillStyle = '#fde047'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
-                ctx.fillText("🏴‍☠️ [해적 지형] 해적의 만 (Pirate Cove - 낚시터)", GAME_WIDTH / 2, 1185);
+                ctx.fillText("👑 [로얄 지형] 로얄 황실 영지 (Royal Realm)", GAME_WIDTH / 2, 1185);
             } else {
                 ctx.strokeStyle = '#ec4899'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1150); ctx.lineTo(GAME_WIDTH, 1150); ctx.stroke();
                 ctx.fillStyle = '#f472b6'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
@@ -39173,8 +39183,8 @@ const adminShipwreckTree = {
     id: 'shipwreck',
     type: 'shipwreck',
     x: GAME_WIDTH / 2, // 🎯 정중앙 X: 300
-    y: 1420,
-    radius: 175,       // 🎯 훨씬 더 크고 웅장한 대형 난파선 크기
+    y: -10500,         // 🎯 해적 지형 (-11000 ~ -10000) 중앙
+    radius: 175,
     trunkRadius: 90,
     name: '난파선',
     progress: 0,
@@ -39182,7 +39192,7 @@ const adminShipwreckTree = {
     shakeAngle: 0,
     unlocked: true,
     price: 0,
-    reqLevel: 1,
+    reqLevel: 145,     // 🎯 145레벨 제한
     color1: '#8d5b2c',
     color2: '#3e2723',
     drops: [4, 8]
@@ -39192,9 +39202,9 @@ const adminPirateShop = {
     type: 'pirate',
     name: '해적 상점',
     x: 420,
-    y: 1720,
+    y: -10250,        // 🎯 해적 지형 (-11000 ~ -10000)
     frontX: 350,
-    queueY: 1860,
+    queueY: -10120,    // 🎯 해적 지형 손님 주민 대기열
     queue: [],
     roofColor: '#dc2626',
     wallColor: '#2c1810'
@@ -39204,12 +39214,22 @@ const adminPirateShop = {
 function syncAdminPirateObjects() {
     if (typeof trees !== 'undefined') {
         const treeIdx = trees.findIndex(t => t.id === 'shipwreck');
-        if (treeIdx === -1) trees.push(adminShipwreckTree);
+        if (treeIdx === -1) {
+            trees.push(adminShipwreckTree);
+        } else {
+            trees[treeIdx].y = -10500;
+            trees[treeIdx].reqLevel = 145;
+        }
     }
 
     if (typeof shops !== 'undefined') {
         const shopIdx = shops.findIndex(s => s.type === 'pirate');
-        if (shopIdx === -1) shops.push(adminPirateShop);
+        if (shopIdx === -1) {
+            shops.push(adminPirateShop);
+        } else {
+            shops[shopIdx].y = -10250;
+            shops[shopIdx].queueY = -10120;
+        }
     }
 }
 window.syncAdminPirateObjects = syncAdminPirateObjects;
@@ -40858,46 +40878,124 @@ window.drawFallLeavesWorld = drawFallLeavesWorld;
 function renderShopCraftTab() {
     const listEl = document.getElementById('shop-craft-list');
     if (!listEl) return;
-    
-    // 기존 스킨 파편 현황 & 조합 가능한 레시피들 렌더링
+
+    // 크래프팅 머신의 3대 카테고리 (일본풍 검사 합성 슬롯, 럭키 스킨 조각 합성, 도끼 콤비네이션) 전체 렌더링
+    listEl.innerHTML = `
+        <!-- 상단 서브 탭 바 -->
+        <div style="display: flex; gap: 6px; margin-bottom: 12px; justify-content: center; flex-wrap: wrap;">
+            <button id="shop-craft-subtab-ronin" onclick="switchShopCraftSubtab('ronin')" style="flex: 1; min-width: 90px; padding: 7px 8px; border-radius: 10px; border: 1.5px solid #38bdf8; background: #0284c7; color: white; font-weight: 900; font-size: 11.5px; cursor: pointer;">
+                ⚔️ 일본풍 검사
+            </button>
+            <button id="shop-craft-subtab-shards" onclick="switchShopCraftSubtab('shards')" style="flex: 1; min-width: 110px; padding: 7px 8px; border-radius: 10px; border: 1.5px solid #a855f7; background: rgba(30, 41, 59, 0.85); color: #c084fc; font-weight: 900; font-size: 11.5px; cursor: pointer;">
+                🧩 럭키 스킨 조각 합성
+            </button>
+            <button id="shop-craft-subtab-ax" onclick="switchShopCraftSubtab('ax')" style="flex: 1; min-width: 100px; padding: 7px 8px; border-radius: 10px; border: 1.5px solid #facc15; background: rgba(30, 41, 59, 0.85); color: #facc15; font-weight: 900; font-size: 11.5px; cursor: pointer;">
+                👑 도끼 콤비네이션
+            </button>
+        </div>
+
+        <!-- 1. 일본풍 검사 슬롯 합성 뷰 -->
+        <div id="shop-craft-view-ronin" style="display: block; background: rgba(15, 23, 42, 0.8); border: 1.5px solid #38bdf8; border-radius: 14px; padding: 14px; margin-bottom: 10px;">
+            <div style="font-size: 13.5px; font-weight: 900; color: #38bdf8; margin-bottom: 8px;">⚔️ 2가지 스킨 융합 합성 (일본풍 검사)</div>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 12px;">
+                <div onclick="if (typeof openTradeMachineModal === 'function') { openTradeMachineModal(); selectCraftRecipe('ronin'); openCraftSlotPicker(1); }" style="width: 72px; height: 72px; background: rgba(30, 41, 59, 0.9); border: 2px dashed #f97316; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;">
+                    <span style="font-size: 24px;">🗡️</span>
+                    <span style="font-size: 11px; color: #fed7aa; font-weight: 800; margin-top: 2px;">슬롯 1 선택</span>
+                </div>
+                <span style="font-size: 20px; font-weight: 900; color: #facc15;">+</span>
+                <div onclick="if (typeof openTradeMachineModal === 'function') { openTradeMachineModal(); selectCraftRecipe('ronin'); openCraftSlotPicker(2); }" style="width: 72px; height: 72px; background: rgba(30, 41, 59, 0.9); border: 2px dashed #ef4444; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;">
+                    <span style="font-size: 24px;">🛡️</span>
+                    <span style="font-size: 11px; color: #fca5a5; font-weight: 800; margin-top: 2px;">슬롯 2 선택</span>
+                </div>
+            </div>
+            <button onclick="if (typeof openTradeMachineModal === 'function') { openTradeMachineModal(); selectCraftRecipe('ronin'); }" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #0284c7, #0369a1); border: none; border-radius: 10px; color: white; font-weight: 900; font-size: 13px; cursor: pointer;">
+                ⚔️ 일본풍 검사 슬롯 합성창 열기
+            </button>
+        </div>
+
+        <!-- 2. 럭키 스킨 조각 합성 뷰 (모든 조각 합성 레시피) -->
+        <div id="shop-craft-view-shards" style="display: none; flex-direction: column; gap: 8px;">
+            ${renderShardRecipesHTML()}
+        </div>
+
+        <!-- 3. 도끼 콤비네이션 뷰 -->
+        <div id="shop-craft-view-ax" style="display: none; background: rgba(15, 23, 42, 0.8); border: 1.5px solid #facc15; border-radius: 14px; padding: 14px;">
+            <div style="font-size: 13.5px; font-weight: 900; color: #facc15; margin-bottom: 8px;">👑 전설의 고대 도끼 콤비네이션</div>
+            <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 12px;">은도끼와 금도끼를 융합하여 강력한 고대 도끼를 제작합니다! (벌목 2.7초)</div>
+            <button onclick="if (typeof craftAncientAxe === 'function') craftAncientAxe();" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #eab308, #ca8a04); border: none; border-radius: 10px; color: black; font-weight: 900; font-size: 13px; cursor: pointer;">
+                🪓 고대 도끼 제작하기
+            </button>
+        </div>
+    `;
+}
+window.renderShopCraftTab = renderShopCraftTab;
+
+function switchShopCraftSubtab(tab) {
+    const vRonin = document.getElementById('shop-craft-view-ronin');
+    const vShards = document.getElementById('shop-craft-view-shards');
+    const vAx = document.getElementById('shop-craft-view-ax');
+
+    const bRonin = document.getElementById('shop-craft-subtab-ronin');
+    const bShards = document.getElementById('shop-craft-subtab-shards');
+    const bAx = document.getElementById('shop-craft-subtab-ax');
+
+    if (vRonin) vRonin.style.display = (tab === 'ronin') ? 'block' : 'none';
+    if (vShards) vShards.style.display = (tab === 'shards') ? 'flex' : 'none';
+    if (vAx) vAx.style.display = (tab === 'ax') ? 'block' : 'none';
+
+    if (bRonin) { bRonin.style.background = (tab === 'ronin') ? '#0284c7' : 'rgba(30, 41, 59, 0.85)'; bRonin.style.color = (tab === 'ronin') ? 'white' : '#94a3b8'; }
+    if (bShards) { bShards.style.background = (tab === 'shards') ? '#a855f7' : 'rgba(30, 41, 59, 0.85)'; bShards.style.color = (tab === 'shards') ? 'white' : '#94a3b8'; }
+    if (bAx) { bAx.style.background = (tab === 'ax') ? '#facc15' : 'rgba(30, 41, 59, 0.85)'; bAx.style.color = (tab === 'ax') ? 'black' : '#94a3b8'; }
+}
+window.switchShopCraftSubtab = switchShopCraftSubtab;
+
+function renderShardRecipesHTML() {
     const recipes = [
-        { id: 'ronin', name: '일본풍 검사 (닌자/로닌)', reqShards: 5, shardKey: 'ronin_shards', icon: '⚔️' },
-        { id: 'western_swordsman', name: '서양 검사', reqShards: 5, shardKey: 'swordsman_shards', icon: '🤺' },
-        { id: 'pirate_captain', name: '해적 선장', reqShards: 5, shardKey: 'pirate_shards', icon: '🏴‍☠️' },
-        { id: 'fire_and_space', name: '불과 행성', reqShards: 5, shardKey: 'fire_space_shards', icon: '🔥🪐' },
-        { id: 'hacker', name: '사이버 해커', reqShards: 5, shardKey: 'hacker_shards', icon: '💻' }
+        { id: 'pirate_captain', name: '해적 선장 (전설)', req: 30, key: 'pirate_captain_shard', icon: '🏴‍☠️' },
+        { id: 'pirate_gunner', name: '해적 포수', req: 30, key: 'pirate_gunner_shard', icon: '💣' },
+        { id: 'pirate_navigator', name: '해적 항해사', req: 30, key: 'pirate_navigator_shard', icon: '🧭' },
+        { id: 'ghost_pirate', name: '유령 해적', req: 30, key: 'ghost_pirate_shard', icon: '👻' },
+        { id: 'jellyfish', name: '해파리 스킨', req: 75, key: 'jellyfish_shard', icon: '🪼' },
+        { id: 'angel', name: '천사 스킨', req: 50, key: 'angel_shard', icon: '👼' },
+        { id: 'devil', name: '악마 스킨', req: 40, key: 'devil_shard', icon: '😈' },
+        { id: 'aetheron', name: '에테론 스킨', req: 6, key: 'aetheron_shard', icon: '✨' },
+        { id: 'western_swordsman', name: '서양 검사', req: 5, key: 'swordsman_shards', icon: '🤺' },
+        { id: 'fire_and_space', name: '불과 행성', req: 5, key: 'fire_space_shards', icon: '🔥🪐' },
+        { id: 'hacker', name: '사이버 해커', req: 5, key: 'hacker_shards', icon: '💻' }
     ];
 
     let htmlStr = '';
     recipes.forEach(r => {
-        let ownedShards = 0;
+        let count = 0;
         try {
-            if (typeof skinShards !== 'undefined' && skinShards[r.shardKey]) ownedShards = skinShards[r.shardKey];
-            else if (typeof skinShards !== 'undefined' && skinShards[r.id]) ownedShards = skinShards[r.id];
+            if (typeof skinShards !== 'undefined' && skinShards[r.key]) count = skinShards[r.key];
+            else if (typeof skinShards !== 'undefined' && skinShards[r.id]) count = skinShards[r.id];
         } catch(e) {}
 
-        const canCraft = ownedShards >= r.reqShards;
-        const isOwned = (typeof ownedSkins !== 'undefined' && ownedSkins.includes(r.id));
+        const canCraft = count >= r.req;
+        const owned = (typeof ownedSkins !== 'undefined' && ownedSkins.includes(r.id));
 
         htmlStr += `
             <div style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid ${canCraft ? '#22c55e' : '#475569'}; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                 <div style="display: flex; align-items: center; gap: 10px; text-align: left;">
-                    <span style="font-size: 26px;">${r.icon}</span>
+                    <span style="font-size: 24px;">${r.icon}</span>
                     <div>
-                        <div style="font-size: 13.5px; font-weight: 950; color: #f1f5f9;">${r.name}</div>
-                        <div style="font-size: 11px; color: ${canCraft ? '#4ade80' : '#94a3b8'};">파편: ${ownedShards} / ${r.reqShards}개 ${isOwned ? '<span style="color:#facc15;">(보유중)</span>' : ''}</div>
+                        <div style="color: white; font-size: 13.5px; font-weight: 900;">${r.name}</div>
+                        <div style="font-size: 11.5px; color: ${canCraft ? '#4ade80' : '#94a3b8'}; font-weight: 800;">
+                            파편: ${count} / ${r.req}개 ${owned ? '(보유중)' : ''}
+                        </div>
                     </div>
                 </div>
-                <button onclick="craftSkinFromShop('${r.id}', '${r.shardKey}', ${r.reqShards})" style="padding: 8px 14px; background: ${canCraft ? 'linear-gradient(135deg, #10b981, #059669)' : '#334155'}; color: white; border: none; border-radius: 8px; font-weight: 950; font-size: 12px; cursor: ${canCraft ? 'pointer' : 'not-allowed'}; box-shadow: ${canCraft ? '0 2px 8px rgba(16,185,129,0.5)' : 'none'};" ${canCraft ? '' : 'disabled'}>
-                    ${isOwned ? '완제 보유' : (canCraft ? '조합하기' : '재료 부족')}
+                <button onclick="craftSkinFromShop('${r.id}', '${r.key}', ${r.req}, '${r.name}')" style="padding: 7px 12px; background: ${canCraft ? '#22c55e' : 'rgba(71, 85, 105, 0.5)'}; border: none; border-radius: 8px; color: white; font-weight: 900; font-size: 12px; cursor: ${canCraft ? 'pointer' : 'not-allowed'};" ${canCraft ? '' : 'disabled'}>
+                    합성
                 </button>
             </div>
         `;
     });
-
-    listEl.innerHTML = htmlStr;
+    return htmlStr;
 }
-window.renderShopCraftTab = renderShopCraftTab;
+window.renderShardRecipesHTML = renderShardRecipesHTML;
+
 
 function craftSkinFromShop(skinId, shardKey, reqShards) {
     if (typeof ownedSkins !== 'undefined' && ownedSkins.includes(skinId)) {
