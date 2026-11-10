@@ -27680,6 +27680,12 @@ unlocked: true, price: 0, reqLevel: 1, color1: '#f59e0b', color2: '#b45309', dro
             } else { player.walkTimer = 0; }
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
+            if (isNaN(player.x) || isNaN(player.y) || player.y > 2150) {
+                player.x = 300;
+                player.y = 500;
+                player.vx = 0; player.vy = 0;
+            }
+
             const maxBottomLimit = 3950; // 사탕 마을(집 10채) 및 Y:3600 캔디콘 상점까지 자유롭게 이동 가능
             player.y = Math.max(-12800, Math.min(2100, player.y));
         // 🏴‍☠️ [해적 지형 145레벨 출입 제한] 천사 지형 위(y < -10000) 진입 검사
@@ -27749,16 +27755,7 @@ unlocked: true, price: 0, reqLevel: 1, color1: '#f59e0b', color2: '#b45309', dro
 
             // 호박 융합 머신 충돌 판정 삭제됨
 
-            // 🔮 크래프팅 머신 충돌 판정 (원형 반경)
-            if (typeof craftingMachine !== 'undefined') {
-                let dCm = Math.hypot(player.x - craftingMachine.x, player.y - craftingMachine.y);
-                let minCmR = (craftingMachine.radius || 45) + player.radius;
-                if (dCm < minCmR && dCm > 0) {
-                    let pushAngle = Math.atan2(player.y - craftingMachine.y, player.x - craftingMachine.x);
-                    player.x = craftingMachine.x + Math.cos(pushAngle) * minCmR;
-                    player.y = craftingMachine.y + Math.sin(pushAngle) * minCmR;
-                }
-            }
+            // 🔮 크래프팅 머신 충돌 판정 삭제 완료
 
             let targetCamY = player.y - GAME_HEIGHT / 2 + 100;
             targetCamY = Math.max(-10800, Math.min(3450, targetCamY));
@@ -36377,6 +36374,7 @@ ctx.restore();
                 drawPvpArena();
                 return;
             }
+            ctx.setTransform(1, 0, 0, 1, 0, 0); // 🛡️ 프레임마다 변환 행렬 완전 리셋
             ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
             ctx.save();
             ctx.translate(0, -cameraY);
@@ -39567,6 +39565,7 @@ function drawAdminPirateTerrain(ctx) {
     if (typeof drawPirateFuseMachine === 'function') {
         drawPirateFuseMachine(ctx, 320, -10350);
     }
+    ctx.restore();
 }
 window.drawAdminPirateTerrain = drawAdminPirateTerrain;
 
