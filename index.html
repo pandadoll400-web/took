@@ -642,9 +642,26 @@
         <canvas id="gameCanvas"></canvas>
         <div id="money-display">💰 0</div>
         <!-- 🍂 날개 달린 가을낙엽 표시 (돈 밑에 상시 배치, 전 서버 0부터 시작) -->
-        <div id="fall-leaf-display" style="position: absolute; top: 48px; left: 10px; background: rgba(26, 16, 8, 0.94); color: #f59e0b; font-size: 14px; font-weight: 900; padding: 4px 12px; border-radius: 16px; border: 2.2px solid #f97316; pointer-events: auto; cursor: pointer; z-index: 15; white-space: nowrap; box-shadow: 0 0 14px rgba(249, 115, 22, 0.55); display: flex; align-items: center; gap: 7px;" onclick="openFallShopModal()">
-            <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: linear-gradient(135deg, #ea580c, #f59e0b); border-radius: 6px; color: white; font-size: 13px; box-shadow: 0 0 8px rgba(245, 158, 11, 0.7);">🪽🍂</span>
-            <span id="fall-leaf-amount" style="color: #fed7aa; font-size: 14px; font-weight: 950;">0</span>
+        <div id="fall-leaf-display" style="position: absolute; top: 48px; left: 10px; background: rgba(26, 16, 8, 0.94); color: #facc15; font-size: 14px; font-weight: 900; padding: 4px 12px; border-radius: 16px; border: 2.2px solid #f97316; pointer-events: none; z-index: 15; white-space: nowrap; box-shadow: 0 0 14px rgba(249, 115, 22, 0.55); display: flex; align-items: center; gap: 7px;">
+            <!-- 초고화질 인라인 SVG 날개 달린 가을낙엽 아이콘 (어떤 기기에서도 깨짐 없이 렌더링) -->
+            <svg width="22" height="22" viewBox="0 0 44 44" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));">
+                <!-- 좌측 날개 -->
+                <path d="M 18,22 C 10,18 2,12 0,2 C 6,8 14,12 18,16 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+                <!-- 우측 날개 -->
+                <path d="M 26,22 C 34,18 42,12 44,2 C 38,8 30,12 26,16 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+                <!-- 중앙 단풍잎 (4번째 사진 스케치 완벽 구현) -->
+                <path d="M 22,4 C 30,12 34,24 28,34 C 24,40 18,43 16,44 C 18,38 18,34 14,28 C 10,20 14,10 22,4 Z" fill="url(#leafGradHUD)" stroke="#7c2d12" stroke-width="1.8"/>
+                <!-- 잎맥 -->
+                <path d="M 22,6 Q 21,24 17,40 M 21,16 L 28,20 M 20,24 L 14,28 M 19,30 L 25,33" stroke="#fef08a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+                <defs>
+                    <linearGradient id="leafGradHUD" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#fb923c"/>
+                        <stop offset="50%" stop-color="#ea580c"/>
+                        <stop offset="100%" stop-color="#b91c1c"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span id="fall-leaf-amount" style="font-size: 15px; font-weight: 950; color: #fef08a; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">0</span>
         </div>
         <!-- ♾️ 인피니티 코인 표시 (어드민 전용 숨김 처리) -->
         <div id="infinity-coin-display" style="display: none; position: absolute; top: 88px; left: 10px; background: rgba(15, 23, 42, 0.92); color: #facc15; font-size: 13px; font-weight: 900; padding: 3px 10px; border-radius: 14px; border: 1.8px solid #38bdf8; pointer-events: none; z-index: 15; white-space: nowrap; box-shadow: 0 0 10px rgba(56, 189, 248, 0.45); align-items: center; gap: 6px;">
@@ -4241,28 +4258,58 @@
                 return;
             }
 
-            // 🐣 [유저 요구] 펫 알 부화 확률: 3대 고유 펫만 부화! (일반 고릴라 60%, 일반 늑대 25%, 일반 고양이 15%)
-            const roll = Math.random() * 100;
-            let petId, petName, petIcon, petColor, petRarity;
-            if (roll < 60) {
-                petId = 'pet_gorilla';
-                petName = '일반 고릴라';
-                petIcon = '🦍';
-                petColor = '#a855f7';
-                petRarity = '일반 (60%)';
-            } else if (roll < 85) {
-                petId = 'pet_wolf';
-                petName = '일반 늑대';
-                petIcon = '🐺';
-                petColor = '#38bdf8';
-                petRarity = '희귀 (25%)';
-            } else {
-                petId = 'pet_cat';
-                petName = '일반 고양이';
-                petIcon = '🐱';
-                petColor = '#facc15';
-                petRarity = '초희귀 (15%)';
+            // 🧬 [유저 요구] 부화 시 랜덤 특성 부여: 골드(1.5배), 다이아(2배), 레인보우(5배)
+            const traitRoll = Math.random() * 100;
+            const has8xLuck = (window.is8xLuckActive === true);
+            let traitName = '일반';
+            let traitIcon = '';
+            let traitMult = 1.0;
+            let traitColor = '#ffffff';
+
+            if (has8xLuck ? (traitRoll < 16) : (traitRoll < 2)) {
+                traitName = '레인보우';
+                traitIcon = '🌈 [레인보우] ';
+                traitMult = 5.0; // 5배 효과 증폭
+                traitColor = '#f43f5e';
+            } else if (has8xLuck ? (traitRoll < 40) : (traitRoll < 10)) {
+                traitName = '다이아';
+                traitIcon = '💎 [다이아] ';
+                traitMult = 2.0; // 2배 효과 증폭
+                traitColor = '#38bdf8';
+            } else if (has8xLuck ? (traitRoll < 75) : (traitRoll < 30)) {
+                traitName = '골드';
+                traitIcon = '✨ [골드] ';
+                traitMult = 1.5; // 1.5배 효과 증폭
+                traitColor = '#facc15';
             }
+
+            // 기본 펫 추첨 (또는 특수 알에서 나온 펫)
+            const petRoll = Math.random() * 100;
+            let petId = 'pet_cat', basePetName = '고양이', petBaseIcon = '🐱', petBaseColor = '#facc15';
+
+            if (incubatorState.eggType) {
+                if (incubatorState.eggType === '고양이알') { petId = 'pet_cat'; basePetName = '고양이'; petBaseIcon = '🐱'; }
+                else if (incubatorState.eggType === '늑대알') { petId = 'pet_wolf'; basePetName = '늑대'; petBaseIcon = '🐺'; }
+                else if (incubatorState.eggType === '고릴라알') { petId = 'pet_gorilla'; basePetName = '고릴라'; petBaseIcon = '🦍'; }
+                else if (incubatorState.eggType === '상어알') { petId = 'pet_shark'; basePetName = '상어'; petBaseIcon = '🦈'; }
+                else if (incubatorState.eggType === '킹머니펫에그') { petId = 'pet_king_money'; basePetName = '킹머니 펫'; petBaseIcon = '👑💵'; }
+                else if (incubatorState.eggType === '소드콤비네이션펫에그') { petId = 'pet_sword_combo'; basePetName = '소드 콤비네이션 펫'; petBaseIcon = '⚔️'; }
+                else if (incubatorState.eggType === '도끼콤비네이션 에그') { petId = 'pet_axe_combo'; basePetName = '도끼 콤비네이션 펫'; petBaseIcon = '🪓'; }
+                else if (incubatorState.eggType === '킹펫에그') { petId = 'pet_king'; basePetName = '전설의 킹 펫'; petBaseIcon = '👑✨'; }
+            } else {
+                if (petRoll < 60) { petId = 'pet_cat'; basePetName = '고양이'; petBaseIcon = '🐱'; }
+                else if (petRoll < 80) { petId = 'pet_wolf'; basePetName = '늑대'; petBaseIcon = '🐺'; }
+                else if (petRoll < 95) { petId = 'pet_gorilla'; basePetName = '고릴라'; petBaseIcon = '🦍'; }
+                else { petId = 'pet_shark'; basePetName = '상어'; petBaseIcon = '🦈'; }
+            }
+
+            const fullPetName = traitIcon + basePetName;
+            window.activePetTraitMult = traitMult;
+            window.activePetTraitName = traitName;
+            try {
+                localStorage.setItem('active_pet_trait_mult', traitMult.toString());
+                localStorage.setItem('active_pet_trait_name', traitName);
+            } catch(e) {}
 
             if (!ownedPets.includes(petId)) {
                 ownedPets.push(petId);
@@ -4274,9 +4321,9 @@
             activeSkinPet = petId;
             adminPetFollowEnabled = true;
 
-            // 인큐베이터 초기화 (다음 알 안치 대기)
             incubatorState.active = false;
             incubatorState.startTime = 0;
+            incubatorState.eggType = null;
             saveIncubatorState();
 
             try {
@@ -4287,47 +4334,9 @@
             saveGame(true);
             updatePetMachineModalUI();
 
-            floatTexts.push({ x: player.x, y: player.y - 90, text: `🥚✨ 부화 성공! [${petIcon} ${petName}]`, color: petColor, life: 120, size: 24 });
-            alert(`🎉 [🥚 펫 알 부화 성공!]\n\n인큐베이터에서 5분간 따뜻하게 생명을 품은 알이 깨어났습니다!\n\n출현 펫: ${petIcon} [${petName}] (${petRarity})\n\n동행 펫으로 플레이어 옆을 든든하게 따르며 함께 모험합니다!\n(🌲 벌목 속도 +20% 단축 부스트 활성화!)`);
-        }
-
-        function adminFastForwardIncubator() {
-            if (!isAdmin() || !incubatorState.active) return;
-            incubatorState.startTime = Date.now() - incubatorState.duration - 1000;
-            saveIncubatorState();
-            saveGame(true);
-            updatePetMachineModalUI();
-        }
-
-        setInterval(() => {
-            const modal = document.getElementById('pet-machine-modal');
-            if (modal && modal.style.display === 'block') {
-                updatePetMachineModalUI();
-            }
-        }, 1000);
-        
-        function openPetLeashModal(rock) {
-            currentActiveLeashRock = rock;
-            currentActiveFossilRock = rock;
-            const modal = document.getElementById('pet-leash-modal');
-            if (!modal) return;
-            updatePetLeashModalUI();
-            modal.style.display = 'block';
-            if (typeof resetJoyMouse === 'function') resetJoyMouse();
-            if (typeof player !== 'undefined') player.targetTree = null;
-        }
-
-        function closePetLeashModal() {
-            const modal = document.getElementById('pet-leash-modal');
-            if (modal) modal.style.display = 'none';
-        }
-
-        function getDinoFragCount() {
-            let count = 0;
-            ['공룡알 조각', '공룡알조각', '공룡 알 조각', '공룡 알 화석', '공룡알 화석'].forEach(k => {
-                if (inventory[k]) count += inventory[k];
-            });
-            return count;
+            floatTexts.push({ x: player.x, y: player.y - 90, text: `🎉 ${petBaseIcon} [${fullPetName}] 부화! (${traitMult}배)`, color: traitColor, life: 130, size: 24 });
+            alert(`🎉 [🥚 펫 알 부화 성공!]\n\n인큐베이터에서 알이 성공적으로 깨어났습니다!\n\n출현 펫: ${petBaseIcon} [${fullPetName}]\n✨ 부여된 특성: ${traitName} 특성 (능력치 ${traitMult}배 증폭!)\n\n플레이어 곁을 동행하며 강력한 특성 효과를 발휘합니다!`);
+            return;
         }
 
         function updatePetLeashModalUI() {
@@ -4379,20 +4388,40 @@
                 }
             }
 
-            if (!inventory['펫 알']) inventory['펫 알'] = 0;
-            inventory['펫 알']++;
+            // 🦕 [유저 요구 100% 충실] 공룡알 바위에서 나올 때부터 무슨 펫 알인지 확정!
+            // 고양이알 60%, 늑대알 20%, 고릴라알 15%, 상어알 5%
+            const roll = Math.random() * 100;
+            let eggName = '고양이알';
+            let eggIcon = '🐱🥚';
+            let eggRate = '60%';
+            let eggColor = '#facc15';
+
+            if (roll < 60) {
+                eggName = '고양이알'; eggIcon = '🐱🥚'; eggRate = '60%'; eggColor = '#facc15';
+            } else if (roll < 80) {
+                eggName = '늑대알'; eggIcon = '🐺🥚'; eggRate = '20%'; eggColor = '#38bdf8';
+            } else if (roll < 95) {
+                eggName = '고릴라알'; eggIcon = '🦍🥚'; eggRate = '15%'; eggColor = '#a855f7';
+            } else {
+                eggName = '상어알'; eggIcon = '🦈🥚'; eggRate = '5%'; eggColor = '#06b6d4';
+            }
+
+            if (!inventory[eggName]) inventory[eggName] = 0;
+            inventory[eggName]++;
+            // 기존 호환용 총합 카운트도 유지
+            inventory['펫 알'] = (inventory['펫 알'] || 0) + 1;
 
             saveGame();
             updatePetLeashModalUI();
             if (typeof updatePetMachineModalUI === 'function') updatePetMachineModalUI();
 
-            floatTexts.push({ x: player.x, y: player.y - 90, text: `🥚 [알 구매 완료!]`, color: '#facc15', life: 100, size: 22 });
+            floatTexts.push({ x: player.x, y: player.y - 90, text: `${eggIcon} [${eggName}] 획득!`, color: eggColor, life: 110, size: 24 });
             for (let i = 0; i < 35; i++) {
                 let a = Math.random() * Math.PI * 2;
                 let sp = Math.random() * 5 + 2;
                 labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#38bdf8' : '#facc15'), life: 35 });
             }
-            alert("🎉 [🥚 알 제작 완료!]\n\n공룡알 조각 10개로 신비로운 [펫 알]을 획득했습니다!\n\n인큐베이터로 가서 알을 넣고 5분 후 펫을 획득하세요!");
+            alert(`🎉 [🥚 알 제작 완료!]\n\n공룡알 조각 10개로 [${eggIcon} ${eggName}] (${eggRate})을(를) 제작했습니다!\n\n인큐베이터에서 부화시키거나 로얄 지형 왕실 퓨즈 머신에서 융합할 수 있습니다!`);
         }
 
         const buyPetLeash = craftPetEgg;
@@ -15718,18 +15747,7 @@
                     player.targetTree = null;
                 } else {
                     // 👑 [유저 요청 완벽 반영] 로얄 지형 왕관 나무는 현재 흔들기 불가!
-                    if (target.id === 'royal') {
-                        player.targetTree = null;
-                        floatTexts.push({
-                            x: target.x,
-                            y: target.y - 70,
-                            text: '👑 로얄 왕관 나무는 현재 흔들 수 없습니다!',
-                            color: '#facc15',
-                            life: 75,
-                            size: 20
-                        });
-                        return;
-                    }
+                    // 로얄 왕관 나무 벌목 활성화
                     if (!target.unlocked) {
                         if (isAdmin() || money >= target.price) {
                             if (!isAdmin()) { money -= target.price; updateMoney(); }
@@ -17151,6 +17169,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             resetJoyMouse();
             if (typeof player !== 'undefined') player.targetTree = null;
             const luckyBtn = document.getElementById('shop-tab-lucky-btn');
+            if (luckyBtn) luckyBtn.style.display = 'inline-block';
             if (luckyBtn) {
                 const canSee = (typeof isPrivilegedAdminOrTester === 'function') ? isPrivilegedAdminOrTester() : false;
                 luckyBtn.style.display = canSee ? 'inline-block' : 'none';
@@ -19595,9 +19614,9 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 unlocked: true, price: 0, reqLevel: 135, color1: '#fef08a', color2: '#ef4444', drops: [4, 8]
             },
             {
-                id: 'royal', type: 'royal', x: GAME_WIDTH / 2, y: 1450, radius: 155, trunkRadius: 52,
-                name: '로얄 왕관 나무', progress: 0, maxProgress: 9999, shakeAngle: 0,
-                unlocked: true, price: 0, reqLevel: 1, color1: '#f59e0b', color2: '#b45309', drops: [0, 0]
+                id: 'royal', type: 'royal', x: GAME_WIDTH / 2, y: 1500, radius: 155, trunkRadius: 52,
+name: '로얄 왕관 나무', progress: 0, maxProgress: 350, shakeAngle: 0,
+unlocked: true, price: 0, reqLevel: 1, color1: '#f59e0b', color2: '#b45309', drops: [5, 10]
             }
         ];
 
@@ -27359,7 +27378,18 @@ window.claimPirateShipSkin = claimPirateShipSkin;
             { chance: 0.01, items: ['캡틴의 모자'], price: 250000, xp: 2500, color: '#ef4444', tier: '역사', icon: '🎩' }
         ];
 
+        
+        // 👑 로얄 왕관 나무 5대 등급 드롭 테이블
+        const royalCrownDropTables = [
+            { chance: 0.48, items: ['황금 나뭇가지', '황실 실타래'], price: 15000, xp: 80, color: '#facc15', tier: '일반', icon: '🪵' },
+            { chance: 0.28, items: ['로얄 사파이어 보석', '순금 도토리'], price: 35000, xp: 160, color: '#38bdf8', tier: '희귀', icon: '💎' },
+            { chance: 0.16, items: ['왕가의 에메랄드 인장', '황금 왕관 파편'], price: 90000, xp: 350, color: '#a855f7', tier: '영웅', icon: '👑' },
+            { chance: 0.07, items: ['황실 다이아몬드 원석', '황금 보검'], price: 250000, xp: 800, color: '#f97316', tier: '전설', icon: '🗡️' },
+            { chance: 0.01, items: ['찬란한 태양의 황금 왕관'], price: 1000000, xp: 3000, color: '#ef4444', tier: '신화', icon: '✨' }
+        ];
+
         function getTables(type) {
+            if (type === 'royal') return (window.royalCrownDropTables || royalCrownDropTables);
             if (type === 'shipwreck') return shipwreckDropTables;
             if (type === 'angel_devil') return angelDevilDropTables;
             if (type === 'space') return spaceDropTables;
@@ -27651,7 +27681,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
 
             player.x = Math.max(player.radius, Math.min(GAME_WIDTH - player.radius, player.x));
             const maxBottomLimit = 3950; // 사탕 마을(집 10채) 및 Y:3600 캔디콘 상점까지 자유롭게 이동 가능
-            player.y = Math.max(-11200, Math.min(2100, player.y));
+            player.y = Math.max(-12800, Math.min(2100, player.y));
         // 🏴‍☠️ [해적 지형 145레벨 출입 제한] 천사 지형 위(y < -10000) 진입 검사
         const currentPLevel = (typeof level !== 'undefined') ? level : 1;
         if (player.y < -10000 && currentPLevel < 145) {
@@ -36418,9 +36448,9 @@ ctx.restore();
             ctx.fillStyle = '#a29bfe'; ctx.fillText("🚀 미지의 영역: 우주 지역 (레벨 105 진입 가능)", GAME_WIDTH / 2, -7020);
 
             if (typeof isPirateTerrainUser === 'function' && isPirateTerrainUser()) {
-                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1150); ctx.lineTo(GAME_WIDTH, 1150); ctx.stroke();
-                ctx.fillStyle = '#fde047'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
-                ctx.fillText("👑 [로얄 지형] 로얄 황실 영지 (Royal Realm)", GAME_WIDTH / 2, 1185);
+                ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1000); ctx.lineTo(GAME_WIDTH, 1000); ctx.stroke();
+ctx.fillStyle = '#fde047'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
+ctx.fillText("👑 [로얄 지형] 로얄 황실 영지 (Royal Realm)", GAME_WIDTH / 2, 1035);
             } else {
                 ctx.strokeStyle = '#ec4899'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 1150); ctx.lineTo(GAME_WIDTH, 1150); ctx.stroke();
                 ctx.fillStyle = '#f472b6'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center';
@@ -39182,8 +39212,8 @@ window.teleportToForgeStage = teleportToForgeStage;
 const adminShipwreckTree = {
     id: 'shipwreck',
     type: 'shipwreck',
-    x: GAME_WIDTH / 2, // 🎯 정중앙 X: 300
-    y: -10500,         // 🎯 해적 지형 (-11000 ~ -10000) 중앙
+    x: GAME_WIDTH / 2, // 🎯 X: 300
+    y: -11250,        // 🎯 2500px 광활한 해적 지형 중앙
     radius: 175,
     trunkRadius: 90,
     name: '난파선',
@@ -39192,7 +39222,7 @@ const adminShipwreckTree = {
     shakeAngle: 0,
     unlocked: true,
     price: 0,
-    reqLevel: 145,     // 🎯 145레벨 제한
+    reqLevel: 145,
     color1: '#8d5b2c',
     color2: '#3e2723',
     drops: [4, 8]
@@ -39202,9 +39232,9 @@ const adminPirateShop = {
     type: 'pirate',
     name: '해적 상점',
     x: 420,
-    y: -10250,        // 🎯 해적 지형 (-11000 ~ -10000)
+    y: -10800,        // 🎯 넉넉한 위치
     frontX: 350,
-    queueY: -10120,    // 🎯 해적 지형 손님 주민 대기열
+    queueY: -10670,   // 🎯 주민 대기열
     queue: [],
     roofColor: '#dc2626',
     wallColor: '#2c1810'
@@ -39495,16 +39525,14 @@ function startWeqwxe3StageDanceTest() {
 window.startWeqwxe3StageDanceTest = startWeqwxe3StageDanceTest;
 
 function drawAdminPirateTerrain(ctx) {
-    const time = Date.now() * 0.002;
-
-    // 🏴‍☠️ [유저 요청 완벽 반영] 해적 지형을 통째로 천사 지형 위쪽(Y: -11000 ~ -10000)으로 이동!
-    let sandGrad = ctx.createLinearGradient(0, -11000, 0, -10000);
-    sandGrad.addColorStop(0, '#e9c46a');
-    sandGrad.addColorStop(0.3, '#f4a261');
-    sandGrad.addColorStop(0.7, '#deb887');
-    sandGrad.addColorStop(1, '#d4a373');
-    ctx.fillStyle = sandGrad;
-    ctx.fillRect(0, -11000, GAME_WIDTH, 1000);
+    ctx.save();
+    // 🏴‍☠️ [광역 2500px 대폭 확장] Y: -12500 ~ -10000
+    const seaGrad = ctx.createLinearGradient(0, -12500, 0, -10000);
+    seaGrad.addColorStop(0, '#020617');
+    seaGrad.addColorStop(0.5, '#0c1b2f');
+    seaGrad.addColorStop(1, '#0f2b48');
+    ctx.fillStyle = seaGrad;
+    ctx.fillRect(0, -12500, GAME_WIDTH, 2500);
 
     // 좌우 에메랄드 바다 해안선 (X: 0~35, GAME_WIDTH-35~GAME_WIDTH)
     ctx.fillStyle = '#0077b6';
@@ -40593,6 +40621,350 @@ function drawWingedFallLeaf(ctx, x, y, scale = 1.0, angle = 0, wingFlap = 0) {
     ctx.restore();
 }
 window.drawWingedFallLeaf = drawWingedFallLeaf;
+
+// =========================================================================
+// 👑 [왕실 퓨즈 머신 & 8배럭 & 로얄 스냅 & 이벤트 컨트롤러 엔진]
+// =========================================================================
+let isFuseLuckActive = false;
+let is8xLuckActive = false;
+let selectedFuseEgg = null;
+let activeMasterEvents = { ufo: false, meteor: false, fire: false, leaf: false };
+
+// 1. 머신 클릭 시 왕실 퓨즈 모달 오픈
+function openRoyalFuseModal() {
+    const modal = document.getElementById('royal-fuse-modal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    renderRoyalFuseEggSelector();
+    const ind = document.getElementById('royal-fuse-luck-indicator');
+    if (ind) ind.style.display = (isFuseLuckActive || is8xLuckActive) ? 'block' : 'none';
+}
+window.openRoyalFuseModal = openRoyalFuseModal;
+
+function closeRoyalFuseModal() {
+    const modal = document.getElementById('royal-fuse-modal');
+    if (modal) modal.style.display = 'none';
+    selectedFuseEgg = null;
+}
+window.closeRoyalFuseModal = closeRoyalFuseModal;
+
+function renderRoyalFuseEggSelector() {
+    const container = document.getElementById('royal-fuse-egg-selector');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const eggList = ['고양이알', '늑대알', '고릴라알', '상어알', '펫 알'];
+    let hasAny = false;
+
+    eggList.forEach(name => {
+        const count = inventory[name] || 0;
+        if (count > 0) {
+            hasAny = true;
+            const isSel = (selectedFuseEgg === name);
+            const btn = document.createElement('div');
+            btn.style.padding = '8px 12px';
+            btn.style.borderRadius = '10px';
+            btn.style.border = isSel ? '2px solid #facc15' : '1.5px solid #475569';
+            btn.style.background = isSel ? 'rgba(234, 179, 8, 0.3)' : 'rgba(30, 41, 59, 0.8)';
+            btn.style.cursor = 'pointer';
+            btn.style.fontSize = '12px';
+            btn.style.fontWeight = '900';
+            btn.style.color = isSel ? '#fde047' : '#cbd5e1';
+            btn.innerHTML = `🥚 ${name} <strong style="color: #38bdf8;">(${count})</strong>`;
+            btn.onclick = () => {
+                selectedFuseEgg = name;
+                renderRoyalFuseEggSelector();
+            };
+            container.appendChild(btn);
+        }
+    });
+
+    if (!hasAny) {
+        container.innerHTML = '<div style="color: #94a3b8; font-size: 12px; padding: 6px;">보유 중인 펫 알이 없습니다! (얼음 협곡에서 공룡알 교환 필요)</div>';
+    }
+}
+
+function executeRoyalFuse() {
+    if (!selectedFuseEgg || !inventory[selectedFuseEgg] || inventory[selectedFuseEgg] <= 0) {
+        alert("융합에 사용할 알을 선택해주세요!");
+        return;
+    }
+
+    inventory[selectedFuseEgg]--;
+    if (inventory['펫 알'] && inventory['펫 알'] > 0) inventory['펫 알']--;
+
+    // 융합 확률: 킹머니펫에그 62%, 소드콤비네이션 20%, 도끼콤비네이션 15%, 킹펫에그 3%
+    const boost = (isFuseLuckActive || is8xLuckActive);
+    const roll = Math.random() * 100;
+    let resultEgg = '킹머니펫에그';
+    let resultIcon = '👑💵';
+    let resultColor = '#facc15';
+
+    if (boost ? (roll < 24) : (roll < 3)) {
+        resultEgg = '킹펫에그';
+        resultIcon = '👑✨';
+        resultColor = '#f43f5e';
+    } else if (boost ? (roll < 54) : (roll < 18)) {
+        resultEgg = '도끼콤비네이션 에그';
+        resultIcon = '🪓';
+        resultColor = '#fb923c';
+    } else if (boost ? (roll < 80) : (roll < 38)) {
+        resultEgg = '소드콤비네이션펫에그';
+        resultIcon = '⚔️';
+        resultColor = '#38bdf8';
+    } else {
+        resultEgg = '킹머니펫에그';
+        resultIcon = '👑💵';
+        resultColor = '#facc15';
+    }
+
+    inventory[resultEgg] = (inventory[resultEgg] || 0) + 1;
+    inventory['펫 알'] = (inventory['펫 알'] || 0) + 1;
+    saveGame(true);
+    renderRoyalFuseEggSelector();
+
+    if (typeof showFloatingText === 'function') {
+        showFloatingText(`✨ ${resultIcon} [${resultEgg}] 융합 성공!`, player.x, player.y - 70, resultColor);
+    }
+    alert(`⚗️ [👑 왕실 융합 대성공!]\n\n신비로운 황실 마법으로 새 생명의 알이 창조되었습니다!\n\n획득 알: ${resultIcon} [${resultEgg}]\n\n인큐베이터에 안치하여 특별한 능력을 지닌 신규 펫으로 부화시키세요!`);
+}
+window.executeRoyalFuse = executeRoyalFuse;
+
+// 2. [나무사장 & 관리자 전용] HUD 접근 권한 체크 & 업데이트
+function updateMasterEventHUDVisibility() {
+    const isNamusajang = (typeof currentUser !== 'undefined' && currentUser === '나무사장');
+    const isAdm = (typeof isAdmin === 'function' && isAdmin()) || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3());
+    const hud = document.getElementById('master-event-controller-hud');
+    if (hud) {
+        hud.style.display = (isNamusajang || isAdm) ? 'flex' : 'none';
+    }
+}
+setInterval(updateMasterEventHUDVisibility, 1500);
+
+// 이벤트 토글 함수들
+function toggleMasterEvent(type) {
+    if (type === 'fuseluck') {
+        isFuseLuckActive = !isFuseLuckActive;
+        const st = document.getElementById('st-fuseluck');
+        if (st) { st.innerText = isFuseLuckActive ? 'ON' : 'OFF'; st.style.color = isFuseLuckActive ? '#4ade80' : 'white'; }
+        alert(`⚗️ 퓨즈럭(Fuse Luck)이 ${isFuseLuckActive ? '활성화' : '비활성화'}되었습니다! (왕실 퓨즈 대박 확률 800% 증폭)`);
+        return;
+    }
+    if (type === '8xluck') {
+        is8xLuckActive = !is8xLuckActive;
+        window.is8xLuckActive = is8xLuckActive;
+        const st = document.getElementById('st-8xluck');
+        if (st) { st.innerText = is8xLuckActive ? 'ON' : 'OFF'; st.style.color = is8xLuckActive ? '#15803d' : 'black'; }
+        const ov = document.getElementById('clover-8x-overlay');
+        if (ov) ov.style.display = is8xLuckActive ? 'flex' : 'none';
+        if (is8xLuckActive) draw3DPixelCloverLoop();
+        alert(`🍀 8배 럭(8x Luck)이 ${is8xLuckActive ? '활성화' : '비활성화'}되었습니다! (모든 드롭, 특성, 융합 행운 800% 폭증!)`);
+        return;
+    }
+
+    activeMasterEvents[type] = !activeMasterEvents[type];
+    const el = document.getElementById('st-' + type);
+    if (el) { el.innerText = activeMasterEvents[type] ? 'ON' : 'OFF'; el.style.color = activeMasterEvents[type] ? '#4ade80' : 'white'; }
+
+    if (type === 'meteor' && activeMasterEvents[type]) {
+        triggerMeteorShowerEffect();
+    } else if (type === 'fire' && activeMasterEvents[type]) {
+        triggerFireStormEffect();
+    } else if (type === 'ufo' && activeMasterEvents[type]) {
+        triggerUFOSpawnEffect();
+    }
+}
+window.toggleMasterEvent = toggleMasterEvent;
+
+function toggleFallLeafMinigameEvent() {
+    activeMasterEvents.leaf = !activeMasterEvents.leaf;
+    const st = document.getElementById('st-leaf-game');
+    if (st) { st.innerText = activeMasterEvents.leaf ? 'ON' : 'OFF'; st.style.color = activeMasterEvents.leaf ? '#4ade80' : 'white'; }
+    if (typeof triggerFallLeafSpawnEvent === 'function') {
+        triggerFallLeafSpawnEvent(activeMasterEvents.leaf ? 40 : 0);
+    }
+}
+window.toggleFallLeafMinigameEvent = toggleFallLeafMinigameEvent;
+
+// 3. 🍀 8배 럭 입체 픽셀 클로버 캔버스 렌더러 (사진 완벽 구현)
+function draw3DPixelClover(ctx, cx, cy, size = 18, angle = 0) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+
+    // 사진처럼 층층이 뒤로 겹쳐지는 3D 그림자 레이어 10단
+    for (let layer = 9; layer >= 0; layer--) {
+        const offset = layer * 1.8;
+        ctx.fillStyle = (layer % 2 === 0) ? '#18181b' : '#facc15';
+        ctx.save();
+        ctx.translate(offset * 0.7, offset * 0.7);
+        // 4개의 픽셀 클로버 잎사귀
+        [-1, 1].forEach(dx => {
+            [-1, 1].forEach(dy => {
+                ctx.fillRect(dx * 7 - 5, dy * 7 - 5, 10, 10);
+            });
+        });
+        ctx.restore();
+    }
+
+    // 최상단 메인 골드 픽셀 클로버
+    ctx.fillStyle = '#fde047';
+    ctx.strokeStyle = '#ca8a04';
+    ctx.lineWidth = 1.5;
+    [-1, 1].forEach(dx => {
+        [-1, 1].forEach(dy => {
+            ctx.fillRect(dx * 7 - 5, dy * 7 - 5, 10, 10);
+            ctx.strokeRect(dx * 7 - 5, dy * 7 - 5, 10, 10);
+        });
+    });
+    // 클로버 중심 십자 틈새
+    ctx.fillStyle = '#1c1917';
+    ctx.fillRect(-2, -10, 4, 20);
+    ctx.fillRect(-10, -2, 20, 4);
+
+    ctx.restore();
+}
+
+let cloverAnimAngle = 0;
+function draw3DPixelCloverLoop() {
+    const canvas = document.getElementById('clover8xCanvas');
+    if (!canvas || !is8xLuckActive) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    cloverAnimAngle += 0.04;
+    draw3DPixelClover(ctx, 18, 18, 18, cloverAnimAngle);
+    requestAnimationFrame(draw3DPixelCloverLoop);
+}
+
+// 4. 👑 로얄 스냅 (Royal Snap) 시네마틱 연출 (왕관 출현 ➔ 팔다리 ➔ 로얄리티 스냅 ➔ 거대 해골 섬광 ➔ 멸종 특성)
+function triggerRoyalSnapCinematic() {
+    const overlay = document.getElementById('royal-snap-overlay');
+    const canvas = document.getElementById('royalSnapCanvas');
+    if (!overlay || !canvas) return;
+    overlay.style.display = 'flex';
+    const ctx = canvas.getContext('2d');
+
+    let frame = 0;
+    const maxFrames = 180; // 약 3초간 시네마틱
+
+    function anim() {
+        frame++;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const progress = frame / maxFrames;
+
+        if (progress < 0.45) {
+            // 1단계: 왕관 출현 & 팔다리 돋아남 (캐릭터화)
+            ctx.save();
+            ctx.translate(300, 320);
+            const bounce = Math.sin(frame * 0.2) * 8;
+
+            // 팔 다리
+            ctx.strokeStyle = '#facc15'; ctx.lineWidth = 8; ctx.lineCap = 'round';
+            // 다리
+            ctx.beginPath(); ctx.moveTo(-35, 60); ctx.lineTo(-45, 120); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(35, 60); ctx.lineTo(45, 120); ctx.stroke();
+            // 팔 (서서히 위로 치켜들기)
+            const armAngle = (progress / 0.45) * Math.PI * 0.7;
+            ctx.beginPath(); ctx.moveTo(-60, 20); ctx.lineTo(-60 - Math.cos(armAngle)*65, 20 - Math.sin(armAngle)*65); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(60, 20); ctx.lineTo(60 + Math.cos(armAngle)*65, 20 - Math.sin(armAngle)*65); ctx.stroke();
+
+            // 황금 왕관 몸체
+            ctx.fillStyle = '#facc15'; ctx.strokeStyle = '#ca8a04'; ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.moveTo(-90, 50); ctx.lineTo(90, 50); ctx.lineTo(80, -30);
+            ctx.lineTo(40, 10); ctx.lineTo(0, -60); ctx.lineTo(-40, 10); ctx.lineTo(-80, -30);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+
+            // 왕관 눈
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath(); ctx.arc(-25, 25, 8, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(25, 25, 8, 0, Math.PI * 2); ctx.fill();
+
+            ctx.fillStyle = '#fde047'; ctx.font = 'bold 22px sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText("👑 왕관이 깨어납니다...", 0, 160);
+            ctx.restore();
+
+        } else if (progress < 0.55) {
+            // 2단계: 팔을 번쩍 들며 [로얄리티 스냅!] 텍스트 & 백색 황금 섬광
+            ctx.fillStyle = 'rgba(250, 204, 21, 0.85)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff'; ctx.font = '900 36px sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText("⚡ [ ROYATLY SNAP ! ] ⚡", 300, 300);
+
+        } else {
+            // 3단계: 화면 전체에 거대한 해골 모양 섬광 + 멸종 특성 부여
+            const skullAlpha = 1 - ((progress - 0.55) / 0.45);
+            ctx.save();
+            ctx.globalAlpha = skullAlpha;
+            ctx.translate(300, 280);
+
+            // 거대 해골 (Skull) 실루엣 & 섬광
+            ctx.fillStyle = '#f8fafc'; ctx.strokeStyle = '#facc15'; ctx.lineWidth = 8;
+            // 두개골
+            ctx.beginPath(); ctx.arc(0, -30, 110, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            // 턱
+            ctx.beginPath(); ctx.roundRect(-55, 45, 110, 70, 16); ctx.fill(); ctx.stroke();
+            // 눈 구멍
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath(); ctx.ellipse(-40, -20, 26, 36, -0.15, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(40, -20, 26, 36, 0.15, 0, Math.PI*2); ctx.fill();
+            // 코 구멍
+            ctx.beginPath(); ctx.moveTo(0, 20); ctx.lineTo(-12, 45); ctx.lineTo(12, 45); ctx.closePath(); ctx.fill();
+            // 이빨
+            for (let t = -40; t <= 40; t += 20) {
+                ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 4;
+                ctx.strokeRect(t - 6, 75, 12, 28);
+            }
+
+            ctx.fillStyle = '#ef4444'; ctx.font = '900 32px sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText("💀 [ 멸종 특성 (Extinction) 부여 완료! ]", 0, 175);
+            ctx.restore();
+        }
+
+        if (frame < maxFrames) {
+            requestAnimationFrame(anim);
+        } else {
+            overlay.style.display = 'none';
+            // 전 서버/플레이어 멸종 특성 부여!
+            window.activeExtinctionTrait = true;
+            try { localStorage.setItem('active_extinction_trait', 'true'); } catch(e) {}
+            if (typeof showFloatingText === 'function') {
+                showFloatingText("💀 멸종 특성 활성화! (전체 파괴력 10배 폭증!)", player.x, player.y - 80, '#ef4444');
+            }
+            alert("👑💀 [로얄리티 스냅 대격변 발동 완료!]\n\n황금 왕관이 팔을 들어 로얄리티 스냅을 시전했습니다!\n화면에 거대한 해골 섬광이 번쩍이며 전 서버에 [멸종 특성 (Extinction Trait)]이 부여되었습니다!\n(벌목 공격력 및 수확량 10배 폭증!)");
+        }
+    }
+    requestAnimationFrame(anim);
+}
+window.triggerRoyalSnapCinematic = triggerRoyalSnapCinematic;
+
+// 메테오 / UFO / 파이어 파티클 효과 함수들
+function triggerMeteorShowerEffect() {
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            if (typeof floatTexts !== 'undefined') {
+                floatTexts.push({ x: player.x + (Math.random()*400 - 200), y: player.y + (Math.random()*400 - 200), text: '☄️ 거대 메테오 충돌!', color: '#ef4444', life: 70, size: 22 });
+            }
+        }, i * 200);
+    }
+}
+function triggerFireStormEffect() {
+    for (let i = 0; i < 25; i++) {
+        setTimeout(() => {
+            if (typeof floatTexts !== 'undefined') {
+                floatTexts.push({ x: player.x + (Math.random()*300 - 150), y: player.y + (Math.random()*300 - 150), text: '🔥 화염 폭발!', color: '#f97316', life: 60, size: 20 });
+            }
+        }, i * 150);
+    }
+}
+function triggerUFOSpawnEffect() {
+    if (typeof showFloatingText === 'function') {
+        showFloatingText("🛸 UFO 외계 우주선이 지상에 출현했습니다!", player.x, player.y - 70, '#06b6d4');
+    }
+}
+
 
 // 🎨 [3번째 사진 스케치 충실 구현] fall's hero 캐릭터 일러스트 렌더러
 function drawFallHeroCanvas() {
@@ -43585,5 +43957,106 @@ window.renderSwordsmenDuelCutscene = renderSwordsmenDuelCutscene;
             </div>
         </div>
     </div>
+
+    <!-- 👑 [로얄 지형 머신] 왕실 퓨즈 (Royal Fuse) 모달 -->
+    <div id="royal-fuse-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); z-index: 99995; justify-content: center; align-items: center;">
+        <div style="background: linear-gradient(160deg, #1e112a 0%, #2e1065 50%, #0f051d 100%); border: 3px solid #facc15; border-radius: 24px; width: 92%; max-width: 400px; padding: 20px; color: white; box-shadow: 0 10px 45px rgba(0,0,0,0.9), 0 0 30px rgba(250, 204, 21, 0.45); position: relative; text-align: center; font-family: sans-serif;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed rgba(250, 204, 21, 0.4); padding-bottom: 10px; margin-bottom: 14px;">
+                <div style="font-size: 18px; font-weight: 950; color: #fde047; display: flex; align-items: center; gap: 8px;">
+                    👑 <span>왕실 퓨즈 머신 (Royal Fuse)</span>
+                </div>
+                <button onclick="closeRoyalFuseModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fde047; font-size: 16px; font-weight: 900; width: 30px; height: 30px; border-radius: 8px; cursor: pointer;">✕</button>
+            </div>
+
+            <div style="font-size: 12.5px; color: #e9d5ff; margin-bottom: 14px; line-height: 1.4;">
+                보유한 펫의 알을 왕실의 비전 마법으로 융합하여<br>
+                <strong style="color: #facc15;">전설의 신규 4종 에그</strong>를 창조하세요!
+            </div>
+
+            <!-- 보유 알 선택 영역 -->
+            <div style="background: rgba(0,0,0,0.45); border: 1.5px solid rgba(250, 204, 21, 0.3); border-radius: 14px; padding: 12px; margin-bottom: 14px;">
+                <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 8px; font-weight: 800;">[융합에 사용할 알 선택]</div>
+                <div id="royal-fuse-egg-selector" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;"></div>
+            </div>
+
+            <!-- 획득 가능 알 목록 및 확률 표시 -->
+            <div style="background: rgba(15, 23, 42, 0.7); border-radius: 12px; padding: 10px; margin-bottom: 14px; text-align: left; font-size: 12px;">
+                <div style="color: #facc15; font-weight: 900; margin-bottom: 5px;">✨ 융합 출현 신규 알 & 확률:</div>
+                <div style="display: flex; justify-content: space-between; color: #fef08a;"><span>👑💵 킹머니펫에그</span><strong>62%</strong></div>
+                <div style="display: flex; justify-content: space-between; color: #38bdf8;"><span>⚔️ 소드콤비네이션펫에그</span><strong>20%</strong></div>
+                <div style="display: flex; justify-content: space-between; color: #fb923c;"><span>🪓 도끼콤비네이션 에그</span><strong>15%</strong></div>
+                <div style="display: flex; justify-content: space-between; color: #f43f5e; font-weight: 900;"><span>👑✨ 킹펫에그 (전설)</span><strong>3%</strong></div>
+                <div id="royal-fuse-luck-indicator" style="margin-top: 6px; font-size: 11px; color: #4ade80; display: none; font-weight: 900;">
+                    ⚡ [퓨즈럭 8배 버프 활성화 중! 대박 확률 800% 폭증!]
+                </div>
+            </div>
+
+            <button id="btn-royal-fuse-action" onclick="executeRoyalFuse()" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); border: none; border-radius: 12px; color: black; font-weight: 950; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(234, 179, 8, 0.45); letter-spacing: 0.5px;">
+                ⚗️ 왕실 융합 시작 !
+            </button>
+        </div>
+    </div>
+
+    <!-- 🎪 [나무사장 & 관리자 전용] 대규모 이벤트 제어 HUD -->
+    <div id="master-event-controller-hud" style="display: none; position: fixed; right: 12px; top: 75px; z-index: 99992; flex-direction: column; gap: 6px; font-family: sans-serif;">
+        <div style="background: rgba(15, 23, 42, 0.95); border: 2.2px solid #facc15; border-radius: 16px; padding: 10px 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.85), 0 0 15px rgba(250, 204, 21, 0.35); color: white; width: 195px; text-align: center;">
+            
+            <div style="font-size: 12.5px; font-weight: 950; color: #facc15; border-bottom: 1.5px dashed rgba(250, 204, 21, 0.4); padding-bottom: 5px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                🎪 <span>마스터 이벤트 제어</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <!-- 🍂 가을낙엽 줍기 미니게임 토글 -->
+                <button id="btn-toggle-fall-leaf-game" onclick="toggleFallLeafMinigameEvent()" style="padding: 6px 8px; background: rgba(30, 41, 59, 0.9); border: 1.5px solid #f97316; border-radius: 8px; color: #fed7aa; font-weight: 900; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+                    <span>🍂 낙엽 줍기 미니게임</span><strong id="st-leaf-game">OFF</strong>
+                </button>
+
+                <!-- 🛸 UFO 이벤트 토글 -->
+                <button id="btn-toggle-ufo" onclick="toggleMasterEvent('ufo')" style="padding: 6px 8px; background: rgba(30, 41, 59, 0.9); border: 1.5px solid #06b6d4; border-radius: 8px; color: #a5f3fc; font-weight: 900; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+                    <span>🛸 UFO 외계인</span><strong id="st-ufo">OFF</strong>
+                </button>
+
+                <!-- ☄️ 메테오 이벤트 토글 -->
+                <button id="btn-toggle-meteor" onclick="toggleMasterEvent('meteor')" style="padding: 6px 8px; background: rgba(30, 41, 59, 0.9); border: 1.5px solid #ef4444; border-radius: 8px; color: #fca5a5; font-weight: 900; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+                    <span>☄️ 메테오 운석 낙하</span><strong id="st-meteor">OFF</strong>
+                </button>
+
+                <!-- 🔥 불 이벤트 토글 -->
+                <button id="btn-toggle-fire" onclick="toggleMasterEvent('fire')" style="padding: 6px 8px; background: rgba(30, 41, 59, 0.9); border: 1.5px solid #ea580c; border-radius: 8px; color: #fdba74; font-weight: 900; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+                    <span>🔥 불꽃 화염 대격변</span><strong id="st-fire">OFF</strong>
+                </button>
+
+                <!-- ⚗️ 퓨즈럭 토글 -->
+                <button id="btn-toggle-fuseluck" onclick="toggleMasterEvent('fuseluck')" style="padding: 6px 8px; background: rgba(30, 41, 59, 0.9); border: 1.5px solid #a855f7; border-radius: 8px; color: #e9d5ff; font-weight: 900; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+                    <span>⚗️ 퓨즈럭 (Fuse Luck)</span><strong id="st-fuseluck">OFF</strong>
+                </button>
+
+                <!-- 🍀 8배럭 토글 (사용자 사진 스케치 구현) -->
+                <button id="btn-toggle-8xluck" onclick="toggleMasterEvent('8xluck')" style="padding: 7px 8px; background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); border: 1.5px solid #fef08a; border-radius: 8px; color: black; font-weight: 950; font-size: 11.5px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(234, 179, 8, 0.5);">
+                    <span>🍀 8배 럭 (8x Luck)</span><strong id="st-8xluck">OFF</strong>
+                </button>
+
+                <!-- 👑 로얄 스냅 발동 버튼 -->
+                <button id="btn-trigger-royal-snap" onclick="triggerRoyalSnapCinematic()" style="margin-top: 4px; padding: 9px 8px; background: linear-gradient(135deg, #7e22ce 0%, #4c1d95 100%); border: 2px solid #facc15; border-radius: 10px; color: #fde047; font-weight: 950; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(126, 34, 206, 0.6); letter-spacing: 0.5px;">
+                    👑 로얄 스냅 (멸종 특성)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🍀 8배 럭 화면 중앙 플로팅 3D 픽셀 클로버 오버레이 (사진 완벽 구현) -->
+    <div id="clover-8x-overlay" style="display: none; position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 99990; pointer-events: none; align-items: center; gap: 10px; background: rgba(0,0,0,0.75); border: 2px solid #facc15; padding: 6px 16px; border-radius: 20px; box-shadow: 0 0 25px rgba(250, 204, 21, 0.6);">
+        <canvas id="clover8xCanvas" width="36" height="36"></canvas>
+        <div style="font-size: 14px; font-weight: 950; color: #facc15; letter-spacing: 0.5px; text-shadow: 0 2px 5px rgba(0,0,0,0.8);">
+            🍀 8X LUCK 활성화 중! (모든 행운 800% 폭증)
+        </div>
+    </div>
+
+    <!-- 💀 로얄 스냅 풀스크린 해골 섬광 오버레이 -->
+    <div id="royal-snap-overlay" style="display: none; position: fixed; inset: 0; z-index: 99999; pointer-events: none; justify-content: center; align-items: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
+        <canvas id="royalSnapCanvas" width="600" height="600" style="max-width: 90vw; max-height: 90vh;"></canvas>
+    </div>
+
 </body>
 </html>
