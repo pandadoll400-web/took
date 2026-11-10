@@ -39526,6 +39526,7 @@ window.startWeqwxe3StageDanceTest = startWeqwxe3StageDanceTest;
 
 function drawAdminPirateTerrain(ctx) {
     ctx.save();
+    const time = (typeof gameTime !== 'undefined' ? gameTime : Date.now() * 0.003);
     // 🏴‍☠️ [광역 2500px 대폭 확장] Y: -12500 ~ -10000
     const seaGrad = ctx.createLinearGradient(0, -12500, 0, -10000);
     seaGrad.addColorStop(0, '#020617');
@@ -39612,10 +39613,7 @@ window.drawRoyalTerrain = drawRoyalTerrain;
 
 // 👑 [로얄 왕관 나무 렌더러] (나무 기둥 + 거대 황금 왕관 지붕 + 보석 장식)
 function drawRoyalCrownTree(ctx, tree) {
-    const x = tree.x;
-    const y = tree.y;
     ctx.save();
-    ctx.translate(x, y);
 
     // 1. 기둥 그림자 & 튼튼한 목재 기둥
     ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
@@ -41753,7 +41751,7 @@ window.renderIndexGrid = renderIndexGrid;
         }
         window.buyPirateLuckyBlock = buyPirateLuckyBlock;
         window.buyPirateLuckyPieces = buyPirateLuckyBlock; // 하위 호환
-        window.buyPirateLuckyPieces = buyPirateLuckyPieces;
+        
 
         // ==========================================
         // ⚒️ [손그림 스케치] 해적 퓨즈머신 로직
