@@ -2632,6 +2632,19 @@
                     <!-- Dynamic button inserted by updatePetMachineModalUI() -->
                 </div>
             </div>
+            <!-- ✨ 특성 배율 미니멀 안내 -->
+            <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid #facc15; border-radius: 12px; padding: 8px 10px; margin-bottom: 12px; display: flex; justify-content: space-around; font-size: 11.5px; font-weight: 900;">
+                <span style="color: #facc15;">✨ 골드 1.5x</span>
+                <span style="color: #38bdf8;">💎 다이아 2.0x</span>
+                <span style="color: #f43f5e;">🌈 레인보우 5.0x</span>
+            </div>
+
+            <!-- 보유 알 선택 탭 -->
+            <div style="background: rgba(30, 41, 59, 0.7); border-radius: 12px; padding: 10px; margin-bottom: 12px;">
+                <div style="font-size: 12px; font-weight: 800; color: #94a3b8; margin-bottom: 6px; text-align: left;">[안치할 알 선택]</div>
+                <div id="incubator-egg-picker" style="display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;"></div>
+            </div>
+
 
             <!-- 중앙 인큐베이터 배양 챔버 (알 없을 때 빈 상태 vs 알 안치 시 5분 배양 애니메이션 vs 5분 경과 시 부화 준비) -->
             <div id="incubator-chamber" style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(168, 85, 247, 0.4); border-radius: 14px; padding: 20px 16px; margin-bottom: 16px; text-align: center; min-height: 145px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -2696,32 +2709,46 @@
 
         <!-- 🥚 [바위 2] 공룡알 조각 10개 -> 펫 알 교환 제단 모달 -->
                 <!-- 🥚 알 제작 바위 모달 (달걀 아이콘 + 숫자 + 사기! 버튼) -->
-        <div id="pet-leash-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle at 50% 20%, #1a2234 0%, #0b1120 100%); color: white; padding: 22px 20px; border-radius: 24px; width: 88%; max-width: 320px; display: none; border: 2px solid #38bdf8; z-index: 60; box-shadow: 0 15px 50px rgba(0,0,0,0.95), 0 0 35px rgba(56, 189, 248, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; text-align: center; box-sizing: border-box;">
-            <!-- 닫기 버튼 -->
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 2px;">
-                <button onclick="closePetLeashModal()" style="background: rgba(255,255,255,0.1); border: none; color: #94a3b8; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer;">✕</button>
-            </div>
-
-            <!-- 달걀 하나 -->
-            <div style="font-size: 80px; line-height: 1; margin: 6px 0 16px 0; filter: drop-shadow(0 0 18px rgba(250, 204, 21, 0.5));">🥚</div>
-
-            <!-- 보유 개수 숫자 -->
-            <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 20px;">
-                <div style="background: rgba(15, 23, 42, 0.85); padding: 7px 14px; border-radius: 12px; border: 1.5px solid rgba(56, 189, 248, 0.45);">
-                    <div style="font-size: 11px; color: #94a3b8; font-weight: bold;">조각</div>
-                    <div id="leash-modal-heart-count" style="color: #38bdf8; font-size: 17px; font-weight: 900;">0 / 10</div>
-                </div>
-                <div style="background: rgba(15, 23, 42, 0.85); padding: 7px 14px; border-radius: 12px; border: 1.5px solid rgba(250, 204, 21, 0.45);">
-                    <div style="font-size: 11px; color: #94a3b8; font-weight: bold;">보유 알</div>
-                    <div id="leash-modal-egg-count" style="color: #facc15; font-size: 17px; font-weight: 900;">0</div>
-                </div>
-            </div>
-
-            <!-- 사기! 버튼 -->
-            <button id="leash-buy-btn" onclick="craftPetEgg()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 14px; font-weight: 900; font-size: 19px; cursor: pointer; box-shadow: 0 4px 0 #047857, 0 8px 20px rgba(16, 185, 129, 0.45); letter-spacing: 2px;">
-                사기!
-            </button>
+        <div id="pet-leash-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #0f172a; color: white; padding: 18px; border-radius: 20px; width: 90%; max-width: 320px; display: none; border: 2px solid #38bdf8; z-index: 60; box-shadow: 0 10px 40px rgba(0,0,0,0.9); font-family: sans-serif; text-align: center; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 12px;">
+            <div style="font-size: 15px; font-weight: 900; color: #38bdf8;">🦕 펫 알 제작 바위</div>
+            <button onclick="closePetLeashModal()" style="background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer;">✕</button>
         </div>
+
+        <!-- 4종 알 확률 미니멀 카드 그리드 -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+            <div style="background: #1e293b; border: 1.5px solid #facc15; border-radius: 10px; padding: 8px 6px;">
+                <div style="font-size: 22px;">🐱🥚</div>
+                <div style="font-size: 12px; font-weight: 900; color: #fef08a; margin-top: 2px;">고양이알</div>
+                <div style="font-size: 11px; color: #facc15; font-weight: 900;">60%</div>
+            </div>
+            <div style="background: #1e293b; border: 1.5px solid #38bdf8; border-radius: 10px; padding: 8px 6px;">
+                <div style="font-size: 22px;">🐺🥚</div>
+                <div style="font-size: 12px; font-weight: 900; color: #bae6fd; margin-top: 2px;">늑대알</div>
+                <div style="font-size: 11px; color: #38bdf8; font-weight: 900;">20%</div>
+            </div>
+            <div style="background: #1e293b; border: 1.5px solid #a855f7; border-radius: 10px; padding: 8px 6px;">
+                <div style="font-size: 22px;">🦍🥚</div>
+                <div style="font-size: 12px; font-weight: 900; color: #e9d5ff; margin-top: 2px;">고릴라알</div>
+                <div style="font-size: 11px; color: #c084fc; font-weight: 900;">15%</div>
+            </div>
+            <div style="background: #1e293b; border: 1.5px solid #06b6d4; border-radius: 10px; padding: 8px 6px;">
+                <div style="font-size: 22px;">🦈🥚</div>
+                <div style="font-size: 12px; font-weight: 900; color: #a5f3fc; margin-top: 2px;">상어알</div>
+                <div style="font-size: 11px; color: #06b6d4; font-weight: 900;">5%</div>
+            </div>
+        </div>
+
+        <!-- 조각 수량 -->
+        <div style="background: #1e293b; border-radius: 10px; padding: 8px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 12.5px;">
+            <span style="color: #94a3b8; font-weight: 800;">공룡알 조각</span>
+            <strong id="leash-modal-heart-count" style="color: #38bdf8; font-size: 14px;">0 / 10</strong>
+        </div>
+
+        <button id="leash-buy-btn" onclick="craftPetEgg()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #10b981, #059669); border: none; border-radius: 10px; color: white; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
+            🥚 10개로 알 제작 !
+        </button>
+    </div>
 
         <!-- 🐾 인큐베이터 3대 고유 펫 도감 모달 -->
         <div id="penguin-codex-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.98); color: white; padding: 22px 18px; border-radius: 18px; width: 92%; max-width: 480px; max-height: 85%; overflow-y: auto; display: none; border: 2.5px solid #38bdf8; z-index: 55; box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.4); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
@@ -4131,6 +4158,45 @@
 
         function updatePetMachineModalUI() {
             loadIncubatorState();
+            // 🥚 [인큐베이터 알 선택기 렌더링]
+            const pickerEl = document.getElementById('incubator-egg-picker');
+            if (pickerEl) {
+                pickerEl.innerHTML = '';
+                const eggTypesList = [
+                    { name: '고양이알', icon: '🐱🥚', color: '#facc15' },
+                    { name: '늑대알', icon: '🐺🥚', color: '#38bdf8' },
+                    { name: '고릴라알', icon: '🦍🥚', color: '#a855f7' },
+                    { name: '상어알', icon: '🦈🥚', color: '#06b6d4' },
+                    { name: '킹머니펫에그', icon: '👑💵', color: '#facc15' },
+                    { name: '소드콤비네이션펫에그', icon: '⚔️', color: '#38bdf8' },
+                    { name: '도끼콤비네이션 에그', icon: '🪓', color: '#fb923c' },
+                    { name: '킹펫에그', icon: '👑✨', color: '#f43f5e' },
+                    { name: '펫 알', icon: '🥚', color: '#cbd5e1' }
+                ];
+                let hasAnyEgg = false;
+                eggTypesList.forEach(item => {
+                    const cnt = inventory[item.name] || 0;
+                    if (cnt > 0) {
+                        hasAnyEgg = true;
+                        const chip = document.createElement('button');
+                        chip.style.padding = '5px 10px';
+                        chip.style.background = '#1e293b';
+                        chip.style.border = '1.5px solid ' + item.color;
+                        chip.style.borderRadius = '8px';
+                        chip.style.color = 'white';
+                        chip.style.fontSize = '11.5px';
+                        chip.style.fontWeight = 'bold';
+                        chip.style.cursor = 'pointer';
+                        chip.innerHTML = `${item.icon} ${item.name} <span style="color: ${item.color}">(${cnt})</span>`;
+                        chip.onclick = () => { placeEggInIncubator(item.name); };
+                        pickerEl.appendChild(chip);
+                    }
+                });
+                if (!hasAnyEgg) {
+                    pickerEl.innerHTML = '<div style="color: #64748b; font-size: 11px;">보유한 알이 없습니다. (알 제작 바위에서 제작)</div>';
+                }
+            }
+
             const ownedEl = document.getElementById('incubator-owned-eggs');
             const activeEl = document.getElementById('incubator-active-eggs');
             const btnArea = document.getElementById('incubator-action-btn-area');
@@ -4216,30 +4282,40 @@
             }
         }
 
-        function placeEggInIncubator() {
-            let eggCount = (inventory['펫 알'] || 0);
-            if (eggCount <= 0 && inventory['공룡 알 화석'] > 0) {
-                inventory['펫 알'] = inventory['공룡 알 화석'];
-                delete inventory['공룡 알 화석'];
-                eggCount = inventory['펫 알'];
+        function placeEggInIncubator(chosenEggType) {
+            const availableEggs = [
+                '고양이알', '늑대알', '고릴라알', '상어알',
+                '킹머니펫에그', '소드콤비네이션펫에그', '도끼콤비네이션 에그', '킹펫에그', '펫 알'
+            ];
+
+            let targetEgg = chosenEggType;
+            if (!targetEgg) {
+                for (let k of availableEggs) {
+                    if (inventory[k] && inventory[k] > 0) { targetEgg = k; break; }
+                }
             }
 
-            if (eggCount <= 0) {
-                alert("인벤토리에 보유 중인 '펫 알'이 없습니다!\n우측 알 제작 바위에서 공룡알 조각 10개로 펫 알을 교환해오세요.");
+            if (!targetEgg || !inventory[targetEgg] || inventory[targetEgg] <= 0) {
+                alert("안치할 알을 선택하거나 보유 중인 알이 없습니다!\n우측 알 제작 바위에서 제작하세요.");
                 return;
             }
 
             if (incubatorState.active) {
-                alert("이미 인큐베이터 안에서 알이 배양 중입니다! 5분 뒤 부화 완료 후 다음 알을 넣을 수 있습니다.");
+                alert("이미 인큐베이터 안에서 알이 배양 중입니다! 5분 뒤 완료 후 다음 알을 넣을 수 있습니다.");
                 return;
             }
 
-            inventory['펫 알']--;
+            inventory[targetEgg]--;
+            if (targetEgg !== '펫 알' && inventory['펫 알'] && inventory['펫 알'] > 0) {
+                inventory['펫 알']--;
+            }
+
             incubatorState.active = true;
+            incubatorState.eggType = targetEgg;
             incubatorState.startTime = Date.now();
             incubatorState.duration = 300000; // 5분
             saveIncubatorState();
-            saveGame(true); // 즉시 강제 세이브 (세로고침/재접속 대비)
+            saveGame(true);
             updatePetMachineModalUI();
 
             floatTexts.push({ x: player.x, y: player.y - 80, text: '🥚 [인큐베이터] 펫 알 안치! (5분 배양 시작)', color: '#38bdf8', life: 100, size: 20 });
@@ -4421,7 +4497,7 @@
                 let sp = Math.random() * 5 + 2;
                 labSparks.push({ x: player.x, y: player.y, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp, color: (i % 2 === 0 ? '#38bdf8' : '#facc15'), life: 35 });
             }
-            alert(`🎉 [🥚 알 제작 완료!]\n\n공룡알 조각 10개로 [${eggIcon} ${eggName}] (${eggRate})을(를) 제작했습니다!\n\n인큐베이터에서 부화시키거나 로얄 지형 왕실 퓨즈 머신에서 융합할 수 있습니다!`);
+            alert(`🎉 [${eggIcon} ${eggName}] (${eggRate}) 획득!`);
         }
 
         const buyPetLeash = craftPetEgg;
@@ -15552,7 +15628,7 @@
                 for (let rock of iceCanyonFossilRocks) {
                     let rDist = Math.hypot(cx - rock.x, cy - rock.y);
                     let rPlayerDist = Math.hypot(player.x - rock.x, player.y - rock.y);
-                    if (rDist < rock.radius + 35 || (isSpacebar && rPlayerDist < 90)) {
+                    if (rDist < rock.radius + 65 || (isSpacebar && rPlayerDist < 120)) {
                         // egg_rock(바위 2) 클릭 시 반드시 알 제작 모달 오픈!
                         if (rock.id === 'egg_rock' || rock.id === 'leash_rock' || rock.x > 350) {
                             openPetLeashModal(rock);
@@ -15713,8 +15789,8 @@
                 }
 
                 // 👑 로얄 머신 클릭 감지 (X: 160, Y: 1750, 1번째 사진)
-                let rmDist = Math.hypot(cx - 160, cy - 1750);
-                let rmPlayerDist = Math.hypot(player.x - 160, player.y - 1750);
+                let rmDist = Math.hypot(cx - 300, cy - 1350);
+                let rmPlayerDist = Math.hypot(player.x - 300, player.y - 1350);
                 if (rmDist < 65 || (isSpacebar && rmPlayerDist < 85)) {
                     const isAdminUser = (typeof isAdmin === 'function' && isAdmin()) || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(typeof currentUser !== 'undefined' ? currentUser : ''));
                     if (isAdminUser) {
@@ -19614,7 +19690,7 @@ window.claimPirateShipSkin = claimPirateShipSkin;
                 unlocked: true, price: 0, reqLevel: 135, color1: '#fef08a', color2: '#ef4444', drops: [4, 8]
             },
             {
-                id: 'royal', type: 'royal', x: GAME_WIDTH / 2, y: 1500, radius: 155, trunkRadius: 52,
+                id: 'royal', type: 'royal', x: GAME_WIDTH / 2, y: 1720, radius: 155, trunkRadius: 52,
 name: '로얄 왕관 나무', progress: 0, maxProgress: 350, shakeAngle: 0,
 unlocked: true, price: 0, reqLevel: 1, color1: '#f59e0b', color2: '#b45309', drops: [5, 10]
             }
@@ -19634,7 +19710,7 @@ unlocked: true, price: 0, reqLevel: 1, color1: '#f59e0b', color2: '#b45309', dro
             { type: 'space', name: '우주 상점', x: 420, y: -7300, frontX: shopFrontX, queueY: -7150, queue: [] },
             { type: 'ice_canyon', name: '얼음 협곡 상점', x: 420, y: -8300, frontX: shopFrontX, queueY: -8150, queue: [] },
             { type: 'angel_devil', name: '천악 상점', x: 420, y: -9300, frontX: shopFrontX, queueY: -9180, queue: [], roofColor: '#fef08a', wallColor: '#450a0a' },
-            { type: 'royal', name: '로얄 상점', x: 420, y: 1750, frontX: shopFrontX, queueY: 1880, queue: [], roofColor: '#f59e0b', wallColor: '#581c87' }
+            { type: 'royal', name: '로얄 상점', x: 480, y: 1720, frontX: 430, queueY: 1850, queue: [], roofColor: '#f59e0b', wallColor: '#581c87' }
         ];
 
         // 🔮 크래프팅 머신 (일반 지역 중앙 배치)
@@ -27576,6 +27652,7 @@ unlocked: true, price: 0, reqLevel: 1, color1: '#f59e0b', color2: '#b45309', dro
 
         function update() {
             if (typeof updateLuckyCoinMinigame === 'function') updateLuckyCoinMinigame();
+            if (typeof updateFallLeavesLoop === 'function') updateFallLeavesLoop();
             if (window.inBoatRaceDimension && typeof updateBoatRace === 'function') {
                 updateBoatRace();
                 return;
@@ -36513,7 +36590,7 @@ ctx.fillText("👑 [로얄 지형] 로얄 황실 영지 (Royal Realm)", GAME_WID
             // 🍂 [2번째 사진 스케치] 크래프트 머신 자리에 가을 상점(Fall Shop) 배치
             renderList.push({ type: 'fallShop', obj: { x: 300, y: 930 }, y: 930 });
             // 👑 [1번째 사진 스케치] 로얄 지형 머신 배치 (X: 160, Y: 1750)
-            renderList.push({ type: 'royalMachine', obj: { x: 160, y: 1750 }, y: 1750 });
+            renderList.push({ type: 'royalMachine', obj: { x: 300, y: 1350 }, y: 1350 });
 
             // 🪙 [weqwxe3 전용] 원숭이 보스전 자리의 큰 황금 동전 (머니상점)
             // 🪙 [어드민 전용] 공개 서버에서는 일반 유저에게 인피니티 코인 상점 숨김
@@ -36544,6 +36621,7 @@ ctx.fillText("👑 [로얄 지형] 로얄 황실 영지 (Royal Realm)", GAME_WID
 
             renderList.sort((a, b) => a.y - b.y);
 
+            if (typeof drawFallLeavesWorld === 'function') drawFallLeavesWorld(ctx);
             renderList.forEach(item => {
                 if (item.type === 'fruit') {
                     let f = item.obj;
@@ -39613,6 +39691,7 @@ window.drawRoyalTerrain = drawRoyalTerrain;
 // 👑 [로얄 왕관 나무 렌더러] (나무 기둥 + 거대 황금 왕관 지붕 + 보석 장식)
 function drawRoyalCrownTree(ctx, tree) {
     ctx.save();
+    ctx.scale(1.6, 1.6);
 
     // 1. 기둥 그림자 & 튼튼한 목재 기둥
     ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
@@ -39677,15 +39756,18 @@ function drawRoyalCrownTree(ctx, tree) {
     ctx.font = 'bold 11px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('🔒 흔들기 잠김', 0, 33);
+    ctx.fillText('👑 왕관 나무', 0, 33);
 
     ctx.restore();
 }
 window.drawRoyalCrownTree = drawRoyalCrownTree;
 
 // 🏰 [1번째 사진 스케치 충실 구현] 로얄 머신 (공개 서버: 검정 실루엣 / 어드민: 풀컬러 오픈)
-function drawRoyalMachine(ctx, x = 160, y = 1750) {
-    const isAdminUser = (typeof isAdmin === 'function' && isAdmin()) || (typeof isUserWeqwxe3 === 'function' && isUserWeqwxe3(typeof currentUser !== 'undefined' ? currentUser : ''));
+function drawRoyalMachine(ctx, x = 300, y = 1350) {
+    const isAdminUser = true; // 👑 왕실 퓨즈 머신 전체 공개
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(1.6, 1.6); // 🎯 1.6배 대형화 중앙 배치
     ctx.save();
     ctx.translate(x, y);
 
@@ -40723,7 +40805,7 @@ function executeRoyalFuse() {
     if (typeof showFloatingText === 'function') {
         showFloatingText(`✨ ${resultIcon} [${resultEgg}] 융합 성공!`, player.x, player.y - 70, resultColor);
     }
-    alert(`⚗️ [👑 왕실 융합 대성공!]\n\n신비로운 황실 마법으로 새 생명의 알이 창조되었습니다!\n\n획득 알: ${resultIcon} [${resultEgg}]\n\n인큐베이터에 안치하여 특별한 능력을 지닌 신규 펫으로 부화시키세요!`);
+    alert(`⚗️ ${resultIcon} [${resultEgg}] 융합 성공!`);
 }
 window.executeRoyalFuse = executeRoyalFuse;
 
@@ -43956,41 +44038,50 @@ window.renderSwordsmenDuelCutscene = renderSwordsmenDuelCutscene;
     </div>
 
     <!-- 👑 [로얄 지형 머신] 왕실 퓨즈 (Royal Fuse) 모달 -->
-    <div id="royal-fuse-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); z-index: 99995; justify-content: center; align-items: center;">
-        <div style="background: linear-gradient(160deg, #1e112a 0%, #2e1065 50%, #0f051d 100%); border: 3px solid #facc15; border-radius: 24px; width: 92%; max-width: 400px; padding: 20px; color: white; box-shadow: 0 10px 45px rgba(0,0,0,0.9), 0 0 30px rgba(250, 204, 21, 0.45); position: relative; text-align: center; font-family: sans-serif;">
+    <div id="royal-fuse-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 99995; justify-content: center; align-items: center;">
+        <div style="background: #111827; border: 2.5px solid #facc15; border-radius: 20px; width: 92%; max-width: 360px; padding: 16px; color: white; text-align: center; font-family: sans-serif; box-shadow: 0 10px 40px rgba(0,0,0,0.9); box-sizing: border-box;">
             
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed rgba(250, 204, 21, 0.4); padding-bottom: 10px; margin-bottom: 14px;">
-                <div style="font-size: 18px; font-weight: 950; color: #fde047; display: flex; align-items: center; gap: 8px;">
-                    👑 <span>왕실 퓨즈 머신 (Royal Fuse)</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #374151; padding-bottom: 8px; margin-bottom: 12px;">
+                <div style="font-size: 16px; font-weight: 900; color: #fde047;">👑 왕실 퓨즈 머신</div>
+                <button onclick="closeRoyalFuseModal()" style="background: none; border: none; color: #9ca3af; font-size: 18px; cursor: pointer;">✕</button>
+            </div>
+
+            <!-- 슬롯 선택 영역 -->
+            <div style="background: #1f2937; border-radius: 12px; padding: 10px; margin-bottom: 12px;">
+                <div style="font-size: 11px; color: #9ca3af; margin-bottom: 6px; font-weight: bold;">[알 선택]</div>
+                <div id="royal-fuse-egg-selector" style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;"></div>
+            </div>
+
+            <!-- 신규 4종 펫 사진/아이콘 & 실시간 확률표 -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
+                <div style="background: #1f2937; border: 1.5px solid #facc15; border-radius: 10px; padding: 8px 4px;">
+                    <div style="font-size: 24px;">👑💵</div>
+                    <div style="font-size: 11.5px; font-weight: 900; color: #fef08a;">킹머니펫</div>
+                    <div style="font-size: 11px; color: #facc15; font-weight: 900;">62%</div>
                 </div>
-                <button onclick="closeRoyalFuseModal()" style="background: rgba(255,255,255,0.12); border: none; color: #fde047; font-size: 16px; font-weight: 900; width: 30px; height: 30px; border-radius: 8px; cursor: pointer;">✕</button>
-            </div>
-
-            <div style="font-size: 12.5px; color: #e9d5ff; margin-bottom: 14px; line-height: 1.4;">
-                보유한 펫의 알을 왕실의 비전 마법으로 융합하여<br>
-                <strong style="color: #facc15;">전설의 신규 4종 에그</strong>를 창조하세요!
-            </div>
-
-            <!-- 보유 알 선택 영역 -->
-            <div style="background: rgba(0,0,0,0.45); border: 1.5px solid rgba(250, 204, 21, 0.3); border-radius: 14px; padding: 12px; margin-bottom: 14px;">
-                <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 8px; font-weight: 800;">[융합에 사용할 알 선택]</div>
-                <div id="royal-fuse-egg-selector" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;"></div>
-            </div>
-
-            <!-- 획득 가능 알 목록 및 확률 표시 -->
-            <div style="background: rgba(15, 23, 42, 0.7); border-radius: 12px; padding: 10px; margin-bottom: 14px; text-align: left; font-size: 12px;">
-                <div style="color: #facc15; font-weight: 900; margin-bottom: 5px;">✨ 융합 출현 신규 알 & 확률:</div>
-                <div style="display: flex; justify-content: space-between; color: #fef08a;"><span>👑💵 킹머니펫에그</span><strong>62%</strong></div>
-                <div style="display: flex; justify-content: space-between; color: #38bdf8;"><span>⚔️ 소드콤비네이션펫에그</span><strong>20%</strong></div>
-                <div style="display: flex; justify-content: space-between; color: #fb923c;"><span>🪓 도끼콤비네이션 에그</span><strong>15%</strong></div>
-                <div style="display: flex; justify-content: space-between; color: #f43f5e; font-weight: 900;"><span>👑✨ 킹펫에그 (전설)</span><strong>3%</strong></div>
-                <div id="royal-fuse-luck-indicator" style="margin-top: 6px; font-size: 11px; color: #4ade80; display: none; font-weight: 900;">
-                    ⚡ [퓨즈럭 8배 버프 활성화 중! 대박 확률 800% 폭증!]
+                <div style="background: #1f2937; border: 1.5px solid #38bdf8; border-radius: 10px; padding: 8px 4px;">
+                    <div style="font-size: 24px;">⚔️</div>
+                    <div style="font-size: 11.5px; font-weight: 900; color: #bae6fd;">소드콤비</div>
+                    <div style="font-size: 11px; color: #38bdf8; font-weight: 900;">20%</div>
+                </div>
+                <div style="background: #1f2937; border: 1.5px solid #fb923c; border-radius: 10px; padding: 8px 4px;">
+                    <div style="font-size: 24px;">🪓</div>
+                    <div style="font-size: 11.5px; font-weight: 900; color: #fed7aa;">도끼콤비</div>
+                    <div style="font-size: 11px; color: #fb923c; font-weight: 900;">15%</div>
+                </div>
+                <div style="background: #1f2937; border: 1.5px solid #f43f5e; border-radius: 10px; padding: 8px 4px;">
+                    <div style="font-size: 24px;">👑✨</div>
+                    <div style="font-size: 11.5px; font-weight: 900; color: #fecdd3;">킹펫 (전설)</div>
+                    <div style="font-size: 11px; color: #f43f5e; font-weight: 900;">3%</div>
                 </div>
             </div>
 
-            <button id="btn-royal-fuse-action" onclick="executeRoyalFuse()" style="width: 100%; padding: 13px; background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%); border: none; border-radius: 12px; color: black; font-weight: 950; font-size: 16px; cursor: pointer; box-shadow: 0 4px 15px rgba(234, 179, 8, 0.45); letter-spacing: 0.5px;">
-                ⚗️ 왕실 융합 시작 !
+            <div id="royal-fuse-luck-indicator" style="margin-bottom: 10px; font-size: 11.5px; color: #4ade80; display: none; font-weight: 900;">
+                ⚡ [퓨즈럭 8배 버프 활성화 중!]
+            </div>
+
+            <button onclick="executeRoyalFuse()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #eab308, #ca8a04); border: none; border-radius: 10px; color: black; font-weight: 950; font-size: 15px; cursor: pointer; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);">
+                ⚗️ 퓨즈 시작 !
             </button>
         </div>
     </div>
